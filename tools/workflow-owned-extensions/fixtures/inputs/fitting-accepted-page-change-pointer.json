@@ -1,0 +1,5 @@
+{
+  "retainedFrom": "tools/result-reuse/fixtures/accepted-page-change.json",
+  "kind": "page_change_brief",
+  "note": "Use the existing public fixture in place. This pointer keeps the larger input retained without rewriting result-reuse."
+}

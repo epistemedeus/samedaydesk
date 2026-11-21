@@ -1,0 +1,35 @@
+--- a/server/app.js
++++ b/server/app.js
+@@ -28,6 +28,7 @@
+ import { mountProductionClient } from "./lib/spa-client.js";
+ import { mountCorrespondence } from "./lib/correspondence-mount.js";
+ import { mountNeomorphicOpportunity } from "./lib/neomorphic-opportunity-mount.js";
++import { mountMachineGateway } from "./vendor/neomorphic-machine-gateway/src/index.mjs";
+ import { mountManagedWatch } from "./lib/managed-watch/http.mjs";
+ import { mountPublicReadiness } from "./lib/public-readiness-mount.js";
+ import { mountHostedUsefulJourney } from "../tools/hosted-useful-journey-100346/lib/router.mjs";
+@@ -94,6 +95,9 @@
+ //     besides a truthful disabled healthz under the prefix.
+ const correspondence = mountCorrespondence(app, options.correspondence || {});
+ app.set("s51Correspondence", correspondence);
++
++// Optional machine gateway owns its bounded raw body and durable state.
++app.set("machineGateway", mountMachineGateway(app, options.machineGateway || {}));
+
+ // Opt-in retained watch. Unset MANAGED_WATCH_OPT_IN mounts nothing, so existing
+ // routes and the foundry CJS/runtime materialization path stay as they are.
+--- a/server/index.js
++++ b/server/index.js
+@@ -16,7 +16,11 @@
+ bindListenerLifecycle(server, async () => {
+   const handle = app.get("s51Correspondence");
+   try {
+-    await app.get("s346HostedUsefulJourney")?.close();
++    try {
++      await app.get("machineGateway")?.close?.();
++    } finally {
++      await app.get("s346HostedUsefulJourney")?.close();
++    }
+   } finally {
+     try {
+       await app.get("l12ManagedWatch")?.close?.();

@@ -1,0 +1,35 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "SameDayDesk result reuse",
+    "version": "0.1.0",
+    "description": "Source-only Dify custom-tool interface. There is no hosted endpoint in this package. Installation status is source_only_not_installed. Runtime execution status is not yet executed on runtime. Local execution uses tools/result-reuse."
+  },
+  "servers": [],
+  "paths": {
+    "/preview_reuse": {
+      "post": {
+        "operationId": "preview_reuse",
+        "summary": "Preview reuse",
+        "description": "Local SDK fallback. Not executed on Dify."
+      }
+    },
+    "/export_reuse": {
+      "post": {
+        "operationId": "export_reuse",
+        "summary": "Export reuse",
+        "description": "Requires opt-in. Local SDK fallback. Not executed on Dify."
+      }
+    },
+    "/decide_or_reuse": {
+      "post": {
+        "operationId": "decide_or_reuse",
+        "summary": "Decide or reuse",
+        "description": "Does not run the producer. Local SDK fallback. Not executed on Dify."
+      }
+    }
+  },
+  "x-samedaydesk-execution": "local CLI and SDK only",
+  "x-installation-status": "source_only_not_installed",
+  "x-runtime-execution-status": "not yet executed on runtime"
+}

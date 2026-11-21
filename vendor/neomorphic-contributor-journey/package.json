@@ -1,0 +1,11 @@
+{
+  "name": "@neomorphic/contributor-journey-installed-artifact",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "dependencies": {
+    "express": "5.2.1",
+    "pg": "8.23.0",
+    "zod": "3.25.76"
+  }
+}

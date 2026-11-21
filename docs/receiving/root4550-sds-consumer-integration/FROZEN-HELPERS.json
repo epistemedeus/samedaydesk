@@ -1,0 +1,18 @@
+[
+  {
+    "local": "frozen-hostinger-release-source.mjs",
+    "repository": "epistemedeus/pilot",
+    "commit": "14761c91e530fc31947b6aa76251db6896a1f4c6",
+    "path": "tools/ops/hostinger-release-source.mjs",
+    "sha256": "750bad1dad3aaebdd8fba317ce900d593d561d54e6f4d028fe1fd06b6aa76824",
+    "byteEqual": true
+  },
+  {
+    "local": "receive-assets.py",
+    "repository": "epistemedeus/pilot",
+    "commit": "14761c91e530fc31947b6aa76251db6896a1f4c6",
+    "path": "overview/research/phase-20261023/multichain-discovery/managed-qualification/receive-assets.py",
+    "sha256": "ce047bc5c4c2e93ab8f3cd90c6cf7665f832e4b80c1b23501a44545d5a9ece82",
+    "byteEqual": true
+  }
+]

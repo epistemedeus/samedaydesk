@@ -1,0 +1,5 @@
+
+> samedaydesk@1.0.0 foundry:managed-probe
+> node server/foundry/managed-node-probe.mjs
+
+{"probe":"managed-node","ok":true,"linuxX64":true,"node":"v22.23.4","python3":true,"installedPython":true,"bundledPython":true,"runtimeLayout":"self-contained-regular-v1","runtimeLayoutFailure":null,"installedPythonFailure":null,"prlimit":true,"procReadable":true,"procFdReadable":true,"childProcReadable":true,"referenceRuntime":true,"osLimitsEnforced":true,"pidPreserved":true,"referenceExecution":true,"referenceFailure":null,"pythonFailure":null,"osLimitMechanism":"python-setrlimit-before-exec","launcher":{"id":"vf08.python-setrlimit-exec.v1","adapter":"sha256:0cf2db127cce64f02abde24799edbb9f1094916333a95acc6cabf435b45f7b95","script":"sha256:672f7d9881e28787eba316a3c99a52e18432d0c0638f299df6aabdc2a2151ece"},"launcherIdentityStable":true,"unsupportedHostReasons":[],"productionActivate":"HOLD","activation":false,"notProduction":true,"wholeHostSandbox":false,"privatePythonWebServer":false,"referenceProfileRetained":true}

@@ -4,6 +4,7 @@ import test from "node:test";
 import { UNKNOWN_TOOL_NAME, guardedExchange, mcpRpcBody, probeHost, rawExchange } from "../../lib/agent-readiness/probe.js";
 import { PublicHostError, isPrivateIp } from "../../lib/agent-readiness/ssrf.js";
 import { resetRateLimits } from "../../lib/agent-readiness/rate-limit.js";
+import { PUBLIC_IP, wireSockets } from "./fixtures/socket-controls.mjs";
 
 function listen(server) {
   return new Promise((resolve, reject) => {
@@ -133,15 +134,17 @@ test("response bodies are capped", async () => {
     res.end("x".repeat(250_000));
   });
   const port = await listen(server);
+  const wiring = wireSockets([{ address: PUBLIC_IP, server }]);
   try {
-    const got = await rawExchange(new URL(`http://127.0.0.1:${port}/big`), {
-      address: { address: "127.0.0.1", family: 4 },
+    const got = await rawExchange(new URL(`http://body.example:${port}/big`), {
+      address: { address: PUBLIC_IP, family: 4 },
       maxBytes: 1000,
       timeoutMs: 2000,
     });
     assert.equal(got.status, 200);
     assert.ok(got.body.length <= 1000, String(got.body.length));
   } finally {
+    wiring.restore();
     await close(server);
   }
 });
@@ -153,14 +156,17 @@ test("pinned lookup connects to the resolved address, not a second name", async 
     res.end("pinned");
   });
   const port = await listen(server);
+  const wiring = wireSockets([{ address: PUBLIC_IP, server }]);
   try {
     const got = await rawExchange(new URL(`http://example.com:${port}/pinned`), {
-      address: { address: "127.0.0.1", family: 4 },
+      address: { address: PUBLIC_IP, family: 4 },
       timeoutMs: 2000,
     });
     assert.equal(got.body, "pinned");
     assert.match(hostHeader, /example\.com/);
+    assert.deepEqual(wiring.attempts.map((x) => x.address), [PUBLIC_IP]);
   } finally {
+    wiring.restore();
     await close(server);
   }
 });

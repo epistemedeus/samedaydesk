@@ -1,0 +1,42 @@
+{
+  "supervisorPid": 1215953,
+  "processes": [
+    {
+      "pid": 1215953,
+      "ppid": 1215888,
+      "rssKiB": 12964,
+      "name": "python3"
+    },
+    {
+      "pid": 1215954,
+      "ppid": 1215953,
+      "rssKiB": 54436,
+      "name": "node"
+    },
+    {
+      "pid": 1215961,
+      "ppid": 1215954,
+      "rssKiB": 210892,
+      "name": "codex"
+    },
+    {
+      "pid": 1216574,
+      "ppid": 1215961,
+      "rssKiB": 25680,
+      "name": "codex-code-mode"
+    },
+    {
+      "pid": 1217975,
+      "ppid": 1215961,
+      "rssKiB": 3484,
+      "name": "bash"
+    },
+    {
+      "pid": 1217987,
+      "ppid": 1217975,
+      "rssKiB": 11736,
+      "name": "python3"
+    }
+  ],
+  "sampleRSSKiB": 319192
+}

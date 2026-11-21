@@ -1,0 +1,45 @@
+TAP version 13
+# Subtest: explicit complete future-version path takes precedence
+ok 1 - explicit complete future-version path takes precedence
+  ---
+  duration_ms: 2.475226
+  ...
+# Subtest: invalid explicit selection refuses instead of falling through
+ok 2 - invalid explicit selection refuses instead of falling through
+  ---
+  duration_ms: 1.798763
+  ...
+# Subtest: pg_config selects an installed future-version directory
+ok 3 - pg_config selects an installed future-version directory
+  ---
+  duration_ms: 3.050323
+  ...
+# Subtest: complete PATH directory is supported without pg_config
+ok 4 - complete PATH directory is supported without pg_config
+  ---
+  duration_ms: 2.243967
+  ...
+# Subtest: incomplete directory is refused
+ok 5 - incomplete directory is refused
+  ---
+  duration_ms: 1.146473
+  ...
+# Subtest: non-executable member is refused
+ok 6 - non-executable member is refused
+  ---
+  duration_ms: 1.54919
+  ...
+# Subtest: unavailable binaries have a distinct refusal
+ok 7 - unavailable binaries have a distinct refusal
+  ---
+  duration_ms: 2.029171
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 70.804104

@@ -1,0 +1,250 @@
+{
+  "schema": "root4550.financial-contract.v1",
+  "receipts": [
+    {
+      "root": "/tmp/root4550-qualification/baseline",
+      "examples": [
+        {
+          "gross": "19",
+          "railCost": "0",
+          "fee": "0",
+          "net": "19",
+          "result": {
+            "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+            "feeBps": 500,
+            "feeBasis": "new_job_gross",
+            "grossAtomic": "19",
+            "railCostAtomic": "0",
+            "captures": [
+              {
+                "amountAtomic": "19",
+                "feeAtomic": "0"
+              }
+            ],
+            "platformFeeAtomic": "0",
+            "contributorNetAtomic": "19",
+            "exactFivePercentAtEveryAtomicAmount": false,
+            "thisQuoteFeeIsExactFivePercent": false
+          }
+        },
+        {
+          "gross": "20",
+          "railCost": "0",
+          "fee": "1",
+          "net": "19",
+          "result": {
+            "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+            "feeBps": 500,
+            "feeBasis": "new_job_gross",
+            "grossAtomic": "20",
+            "railCostAtomic": "0",
+            "captures": [
+              {
+                "amountAtomic": "20",
+                "feeAtomic": "1"
+              }
+            ],
+            "platformFeeAtomic": "1",
+            "contributorNetAtomic": "19",
+            "exactFivePercentAtEveryAtomicAmount": false,
+            "thisQuoteFeeIsExactFivePercent": true
+          }
+        },
+        {
+          "gross": "21",
+          "railCost": "0",
+          "fee": "1",
+          "net": "20",
+          "result": {
+            "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+            "feeBps": 500,
+            "feeBasis": "new_job_gross",
+            "grossAtomic": "21",
+            "railCostAtomic": "0",
+            "captures": [
+              {
+                "amountAtomic": "21",
+                "feeAtomic": "1"
+              }
+            ],
+            "platformFeeAtomic": "1",
+            "contributorNetAtomic": "20",
+            "exactFivePercentAtEveryAtomicAmount": false,
+            "thisQuoteFeeIsExactFivePercent": false
+          }
+        },
+        {
+          "gross": "100001",
+          "railCost": "0",
+          "fee": "5000",
+          "net": "95001",
+          "result": {
+            "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+            "feeBps": 500,
+            "feeBasis": "new_job_gross",
+            "grossAtomic": "100001",
+            "railCostAtomic": "0",
+            "captures": [
+              {
+                "amountAtomic": "100001",
+                "feeAtomic": "5000"
+              }
+            ],
+            "platformFeeAtomic": "5000",
+            "contributorNetAtomic": "95001",
+            "exactFivePercentAtEveryAtomicAmount": false,
+            "thisQuoteFeeIsExactFivePercent": false
+          }
+        },
+        {
+          "gross": "100000",
+          "railCost": "3",
+          "fee": "5000",
+          "net": "94997",
+          "result": {
+            "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+            "feeBps": 500,
+            "feeBasis": "new_job_gross",
+            "grossAtomic": "100000",
+            "railCostAtomic": "3",
+            "captures": [
+              {
+                "amountAtomic": "100000",
+                "feeAtomic": "5000"
+              }
+            ],
+            "platformFeeAtomic": "5000",
+            "contributorNetAtomic": "94997",
+            "exactFivePercentAtEveryAtomicAmount": false,
+            "thisQuoteFeeIsExactFivePercent": true
+          }
+        }
+      ],
+      "partialCaptureRefused": true
+    },
+    {
+      "root": "/tmp/root4550-qualification/final",
+      "examples": [
+        {
+          "gross": "19",
+          "railCost": "0",
+          "fee": "0",
+          "net": "19",
+          "result": {
+            "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+            "feeBps": 500,
+            "feeBasis": "new_job_gross",
+            "grossAtomic": "19",
+            "railCostAtomic": "0",
+            "captures": [
+              {
+                "amountAtomic": "19",
+                "feeAtomic": "0"
+              }
+            ],
+            "platformFeeAtomic": "0",
+            "contributorNetAtomic": "19",
+            "exactFivePercentAtEveryAtomicAmount": false,
+            "thisQuoteFeeIsExactFivePercent": false
+          }
+        },
+        {
+          "gross": "20",
+          "railCost": "0",
+          "fee": "1",
+          "net": "19",
+          "result": {
+            "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+            "feeBps": 500,
+            "feeBasis": "new_job_gross",
+            "grossAtomic": "20",
+            "railCostAtomic": "0",
+            "captures": [
+              {
+                "amountAtomic": "20",
+                "feeAtomic": "1"
+              }
+            ],
+            "platformFeeAtomic": "1",
+            "contributorNetAtomic": "19",
+            "exactFivePercentAtEveryAtomicAmount": false,
+            "thisQuoteFeeIsExactFivePercent": true
+          }
+        },
+        {
+          "gross": "21",
+          "railCost": "0",
+          "fee": "1",
+          "net": "20",
+          "result": {
+            "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+            "feeBps": 500,
+            "feeBasis": "new_job_gross",
+            "grossAtomic": "21",
+            "railCostAtomic": "0",
+            "captures": [
+              {
+                "amountAtomic": "21",
+                "feeAtomic": "1"
+              }
+            ],
+            "platformFeeAtomic": "1",
+            "contributorNetAtomic": "20",
+            "exactFivePercentAtEveryAtomicAmount": false,
+            "thisQuoteFeeIsExactFivePercent": false
+          }
+        },
+        {
+          "gross": "100001",
+          "railCost": "0",
+          "fee": "5000",
+          "net": "95001",
+          "result": {
+            "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+            "feeBps": 500,
+            "feeBasis": "new_job_gross",
+            "grossAtomic": "100001",
+            "railCostAtomic": "0",
+            "captures": [
+              {
+                "amountAtomic": "100001",
+                "feeAtomic": "5000"
+              }
+            ],
+            "platformFeeAtomic": "5000",
+            "contributorNetAtomic": "95001",
+            "exactFivePercentAtEveryAtomicAmount": false,
+            "thisQuoteFeeIsExactFivePercent": false
+          }
+        },
+        {
+          "gross": "100000",
+          "railCost": "3",
+          "fee": "5000",
+          "net": "94997",
+          "result": {
+            "roundingProfile": "commerce-payments-v1.1.0-single-capture",
+            "feeBps": 500,
+            "feeBasis": "new_job_gross",
+            "grossAtomic": "100000",
+            "railCostAtomic": "3",
+            "captures": [
+              {
+                "amountAtomic": "100000",
+                "feeAtomic": "5000"
+              }
+            ],
+            "platformFeeAtomic": "5000",
+            "contributorNetAtomic": "94997",
+            "exactFivePercentAtEveryAtomicAmount": false,
+            "thisQuoteFeeIsExactFivePercent": true
+          }
+        }
+      ],
+      "partialCaptureRefused": true
+    }
+  ],
+  "equal": true,
+  "synthetic": true,
+  "networkArithmetic": "none; examples use atomic units of one asset only"
+}

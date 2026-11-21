@@ -13,11 +13,17 @@ const cli = join(repoRoot, "tools/l08-agent-repair/cli.mjs");
 const cold = join(repoRoot, "tools/l08-agent-repair/cold-client.mjs");
 const handoffPath = join(repoRoot, "tools/l08-agent-repair/MAINT-HANDOFF.json");
 const PRIOR_SEAL = "ac7e0c75c224a062d9ed4e58332e9c2f34b90895";
+const fixtureNodeOptions = [
+  process.env.NODE_OPTIONS,
+  `--import=${new URL("../../../server/scripts/helpers/taskmarket-fixture-preload.js", import.meta.url).href}`,
+].filter(Boolean).join(" ");
 
 function run(args) {
   return spawnSync(process.execPath, [cli, ...args], {
     cwd: repoRoot,
     encoding: "utf8",
+    // Inherited by cli -> cold client -> its parent canonical HTTP server.
+    env: { ...process.env, NODE_OPTIONS: fixtureNodeOptions },
   });
 }
 

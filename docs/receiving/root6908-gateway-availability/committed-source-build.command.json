@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "npm",
+    "--prefix",
+    "client",
+    "run",
+    "build"
+  ],
+  "exit": 0,
+  "startedAt": "2026-10-25T00:07:45Z",
+  "elapsedSeconds": 4.013410568237305,
+  "sampledCommandTreePeakRSSKiB": 431460,
+  "samples": 75,
+  "sampledOwnedAggregatePeakRSSKiB": 746632,
+  "nativeResourceRootPid": 1215953,
+  "nativeResourceRootStartTicks": "21786463",
+  "sampleIntervalMs": 50,
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=768",
+    "UV_THREADPOOL_SIZE": "1",
+    "OMP_NUM_THREADS": "1",
+    "RAYON_NUM_THREADS": "1",
+    "NODE_ENV": null,
+    "SAMEDAYDESK_CLIENT_DIST": null
+  }
+}

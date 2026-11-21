@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: default installed artifact has exact source/build provenance and every received byte matches its manifest
+ok 1 - default installed artifact has exact source/build provenance and every received byte matches its manifest
+  ---
+  duration_ms: 54.587599
+  ...
+# Subtest: native default artifact imports without a TS loader and disabled factory opens no store
+ok 2 - native default artifact imports without a TS loader and disabled factory opens no store
+  ---
+  duration_ms: 125.728576
+  ...
+# Subtest: exact installed continuation closure and SQL are pinned to the committed clean producer
+ok 3 - exact installed continuation closure and SQL are pinned to the committed clean producer
+  ---
+  duration_ms: 156.00394
+  ...
+# Subtest: original canonical service retains its producer and explicitly identifies the additive source overlay
+ok 4 - original canonical service retains its producer and explicitly identifies the additive source overlay
+  ---
+  duration_ms: 34.37248
+  ...
+# Subtest: default optional SDS mount is disabled and never discovers or opens account/provider resources
+ok 5 - default optional SDS mount is disabled and never discovers or opens account/provider resources
+  ---
+  duration_ms: 17.474385
+  ...
+# Subtest: enabled optional mount refuses an absent authenticated account contract without a fallback store
+ok 6 - enabled optional mount refuses an absent authenticated account contract without a fallback store
+  ---
+  duration_ms: 0.408134
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 507.482022

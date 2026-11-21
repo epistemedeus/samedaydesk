@@ -1,0 +1,13 @@
+file:///tmp/r6q-oec4g5lv/archive-check/server/foundry/runtime-layout.mjs:8
+export const coded=code=>Object.assign(new Error(code),{code});
+                                       ^
+
+Error: runtime_publication_modes
+    at coded (file:///tmp/r6q-oec4g5lv/archive-check/server/foundry/runtime-layout.mjs:8:40)
+    at runtimeModes (file:///tmp/r6q-oec4g5lv/archive-check/server/foundry/runtime-layout.mjs:62:75)
+    at async verifyOfflineRuntime (file:///tmp/r6q-oec4g5lv/archive-check/server/foundry/runtime-layout.mjs:79:2)
+    at async file:///tmp/r6q-oec4g5lv/archive-check/docs/reviews/root5950/managed-qualification/check-package.mjs:52:17 {
+  code: 'runtime_publication_modes'
+}
+
+Node.js v22.23.4

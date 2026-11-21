@@ -1,0 +1,40 @@
+{
+  "schema": "continuous-monitoring.mounted-run.v1",
+  "capturedAt": "2026-10-15T05:29:06.988Z",
+  "environment": {
+    "node": "v22.14.0",
+    "platform": "linux",
+    "arch": "x64"
+  },
+  "kind": "actual_mounted_http_origin_and_processes",
+  "deployed": false,
+  "naturalCustomerDemand": false,
+  "checks": 2,
+  "originRequests": 2,
+  "events": 1,
+  "deliveryAttempts": 1,
+  "acknowledgedEvents": 1,
+  "receivedBytes": 76,
+  "observationRuntimeMs": 13,
+  "retainedPayloadBytes": 4825,
+  "elapsedMs": 557,
+  "testedRestarts": 2,
+  "immutableBaselinePrice": 10,
+  "deliveredDiff": [
+    {
+      "field": "/price",
+      "before": 10,
+      "after": 14
+    }
+  ],
+  "cost": {
+    "currency": null,
+    "total": null,
+    "sourcePrice": null,
+    "infrastructureRate": null,
+    "laborRate": null,
+    "billable": false,
+    "automaticCharge": false,
+    "basis": "measured inputs; provider, storage, operations and subscription economics unknown"
+  }
+}

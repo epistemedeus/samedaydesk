@@ -1,3 +1,4 @@
+import { withNetworkInfo, planSelectors } from "./helpers/taskmarket-fixtures.js";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import test from "node:test";
@@ -28,7 +29,10 @@ async function post(origin, path, body, headers = {}) {
   return { status: response.status, json, text };
 }
 
-test("existing host keeps its routes and distinguishes compiled repair from deployment", async () => {
+test("existing host keeps its routes and distinguishes compiled repair from deployment", async (t) => {
+  const savedFetch = globalThis.fetch;
+  globalThis.fetch = withNetworkInfo(savedFetch);
+  t.after(() => { globalThis.fetch = savedFetch; });
   const app = createSdsApp();
   const server = createServer(app);
   const port = await listen(server);
@@ -88,6 +92,7 @@ test("existing host keeps its routes and distinguishes compiled repair from depl
         arguments: {
           request: "Describe the public readiness boundary",
           deliverable: "One paragraph",
+          ...planSelectors,
           reward_usdc: "0.10",
           max_spend_usdc: "0.10",
           deadline_hours: 24,

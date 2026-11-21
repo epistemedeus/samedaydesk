@@ -1,0 +1,26 @@
+TAP version 13
+# (node:564428) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: R4-J01 requester proposal review on real HTTPS and verified-TLS PostgreSQL
+    # Subtest: installed baseline exposes the actor/digest but cannot return the current note
+    ok 1 - installed baseline exposes the actor/digest but cannot return the current note
+      ---
+      duration_ms: 81.18729
+      type: 'test'
+      ...
+    1..1
+ok 1 - R4-J01 requester proposal review on real HTTPS and verified-TLS PostgreSQL
+  ---
+  duration_ms: 3207.330258
+  type: 'test'
+  ...
+# Acceptance gap reproduced: POST /v1/market/interests = 404; existing task read has actor/digest only.
+1..1
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3534.910929

@@ -1,0 +1,418 @@
+
+> samedaydesk@1.0.0 test:observatory
+> node --test server/scripts/test-observatory.js server/scripts/test-observatory-s64.js server/scripts/test-observatory-paid-activity.js server/scripts/test-observatory-paid-activity-other.js server/scripts/test-observatory-positioning.js server/scripts/test-observatory-convergence.js server/scripts/test-observatory-measurement.js
+
+TAP version 13
+# Subtest: same-call duplicate payer or clock conflicts never use first-row facts
+ok 1 - same-call duplicate payer or clock conflicts never use first-row facts
+  ---
+  duration_ms: 47.766644
+  ...
+# Subtest: mounted convergence does not emit objects or nonfinite values as valid metrics
+ok 2 - mounted convergence does not emit objects or nonfinite values as valid metrics
+  ---
+  duration_ms: 7.111934
+  ...
+# Subtest: mounted metrics keep zero and reject invalid enums, units, and signs
+ok 3 - mounted metrics keep zero and reject invalid enums, units, and signs
+  ---
+  duration_ms: 4.551766
+  ...
+# Subtest: original and fresh cuts refuse listed-accept and state conflicts
+ok 4 - original and fresh cuts refuse listed-accept and state conflicts
+  ---
+  duration_ms: 27.003313
+  ...
+# Subtest: metadata read keeps the denominator and does not rank rows
+ok 5 - metadata read keeps the denominator and does not rank rows
+  ---
+  duration_ms: 10.218919
+  ...
+# Subtest: default routes keep the convergence schema separate from the legacy schema
+ok 6 - default routes keep the convergence schema separate from the legacy schema
+  ---
+  duration_ms: 14.114956
+  ...
+# Subtest: configured historical capture keeps its clocks and labels
+ok 7 - configured historical capture keeps its clocks and labels # SKIP optional historical capture is not configured
+  ---
+  duration_ms: 0.078187
+  ...
+# Subtest: bridge observations keep USD and USDC from the mounted adapters
+ok 8 - bridge observations keep USD and USDC from the mounted adapters
+  ---
+  duration_ms: 15.929814
+  ...
+# Subtest: refresh ranks two provider pages and does not mix the original rows
+ok 9 - refresh ranks two provider pages and does not mix the original rows
+  ---
+  duration_ms: 3.560959
+  ...
+# Subtest: changed totals, contradictory rows, and corrupt labels stay explicit
+ok 10 - changed totals, contradictory rows, and corrupt labels stay explicit
+  ---
+  duration_ms: 3.216043
+  ...
+# Subtest: stale, future, unknown, and mixed row clocks stay distinct
+ok 11 - stale, future, unknown, and mixed row clocks stay distinct
+  ---
+  duration_ms: 12.553947
+  ...
+# Subtest: upstream 429, 401, and 402 stay unavailable and unquoted
+ok 12 - upstream 429, 401, and 402 stay unavailable and unquoted
+  ---
+  duration_ms: 19.822841
+  ...
+# Subtest: timeout, oversize, and malformed bodies stay bounded
+ok 13 - timeout, oversize, and malformed bodies stay bounded
+  ---
+  duration_ms: 40.443662
+  ...
+# Subtest: query strings and off-host redirects are refused
+ok 14 - query strings and off-host redirects are refused
+  ---
+  duration_ms: 10.693506
+  ...
+# Subtest: absent capture and hash mismatch do not become a zero rank
+ok 15 - absent capture and hash mismatch do not become a zero rank
+  ---
+  duration_ms: 10.182316
+  ...
+# Subtest: a compatible GET task can be linked and a POST task cannot
+ok 16 - a compatible GET task can be linked and a POST task cannot
+  ---
+  duration_ms: 8.670592
+  ...
+# Subtest: options allows the named origin and legacy positioning still answers
+ok 17 - options allows the named origin and legacy positioning still answers
+  ---
+  duration_ms: 7.212601
+  ...
+# Subtest: mounted metrics use one unit contract for counts, money, and custom units
+ok 18 - mounted metrics use one unit contract for counts, money, and custom units
+  ---
+  duration_ms: 3.329519
+  ...
+# Subtest: measurement rule keeps exact money and rejects unsafe counts
+ok 19 - measurement rule keeps exact money and rejects unsafe counts
+  ---
+  duration_ms: 1.008812
+  ...
+# Subtest: custom units stay custom and atomic text stays exact
+ok 20 - custom units stay custom and atomic text stays exact
+  ---
+  duration_ms: 0.197658
+  ...
+# Subtest: the installed consumer copy of the measurement rule matches this file
+ok 21 - the installed consumer copy of the measurement rule matches this file
+  ---
+  duration_ms: 0.267149
+  ...
+# Subtest: x402stats happy fixture: snapshot sellers/organic still map; organic is heuristic; paidActivity unavailable
+ok 22 - x402stats happy fixture: snapshot sellers/organic still map; organic is heuristic; paidActivity unavailable
+  ---
+  duration_ms: 35.915101
+  ...
+# Subtest: x402stats series is not summed into snapshot metrics; buyers are not unique humans
+ok 23 - x402stats series is not summed into snapshot metrics; buyers are not unique humans
+  ---
+  duration_ms: 14.592947
+  ...
+# Subtest: x402stats does not grow a registered-vs-paid population; missing stays missing
+ok 24 - x402stats does not grow a registered-vs-paid population; missing stays missing
+  ---
+  duration_ms: 19.891718
+  ...
+# Subtest: smithery_mcp still has exactly one catalog metric and no paid activity
+ok 25 - smithery_mcp still has exactly one catalog metric and no paid activity
+  ---
+  duration_ms: 6.670284
+  ...
+# Subtest: adversarial consumer must not treat smithery registered_servers as paid demand
+ok 26 - adversarial consumer must not treat smithery registered_servers as paid demand
+  ---
+  duration_ms: 30.761994
+  ...
+# Subtest: snapshot additivity forbids summing moltjobs marketplaceSettledVolumeUsdc with x402 volume_usd_30d
+ok 27 - snapshot additivity forbids summing moltjobs marketplaceSettledVolumeUsdc with x402 volume_usd_30d
+  ---
+  duration_ms: 15.10174
+  ...
+# strict mode: use allowUnionTypes to allow union type keyword at "\#/definitions/metric/allOf/0/then/properties/value" (strictTypes)
+# strict mode: use allowUnionTypes to allow union type keyword at "\#/definitions/metric/properties/value" (strictTypes)
+# Subtest: program sums preserve decimal precision and do not mark unsafe integer totals ok
+ok 28 - program sums preserve decimal precision and do not mark unsafe integer totals ok
+  ---
+  duration_ms: 6.987254
+  ...
+# Subtest: declared snapshot window survives paid metrics and population metadata while bidding stays 30d
+ok 29 - declared snapshot window survives paid metrics and population metadata while bidding stays 30d
+  ---
+  duration_ms: 0.707972
+  ...
+# Subtest: happy live-shaped MoltJobs body maps marketplace/liquidity/programs without inventing demand
+ok 30 - happy live-shaped MoltJobs body maps marketplace/liquidity/programs without inventing demand
+  ---
+  duration_ms: 1.145396
+  ...
+# Subtest: old totals-only fixture: new paid-activity keys are missing, not zero
+ok 31 - old totals-only fixture: new paid-activity keys are missing, not zero
+  ---
+  duration_ms: 2.052397
+  ...
+# Subtest: marketplace completed=0 with jobs>0 stays numeric zero and ratio 0/jobs
+ok 32 - marketplace completed=0 with jobs>0 stays numeric zero and ratio 0/jobs
+  ---
+  duration_ms: 0.484777
+  ...
+# Subtest: malformed marketplace does not invent zeros
+ok 33 - malformed marketplace does not invent zeros
+  ---
+  duration_ms: 1.367249
+  ...
+# Subtest: stale asOf keeps marketplace values and marks availability stale
+ok 34 - stale asOf keeps marketplace values and marks availability stale
+  ---
+  duration_ms: 0.476317
+  ...
+# Subtest: population-mismatch ratios are refused, never emitted as ok metrics
+ok 35 - population-mismatch ratios are refused, never emitted as ok metrics
+  ---
+  duration_ms: 0.516307
+  ...
+# Subtest: reconcile mismatch warns and does not rewrite totals
+ok 36 - reconcile mismatch warns and does not rewrite totals
+  ---
+  duration_ms: 0.507171
+  ...
+# Subtest: funded employers greater than employers makes funded ratio contradictory
+ok 37 - funded employers greater than employers makes funded ratio contradictory
+  ---
+  duration_ms: 0.592265
+  ...
+# Subtest: GET /sources/moltjobs and /snapshot fetch fixture, echo CORS, stay not_additive
+ok 38 - GET /sources/moltjobs and /snapshot fetch fixture, echo CORS, stay not_additive
+  ---
+  duration_ms: 62.707489
+  ...
+# Subtest: observation.schema.json still validates paid-activity envelopes including additionalProperties
+ok 39 - observation.schema.json still validates paid-activity envelopes including additionalProperties
+  ---
+  duration_ms: 0.932468
+  ...
+# Subtest: open page drops identifiers and ranks platform purpose on its own denominator
+ok 40 - open page drops identifiers and ranks platform purpose on its own denominator
+  ---
+  duration_ms: 3.876316
+  ...
+# Subtest: exhausted platform-only page is no exact overlap and not a demand zero
+ok 41 - exhausted platform-only page is no exact overlap and not a demand zero
+  ---
+  duration_ms: 0.532426
+  ...
+# Subtest: discovery job ids are the maintained list and a drifted mirror is refused
+ok 42 - discovery job ids are the maintained list and a drifted mirror is refused
+  ---
+  duration_ms: 0.469427
+  ...
+# Subtest: invalid quantities, duplicate keys, and tallies above the page cannot rank
+ok 43 - invalid quantities, duplicate keys, and tallies above the page cannot rank
+  ---
+  duration_ms: 0.687158
+  ...
+# Subtest: core-only projection stays useful with every provider absent
+ok 44 - core-only projection stays useful with every provider absent
+  ---
+  duration_ms: 0.198449
+  ...
+# Subtest: removing the open-jobs adapter does not borrow marketplace stock as the queue
+ok 45 - removing the open-jobs adapter does not borrow marketplace stock as the queue
+  ---
+  duration_ms: 0.198353
+  ...
+# Subtest: stale, unavailable, partial, and conflicting inputs withhold a current cut
+ok 46 - stale, unavailable, partial, and conflicting inputs withhold a current cut
+  ---
+  duration_ms: 0.741247
+  ...
+# Subtest: oversized page and non-token purpose do not export row text
+ok 47 - oversized page and non-token purpose do not export row text
+  ---
+  duration_ms: 0.689734
+  ...
+# Subtest: machine route returns the positioning cut and not a human page
+ok 48 - machine route returns the positioning cut and not a human page
+  ---
+  duration_ms: 40.479576
+  ...
+# Subtest: CLI position reads a capture and core-only stays empty of provider counts
+ok 49 - CLI position reads a capture and core-only stays empty of provider counts
+  ---
+  duration_ms: 7.745844
+  ...
+# Subtest: cold CLI outside the checkout projects a fixture capture
+ok 50 - cold CLI outside the checkout projects a fixture capture
+  ---
+  duration_ms: 50.085938
+  ...
+# strict mode: use allowUnionTypes to allow union type keyword at "\#/definitions/metric/allOf/0/then/properties/value" (strictTypes)
+# strict mode: use allowUnionTypes to allow union type keyword at "\#/definitions/metric/properties/value" (strictTypes)
+# Subtest: S64 actual mounted HTTP envelopes validate, preserve status/CORS and capture roundtrip
+ok 51 - S64 actual mounted HTTP envelopes validate, preserve status/CORS and capture roundtrip
+  ---
+  duration_ms: 231.902608
+  ...
+# Subtest: S64 all error/partial/empty/non-200 returns satisfy schema without false zero
+ok 52 - S64 all error/partial/empty/non-200 returns satisfy schema without false zero
+  ---
+  duration_ms: 6.527141
+  ...
+# Subtest: S64 unknown/changed window and ratio cannot imply 30 days or valid share
+ok 53 - S64 unknown/changed window and ratio cannot imply 30 days or valid share
+  ---
+  duration_ms: 0.458982
+  ...
+# Subtest: S64 fixed upstream redirect and error cache replace last good data
+ok 54 - S64 fixed upstream redirect and error cache replace last good data
+  ---
+  duration_ms: 0.540454
+  ...
+# Subtest: S64 capture identity and bounded nonretrying HTTP errors
+ok 55 - S64 capture identity and bounded nonretrying HTTP errors
+  ---
+  duration_ms: 9.260137
+  ...
+# Subtest: GET /sources lists fixed registry metadata and does not fetch
+ok 56 - GET /sources lists fixed registry metadata and does not fetch
+  ---
+  duration_ms: 34.283605
+  ...
+# Subtest: happy fixture: moltjobs maps work-market metrics and keeps clocks distinct
+ok 57 - happy fixture: moltjobs maps work-market metrics and keeps clocks distinct
+  ---
+  duration_ms: 9.851566
+  ...
+# Subtest: happy fixture: x402stats maps snapshot fields with heuristic labels
+ok 58 - happy fixture: x402stats maps snapshot fields with heuristic labels
+  ---
+  duration_ms: 4.35336
+  ...
+# Subtest: happy fixture: smithery_mcp uses pagination.totalCount only
+ok 59 - happy fixture: smithery_mcp uses pagination.totalCount only
+  ---
+  duration_ms: 3.892912
+  ...
+# Subtest: unknown sourceId is rejected and does not fetch
+ok 60 - unknown sourceId is rejected and does not fetch
+  ---
+  duration_ms: 9.920481
+  ...
+# Subtest: malformed JSON is error, not zeros
+ok 61 - malformed JSON is error, not zeros
+  ---
+  duration_ms: 9.322227
+  ...
+# Subtest: partial x402stats snapshot is partial, not zeros
+ok 62 - partial x402stats snapshot is partial, not zeros
+  ---
+  duration_ms: 4.712166
+  ...
+# Subtest: timeout is unavailable, not a zero total
+ok 63 - timeout is unavailable, not a zero total
+  ---
+  duration_ms: 45.475665
+  ...
+# Subtest: 429 is unavailable, not zeros
+ok 64 - 429 is unavailable, not zeros
+  ---
+  duration_ms: 4.072777
+  ...
+# Subtest: oversized body is error and is not parsed as metrics
+ok 65 - oversized body is error and is not parsed as metrics
+  ---
+  duration_ms: 5.647612
+  ...
+# Subtest: stale provider clock is explicit and keeps metric values
+ok 66 - stale provider clock is explicit and keeps metric values
+  ---
+  duration_ms: 3.089888
+  ...
+# Subtest: two concurrent requests share a single upstream GET per source
+ok 67 - two concurrent requests share a single upstream GET per source
+  ---
+  duration_ms: 36.320423
+  ...
+# Subtest: second GET within TTL is a cache hit
+ok 68 - second GET within TTL is a cache hit
+  ---
+  duration_ms: 5.284521
+  ...
+# Subtest: CORS allowlist echoes https://neomorphic.io exactly
+ok 69 - CORS allowlist echoes https://neomorphic.io exactly
+  ---
+  duration_ms: 3.198788
+  ...
+# Subtest: CORS deny omits ACAO for https://evil.example
+ok 70 - CORS deny omits ACAO for https://evil.example
+  ---
+  duration_ms: 2.819949
+  ...
+# Subtest: OPTIONS allowlisted origin is 204; denied origin is 403 without ACAO
+ok 71 - OPTIONS allowlisted origin is 204; denied origin is 403 without ACAO
+  ---
+  duration_ms: 3.665539
+  ...
+# Subtest: OBSERVATORY_CORS_ORIGINS extra origin is allowlisted and star is ignored
+ok 72 - OBSERVATORY_CORS_ORIGINS extra origin is allowlisted and star is ignored
+  ---
+  duration_ms: 6.169328
+  ...
+# Subtest: caller Authorization and Cookie are not forwarded upstream
+ok 73 - caller Authorization and Cookie are not forwarded upstream
+  ---
+  duration_ms: 3.811162
+  ...
+# Subtest: url= query override is ignored; upstream stays the fixed URL
+ok 74 - url= query override is ignored; upstream stays the fixed URL
+  ---
+  duration_ms: 3.21377
+  ...
+# Subtest: off-host redirect is error and is not followed
+ok 75 - off-host redirect is error and is not followed
+  ---
+  duration_ms: 3.65481
+  ...
+# Subtest: snapshot observes each named source in parallel without cross-source totals
+ok 76 - snapshot observes each named source in parallel without cross-source totals
+  ---
+  duration_ms: 45.762472
+  ...
+# Subtest: snapshot does not add metrics across sources when one source fails
+ok 77 - snapshot does not add metrics across sources when one source fails
+  ---
+  duration_ms: 47.52434
+  ...
+# Subtest: no cross-source sum helper exists on the registry or observatory modules
+ok 78 - no cross-source sum helper exists on the registry or observatory modules
+  ---
+  duration_ms: 1.127114
+  ...
+# Subtest: S49 market-observations bridge remains intact beside observatory
+ok 79 - S49 market-observations bridge remains intact beside observatory
+  ---
+  duration_ms: 6.760658
+  ...
+# Subtest: optional live OBSERVATORY_LIVE real GETs for the three fixed URLs
+ok 80 - optional live OBSERVATORY_LIVE real GETs for the three fixed URLs # SKIP OBSERVATORY_LIVE is not 1
+  ---
+  duration_ms: 0.229786
+  ...
+1..80
+# tests 80
+# suites 0
+# pass 78
+# fail 0
+# cancelled 0
+# skipped 2
+# todo 0
+# duration_ms 760.613004

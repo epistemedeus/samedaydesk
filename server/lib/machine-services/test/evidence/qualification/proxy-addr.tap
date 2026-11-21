@@ -1,0 +1,69 @@
+
+> samedaydesk@1.0.0 test:proxy-addr
+> node --test --test-concurrency=1 server/scripts/test-proxy-addr-patch.js
+
+TAP version 13
+# Subtest: production dependencies retain a valid private caller control closure
+ok 1 - production dependencies retain a valid private caller control closure
+  ---
+  duration_ms: 4155.677158
+  ...
+# Subtest: composed caller closure receives the machine host and continuation without dropping prior callers
+ok 2 - composed caller closure receives the machine host and continuation without dropping prior callers
+  ---
+  duration_ms: 386.233742
+  ...
+# Subtest: cold production caller receives exact contributor bytes and both Postgres ports
+ok 3 - cold production caller receives exact contributor bytes and both Postgres ports
+  ---
+  duration_ms: 282.953685
+  ...
+# Subtest: predecessor caller manifest cannot authorize the composed source
+ok 4 - predecessor caller manifest cannot authorize the composed source
+  ---
+  duration_ms: 114.997671
+  ...
+# Subtest: cold caller refuses changed machine/PG/continuation/artifact/authority members before execution
+ok 5 - cold caller refuses changed machine/PG/continuation/artifact/authority members before execution
+  ---
+  duration_ms: 833.829993
+  ...
+# Subtest: caller closure binds original-task runtime and retains received callers
+ok 6 - caller closure binds original-task runtime and retains received callers
+  ---
+  duration_ms: 73.650869
+  ...
+# Subtest: seeded proxy-addr 2.0.7 resolution is refused
+ok 7 - seeded proxy-addr 2.0.7 resolution is refused
+  ---
+  duration_ms: 0.347562
+  ...
+# Subtest: cold production install resolves patched proxy-addr from the managed-layout lock
+ok 8 - cold production install resolves patched proxy-addr from the managed-layout lock
+  ---
+  duration_ms: 284.139275
+  ...
+# Subtest: ordinary trusted IPv4 and IPv6 hops resolve on the cold-installed module
+ok 9 - ordinary trusted IPv4 and IPv6 hops resolve on the cold-installed module
+  ---
+  duration_ms: 19.326518
+  ...
+# Subtest: spoofed IPv4-mapped prefixes are refused by the cold-installed module
+ok 10 - spoofed IPv4-mapped prefixes are refused by the cold-installed module
+  ---
+  duration_ms: 2.359688
+  ...
+# Subtest: host trust proxy stays closed and request identity keeps ordinary hops
+ok 11 - host trust proxy stays closed and request identity keeps ordinary hops
+  ---
+  duration_ms: 10.841021
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6923.873475

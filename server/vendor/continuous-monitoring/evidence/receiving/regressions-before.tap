@@ -1,0 +1,133 @@
+TAP version 13
+# (node:2181967) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: cancel committed between dispatch claim and HTTP entry prevents the source request
+not ok 1 - cancel committed between dispatch claim and HTTP entry prevents the source request
+  ---
+  duration_ms: 146.060194
+  location: '/home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:11:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    1 !== 0
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:19:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: revocation fences an old claim even when the tenant is regranted before the next tick
+not ok 2 - revocation fences an old claim even when the tenant is regranted before the next tick
+  ---
+  duration_ms: 106.126809
+  location: '/home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:23:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    true !== false
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:30:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: upstream failure strings never enter notification or run output
+not ok 3 - upstream failure strings never enter notification or run output
+  ---
+  duration_ms: 171.320298
+  location: '/home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:34:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + 'private_upstream_failure_payload_fixture'
+    - 'source_unreachable'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'source_unreachable'
+  actual: 'private_upstream_failure_payload_fixture'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:45:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: malformed Observatory structures produce unavailable evidence instead of crashing the worker
+not ok 4 - malformed Observatory structures produce unavailable evidence instead of crashing the worker
+  ---
+  duration_ms: 167.450722
+  location: '/home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:49:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Command failed: /exec-daemon/node /home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/src/cli.mjs tick --config /tmp/neo-monitor-xTWjXO/runtime.json
+    (node:2182054) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+    (Use `node --trace-warnings ...` to show where the warning was created)
+    {"error":"command_failed"}
+
+  code: 1
+  stack: |-
+    genericNodeError (node:internal/errors:983:15)
+    wrappedFn (node:internal/errors:537:14)
+    ChildProcess.exithandler (node:child_process:414:12)
+    ChildProcess.emit (node:events:518:28)
+    maybeClose (node:internal/child_process:1101:16)
+    ChildProcess._handle.onexit (node:internal/child_process:304:5)
+  ...
+# Subtest: monitor initialization refuses foreign databases without modifying their contents
+not ok 5 - monitor initialization refuses foreign databases without modifying their contents
+  ---
+  duration_ms: 60.709315
+  location: '/home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:66:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:72:10)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: monitor state refuses hard links, shared directories and symlinked parent paths
+not ok 6 - monitor state refuses hard links, shared directories and symlinked parent paths
+  ---
+  duration_ms: 44.743629
+  location: '/home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:76:1'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected exception.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'throws'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243002/source/services/continuous-monitoring/test/05-receiving.test.mjs:80:10)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 0
+# fail 6
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 760.508099

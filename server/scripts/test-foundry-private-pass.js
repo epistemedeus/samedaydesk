@@ -12,6 +12,7 @@ import pg from 'pg';
 import {PostgresStore} from '@neomorphic/correspondence';
 import {startDisposablePg} from './fixtures/disposable-pg.mjs';
 import {runBounded} from '../foundry/bounded-child.mjs';
+import {npmCli} from '../foundry/activation/receiving-100502/namespace.mjs';
 import {bootFoundryServer} from '../foundry/activation/local-journey.mjs';
 import {openEntryFacade,closeEntryThenBase} from '../foundry/compose.js';
 import {receivePassRequest} from '../foundry/private-pass.mjs';

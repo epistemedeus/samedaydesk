@@ -1,0 +1,141 @@
+{"consumerSourceSha256":"2c72b86a4ca1892f8c62eb8159258fa76eb4233c46c912505f001d28aa0f92b2","hostMembers":1300,"qualified":false,"installed":false}
+{"candidatePackageSha256":"2c72b86a4ca1892f8c62eb8159258fa76eb4233c46c912505f001d28aa0f92b2","candidateHostSha256":"0497804f5b74c9eeeb69cc6c3ba5a7ccc0c48a12da661736aa75a4a2642b1972","candidatePinSha256":"168ababa8310ed736ea6f2c123bd18e47231ce777b1741fa78338fec210e9ed5","qualified":false,"installed":false}
+TAP version 13
+# (node:566811) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: ROOT425 committed cold mutations, real createSdsApp, PostgreSQL and verified TLS
+    # Subtest: ordinary client refuses an older profile before sending any business mutation
+    ok 1 - ordinary client refuses an older profile before sending any business mutation
+      ---
+      duration_ms: 106.550425
+      type: 'test'
+      ...
+    # Subtest: new post and interest return exact actor/action/body/task bound receipts
+    ok 2 - new post and interest return exact actor/action/body/task bound receipts
+      ---
+      duration_ms: 0.215496
+      type: 'test'
+      ...
+    # Subtest: changed same-key interest is refused before it can replace the stored note
+    ok 3 - changed same-key interest is refused before it can replace the stored note
+      ---
+      duration_ms: 60.633742
+      type: 'test'
+      ...
+    # Subtest: contributor-only readback rejects wrong principal/action/body/key and absent operation
+    ok 4 - contributor-only readback rejects wrong principal/action/body/key and absent operation
+      ---
+      duration_ms: 631.893884
+      type: 'test'
+      ...
+    # Subtest: effect, transition and durable receipt roll back together on transition failure
+    ok 5 - effect, transition and durable receipt roll back together on transition failure
+      ---
+      duration_ms: 181.404894
+      type: 'test'
+      ...
+    # Subtest: post committed with lost response recovers via readback, no second business POST
+    ok 6 - post committed with lost response recovers via readback, no second business POST
+      ---
+      duration_ms: 575.845034
+      type: 'test'
+      ...
+    # Subtest: post committed with empty response recovers via readback, no second business POST
+    ok 7 - post committed with empty response recovers via readback, no second business POST
+      ---
+      duration_ms: 582.313592
+      type: 'test'
+      ...
+    # Subtest: post committed with malformed response recovers via readback, no second business POST
+    ok 8 - post committed with malformed response recovers via readback, no second business POST
+      ---
+      duration_ms: 584.222903
+      type: 'test'
+      ...
+    # Subtest: post committed with shape response recovers via readback, no second business POST
+    ok 9 - post committed with shape response recovers via readback, no second business POST
+      ---
+      duration_ms: 578.650198
+      type: 'test'
+      ...
+    # Subtest: post committed with truncated response recovers via readback, no second business POST
+    ok 10 - post committed with truncated response recovers via readback, no second business POST
+      ---
+      duration_ms: 720.891161
+      type: 'test'
+      ...
+    # Subtest: interest committed with lost response recovers via readback, no second business POST
+    ok 11 - interest committed with lost response recovers via readback, no second business POST
+      ---
+      duration_ms: 635.866819
+      type: 'test'
+      ...
+    # Subtest: interest committed with empty response recovers via readback, no second business POST
+    ok 12 - interest committed with empty response recovers via readback, no second business POST
+      ---
+      duration_ms: 643.039687
+      type: 'test'
+      ...
+    # Subtest: interest committed with malformed response recovers via readback, no second business POST
+    ok 13 - interest committed with malformed response recovers via readback, no second business POST
+      ---
+      duration_ms: 640.7306
+      type: 'test'
+      ...
+    # Subtest: interest committed with shape response recovers via readback, no second business POST
+    ok 14 - interest committed with shape response recovers via readback, no second business POST
+      ---
+      duration_ms: 636.035966
+      type: 'test'
+      ...
+    # Subtest: interest committed with truncated response recovers via readback, no second business POST
+    ok 15 - interest committed with truncated response recovers via readback, no second business POST
+      ---
+      duration_ms: 787.153161
+      type: 'test'
+      ...
+    # Subtest: cold app restart preserves the identical stored operation receipt and financial/private gates
+    ok 16 - cold app restart preserves the identical stored operation receipt and financial/private gates
+      ---
+      duration_ms: 353.841554
+      type: 'test'
+      ...
+    # Subtest: pre-receipt legacy transition is recovered honestly without replay or rewriting history
+    ok 17 - pre-receipt legacy transition is recovered honestly without replay or rewriting history
+      ---
+      duration_ms: 370.223045
+      type: 'test'
+      ...
+    # Subtest: legacy post readback preserves historical cohort and refuses altered body and mutation
+    ok 18 - legacy post readback preserves historical cohort and refuses altered body and mutation
+      ---
+      duration_ms: 366.874144
+      type: 'test'
+      ...
+    # Subtest: the configured schema owns receipt writes and readback without a default-schema fallback
+    ok 19 - the configured schema owns receipt writes and readback without a default-schema fallback
+      ---
+      duration_ms: 423.30788
+      type: 'test'
+      ...
+    # Subtest: wrong tenant and a closed capability cannot read an operation from the old tenant
+    ok 20 - wrong tenant and a closed capability cannot read an operation from the old tenant
+      ---
+      duration_ms: 47.394289
+      type: 'test'
+      ...
+    1..20
+ok 1 - ROOT425 committed cold mutations, real createSdsApp, PostgreSQL and verified TLS
+  ---
+  duration_ms: 11575.401602
+  type: 'test'
+  ...
+1..1
+# tests 21
+# suites 0
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11896.812301

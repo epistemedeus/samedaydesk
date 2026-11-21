@@ -1,0 +1,290 @@
+
+> samedaydesk@1.0.0 test:mcp
+> node --test server/scripts/test-mcp-protocol-negotiation.js server/scripts/test-fixpack-entitlement.js server/scripts/test-mcp-boundary.js --test-concurrency=1
+
+TAP version 13
+# Subtest: configured Fix Pack Payment Link IDs accept only exact plink_ values
+ok 1 - configured Fix Pack Payment Link IDs accept only exact plink_ values
+  ---
+  duration_ms: 5.861077
+  type: 'test'
+  ...
+# Subtest: exact paid state rejects unpaid, wrong currency, and non-exact amounts
+ok 2 - exact paid state rejects unpaid, wrong currency, and non-exact amounts
+  ---
+  duration_ms: 0.205385
+  type: 'test'
+  ...
+# Subtest: amount-only paid sessions without trusted offer binding are denied
+ok 3 - amount-only paid sessions without trusted offer binding are denied
+  ---
+  duration_ms: 0.348743
+  type: 'test'
+  ...
+# Subtest: trusted Payment Link, stamped offer, product id, and legacy buy URL all entitle
+ok 4 - trusted Payment Link, stamped offer, product id, and legacy buy URL all entitle
+  ---
+  duration_ms: 0.433195
+  type: 'test'
+  ...
+# Subtest: validateFixPackLicense uses checkout.sessions.retrieve on the real export path
+ok 5 - validateFixPackLicense uses checkout.sessions.retrieve on the real export path
+  ---
+  duration_ms: 0.61948
+  type: 'test'
+  ...
+# Subtest: starter artifact is narrower than the complete paid pack
+ok 6 - starter artifact is narrower than the complete paid pack
+  ---
+  duration_ms: 24.083484
+  type: 'test'
+  ...
+# Subtest: MCP route denies invalid or foreign licenses and returns only the free starter
+ok 7 - MCP route denies invalid or foreign licenses and returns only the free starter
+  ---
+  duration_ms: 38.643728
+  type: 'test'
+  ...
+# Subtest: MCP route grants the complete pack for a legitimate trusted Fix Pack license
+ok 8 - MCP route grants the complete pack for a legitimate trusted Fix Pack license
+  ---
+  duration_ms: 7.410782
+  type: 'test'
+  ...
+# Subtest: MCP route still lists free readiness and TaskMarket tools
+ok 9 - MCP route still lists free readiness and TaskMarket tools
+  ---
+  duration_ms: 5.226962
+  type: 'test'
+  ...
+# Subtest: transient Payment Link lookup failure recovers without process restart
+ok 10 - transient Payment Link lookup failure recovers without process restart
+  ---
+  duration_ms: 13.509921
+  type: 'test'
+  ...
+# Subtest: mounted invalid envelopes and IDs never select a license/site adapter
+ok 11 - mounted invalid envelopes and IDs never select a license/site adapter
+  ---
+  duration_ms: 54.622294
+  type: 'test'
+  ...
+# Subtest: invalid params and supplied argument types are rejected before paid validation
+ok 12 - invalid params and supplied argument types are rejected before paid validation
+  ---
+  duration_ms: 21.430919
+  type: 'test'
+  ...
+# Subtest: all accepted notifications and responses have empty 202 bodies
+ok 13 - all accepted notifications and responses have empty 202 bodies
+  ---
+  duration_ms: 17.257141
+  type: 'test'
+  ...
+# Subtest: one 1..25 legacy bound; mixed invalid entries preserve valid execution and observation
+ok 14 - one 1..25 legacy bound; mixed invalid entries preserve valid execution and observation
+  ---
+  duration_ms: 17.748684
+  type: 'test'
+  ...
+# Subtest: initialize cannot exempt unrelated or invalid messages from version validation
+ok 15 - initialize cannot exempt unrelated or invalid messages from version validation
+  ---
+  duration_ms: 14.404702
+  type: 'test'
+  ...
+# Subtest: MCP parse/budget errors are machine errors without body/query console leaks
+ok 16 - MCP parse/budget errors are machine errors without body/query console leaks
+  ---
+  duration_ms: 13.827188
+  type: 'test'
+  ...
+# Subtest: bearer returns and POST deliveries receive cache/referrer protections; pulse/WAL redact queries
+ok 17 - bearer returns and POST deliveries receive cache/referrer protections; pulse/WAL redact queries
+  ---
+  duration_ms: 12.897615
+  type: 'test'
+  ...
+# Subtest: normal no-key planning, free check, paid and invalid-license fixtures retain useful behavior
+ok 18 - normal no-key planning, free check, paid and invalid-license fixtures retain useful behavior
+  ---
+  duration_ms: 10.132411
+  type: 'test'
+  ...
+# Subtest: other API parser behavior and the signed raw-webhook bytes remain intact
+ok 19 - other API parser behavior and the signed raw-webhook bytes remain intact
+  ---
+  duration_ms: 3.447499
+  type: 'test'
+  ...
+# Subtest: observation and execution receive one admission object, including safe rejection decisions
+ok 20 - observation and execution receive one admission object, including safe rejection decisions
+  ---
+  duration_ms: 0.330987
+  type: 'test'
+  ...
+# Subtest: the actual generated OpenAPI receives the same admission limits and ID types
+ok 21 - the actual generated OpenAPI receives the same admission limits and ID types
+  ---
+  duration_ms: 3.664028
+  type: 'test'
+  ...
+# Subtest: async adapter failure retains sibling work and suppresses notification error details
+ok 22 - async adapter failure retains sibling work and suppresses notification error details
+  ---
+  duration_ms: 7.783462
+  type: 'test'
+  ...
+# Subtest: negotiation echoes only the four supported versions and otherwise returns the latest
+ok 23 - negotiation echoes only the four supported versions and otherwise returns the latest
+  ---
+  duration_ms: 5.7723
+  type: 'test'
+  ...
+# Subtest: apex tools remain listed; tools/call still serves readiness, Fix Pack, and TaskMarket
+ok 24 - apex tools remain listed; tools/call still serves readiness, Fix Pack, and TaskMarket
+  ---
+  duration_ms: 0.667733
+  type: 'test'
+  ...
+# Subtest: initialize missing params returns 2025-11-25
+ok 25 - initialize missing params returns 2025-11-25
+  ---
+  duration_ms: 33.694914
+  type: 'test'
+  ...
+# Subtest: initialize missing protocolVersion returns 2025-11-25
+ok 26 - initialize missing protocolVersion returns 2025-11-25
+  ---
+  duration_ms: 8.134303
+  type: 'test'
+  ...
+# Subtest: initialize 2025-11-25 returns 2025-11-25
+ok 27 - initialize 2025-11-25 returns 2025-11-25
+  ---
+  duration_ms: 2.992908
+  type: 'test'
+  ...
+# Subtest: initialize 2025-06-18 returns 2025-06-18
+ok 28 - initialize 2025-06-18 returns 2025-06-18
+  ---
+  duration_ms: 2.482956
+  type: 'test'
+  ...
+# Subtest: initialize 2025-03-26 returns 2025-03-26
+ok 29 - initialize 2025-03-26 returns 2025-03-26
+  ---
+  duration_ms: 2.922924
+  type: 'test'
+  ...
+# Subtest: initialize 2024-11-05 returns 2024-11-05
+ok 30 - initialize 2024-11-05 returns 2024-11-05
+  ---
+  duration_ms: 2.615355
+  type: 'test'
+  ...
+# Subtest: initialize 2026-07-28 rejected returns 2025-11-25
+ok 31 - initialize 2026-07-28 rejected returns 2025-11-25
+  ---
+  duration_ms: 4.177822
+  type: 'test'
+  ...
+# Subtest: initialize 2999-01-01 rejected returns 2025-11-25
+ok 32 - initialize 2999-01-01 rejected returns 2025-11-25
+  ---
+  duration_ms: 2.425693
+  type: 'test'
+  ...
+# Subtest: a 2024-11-05-only client still lists the apex inventory after initialize
+ok 33 - a 2024-11-05-only client still lists the apex inventory after initialize
+  ---
+  duration_ms: 7.711505
+  type: 'test'
+  ...
+# Subtest: tools/list exposes annotations on every apex tool
+ok 34 - tools/list exposes annotations on every apex tool
+  ---
+  duration_ms: 4.58567
+  type: 'test'
+  ...
+# Subtest: unknown tool is JSON-RPC -32602 and execution errors are isError results
+ok 35 - unknown tool is JSON-RPC -32602 and execution errors are isError results
+  ---
+  duration_ms: 3.688944
+  type: 'test'
+  ...
+# Subtest: server.json names the apex remote and keeps CORS star
+ok 36 - server.json names the apex remote and keeps CORS star
+  ---
+  duration_ms: 0.261914
+  type: 'test'
+  ...
+# Subtest: seeded unsupported protocol is rejected instead of echoed
+ok 37 - seeded unsupported protocol is rejected instead of echoed
+  ---
+  duration_ms: 0.176193
+  type: 'test'
+  ...
+# Subtest: canonical MCP-Protocol-Version lists tools
+ok 38 - canonical MCP-Protocol-Version lists tools
+  ---
+  duration_ms: 4.303245
+  type: 'test'
+  ...
+# Subtest: a missing MCP-Protocol-Version stays compatible with the readiness probe
+ok 39 - a missing MCP-Protocol-Version stays compatible with the readiness probe
+  ---
+  duration_ms: 2.001692
+  type: 'test'
+  ...
+# Subtest: seeded unsupported MCP-Protocol-Version is HTTP 400 and not a tool result
+ok 40 - seeded unsupported MCP-Protocol-Version is HTTP 400 and not a tool result
+  ---
+  duration_ms: 2.009121
+  type: 'test'
+  ...
+# Subtest: an empty or non-canonical unsupported header is HTTP 400 and a supported older header is not
+ok 41 - an empty or non-canonical unsupported header is HTTP 400 and a supported older header is not
+  ---
+  duration_ms: 4.957387
+  type: 'test'
+  ...
+# Subtest: initialize negotiates the body version and does not reject the header
+ok 42 - initialize negotiates the body version and does not reject the header
+  ---
+  duration_ms: 2.615921
+  type: 'test'
+  ...
+# Subtest: a batch after initialize rejects an unsupported header and accepts a missing one
+ok 43 - a batch after initialize rejects an unsupported header and accepts a missing one
+  ---
+  duration_ms: 5.500628
+  type: 'test'
+  ...
+# Subtest: legacy initialize batches negotiate without bypassing the unsupported-header gate
+ok 44 - legacy initialize batches negotiate without bypassing the unsupported-header gate
+  ---
+  duration_ms: 3.123497
+  type: 'test'
+  ...
+# Subtest: existing error paths stay JSON-RPC results on HTTP 200
+ok 45 - existing error paths stay JSON-RPC results on HTTP 200
+  ---
+  duration_ms: 5.103952
+  type: 'test'
+  ...
+# Subtest: GET /mcp stays a public read when the protocol header is unsupported
+ok 46 - GET /mcp stays a public read when the protocol header is unsupported
+  ---
+  duration_ms: 1.582106
+  type: 'test'
+  ...
+1..46
+# tests 46
+# suites 0
+# pass 46
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 581.255941

@@ -1,0 +1,81 @@
+{
+  "schema": "ae14.network-qualification-consumer.v1",
+  "consumer": "ROOT340",
+  "producerPackage": "tools/ae14-network-admission",
+  "candidateId": "v1.1.0-b748fdd",
+  "productionAdoption": false,
+  "pair": {
+    "admission": "ae14.network-admission.v1",
+    "profile": "ae14.runtime-profile.v1",
+    "rule": "Read one admission receipt and the runtime profile for the same candidate, chain, escrow, and block. Neither file alone is current qualification."
+  },
+  "currentQualification": {
+    "requires": [
+      "receipt.verdict is admitted",
+      "receipt.candidateId is v1.1.0-b748fdd",
+      "receipt.identity.candidateId is v1.1.0-b748fdd",
+      "receipt.identity.network equals profile.network",
+      "receipt.subject.chainId equals profile.chainId",
+      "receipt.identity.escrow equals profile.deployedEscrow.address",
+      "profile.selectedRelease.verdict is qualified",
+      "profile.staticComparison is absent"
+    ]
+  },
+  "notCurrentQualification": [
+    "profile.staticComparison, even when its compiler statuses are match",
+    "profile.selectedRelease.verdict qualified without that paired admitted receipt",
+    "tokenStore.status qualified while the paired receipt is refused or unknown",
+    "a missing comparison treated as match, mismatch, or qualified",
+    "a mismatch labeled unknown",
+    "collector status not-load-bearing",
+    "historical candidate historical-v1.0.0-addresses",
+    "asset.implementation.status by itself. Qualified means the FiatTokenV2_2 body matched the Circle pin. notAdmittedAs remains commerce-payments-v1.1.0, and metadataEqual false stays unknown"
+  ],
+  "staticComparison": {
+    "when": "Present only when the paired receipt is not current for this declaration.",
+    "meaning": "Compiler component evidence retained after refusal, a missing fact, or a candidate, chain, address, block, or code substitution. It is not current-network qualification."
+  },
+  "tokenStore": {
+    "versionedRole": "load-bearing",
+    "why": "AuthCaptureEscrow sets immutable tokenStoreImplementation to address(new TokenStore(address(this))). Capture and refund call TokenStore.sendTokens on a clone of that implementation. sendTokens reverts unless msg.sender is the TokenStore immutable authCaptureEscrow.",
+    "binding": "The versioned producer binds tokenStoreImplementation(), the observed account code hash, the same observation block, and every authCaptureEscrow immutable to the declared escrow. pinned.byChain is authoritative when present; a chain does not inherit another chain's comparison.",
+    "missing": "unknown. The receipt is not admitted and selectedRelease.verdict is not qualified.",
+    "contradiction": "refused, reason source_drift when the bound comparison mismatches. Mismatch is not unknown.",
+    "historical": "The historical TokenStore 0xed411c46508c2acf1d387754df9cc98d0ef80d08 is supporting identity only. Its report says it does not admit the parent or v1.1.0. Historical receipts stay refused with source_drift. A historical profile tokenStore status is not this candidate's current qualification."
+  },
+  "linkedLibraries": {
+    "binding": "SignatureChecker report booleans are current evidence only when the linkedRuntime address is the address linked in the observed implementation, its chain is the receipt chain, and its observedCodeHash equals the observed library account. An optional observedBlock must be the same observation block. The solc 0.6 self-address guard remains an explicit mask and is not permissive.",
+    "missing": "unknown, fact linked_libraries",
+    "contradiction": "refused. Code hash disagreement is code_hash_mismatch. Address or chain disagreement is subject_mismatch. A disagreed block is stale_report or replayed_report."
+  },
+  "notLoadBearing": {
+    "names": ["Permit2PaymentCollector", "PreApprovalPaymentCollector", "SpendPermissionPaymentCollector"],
+    "meaning": "The escrow does not store these collectors. The ERC3009 capture path uses ERC3009PaymentCollector and OperatorRefundCollector. Status not-load-bearing is identity only and is not current qualification."
+  },
+  "identity": {
+    "stable": {
+      "chain": "eip155:8453 or eip155:84532",
+      "escrow": "0xf96815976523E00e65Be8f34cA5e64b4f41EB19c",
+      "escrowCodeHash": "0x33558f6cb34733174fdd6ec5ca8257834a8e4302abc08a4542f73ddf07d8702a",
+      "implementationCommit": "6b0a5ef3f0df973857f558e2d6b5dd645b5e97f9",
+      "deploymentDeclarationCommit": "b748fdd7a830a655a19a530edcf2a94b9dc7d25f",
+      "abiDigest": "e9ef0c2f4c974a81c57f043fd6d6ba8e6ac08faabf18a4a7548e07bccb018c4f"
+    },
+    "attestation": ["observation block number", "observation block hash", "route", "freshness"]
+  },
+  "limits": {
+    "usableMoney": false,
+    "fundingAvailable": false,
+    "finalityReached": false,
+    "liveMoneyEnabled": false,
+    "agentPaid": false,
+    "publicTransaction": false,
+    "signerAuthority": "absent",
+    "qualifiesPublic": "not granted",
+    "consumerUse": { "pendingOwnerAdoption": ["ROOT319"], "adopted": false }
+  },
+  "remainingUnknowns": [
+    "asset_metadata_ipfs_not_reproduced",
+    "signature_checker_metadata_ipfs_not_reproduced"
+  ]
+}

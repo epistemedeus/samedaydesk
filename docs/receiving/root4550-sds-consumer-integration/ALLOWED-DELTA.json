@@ -1,0 +1,179 @@
+{
+  "schema": "root4550.exact-allowed-delta.v1",
+  "baseline": "79fbd37d31aabdc790248443c576a2f0017e55f0",
+  "sourceCommit": "d3fa21acfdf4d5af47ab0962e4123d784c65b6c4",
+  "sourceTree": "d153dd8f3aeda6475991f8d59772c4ae798367f0",
+  "files": {
+    "docs/receiving/r4-monitor-contract/ATTEMPTS.md": "ac54835d280d72b4f04f38689444b7453ff81ad47f98a2dc928e4c42da24bf09",
+    "docs/receiving/r4-monitor-contract/COMMANDS.md": "6908964049ccb0741b410d3e7fa10af80cb1a7f0281c0ee6166d8546d74460ce",
+    "docs/receiving/r4-monitor-contract/IMPLEMENTATION.json": "590b4ecd13049d1c364102bea2a4448aa398840d741c356001b61bf3e2c40cae",
+    "docs/receiving/r4-monitor-contract/INPUTS.json": "55aa3e9fd1e9bcab89aeb8819f33239582e27bb69f422584e8f023894873d53c",
+    "docs/receiving/r4-monitor-contract/RESOURCES-initial.json": "0f8c22b3793e412c8f4a1087d930d40ced9fd1ac885668015a7aa337dc65b8b0",
+    "docs/receiving/r4-monitor-contract/RESOURCES.json": "8415e5c0ad3d734fa5cf0d08120f32fd62875e2a7501231934a608fd4904a9e5",
+    "docs/receiving/r4-monitor-contract/RESULT.md": "e99ddf794d33025c653c7885c72ccf15bbc7c42804ba8bebe06ad7307a28134e",
+    "docs/receiving/r4-monitor-contract/SHARED-PIN-PROPOSAL.json": "216fbf621b5283e38bfa209d8ea3a0a70939bead0864a380ff2d38ffa13ab752",
+    "docs/receiving/r4-monitor-contract/baseline-replay.tap.gz": "67aa682a9bff10d5ef62d70350f5d7b20a58f32cab365ec75666e4508bfddd32",
+    "docs/receiving/r4-monitor-contract/baseline.tap.gz": "2f2b3486dfcc756268c5c606e94c458c9183ff03b2d2977cde7262f01d149e84",
+    "docs/receiving/r4-monitor-contract/cold-server.mjs": "3e4747671ba0b42bef80021b0fd19c02ad6e147fa842ebefd7726154a1fed614",
+    "docs/receiving/r4-monitor-contract/final.tap": "89b118ba5bdc61a7d2b40a4d6236383c7adc63e7cd0391b442f4ad9fdc5be8b1",
+    "docs/receiving/r4-monitor-contract/measure-serial.py": "fdb58650f6ba6c9d62e4ef9c94926dc4dd1e1a2ae5c54e3c48d07ee3ab658c7f",
+    "docs/receiving/r4-monitor-contract/replay-baseline.sh": "dc669f0fb67e2f2f364a94f5bb1bb5ef49d41c9f5ce7fd695ae184bec4ad04aa",
+    "docs/receiving/r4-monitor-contract/standalone-contract.tap": "a2ee9fb169a3fa65aa0eeff96379deb506e44948958b97fc35a2c737f916e1b3",
+    "docs/receiving/r4-requester-proposals/01-prerequisite-failure.tap": "5dd2b3ed19c35b121c0e8a7a39087ff270d6fd421b19e3cdbb7f505d08527f61",
+    "docs/receiving/r4-requester-proposals/02-npm-ci.log": "3e737f6a9117cec194b02103b357f8668fae9adb86a8a8cd0bf25efab8948548",
+    "docs/receiving/r4-requester-proposals/03-npm-ci.log": "1fd9b1fab65ad0b44d84ff200182fe6086b8881d854ad22b532b34b83a1fa207",
+    "docs/receiving/r4-requester-proposals/04-apt-index.log": "33fd6c793a9b46b4abf657dbbef24d49b83fcac23aad10c6f48dc6cec37b90f9",
+    "docs/receiving/r4-requester-proposals/05-existing-baseline.tap": "910b3d6f48b078ea2768eee465e5ab522a68b5c3df10023bda7b292ebd5e3924",
+    "docs/receiving/r4-requester-proposals/06-proposal-gap-baseline.tap": "dcd03d122c91eb26899ee51ec81c2577070a5119f63289229aea8f616d21417c",
+    "docs/receiving/r4-requester-proposals/07-proposal-receiving.tap": "badb8f214ba2c737fb8c4f60f15188fd536e71a5ef6a588cb8c6c1d75e218480",
+    "docs/receiving/r4-requester-proposals/08-source-closure-refusal.txt": "0b238d6bd56fa160d4b41ab872b8a6dcb49698542f26bb0f78bc0a56ffb2bcb8",
+    "docs/receiving/r4-requester-proposals/09-proposal-gap-baseline.tap": "482ca7f23752d513eeab2a5ab0d747d2c78f7639f1b768aefb7414a37b9f5012",
+    "docs/receiving/r4-requester-proposals/10-proposal-receiving.tap": "4efa6a0caeebde1f007c8bfac3e42f71a90cb2cda6190f4a54c12795423500a6",
+    "docs/receiving/r4-requester-proposals/11-proposal-final.tap": "d2e8f4769147c579c24db05dadc76f77dc6e3e7d405a13591e48107c7261c956",
+    "docs/receiving/r4-requester-proposals/12-existing-requester-final.tap": "1728609603ab719e42173f904c464152e2697dc720af2ec5a3ca3c0552c7f898",
+    "docs/receiving/r4-requester-proposals/13-existing-receipts-final.tap": "2e82c20572366e8817e90696390ea0a9f472d1e210576d290cec1442e68c138f",
+    "docs/receiving/r4-requester-proposals/14-existing-receipts-baseline.tap": "c2d14982adc6cd2717e17ba3c96ee55747630182aca3b6fe2728e93b04f12e48",
+    "docs/receiving/r4-requester-proposals/15-existing-receipts-fixture-corrected.tap": "15ee65900cd3f3d60e658cdc1880371de0262abd58a4e2175f0481e9481d4842",
+    "docs/receiving/r4-requester-proposals/EXPORT.json": "fdb003b77b5888491fae02039d075a73e77f98b068336a8e660cd90e59b04ad2",
+    "docs/receiving/r4-requester-proposals/RESULT.md": "29edae2cdaab466c750dd0f07f33c7467eb3295a70e0a36f9278c1374e8a54c4",
+    "docs/receiving/r4-requester-proposals/receive.sh": "6fe82a6baffa6a59a8722e446279482e4f589492b6b6f9bed61118a571229433",
+    "docs/receiving/r4-requester-proposals/root425-fixture.patch": "8cce5ff775c059d5781db7c6c1e1c46d0ea5f40753b8775adfa08bfa695f0309",
+    "docs/receiving/r4-wallet-continuation/00-baseline-prerequisite.log": "296eb4455806d575f3dfb42880ce9b2e3964be5942c31b080d0919cbddb47828",
+    "docs/receiving/r4-wallet-continuation/01-dependencies.log": "5fadbe8ecf37aba5123d674e8397a50689689eb9695a68bc5d660585735d29a3",
+    "docs/receiving/r4-wallet-continuation/02-baseline-http-pg.log": "9e21ab482e0fa4734190ce441bcdb108cbc0be9d647480844ae90de87ceced8e",
+    "docs/receiving/r4-wallet-continuation/03-baseline-http-pg.log": "24033677ed5bae3e03ddc9a214dcaabeb6fd884142a2ad1662df84ea8af92a10",
+    "docs/receiving/r4-wallet-continuation/04-baseline-http-pg.log": "3a0468a75a8c231a27ed19ddb44e2818bf12a95f230e3571f1603a0f5f17e401",
+    "docs/receiving/r4-wallet-continuation/05-baseline-http-pg.log": "027a7945b8485383f974dd12f49209bad3cd40e79b67c5f93ac0f51f8375bdf3",
+    "docs/receiving/r4-wallet-continuation/06-baseline-http-pg.log": "6a0092c79b8c3fe17536af27a39360ae42d57a10dc1681bcf10a6206a5b9a8b2",
+    "docs/receiving/r4-wallet-continuation/07-baseline-http-pg.log": "7e7e184da3a2f5cf60d10ed74140e53ebd5670ad01988c26de60f1e2e1d2e8b6",
+    "docs/receiving/r4-wallet-continuation/08-baseline-http-pg.log": "4c882bdd49d4f50a54e4b8c64b89b2a967f9453adef33032d06f65c16f29420a",
+    "docs/receiving/r4-wallet-continuation/09-continuation-http-pg.log": "1509ac846eab33eafa2438f0498a682b69ad33dfda18c71178f957f6f20fc0fd",
+    "docs/receiving/r4-wallet-continuation/10-continuation-http-pg.log": "3c3ed0a85220462a9a9451078c31f60d93cd987f43a9bbe7834b9db8ab01ef78",
+    "docs/receiving/r4-wallet-continuation/11-continuation-http-pg.log": "9d27f7774f29478b3887786d086114aa6ddbb2b6582a9324d6c01521bd4184a9",
+    "docs/receiving/r4-wallet-continuation/12-continuation-http-pg.log": "a5c2092072811a7b8148269b7592f3912f2741587269db9c350f499fd05b391c",
+    "docs/receiving/r4-wallet-continuation/13-continuation-http-pg.log": "0519fad1746b7c76ee5300a064fd02795a0e83fd823aa60b7cff232bcf3e5e0a",
+    "docs/receiving/r4-wallet-continuation/14-continuation-http-pg.log": "cab6cf04637b05d2dd767e791886539db323587c546a7d3a96dbd3828026e841",
+    "docs/receiving/r4-wallet-continuation/15-original-retained-session-boundary.log": "ef80cdeec535c5bd7360afa4ebf360f8441f077e04a297181eb07d9e5d5c4323",
+    "docs/receiving/r4-wallet-continuation/16-account-profile-regressions.log": "6f4bf640899092a0a9986ff593a0257679a06aaf9e81688d1c32d08fa69af62d",
+    "docs/receiving/r4-wallet-continuation/17-final-http-pg.log": "6e941c2b7bfefd6230fe55f6787ceaa8b7ebd3d04af0c37d76ea92c6249fd9d8",
+    "docs/receiving/r4-wallet-continuation/18-account-profile-regressions.log": "9470038346fa40cb606e6ca82df3e6273eb5bfa4ab1a8d1eb9ddbb1a82377212",
+    "docs/receiving/r4-wallet-continuation/19-final-http-pg-with-native-reserve.log": "f4cfd4932dd65c23e965372505694f52a47a256729f88f6217261ffdca2f3e18",
+    "docs/receiving/r4-wallet-continuation/ATTEMPTS.md": "5496db537ad852f42e603629df16ec206672c0a5a3120a72d47d0027a6445803",
+    "docs/receiving/r4-wallet-continuation/COMMANDS.json": "81ba0f323f5c92a36e77cbab66216060db2a89759a91949cb2eb178f8cf2a7c7",
+    "docs/receiving/r4-wallet-continuation/RECEIPT.json": "1168b0e306c950f9c49c30f2a3fcc691f18a16c875f0478330440199b70110a9",
+    "docs/receiving/r4-wallet-continuation/RESULT.md": "2146fdd757f2c4be502894d127763818ec3f16576bbd1c62104b8bab6670fb6b",
+    "docs/receiving/r4-wallet-continuation/ROOT-SHARED-PORT.md": "4e3b4cd2f9bfc0dd50dceadbe7b42badec2be3b1dd5bd0b3e72e372a7bd1b19b",
+    "docs/receiving/r4-wallet-continuation/operating-telemetry.log": "2a6df18e4f8b17f94dd6bd9be9039d2f5e08b8bcf1a29a61fd2b18955bbbf7ee",
+    "server/foundry/activation/private-control-pin.json": "de1643d97d46d35937c0fdfbe02d17ac034c7ac0c0f89d8e97b1995f3d489b24",
+    "server/lib/machine-services/monitor-manifest.mjs": "b11ccabb6f6efe67e0d0cb3a76a79c1d6d0407dab746abd9510d398604c64b4f",
+    "server/lib/machine-services/mount.mjs": "270e28085a442c03427f02c3b53d78ab1b1adf77aca0cc508ad63877119bdb7c",
+    "server/lib/machine-services/test/monitor-manifest-journey.test.mjs": "a8d83efe9cd3ec319831a8ded6b942605b4ada66418edc355cdde7f612df0875",
+    "server/scripts/test-r4-requester-proposal-review.mjs": "bdb3b727e3951be767b810a3aff431af68f0a70a2dd3058fd6f446dfe5517faf",
+    "server/scripts/test-r4-wallet-continuation.mjs": "33fdd37a71a386d9a8e3d0bf496b3a84e0a8671e6620811bde434b1d4c6881fd",
+    "server/scripts/test-root425-cold-mutation.mjs": "aa4e8eced9897b58e4ad3a159c7dec8c10418e1446f8f595499786f736515a80",
+    "server/vendor/continuous-monitoring/openapi.json": "18a25d6aec57b87de64d4145fd75bdf17d2e7c209ffbcbb8ea598912a5d5d272",
+    "server/vendor/continuous-monitoring/src/api.mjs": "03ae09cb6d6f1f6fb8f9223d530d60c284a6a22deb301f13072a02e1daa2c02c",
+    "vendor/hosted-wallet-market/SOURCE.json": "06955d1ed33f994faed7912b17a1f430a8094172211769ee6503cc27bb8c6037",
+    "vendor/hosted-wallet-market/contracts/machine-runtime.json": "f721aa88393ff9fb4720b0b4df09aa658107f6831223af5c49af3cd8a26ec182",
+    "vendor/hosted-wallet-market/src/machine-market.mjs": "dd3823ebaa96fe4728c23d75e35f386a55a503927a9b7b1e25d886033afcb9f4",
+    "vendor/hosted-wallet-market/src/market-interest-read.mjs": "0bee17f9e32fffbed6b12aa07b1a05c0ffddae686e3842fe563f01cbcaa3efb1",
+    "vendor/hosted-wallet-market/src/retained-outcome.mjs": "a822bbd653b8fc2185b5a262d917f895ec771cd13acf68b377ff4d71d6fa247d",
+    "vendor/hosted-wallet-market/src/server.mjs": "48b13523616b4c76f825bfb7df76a11bb91ac19d5a7ca9a2a0e150bf529e4219",
+    "vendor/hosted-wallet-market/src/wallet-continuation.mjs": "53e61b468863a1d1157ce57084e26af7944f4beca8455e6f57a839fc7a3b8221"
+  },
+  "packageDelta": [
+    {
+      "path": "vendor/hosted-wallet-market/contracts/machine-runtime.json",
+      "before": "56046aa486bdd5f43fd8dc2e6b13f409d13d0d96ac52c25e06f570c2bcd3e50f",
+      "after": "f721aa88393ff9fb4720b0b4df09aa658107f6831223af5c49af3cd8a26ec182"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/machine-market.mjs",
+      "before": "062643e442b3d3bb2431a57d127b9b8b0dbd4c39823ffec799090cdb35ea6071",
+      "after": "dd3823ebaa96fe4728c23d75e35f386a55a503927a9b7b1e25d886033afcb9f4"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/market-interest-read.mjs",
+      "before": null,
+      "after": "0bee17f9e32fffbed6b12aa07b1a05c0ffddae686e3842fe563f01cbcaa3efb1"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/retained-outcome.mjs",
+      "before": "d54c22ac6df05fd5fc6e592a3e538ee8133e03dca7134bfcddd454350a45f29a",
+      "after": "a822bbd653b8fc2185b5a262d917f895ec771cd13acf68b377ff4d71d6fa247d"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/server.mjs",
+      "before": "045958b6158d5c3f62ab8dd9026e78140ae19246747948adee41ac6790c6a382",
+      "after": "48b13523616b4c76f825bfb7df76a11bb91ac19d5a7ca9a2a0e150bf529e4219"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/wallet-continuation.mjs",
+      "before": null,
+      "after": "53e61b468863a1d1157ce57084e26af7944f4beca8455e6f57a839fc7a3b8221"
+    }
+  ],
+  "hostDelta": [
+    {
+      "path": "server/foundry/activation/private-control-pin.json",
+      "before": "e6d25ff238660379a4360050c328b88256a7cff60aa793e777dcd2d6d1fbf25a",
+      "after": "de1643d97d46d35937c0fdfbe02d17ac034c7ac0c0f89d8e97b1995f3d489b24"
+    },
+    {
+      "path": "server/lib/machine-services/monitor-manifest.mjs",
+      "before": null,
+      "after": "b11ccabb6f6efe67e0d0cb3a76a79c1d6d0407dab746abd9510d398604c64b4f"
+    },
+    {
+      "path": "server/lib/machine-services/mount.mjs",
+      "before": "f1e0e165354f456cafb5062aaea8eb369b84d7946c10789f844723af36f71000",
+      "after": "270e28085a442c03427f02c3b53d78ab1b1adf77aca0cc508ad63877119bdb7c"
+    },
+    {
+      "path": "server/vendor/continuous-monitoring/openapi.json",
+      "before": "a9859445d846e52d339dcbf4025971362a2eaef8aca8bc3e5a8b05709af9ddde",
+      "after": "18a25d6aec57b87de64d4145fd75bdf17d2e7c209ffbcbb8ea598912a5d5d272"
+    },
+    {
+      "path": "server/vendor/continuous-monitoring/src/api.mjs",
+      "before": "22406cdec366d08e98741589c6c6ab8cc8980c95b184658c8a2e6bad47116b8c",
+      "after": "03ae09cb6d6f1f6fb8f9223d530d60c284a6a22deb301f13072a02e1daa2c02c"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/SOURCE.json",
+      "before": "5cce7906277b1afd8188fd6c6e0f33cfa6116e5c77795b94c7c82067b5fd8d77",
+      "after": "06955d1ed33f994faed7912b17a1f430a8094172211769ee6503cc27bb8c6037"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/contracts/machine-runtime.json",
+      "before": "56046aa486bdd5f43fd8dc2e6b13f409d13d0d96ac52c25e06f570c2bcd3e50f",
+      "after": "f721aa88393ff9fb4720b0b4df09aa658107f6831223af5c49af3cd8a26ec182"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/machine-market.mjs",
+      "before": "062643e442b3d3bb2431a57d127b9b8b0dbd4c39823ffec799090cdb35ea6071",
+      "after": "dd3823ebaa96fe4728c23d75e35f386a55a503927a9b7b1e25d886033afcb9f4"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/market-interest-read.mjs",
+      "before": null,
+      "after": "0bee17f9e32fffbed6b12aa07b1a05c0ffddae686e3842fe563f01cbcaa3efb1"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/retained-outcome.mjs",
+      "before": "d54c22ac6df05fd5fc6e592a3e538ee8133e03dca7134bfcddd454350a45f29a",
+      "after": "a822bbd653b8fc2185b5a262d917f895ec771cd13acf68b377ff4d71d6fa247d"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/server.mjs",
+      "before": "045958b6158d5c3f62ab8dd9026e78140ae19246747948adee41ac6790c6a382",
+      "after": "48b13523616b4c76f825bfb7df76a11bb91ac19d5a7ca9a2a0e150bf529e4219"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/src/wallet-continuation.mjs",
+      "before": null,
+      "after": "53e61b468863a1d1157ce57084e26af7944f4beca8455e6f57a839fc7a3b8221"
+    }
+  ],
+  "rationale": "Only exact received source owners and original immutable reports, causal consumer/fixture repairs, maintained runtime file-map correction and existing canonical producer output. Financial authority, Neo and dependency locks remain exact."
+}

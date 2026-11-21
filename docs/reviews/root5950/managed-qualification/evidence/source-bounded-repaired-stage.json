@@ -1,0 +1,26 @@
+{
+  "schema": "pilot.release-source-admission.v1",
+  "repository": "epistemedeus/samedaydesk",
+  "sourceCommit": "40c4c692f5f24f13f056b4ebae4cbf48d91f0890",
+  "sourceTree": "9dbae27715928c1fb6d422bff9b17618c3873845",
+  "files": 1305,
+  "bytes": 9616184,
+  "memberDigest": "1f3a885929197e204d0966ce9e7071d43d14d0a1190a5eef8323a93ab1876da0",
+  "memberCount": 17,
+  "identity": {
+    "schema": "sds.contributor-edge-identity.v1",
+    "productCommit": "a0c97a594cebe73236e95caa6c4028bb36a60be9",
+    "edgeSha256": "a3b0c1f9bdaa8f4a24dd8ab8ed1e1295523d05dc2fbe117773bd75bf53270386",
+    "runtimeManifestSha256": "0a9e981ed7a755ccd3cd7e7358cb7a8232bae1f3b25a1f96b032ae8ced4d4aa4",
+    "deskManifestSha256": "bde9b8b51d65202f2a56cdcae7883d9c6e277a23161ef64bfb7ec199d24bba30",
+    "providerReceived": false,
+    "qualificationIssued": false,
+    "publicEnabled": false
+  },
+  "reused": 0,
+  "fetched": 1305,
+  "dependenciesCompatible": true,
+  "nodeModulesReused": true,
+  "providerMutated": false,
+  "qualificationIssued": false
+}

@@ -1,0 +1,41 @@
+TAP version 13
+# (node:2213021) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: cold npm package installs production dependencies only; fresh CLI processes recover after server restart
+ok 1 - cold npm package installs production dependencies only; fresh CLI processes recover after server restart
+  ---
+  duration_ms: 2205.206829
+  ...
+# (node:2213190) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: mounted monitoring observes a gateway authentication refusal without acquiring its tenant authority or executing work
+ok 2 - mounted monitoring observes a gateway authentication refusal without acquiring its tenant authority or executing work
+  ---
+  duration_ms: 249.624885
+  ...
+# (node:2213202) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: persisted deadline fences provider entry even before the event loop runs its timer
+ok 3 - persisted deadline fences provider entry even before the event loop runs its timer
+  ---
+  duration_ms: 80.824266
+  ...
+# Subtest: enrolled SDK response headers cannot print upstream payloads into the host output
+ok 4 - enrolled SDK response headers cannot print upstream payloads into the host output
+  ---
+  duration_ms: 105.750085
+  ...
+# Subtest: a compressed SDK settlement reply is bounded after decoding and cannot authorize another payment
+ok 5 - a compressed SDK settlement reply is bounded after decoding and cannot authorize another payment
+  ---
+  duration_ms: 220.883559
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3264.241967

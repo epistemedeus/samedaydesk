@@ -1,0 +1,1342 @@
+{
+  "openapi": "3.1.0",
+  "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
+  "info": {
+    "title": "Neomorphic Public Read-Only Interface",
+    "version": "1.3.0",
+    "description": "A static, credential-free description of Neomorphic's public laboratory, published instruments, signed public evidence records, and local verification method. These endpoints accept no submissions, perform no purchases, and make no state changes.",
+    "contact": {
+      "name": "Neomorphic LLC",
+      "email": "contact@neomorphic.io",
+      "url": "https://neomorphic.io"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://neomorphic.io"
+    }
+  ],
+  "security": [],
+  "tags": [
+    {
+      "name": "Public records",
+      "description": "Static representations generated from the public site data."
+    }
+  ],
+  "paths": {
+    "/api/v1/organization": {
+      "get": {
+        "operationId": "readPublishedOrganization",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the published organization and role index",
+        "description": "Returns the static legal identity, statement descriptor, funds boundary, SameDayDesk brand relationship, EIN.LLC related-site boundary, the services index URL, and the two primary human engagements. It does not advertise unlaunched origins.",
+        "responses": {
+          "200": {
+            "description": "The current static organization and role index.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationIndex"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/services": {
+      "get": {
+        "operationId": "listPublishedServices",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "List the published service descriptions",
+        "description": "Returns the static service index used by the public engagement pages, including publication state, scope lists, and checkout eligibility. Hypothesis prices are not represented as live Offers.",
+        "responses": {
+          "200": {
+            "description": "The current static service index.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceIndex"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/instruments": {
+      "get": {
+        "operationId": "listPublishedInstruments",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "List the published instrument descriptions",
+        "description": "Returns the static instrument index used by the public Office pages, including publication state and stated boundaries.",
+        "responses": {
+          "200": {
+            "description": "The current static instrument index.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstrumentIndex"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/registry": {
+      "get": {
+        "operationId": "listPublicEvidenceRecords",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "List the signed public evidence records",
+        "description": "Returns the currently published evidence-record envelopes without altering the signed record objects.",
+        "responses": {
+          "200": {
+            "description": "The current static public evidence-register index.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistryIndex"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/verify": {
+      "get": {
+        "operationId": "describeLocalVerification",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Describe local evidence-record verification",
+        "description": "Returns static metadata and instructions. It does not accept a record and does not perform server-side verification.",
+        "responses": {
+          "200": {
+            "description": "The supported local verification method and reliance boundary.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationDescription"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/experiments.json": {
+      "get": {
+        "operationId": "listPublicExperiments",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "List public experiment manifests",
+        "description": "Returns the current experiment state, smallest test, success event, evidence schedule, public counters, review date, and kill condition.",
+        "responses": {
+          "200": {
+            "description": "The current static public experiment register.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExperimentRegister"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/signals/latest.json": {
+      "get": {
+        "operationId": "readLatestSignals",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the latest public signal plates",
+        "description": "Returns external-attributable counters without mixing internal, sponsored, or unclassified activity.",
+        "responses": {
+          "200": {
+            "description": "The latest static public signal snapshot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignalSnapshot"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bounties.json": {
+      "get": {
+        "operationId": "listPublicBounties",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "List open and staged participation items",
+        "description": "Returns the current public bounty schedule, evidence class, acceptance conditions, and consideration boundary.",
+        "responses": {
+          "200": {
+            "description": "The current static public participation schedule.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BountySchedule"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/receipts/{id}.json": {
+      "get": {
+        "operationId": "readPublicLabReceipt",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read one public-safe lab receipt",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A static public-safe lab receipt.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LabReceipt"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/trial-request.json": {
+      "get": {
+        "operationId": "readPrivateTrialRequestSchema",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the private trial request schema and public examples",
+        "description": "Returns the static schema, limitations, and public examples for a browser-local private trial brief. This origin does not accept the request over HTTP and does not run the job.",
+        "responses": {
+          "200": {
+            "description": "Schema and examples for a browser-local trial brief. Not a submission endpoint.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PrivateTrialRequestCatalog"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/skills/index.json": {
+      "get": {
+        "operationId": "readPublicSkillIndex",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the public machine skill index",
+        "description": "Returns the static skill index used by native install. The received-useful-work entry's installed command is scripts/dispatch.mjs. The index is not a catalog of new services and it accepts no submissions.",
+        "responses": {
+          "200": {
+            "description": "The current static machine skill index.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicSkillIndex"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/.well-known/maintained-operations.json": {
+      "get": {
+        "operationId": "readMaintainedOperationsEntry",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the maintained-operations machine entry",
+        "description": "Returns the static machine entry for the free one-shot runner. It is not a subscription, a hosted API, or spending permission.",
+        "responses": {
+          "200": {
+            "description": "Static machine entry. paymentAuthority and claimAuthority stay none.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceivedLibraryEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/labs/customer-retained-operations.json": {
+      "get": {
+        "operationId": "readCustomerRetainedOperationsEntry",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the customer-retained-operations machine entry",
+        "description": "Returns the static hosted-library entry. The archive is not a hosted read API. A grantless read is refused by the existing server. This document does not grant payment or claim authority.",
+        "responses": {
+          "200": {
+            "description": "Static machine entry for the received retained library.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceivedLibraryEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/labs/funded-task-consumer.json": {
+      "get": {
+        "operationId": "readFundedTaskConsumerEntry",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the funded-task-consumer machine entry",
+        "description": "Returns the static hosted-library entry for the walletless trial client. Qualification is not a reservation and not spending permission.",
+        "responses": {
+          "200": {
+            "description": "Static machine entry for the received walletless trial library.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceivedLibraryEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/labs/caller-composition-delivery.json": {
+      "get": {
+        "operationId": "readCallerCompositionDeliveryEntry",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the caller-composition-delivery machine entry",
+        "description": "Returns the static hosted-library entry for caller-owned no-spend composition. A decision is not a purchase.",
+        "responses": {
+          "200": {
+            "description": "Static machine entry for the received composition library.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceivedLibraryEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/labs/compatibility-envelope.json": {
+      "get": {
+        "operationId": "readCompatibilityEnvelopeEntry",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the compatibility-envelope machine entry",
+        "description": "Returns the static candidate library entry. hostedAcquisitionVerified stays false. A compatibility query is not a paid need and not Root acceptance of another package.",
+        "responses": {
+          "200": {
+            "description": "Static machine entry for the public compatibility library.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceivedLibraryEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/labs/buyer-mandate.json": {
+      "get": {
+        "operationId": "readBuyerMandateEntry",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the buyer-mandate 0.4.0 machine entry",
+        "description": "Returns the static machine entry for the received public mandate archive. It is an optional composition dependency, not a new signer or a checkout.",
+        "responses": {
+          "200": {
+            "description": "Static machine entry for the public buyer-mandate archive.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceivedLibraryEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/labs/contribution-reuse-consumer.json": {
+      "get": {
+        "operationId": "readContributionReuseConsumerEntry",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the contribution-reuse-consumer 0.3.0 machine entry",
+        "description": "Returns the static candidate entry. Source acceptance is not hosted acquisition and not production enrollment. hostedAcquisitionVerified stays false.",
+        "responses": {
+          "200": {
+            "description": "Static machine entry for the public contribution-reuse consumer archive.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceivedLibraryEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/labs/maintained-useful-delivery.json": {
+      "get": {
+        "operationId": "readMaintainedUsefulDeliveryEntry",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the current maintained-useful-delivery machine entry",
+        "description": "Returns the static candidate entry. hostedAcquisitionVerified stays false. A local descriptor is not a production flag and not a subscription.",
+        "responses": {
+          "200": {
+            "description": "Static machine entry for the public maintained-useful-delivery archive.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceivedLibraryEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/labs/task-economics-delivery.json": {
+      "get": {
+        "operationId": "readTaskEconomicsDeliveryEntry",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the current task-economics delivery machine entry",
+        "description": "Returns exact archive pins and candidate publication facts for the caller-owned qualification library. Qualification grants no spending or claim authority.",
+        "responses": {
+          "200": {
+            "description": "Current static task-economics delivery entry.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceivedLibraryEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/labs/task-distribution.json": {
+      "get": {
+        "operationId": "readTaskDistributionEntry",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the current task-distribution machine entry",
+        "description": "Returns exact archive pins and candidate publication facts for task-scoped execution and command referrals. Seller publication and caller permission are separate inputs.",
+        "responses": {
+          "200": {
+            "description": "Current static task-distribution entry.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceivedLibraryEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/labs/evidence-referral.json": {
+      "get": {
+        "operationId": "readEvidenceReferralEntry",
+        "tags": [
+          "Public records"
+        ],
+        "summary": "Read the current scoped artifact referral machine entry",
+        "description": "Returns exact referral library pins and candidate publication facts. Current permission, production enrollment, caller usefulness and settlement require separate evidence.",
+        "responses": {
+          "200": {
+            "description": "Current static artifact referral entry.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceivedLibraryEntry"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OrganizationIndex": {
+        "type": "object",
+        "required": [
+          "schema",
+          "mode",
+          "canonical_url",
+          "legal_name",
+          "url",
+          "email",
+          "statement_descriptor",
+          "role",
+          "funds_boundary",
+          "brands",
+          "related_sites",
+          "services_index_url",
+          "primary_engagements",
+          "not_published"
+        ],
+        "properties": {
+          "schema": {
+            "const": "neomorphic.organization-index.v1"
+          },
+          "mode": {
+            "const": "static-read-only"
+          },
+          "canonical_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "legal_name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "email": {
+            "type": "string"
+          },
+          "statement_descriptor": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "funds_boundary": {
+            "type": "string"
+          },
+          "brands": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "related_sites": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "services_index_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "primary_engagements": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "not_published": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceRecord": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "eyebrow",
+          "question",
+          "summary",
+          "price",
+          "price_note",
+          "delivery",
+          "includes",
+          "excludes",
+          "cta",
+          "publication_state",
+          "publication_state_label",
+          "checkout_eligible",
+          "primary",
+          "public_url",
+          "checkout_url"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "eyebrow": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "price": {
+            "type": "string"
+          },
+          "price_note": {
+            "type": "string"
+          },
+          "delivery": {
+            "type": "string"
+          },
+          "includes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "excludes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cta": {
+            "type": "string"
+          },
+          "publication_state": {
+            "type": "string",
+            "enum": [
+              "available",
+              "public-preview",
+              "research",
+              "service",
+              "proposed"
+            ]
+          },
+          "publication_state_label": {
+            "type": "string"
+          },
+          "checkout_eligible": {
+            "type": "boolean"
+          },
+          "primary": {
+            "type": "boolean"
+          },
+          "public_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "checkout_url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          },
+          "fixed_offer": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "scope",
+              "amount",
+              "currency",
+              "quote_limits",
+              "quote_note"
+            ],
+            "properties": {
+              "scope": {
+                "const": "fixed"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "const": "USD"
+              },
+              "quote_limits": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "quote_note": {
+                "type": "string"
+              }
+            }
+          },
+          "service_range": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "scope",
+              "label",
+              "note"
+            ],
+            "properties": {
+              "scope": {
+                "const": "range"
+              },
+              "label": {
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          },
+          "checkout": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "rail",
+              "amount",
+              "currency",
+              "href",
+              "prerequisites",
+              "human_action",
+              "autonomous_rail",
+              "paid_execution"
+            ],
+            "properties": {
+              "rail": {
+                "const": "stripe-hosted"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "currency": {
+                "const": "USD"
+              },
+              "href": {
+                "type": "string",
+                "format": "uri"
+              },
+              "prerequisites": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "human_action": {
+                "type": "string"
+              },
+              "autonomous_rail": {
+                "const": false
+              },
+              "paid_execution": {
+                "const": "human_checkout"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceIndex": {
+        "type": "object",
+        "required": [
+          "schema",
+          "mode",
+          "canonical_url",
+          "count",
+          "services"
+        ],
+        "properties": {
+          "schema": {
+            "const": "neomorphic.services-index.v1"
+          },
+          "mode": {
+            "const": "static-read-only"
+          },
+          "canonical_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceRecord"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "InstrumentSource": {
+        "type": "object",
+        "required": [
+          "name",
+          "url"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Instrument": {
+        "type": "object",
+        "required": [
+          "id",
+          "roman",
+          "name",
+          "question",
+          "summary",
+          "publication_state",
+          "publication_state_label",
+          "free_interface",
+          "paid_service",
+          "source",
+          "method",
+          "boundaries",
+          "evidence_example",
+          "public_url"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "roman": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "question": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "publication_state": {
+            "type": "string",
+            "enum": [
+              "available",
+              "public-preview",
+              "research",
+              "service",
+              "proposed"
+            ]
+          },
+          "publication_state_label": {
+            "type": "string"
+          },
+          "free_interface": {
+            "type": "string"
+          },
+          "paid_service": {
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/InstrumentSource"
+          },
+          "method": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "boundaries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence_example": {
+            "type": "string"
+          },
+          "public_url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InstrumentIndex": {
+        "type": "object",
+        "required": [
+          "schema",
+          "mode",
+          "canonical_url",
+          "count",
+          "instruments"
+        ],
+        "properties": {
+          "schema": {
+            "const": "neomorphic.instruments-index.v1"
+          },
+          "mode": {
+            "const": "static-read-only"
+          },
+          "canonical_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "instruments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Instrument"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "EvidenceSignature": {
+        "type": "object",
+        "required": [
+          "algorithm",
+          "canonicalization",
+          "key_id",
+          "value"
+        ],
+        "properties": {
+          "algorithm": {
+            "type": "string"
+          },
+          "canonicalization": {
+            "type": "string"
+          },
+          "key_id": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EvidenceRecord": {
+        "type": "object",
+        "required": [
+          "schema",
+          "record_id",
+          "record_type",
+          "subject",
+          "claim",
+          "method",
+          "result",
+          "evidence",
+          "issued_at",
+          "observed_at",
+          "expires_at",
+          "supersedes",
+          "revocation_url",
+          "evidence_digest",
+          "signature"
+        ],
+        "properties": {
+          "schema": {
+            "const": "neomorphic.evidence-record.v1"
+          },
+          "record_id": {
+            "type": "string",
+            "pattern": "^rec_[A-Za-z0-9_-]{24}$"
+          },
+          "record_type": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "claim": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "method": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "result": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "evidence": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "supersedes": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "revocation_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "evidence_digest": {
+            "type": "string",
+            "pattern": "^sha256:[a-f0-9]{64}$"
+          },
+          "signature": {
+            "$ref": "#/components/schemas/EvidenceSignature"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegistryIndex": {
+        "type": "object",
+        "required": [
+          "schema",
+          "mode",
+          "canonical_url",
+          "verification_description_url",
+          "public_key_url",
+          "count",
+          "record_urls",
+          "records"
+        ],
+        "properties": {
+          "schema": {
+            "const": "neomorphic.registry-index.v1"
+          },
+          "mode": {
+            "const": "static-read-only"
+          },
+          "canonical_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "verification_description_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "public_key_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "record_urls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvidenceRecord"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "SignatureProfile": {
+        "type": "object",
+        "required": [
+          "algorithm",
+          "canonicalization",
+          "key_id"
+        ],
+        "properties": {
+          "algorithm": {
+            "type": "string"
+          },
+          "canonicalization": {
+            "type": "string"
+          },
+          "key_id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VerificationDescription": {
+        "type": "object",
+        "required": [
+          "schema",
+          "mode",
+          "canonical_url",
+          "operation",
+          "performs_verification",
+          "accepts_submissions",
+          "supported_record_schemas",
+          "signature_profiles",
+          "public_key_url",
+          "registry_url",
+          "browser_verifier_url",
+          "verifier_source_url",
+          "verification_steps",
+          "reliance_boundary"
+        ],
+        "properties": {
+          "schema": {
+            "const": "neomorphic.verification-description.v1"
+          },
+          "mode": {
+            "const": "static-read-only"
+          },
+          "canonical_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "operation": {
+            "const": "describe-local-record-verification"
+          },
+          "performs_verification": {
+            "const": false
+          },
+          "accepts_submissions": {
+            "const": false
+          },
+          "supported_record_schemas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "signature_profiles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SignatureProfile"
+            }
+          },
+          "public_key_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "registry_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "browser_verifier_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "verifier_source_url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "verification_steps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reliance_boundary": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ExperimentRegister": {
+        "type": "object",
+        "required": [
+          "schema",
+          "generatedAt",
+          "eventVocabulary",
+          "evidenceClasses",
+          "experiments"
+        ],
+        "properties": {
+          "schema": {
+            "const": "neomorphic.experiment-register.v1"
+          },
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "eventVocabulary": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidenceClasses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "experiments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "SignalSnapshot": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "BountySchedule": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "LabReceipt": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "PrivateTrialRequestCatalog": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "PublicSkillIndex": {
+        "type": "object",
+        "required": [
+          "skills"
+        ],
+        "properties": {
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "description",
+                "files"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReceivedLibraryEntry": {
+        "type": "object",
+        "required": [
+          "schema",
+          "paymentAuthority",
+          "claimAuthority",
+          "humanPage"
+        ],
+        "properties": {
+          "schema": {
+            "type": "string"
+          },
+          "paymentAuthority": {
+            "const": "none"
+          },
+          "claimAuthority": {
+            "const": "none"
+          },
+          "humanPage": {
+            "const": false
+          },
+          "archive": {
+            "type": "string"
+          },
+          "publicationStatus": {
+            "type": "string"
+          },
+          "hostedAcquisitionVerified": {
+            "type": "boolean"
+          },
+          "execute": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "x-neomorphic-interface-mode": "static-read-only"
+}

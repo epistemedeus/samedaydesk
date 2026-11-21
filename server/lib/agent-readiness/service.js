@@ -2,6 +2,7 @@ import { AGENT_CARD_PATHS, OPENAPI_PATHS } from "./checks.js";
 import { fixPackMarkdown, generateFixPack } from "./fixpack.js";
 import { probeHost } from "./probe.js";
 import { consumeClient } from "./rate-limit.js";
+import { contentTypeOf } from "./retrieval.js";
 import { buildReport } from "./score.js";
 
 function evidencePath(check, bundle) {
@@ -20,12 +21,24 @@ function evidencePath(check, bundle) {
   return "/";
 }
 
+const ADDITIVE_CHECK_KEYS = ["applicability", "linkage", "staticSummary", "redirects", "x402Entries"];
+
+function evidenceExtra(res) {
+  const extra = {};
+  const contentType = contentTypeOf(res);
+  if (contentType) extra.contentType = contentType;
+  if (typeof res?.finalUrl === "string" && res.finalUrl) extra.finalUrl = res.finalUrl;
+  if (Array.isArray(res?.redirects) && res.redirects.length) extra.redirects = res.redirects;
+  return extra;
+}
+
 export function presentReport(report, bundle) {
   const origin = `https://${bundle.host}`;
   const evidence = Object.entries(bundle.responses).map(([path, res]) => ({
     path,
     url: `${origin}${path}`,
     status: res.status,
+    ...evidenceExtra(res),
   }));
   if (bundle.mcp?.url) {
     evidence.push({
@@ -63,6 +76,10 @@ export function presentReport(report, bundle) {
     checks: report.checks.map((check) => {
       const mcp = check.id.startsWith("mcp.") || check.id.startsWith("usability.mcp");
       const evidenceUrl = mcp ? (bundle.mcp?.url || `${origin}/mcp`) : `${origin}${evidencePath(check, bundle)}`;
+      const additive = {};
+      for (const key of ADDITIVE_CHECK_KEYS) {
+        if (check[key] !== undefined) additive[key] = check[key];
+      }
       return {
         id: check.id,
         category: check.category,
@@ -71,6 +88,7 @@ export function presentReport(report, bundle) {
         reason: check.reason,
         fix: check.fix,
         evidenceUrl,
+        ...additive,
       };
     }),
     topFixes: report.topFixes,

@@ -1,0 +1,4 @@
+- repo: https://github.com/epistemedeus/pilot.git
+- ref: codex/h103010-operator-integration-20261102
+- head: f16091ccde8b685fc394dec9e27a08b996b853cb
+- worktree: /home/ubuntu/ae14-work/h115010-companion

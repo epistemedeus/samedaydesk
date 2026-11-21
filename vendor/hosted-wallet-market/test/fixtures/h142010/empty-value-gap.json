@@ -1,0 +1,13 @@
+{
+  "schema": "cc0.query-key-gap.v1",
+  "role": "separate-candidate",
+  "fence": "publication_refused",
+  "why": "An empty query value has length 0, so the publication string rule refuses it.",
+  "case": {
+    "id": "key-holds-equals",
+    "left": [["a=1", ""]],
+    "right": [["a", "1"]],
+    "oldEqual": false,
+    "nowEqual": false
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "id": "H154540",
+  "schema": "samedaydesk.agl-coherent-integration.receipt.v1",
+  "measuredAt": "2026-11-05T23:33:59Z",
+  "checkpoint": "2026-11-06T00:40:00Z",
+  "requiredUntil": "2026-11-06T00:55:00Z",
+  "repository": "https://github.com/epistemedeus/samedaydesk.git",
+  "base": "90939f157fcb33606c0f5ccfbffbc10b9e51e64a",
+  "branch": "codex/h154540-agl-integration-20261105",
+  "predecessor": {
+    "id": "H154510",
+    "commit": "1264ef594ca8fe264e5b82d3f8c133ce6344c338",
+    "report": "experiments/agl-coherent-receiving-20261105/"
+  },
+  "companions": {
+    "sharedCapture364": "3a4a7538329292c11d94b148d58964fc0656dece",
+    "residual365": "9d1f3f9677ade404131fc62ee3e3ab99b10ec144",
+    "portable366": "95c8a84155d01d67c707170e94aa148ba6542c50",
+    "client367": "1264ef594ca8fe264e5b82d3f8c133ce6344c338",
+    "refsMoved": false
+  },
+  "canonicalClient": {
+    "path": "server/scripts/fixtures/h142010-cold-requester-0.3.1.mjs",
+    "version": "0.3.1",
+    "bytes": 30187,
+    "sha256": "accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9",
+    "descriptor": "docs/machine-promotion/evidence/private-successor-descriptor.json",
+    "descriptorSha256": "2edea980c57909e8715cac1c899c1e4886f418614a71a79e50df113e4bd28d25",
+    "publicationStatus": "private_unreleased",
+    "hostedAcquisitionVerified": false,
+    "accountCreated": false,
+    "acquireTransport": "in-process https stub, not a live host"
+  },
+  "oldClient": {
+    "path": "vendor/hosted-wallet-market/client/cold-requester-0.3.0.mjs",
+    "sha256": "38d4e05cc757223f20e727fc75cf5a8bfe6d4e6dcaadd6cecdaff248422529d4",
+    "against031Descriptor": "acquisition_refused"
+  },
+  "unqualifiedExamplesClient": {
+    "commit": "1264ef594ca8fe264e5b82d3f8c133ce6344c338",
+    "path": "vendor/hosted-wallet-market/examples/cold-requester-0.3.1.mjs",
+    "bytes": 34016,
+    "sha256": "ad133fb820d794fb49eff6767153cd3f42202d4259e434214d9a9a4798f5fa0e",
+    "versionLabel": "0.3.1",
+    "presentOnThisBranch": false
+  },
+  "financialSourcesUnchanged": {
+    "machine-money.mjs": "059ac16fc3f4a8855bfa4e9d0c5c14840586d648247f66f5c6b0b5997396e54d",
+    "seed.mjs": "ecf605d362916ba1e00f718c4b5167d8945d514820c78f104d7435a4ff355c4c"
+  },
+  "historicalAuthority": {
+    "path": "vendor/hosted-wallet-market/test/historical-authority.test.mjs",
+    "sha256": "35a7a975339b38915aeba7c6c8edf582f11a82e25f94d884c3c92fa1779b5d81",
+    "executed": false,
+    "reason": "H103010 cache not present and not fabricated; node_modules/viem absent"
+  },
+  "pin": {
+    "path": "server/foundry/activation/private-control-pin.json",
+    "schema": "sds.foundry.private-control-source.v1",
+    "base": "4e24f9b5001aa5a527ca9ba3ecda98c97d4c7134",
+    "packageJson": "c6250a9cab07b37ac0076111f0af76d7dcf63f6f3705ab9651a01bb35e579947",
+    "priorPackageJson": "e2af16586935e92dde2dbb39e6d192e9cc5e845b692e426962891be203a4b0a4",
+    "enrollment": false
+  },
+  "tests": {
+    "node": "v22.23.4",
+    "resultReuse": {
+      "command": "npm run test:result-reuse",
+      "exit": 0,
+      "tests": 70,
+      "pass": 70,
+      "fail": 0,
+      "skipped": 0,
+      "durationMs": 2196.30415,
+      "counts": {
+        "export": 23,
+        "decisionReuse": 9,
+        "sourceGate": 5,
+        "sharedCapture": 4,
+        "portable": 9,
+        "residual": 6,
+        "usefulBodyIntegrity": 7,
+        "r06Harness": 1,
+        "acquisition": 6
+      }
+    },
+    "recipes": {
+      "command": "npm run test:recurring-job-recipes",
+      "exit": 1,
+      "tests": 90,
+      "pass": 83,
+      "fail": 4,
+      "skipped": 3,
+      "durationMs": 718.897929,
+      "cause": "sibling epistemedeus/x402-url-extractor package name x402-merchant is absent; no npm install"
+    },
+    "resultReuseVm": {
+      "command": "npm run test:result-reuse:vm",
+      "executed": false,
+      "cause": "no Postgres on this host"
+    }
+  },
+  "comparison": {
+    "costs": "costs_unknown",
+    "economicAdvantage": false,
+    "finalSample": {
+      "directMs": 36.318,
+      "reuseMs": 34.177,
+      "outcome": "unchanged",
+      "paymentAttempted": false,
+      "paymentReplayBlocked": true
+    },
+    "earlierSamplesThisForeground": [
+      {"directMs": 38.146, "reuseMs": 41.961},
+      {"directMs": 39.400, "reuseMs": 35.204}
+    ],
+    "h154510Sample": {"directMs": 44.73, "reuseMs": 37.29, "source": "1264ef594ca8fe264e5b82d3f8c133ce6344c338"},
+    "sourceGateHit": {
+      "inputCaptureNs": 76197,
+      "inputCaptureBytes": 527,
+      "producerRunNs": 38938831,
+      "producerCallsOnHit": 0
+    },
+    "r06DesignedMix": {
+      "hitRate": 0.625,
+      "falseReuseCount": 0,
+      "recomputeCount": 3,
+      "retirements": 1,
+      "demand": false
+    }
+  },
+  "integrity": {
+    "field": "decisionBinding.usefulBodyDigest",
+    "portableField": "producerBodyDigest",
+    "missing": "integrity_unknown",
+    "mismatch": "integrity_mismatch",
+    "signature": false,
+    "bothFieldsRewrittenDetected": false
+  },
+  "exclusions": [
+    "payment authority",
+    "live commission",
+    "default merge",
+    "deployment",
+    "public contact",
+    "human-facing page",
+    "new market",
+    "new account store",
+    "new ledger",
+    "new client version",
+    "new descriptor",
+    "companion ref moves"
+  ]
+}

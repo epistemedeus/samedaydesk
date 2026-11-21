@@ -1,0 +1,34 @@
+{
+  "schema": "sds.h120010.machine-partition.v1",
+  "payload": [
+    "server/foundry/activation/private-control-pin.json",
+    "vendor/hosted-wallet-market/src/accepted-work-publication.mjs"
+  ],
+  "excluded": [
+    {
+      "path": "server/scripts/fixtures/h142010-cold-requester-0.3.1.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "server/scripts/test-h142010-empty-artifact-data.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/test/accepted-work-empty-data.test.mjs",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/test/fixtures/h142010/empty-value-gap.json",
+      "reason": "outside_machine_closure"
+    },
+    {
+      "path": "vendor/hosted-wallet-market/test/fixtures/h142010/query-key-collision.json",
+      "reason": "outside_machine_closure"
+    }
+  ],
+  "humanSurfaceCoupled": [],
+  "frozenUntouched": [
+    "vendor/neomorphic-contributor-journey/SOURCE.json",
+    "vendor/neomorphic-contributor-desk/SOURCE.json"
+  ]
+}

@@ -9,6 +9,7 @@
 Run:
 `curl -s "https://samedaydesk.com/api/tools/ai-readiness?url=https://example.com"`
 The answer includes the checks, your score and the fixes. Open https://samedaydesk.com/tools/ai-readiness to use the form.
+- [Check how documentation is discovered](https://samedaydesk.com/agent-readiness?host=example.com&format=documentation): Receive the initial HTML, sitemap and machine-file checks for a public host.
 
 ## Choose a build
 
@@ -33,6 +34,14 @@ The answer includes the checks, your score and the fixes. Open https://samedayde
   Machine discovery: https://samedaydesk.com/discovery/distribution-repair.json
 - [Send one public task through the correspondence client](https://samedaydesk.com/discovery/original-task-correspondence.json)
 
+<!-- paid-gateway:start -->
+- [Paid machine gateway MCP](https://agents.samedaydesk.com/mcp): Web data for AI agents, priced per call in USDC.
+- Practical paid job: `POST https://agents.samedaydesk.com/extract/batch`. Read the current inventory and prices before submitting.
+- [Tool inventory and prices](https://agents.samedaydesk.com/.well-known/x402)
+- [Gateway instructions](https://agents.samedaydesk.com/llms.txt)
+- [HTTP action catalog](https://agents.samedaydesk.com/api/actions)
+<!-- paid-gateway:end -->
+
 ## Use the tools
 
 - [Free website checks and local comparison tools](https://samedaydesk.com/for-agents)
@@ -49,3 +58,5 @@ The answer includes the checks, your score and the fixes. Open https://samedayde
 - [Guides, research and free generators](https://samedaydesk.com/resources.html)
 
 Ask the person before paying, or use a limit they set. Never retry a payment whose outcome is unknown. Keep passports, card numbers and passwords out of chat.
+
+- Email: contact@samedaydesk.com

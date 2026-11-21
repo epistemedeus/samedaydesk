@@ -1,0 +1,82 @@
+{"consumerSourceSha256":"2c72b86a4ca1892f8c62eb8159258fa76eb4233c46c912505f001d28aa0f92b2","hostMembers":1300,"qualified":false,"installed":false}
+TAP version 13
+# (node:565507) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: R4-J01 requester proposal review on real HTTPS and verified-TLS PostgreSQL
+    # Subtest: requester reads the actual current note and stored identity without contributor credentials
+    ok 1 - requester reads the actual current note and stored identity without contributor credentials
+      ---
+      duration_ms: 261.368427
+      type: 'test'
+      ...
+    # Subtest: later interest updates current content without rewriting the original receipt
+    ok 2 - later interest updates current content without rewriting the original receipt
+      ---
+      duration_ms: 454.38962
+      type: 'test'
+      ...
+    # Subtest: two contributors paginate deterministically; hostile proposal bytes stay exact JSON data
+    ok 3 - two contributors paginate deterministically; hostile proposal bytes stay exact JSON data
+      ---
+      duration_ms: 1167.743848
+      type: 'test'
+      ...
+    # Subtest: foreign requester, contributor, anonymous, forged identity and missing CSRF/origin refuse
+    ok 4 - foreign requester, contributor, anonymous, forged identity and missing CSRF/origin refuse
+      ---
+      duration_ms: 641.618329
+      type: 'test'
+      ...
+    # Subtest: foreign tenant tasks and same-task IDs never cross the configured tenant
+    ok 5 - foreign tenant tasks and same-task IDs never cross the configured tenant
+      ---
+      duration_ms: 289.049978
+      type: 'test'
+      ...
+    # Subtest: malformed or cross-task cursor and invalid page sizes refuse without effects
+    ok 6 - malformed or cross-task cursor and invalid page sizes refuse without effects
+      ---
+      duration_ms: 1285.360143
+      type: 'test'
+      ...
+    # Subtest: maximum stored note and page are bounded; oversized historical rows refuse rather than truncate
+    ok 7 - maximum stored note and page are bounded; oversized historical rows refuse rather than truncate
+      ---
+      duration_ms: 560.24467
+      type: 'test'
+      ...
+    # Subtest: current account/task membership, role, expiry and explicit session revocation are enforced
+    ok 8 - current account/task membership, role, expiry and explicit session revocation are enforced
+      ---
+      duration_ms: 710.696726
+      type: 'test'
+      ...
+    # Subtest: lost read response retries with identical data and no new receipt or transition
+    ok 9 - lost read response retries with identical data and no new receipt or transition
+      ---
+      duration_ms: 223.161043
+      type: 'test'
+      ...
+    # Subtest: restart, login and account recovery retain current notes and task without resubmitting interest
+    ok 10 - restart, login and account recovery retain current notes and task without resubmitting interest
+      ---
+      duration_ms: 783.324103
+      type: 'test'
+      ...
+    1..10
+ok 1 - R4-J01 requester proposal review on real HTTPS and verified-TLS PostgreSQL
+  ---
+  duration_ms: 9531.567182
+  type: 'test'
+  ...
+# Every proposal HTTP read preserved all row hashes across the authoritative schemas.
+# Owned fixture sampled peak summed RSS: 560188 KiB (Node runner/CLI plus disposable PG; excludes native controller).
+1..1
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9914.494228

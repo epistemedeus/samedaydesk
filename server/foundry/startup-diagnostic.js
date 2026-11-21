@@ -3,9 +3,10 @@ const STAGES = new Set([
   "runtime_publication", "service_import", "service_config", "store_create",
   "app_create", "profile_load", "entry_module", "entry_create",
   "base_readiness", "entry_readiness",
+  "source_verify", "qualification_load", "ingress_profile", "asset_load",
 ]);
 const CODES = new Set([
-  "ECONNREFUSED", "ECONNRESET", "ETIMEDOUT", "ENOTFOUND", "EAI_AGAIN",
+  "ECONNREFUSED", "ECONNRESET", "ECONNABORTED", "ETIMEDOUT", "ENOTFOUND", "EAI_AGAIN",
   "EPIPE", "ENETUNREACH", "EHOSTUNREACH", "ENOENT", "ENOTDIR", "EACCES",
   "EPERM", "EROFS", "ELOOP", "EIO", "EMFILE", "ENFILE",
   "28P01", "28000", "53300", "57P01", "57P02", "57P03", "42P01", "42703",

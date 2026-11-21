@@ -1,0 +1,495 @@
+
+> samedaydesk@1.0.0 test:pulse
+> node --experimental-strip-types --test server/scripts/test-pulse-events.js server/scripts/test-pulse-durable-store.js server/scripts/test-pulse-s125-replay.js server/scripts/test-pulse-postgres-real.js server/scripts/test-pulse-tool-contract.js server/scripts/test-pulse-flush-retry.js --test-concurrency=1
+
+TAP version 13
+# Subtest: SQL migration uses constant-size aggregate, receipts, and service_role grants
+ok 1 - SQL migration uses constant-size aggregate, receipts, and service_role grants
+  ---
+  duration_ms: 0.912677
+  type: 'test'
+  ...
+# Subtest: two disjoint store instances flush to fake authority and exact totals sum
+ok 2 - two disjoint store instances flush to fake authority and exact totals sum
+  ---
+  duration_ms: 1.961184
+  type: 'test'
+  ...
+# Subtest: same flush ID replay is idempotent and conflicting delta fails
+ok 3 - same flush ID replay is idempotent and conflicting delta fails
+  ---
+  duration_ms: 0.731569
+  type: 'test'
+  ...
+# Subtest: declared MCP tool counts survive durable flush, hydration, and idempotent replay
+ok 4 - declared MCP tool counts survive durable flush, hydration, and idempotent replay
+  ---
+  duration_ms: 1.126492
+  type: 'test'
+  ...
+# Subtest: new app against old apply RPC retains the exact WAL evidence
+ok 5 - new app against old apply RPC retains the exact WAL evidence
+  ---
+  duration_ms: 22.308432
+  type: 'test'
+  ...
+# Subtest: empty named counts expose their later lower-bound window
+ok 6 - empty named counts expose their later lower-bound window
+  ---
+  duration_ms: 6.230999
+  type: 'test'
+  ...
+# Subtest: mixed-version durable reads cannot claim a complete zero tool map
+ok 7 - mixed-version durable reads cannot claim a complete zero tool map
+  ---
+  duration_ms: 2.255615
+  type: 'test'
+  ...
+# Subtest: defect 1: ambiguous ack retry keeps one owner and new events do not double-add
+ok 8 - defect 1: ambiguous ack retry keeps one owner and new events do not double-add
+  ---
+  duration_ms: 12.759688
+  type: 'test'
+  ...
+# Subtest: defect 2: dropped backlog counts once and keeps known-gap completeness false
+ok 9 - defect 2: dropped backlog counts once and keeps known-gap completeness false
+  ---
+  duration_ms: 172.383858
+  type: 'test'
+  ...
+# Subtest: defect 2: known gap persists complete false even with empty backlog
+ok 10 - defect 2: known gap persists complete false even with empty backlog
+  ---
+  duration_ms: 2.267035
+  type: 'test'
+  ...
+# Subtest: defect 3: atomic fallback write and corrupt file surfaces fallbackCorrupt
+ok 11 - defect 3: atomic fallback write and corrupt file surfaces fallbackCorrupt
+  ---
+  duration_ms: 2.276665
+  type: 'test'
+  ...
+# Subtest: defect 4: durable RPC payload excludes uniqueHumans and fingerprint sets
+ok 12 - defect 4: durable RPC payload excludes uniqueHumans and fingerprint sets
+  ---
+  duration_ms: 0.287825
+  type: 'test'
+  ...
+# Subtest: defect 5: public pulse response omits absolute fallback paths
+ok 13 - defect 5: public pulse response omits absolute fallback paths
+  ---
+  duration_ms: 0.307383
+  type: 'test'
+  ...
+# Subtest: defect 6: hydration recovers from fallback on lifecycle retry
+ok 14 - defect 6: hydration recovers from fallback on lifecycle retry
+  ---
+  duration_ms: 5.534371
+  type: 'test'
+  ...
+# Subtest: defect 7: conflicting legacy import replay fails closed
+ok 15 - defect 7: conflicting legacy import replay fails closed
+  ---
+  duration_ms: 0.589817
+  type: 'test'
+  ...
+# Subtest: defect 8: snapshot read is constant-size aggregate not bucket scan
+ok 16 - defect 8: snapshot read is constant-size aggregate not bucket scan
+  ---
+  duration_ms: 0.083069
+  type: 'test'
+  ...
+# Subtest: legacy import idempotent with identical payload stays incomplete
+ok 17 - legacy import idempotent with identical payload stays incomplete
+  ---
+  duration_ms: 0.173156
+  type: 'test'
+  ...
+# Subtest: seller-repair counters survive durable round trip
+ok 18 - seller-repair counters survive durable round trip
+  ---
+  duration_ms: 0.372253
+  type: 'test'
+  ...
+# Subtest: delta validation fails closed for malformed inputs
+ok 19 - delta validation fails closed for malformed inputs
+  ---
+  duration_ms: 0.224688
+  type: 'test'
+  ...
+# Subtest: amendment 2 defect 1: legacy snapshot plus WAL duplicate cannot double count
+ok 20 - amendment 2 defect 1: legacy snapshot plus WAL duplicate cannot double count
+  ---
+  duration_ms: 142.17539
+  type: 'test'
+  ...
+# Subtest: amendment 2 defect 1b: ambiguous ack restart reuses flush ID then counts new events once
+ok 21 - amendment 2 defect 1b: ambiguous ack restart reuses flush ID then counts new events once
+  ---
+  duration_ms: 14.445748
+  type: 'test'
+  ...
+# Subtest: amendment 2 defect 2: refused delta is not reinserted by drain
+ok 22 - amendment 2 defect 2: refused delta is not reinserted by drain
+  ---
+  duration_ms: 68.880131
+  type: 'test'
+  ...
+# Subtest: amendment 2 defect 3: future schema snapshot fails closed with known gap
+ok 23 - amendment 2 defect 3: future schema snapshot fails closed with known gap
+  ---
+  duration_ms: 134.104827
+  type: 'test'
+  ...
+# Subtest: amendment 2 defect 3b: malformed snapshot migration fails closed
+ok 24 - amendment 2 defect 3b: malformed snapshot migration fails closed
+  ---
+  duration_ms: 112.783907
+  type: 'test'
+  ...
+# Subtest: amendment 2 defect 3c: deltaFromV2Snapshot rejects unknown keys
+ok 25 - amendment 2 defect 3c: deltaFromV2Snapshot rejects unknown keys
+  ---
+  duration_ms: 0.274382
+  type: 'test'
+  ...
+# Subtest: amendment 2 defect 4: corrupt fallback is not overwritten and DB hydrate keeps known gap
+ok 26 - amendment 2 defect 4: corrupt fallback is not overwritten and DB hydrate keeps known gap
+  ---
+  duration_ms: 3.237756
+  type: 'test'
+  ...
+# Subtest: amendment 2 defect 4b: atomic write uses private temp names
+ok 27 - amendment 2 defect 4b: atomic write uses private temp names
+  ---
+  duration_ms: 2.236458
+  type: 'test'
+  ...
+# Subtest: amendment 3: two Node child processes retain disjoint WAL entries
+ok 28 - amendment 3: two Node child processes retain disjoint WAL entries
+  ---
+  duration_ms: 239.951288
+  type: 'test'
+  ...
+# Subtest: amendment 3: overlapping child mutations preserve both WAL entries
+ok 29 - amendment 3: overlapping child mutations preserve both WAL entries
+  ---
+  duration_ms: 254.492925
+  type: 'test'
+  ...
+# Subtest: amendment 3: write failure keeps memory delta and walWritePending
+ok 30 - amendment 3: write failure keeps memory delta and walWritePending
+  ---
+  duration_ms: 2.240464
+  type: 'test'
+  ...
+# Subtest: amendment 3: post-ack read failure stays incomplete until lifecycle retry
+ok 31 - amendment 3: post-ack read failure stays incomplete until lifecycle retry
+  ---
+  duration_ms: 9.759908
+  type: 'test'
+  ...
+# Subtest: amendment 3: WAL rejects future version and unknown root keys
+ok 32 - amendment 3: WAL rejects future version and unknown root keys
+  ---
+  duration_ms: 0.84847
+  type: 'test'
+  ...
+# Subtest: amendment 3: duplicate flush ID with different delta marks WAL corrupt
+ok 33 - amendment 3: duplicate flush ID with different delta marks WAL corrupt
+  ---
+  duration_ms: 0.439288
+  type: 'test'
+  ...
+# Subtest: amendment 3: legacy v2 snapshot with uniqueHumans migrates counters once
+ok 34 - amendment 3: legacy v2 snapshot with uniqueHumans migrates counters once
+  ---
+  duration_ms: 116.797163
+  type: 'test'
+  ...
+# Subtest: controller: locally pending counters never claim durable authority
+ok 35 - controller: locally pending counters never claim durable authority
+  ---
+  duration_ms: 4.212605
+  type: 'test'
+  ...
+# Subtest: controller: WAL booleans are strict and same-entry replays deduplicate
+ok 36 - controller: WAL booleans are strict and same-entry replays deduplicate
+  ---
+  duration_ms: 0.780874
+  type: 'test'
+  ...
+# Subtest: controller: mutated WAL state is validated before atomic write
+ok 37 - controller: mutated WAL state is validated before atomic write
+  ---
+  duration_ms: 1.049235
+  type: 'test'
+  ...
+# Subtest: controller: durable ack with failed WAL removal remains retryable and incomplete
+ok 38 - controller: durable ack with failed WAL removal remains retryable and incomplete
+  ---
+  duration_ms: 6.698287
+  type: 'test'
+  ...
+# Subtest: controller: lock retry sleeps without CPU spin and releases only its token
+ok 39 - controller: lock retry sleeps without CPU spin and releases only its token
+  ---
+  duration_ms: 0.111466
+  type: 'test'
+  ...
+# Subtest: S125: canonicalize PG timestamptz echo to SQL wire .mmmZ
+ok 40 - S125: canonicalize PG timestamptz echo to SQL wire .mmmZ
+  ---
+  duration_ms: 0.140104
+  type: 'test'
+  ...
+# Subtest: S125: validateDelta accepts failure-shaped +00:00 and emits wire form
+ok 41 - S125: validateDelta accepts failure-shaped +00:00 and emits wire form
+  ---
+  duration_ms: 0.0748
+  type: 'test'
+  ...
+# Subtest: S125: durable flush survives PG-shaped snapshot re-hydration
+ok 42 - S125: durable flush survives PG-shaped snapshot re-hydration
+  ---
+  duration_ms: 0.393319
+  type: 'test'
+  ...
+# Subtest: bounded MCP tool inventory stays equal to the declared tools
+ok 43 - bounded MCP tool inventory stays equal to the declared tools
+  ---
+  duration_ms: 1.461375
+  type: 'test'
+  ...
+# Subtest: tools/call retains method totals but only admits own data names from the inventory
+ok 44 - tools/call retains method totals but only admits own data names from the inventory
+  ---
+  duration_ms: 0.592164
+  type: 'test'
+  ...
+# Subtest: keeps the server event allowlist equal to the canonical public briefs
+ok 45 - keeps the server event allowlist equal to the canonical public briefs
+  ---
+  duration_ms: 0.172296
+  type: 'test'
+  ...
+# Subtest: records only bounded seller-repair funnel events
+ok 46 - records only bounded seller-repair funnel events
+  ---
+  duration_ms: 2.184055
+  type: 'test'
+  ...
+# Subtest: records seller-repair checkout starts separately from scope clicks
+ok 47 - records seller-repair checkout starts separately from scope clicks
+  ---
+  duration_ms: 1.51761
+  type: 'test'
+  ...
+# Subtest: rejects a conflicting route class for an existing finding
+ok 48 - rejects a conflicting route class for an existing finding
+  ---
+  duration_ms: 0.166575
+  type: 'test'
+  ...
+# Subtest: accepts the canonical paid POST finding only with its exact route class
+ok 49 - accepts the canonical paid POST finding only with its exact route class
+  ---
+  duration_ms: 0.243441
+  type: 'test'
+  ...
+# Subtest: keeps the AgentToll finding bound to paid_post
+ok 50 - keeps the AgentToll finding bound to paid_post
+  ---
+  duration_ms: 0.121879
+  type: 'test'
+  ...
+# Subtest: keeps the Argonaut GET and POST route in the canonical paid_post class
+ok 51 - keeps the Argonaut GET and POST route in the canonical paid_post class
+  ---
+  duration_ms: 0.32221
+  type: 'test'
+  ...
+# Subtest: exposes only the bounded event write route
+ok 52 - exposes only the bounded event write route
+  ---
+  duration_ms: 53.647248
+  type: 'test'
+  ...
+# Subtest: persists and reloads bounded seller-repair counters
+ok 53 - persists and reloads bounded seller-repair counters
+  ---
+  duration_ms: 248.359329
+  type: 'test'
+  ...
+# Subtest: reproduces the live false-human case as plain GET /mcp surface access
+ok 54 - reproduces the live false-human case as plain GET /mcp surface access
+  ---
+  duration_ms: 2.945337
+  type: 'test'
+  ...
+# Subtest: classifies every GET /mcp as mcpSurfaceGet regardless of user agent
+ok 55 - classifies every GET /mcp as mcpSurfaceGet regardless of user agent
+  ---
+  duration_ms: 6.174822
+  type: 'test'
+  ...
+# Subtest: does not persist GET /mcp query values such as purchase-return cs codes
+ok 56 - does not persist GET /mcp query values such as purchase-return cs codes
+  ---
+  duration_ms: 1.675102
+  type: 'test'
+  ...
+# Subtest: counts shape-valid POST /mcp JSON-RPC by safe method class
+ok 57 - counts shape-valid POST /mcp JSON-RPC by safe method class
+  ---
+  duration_ms: 11.367267
+  type: 'test'
+  ...
+# Subtest: admits a bounded valid POST /mcp batch and rejects oversized batches
+ok 58 - admits a bounded valid POST /mcp batch and rejects oversized batches
+  ---
+  duration_ms: 4.881257
+  type: 'test'
+  ...
+# Subtest: receives rejected POST bodies as attempts without admitting protocol messages
+ok 59 - receives rejected POST bodies as attempts without admitting protocol messages
+  ---
+  duration_ms: 11.48982
+  type: 'test'
+  ...
+# Subtest: does not count POST JSON-RPC on the wrong path or header-only MCP hints
+ok 60 - does not count POST JSON-RPC on the wrong path or header-only MCP hints
+  ---
+  duration_ms: 4.64664
+  type: 'test'
+  ...
+# Subtest: parseMcpProtocolBody and mcpMethodClass stay bounded and fail closed
+ok 61 - parseMcpProtocolBody and mcpMethodClass stay bounded and fail closed
+  ---
+  duration_ms: 0.160044
+  type: 'test'
+  ...
+# Subtest: seller-repair counters stay unchanged when MCP surface or protocol traffic is recorded
+ok 62 - seller-repair counters stay unchanged when MCP surface or protocol traffic is recorded
+  ---
+  duration_ms: 3.747327
+  type: 'test'
+  ...
+# Subtest: isolates legacy v1 request classification behind a coherent uncertainty boundary
+ok 63 - isolates legacy v1 request classification behind a coherent uncertainty boundary
+  ---
+  duration_ms: 139.287263
+  type: 'test'
+  ...
+# Subtest: persists and reloads v2 MCP counters without a second migration
+ok 64 - persists and reloads v2 MCP counters without a second migration
+  ---
+  duration_ms: 233.120419
+  type: 'test'
+  ...
+# Subtest: uses a durable per-user state path in production and migrates the legacy temp snapshot
+ok 65 - uses a durable per-user state path in production and migrates the legacy temp snapshot
+  ---
+  duration_ms: 134.304923
+  type: 'test'
+  ...
+# Subtest: declaration GET is not a human page view, a tool attempt, or usefulness
+ok 66 - declaration GET is not a human page view, a tool attempt, or usefulness
+  ---
+  duration_ms: 14.893819
+  type: 'test'
+  ...
+# Subtest: flush error classes and backoff bounds
+ok 67 - flush error classes and backoff bounds
+  ---
+  duration_ms: 0.767485
+  type: 'test'
+  ...
+# Subtest: permanent rejection retains the original entry and drains later traffic
+    # Subtest: fake contract rejection does not hot-retry or block the backlog
+    ok 1 - fake contract rejection does not hot-retry or block the backlog
+      ---
+      duration_ms: 39.044325
+      type: 'test'
+      ...
+    # Subtest: transient backoff stays bounded and a lost ack is not double-counted
+    ok 2 - transient backoff stays bounded and a lost ack is not double-counted
+      ---
+      duration_ms: 8.166448
+      type: 'test'
+      ...
+    # Subtest: a crashed transport keeps the original flush bytes
+    ok 3 - a crashed transport keeps the original flush bytes
+      ---
+      duration_ms: 1.935067
+      type: 'test'
+      ...
+    # Subtest: real PostgreSQL 17 replays the original entry after the contract admits it
+    ok 4 - real PostgreSQL 17 replays the original entry after the contract admits it
+      ---
+      duration_ms: 716.514919
+      type: 'test'
+      ...
+    1..4
+ok 68 - permanent rejection retains the original entry and drains later traffic
+  ---
+  duration_ms: 899.513401
+  type: 'test'
+  ...
+# Subtest: real PostgreSQL: migration applies and RPC semantics hold
+ok 69 - real PostgreSQL: migration applies and RPC semantics hold
+  ---
+  duration_ms: 686.541004
+  type: 'test'
+  ...
+# Subtest: real PostgreSQL: existing seven-call row gains only a later name boundary
+ok 70 - real PostgreSQL: existing seven-call row gains only a later name boundary
+  ---
+  duration_ms: 608.420695
+  type: 'test'
+  ...
+# Subtest: S125 SQL format gate: PG echoes +00:00; wire .mmmZ required
+ok 71 - S125 SQL format gate: PG echoes +00:00; wire .mmmZ required
+  ---
+  duration_ms: 576.882953
+  type: 'test'
+  ...
+# Subtest: S130 JS producer/store/WAL -> real PG17 -> hydrate -> next flush
+ok 72 - S130 JS producer/store/WAL -> real PG17 -> hydrate -> next flush
+  ---
+  duration_ms: 1134.401868
+  type: 'test'
+  ...
+# Subtest: S125 root: invalid wire-shaped dates remain rejected
+ok 73 - S125 root: invalid wire-shaped dates remain rejected
+  ---
+  duration_ms: 0.939024
+  type: 'test'
+  ...
+# Subtest: S125 root: pre-fix disk WAL replays same IDs after lost acknowledgement without losing counters
+ok 74 - S125 root: pre-fix disk WAL replays same IDs after lost acknowledgement without losing counters
+  ---
+  duration_ms: 23.035151
+  type: 'test'
+  ...
+# Subtest: forward migration matches the declared inventory and preserves historical 0005 bytes
+ok 75 - forward migration matches the declared inventory and preserves historical 0005 bytes
+  ---
+  duration_ms: 1.959072
+  type: 'test'
+  ...
+# Subtest: real PostgreSQL 17 upgrades historical 0005 and admits project_funnel_evidence
+ok 76 - real PostgreSQL 17 upgrades historical 0005 and admits project_funnel_evidence
+  ---
+  duration_ms: 903.073871
+  type: 'test'
+  ...
+1..76
+# tests 80
+# suites 0
+# pass 80
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4205.363351

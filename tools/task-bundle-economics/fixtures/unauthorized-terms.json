@@ -1,0 +1,34 @@
+{
+  "schema": "pilot.task-bundle-economics.bundle.v1",
+  "bundleId": "unauthorized-terms-example",
+  "requesterNote": "Terms that do not match FEE_BPS=500 and new_job_gross must not invent a take rate.",
+  "tasks": [
+    {
+      "taskId": "other-basis",
+      "title": "A task whose terms do not authorize this readout",
+      "summary": "Show that a different basis is disclosed, not repriced.",
+      "criteria": [
+        "public-example"
+      ],
+      "terms": {
+        "feeBps": 250,
+        "feeBasis": "old_work_net"
+      },
+      "grossAtomic": "1000000",
+      "railCostAtomic": "0",
+      "delivery": {
+        "observations": {
+          "public-example": {
+            "check": "present",
+            "observed": "yes"
+          }
+        }
+      },
+      "effort": {
+        "measured": true,
+        "directCostAtomic": "10000",
+        "bundledShareAtomic": "10000"
+      }
+    }
+  ]
+}

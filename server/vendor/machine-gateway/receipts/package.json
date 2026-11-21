@@ -1,0 +1,226 @@
+[
+  {
+    "id": "@neomorphic/machine-gateway@0.1.0",
+    "name": "@neomorphic/machine-gateway",
+    "version": "0.1.0",
+    "size": 48464,
+    "unpackedSize": 207871,
+    "shasum": "fc851fbf10176c7f99479bfa56ac33e2c2dfb5a5",
+    "integrity": "sha512-aD2jzhx1crV8UJmQoBwpfOkaEhJaCDaenG8XQIuw9K/Mtt9GDvIOoKEA9HnFQhge748ZNju12eZinyALaB7BRw==",
+    "filename": "neomorphic-machine-gateway-0.1.0.tgz",
+    "files": [
+      {
+        "path": "README.md",
+        "size": 3407,
+        "mode": 420
+      },
+      {
+        "path": "SOURCE.json",
+        "size": 4380,
+        "mode": 420
+      },
+      {
+        "path": "bin/caller.mjs",
+        "size": 3164,
+        "mode": 420
+      },
+      {
+        "path": "bin/check.mjs",
+        "size": 1289,
+        "mode": 420
+      },
+      {
+        "path": "bin/client-io.mjs",
+        "size": 3308,
+        "mode": 420
+      },
+      {
+        "path": "bin/contracts.mjs",
+        "size": 445,
+        "mode": 420
+      },
+      {
+        "path": "bin/enroll.mjs",
+        "size": 1280,
+        "mode": 420
+      },
+      {
+        "path": "bin/readiness.mjs",
+        "size": 1082,
+        "mode": 420
+      },
+      {
+        "path": "deploy/hostinger.env.example",
+        "size": 548,
+        "mode": 420
+      },
+      {
+        "path": "deploy/hostinger.json",
+        "size": 840,
+        "mode": 420
+      },
+      {
+        "path": "deploy/LAUNCH-INTEGRATION.md",
+        "size": 1368,
+        "mode": 420
+      },
+      {
+        "path": "deploy/RUNBOOK.md",
+        "size": 10415,
+        "mode": 420
+      },
+      {
+        "path": "deploy/samedaydesk.patch",
+        "size": 1574,
+        "mode": 420
+      },
+      {
+        "path": "npm-shrinkwrap.json",
+        "size": 35304,
+        "mode": 420
+      },
+      {
+        "path": "openapi.json",
+        "size": 46419,
+        "mode": 420
+      },
+      {
+        "path": "package.json",
+        "size": 858,
+        "mode": 420
+      },
+      {
+        "path": "schemas/contracts.json",
+        "size": 16355,
+        "mode": 420
+      },
+      {
+        "path": "src/config.mjs",
+        "size": 1520,
+        "mode": 420
+      },
+      {
+        "path": "src/contracts.mjs",
+        "size": 3865,
+        "mode": 420
+      },
+      {
+        "path": "src/errors.mjs",
+        "size": 534,
+        "mode": 420
+      },
+      {
+        "path": "src/facilitator-io.mjs",
+        "size": 2186,
+        "mode": 420
+      },
+      {
+        "path": "src/facilitator-worker.mjs",
+        "size": 1461,
+        "mode": 420
+      },
+      {
+        "path": "src/gateway.mjs",
+        "size": 6632,
+        "mode": 420
+      },
+      {
+        "path": "src/http.mjs",
+        "size": 5819,
+        "mode": 420
+      },
+      {
+        "path": "src/index.mjs",
+        "size": 1942,
+        "mode": 420
+      },
+      {
+        "path": "src/payments.mjs",
+        "size": 4510,
+        "mode": 420
+      },
+      {
+        "path": "src/providers.mjs",
+        "size": 6777,
+        "mode": 420
+      },
+      {
+        "path": "src/registry.mjs",
+        "size": 3431,
+        "mode": 420
+      },
+      {
+        "path": "src/schemas.mjs",
+        "size": 4627,
+        "mode": 420
+      },
+      {
+        "path": "src/server.mjs",
+        "size": 1139,
+        "mode": 420
+      },
+      {
+        "path": "src/store.mjs",
+        "size": 11033,
+        "mode": 420
+      },
+      {
+        "path": "src/util.mjs",
+        "size": 1761,
+        "mode": 420
+      },
+      {
+        "path": "src/worker.mjs",
+        "size": 242,
+        "mode": 420
+      },
+      {
+        "path": "vendor/extractor/LICENSE",
+        "size": 1068,
+        "mode": 420
+      },
+      {
+        "path": "vendor/extractor/lockfile/compare.mjs",
+        "size": 2922,
+        "mode": 420
+      },
+      {
+        "path": "vendor/extractor/lockfile/errors.mjs",
+        "size": 310,
+        "mode": 420
+      },
+      {
+        "path": "vendor/extractor/lockfile/hash-terms.mjs",
+        "size": 2054,
+        "mode": 420
+      },
+      {
+        "path": "vendor/extractor/lockfile/LICENSE",
+        "size": 1068,
+        "mode": 420
+      },
+      {
+        "path": "vendor/extractor/lockfile/parse-lockfile.mjs",
+        "size": 5982,
+        "mode": 420
+      },
+      {
+        "path": "vendor/extractor/lockfile/PROVENANCE.json",
+        "size": 607,
+        "mode": 420
+      },
+      {
+        "path": "vendor/extractor/public-fetch.mjs",
+        "size": 2005,
+        "mode": 420
+      },
+      {
+        "path": "vendor/extractor/url-guard.mjs",
+        "size": 2340,
+        "mode": 420
+      }
+    ],
+    "entryCount": 42,
+    "bundled": []
+  }
+]

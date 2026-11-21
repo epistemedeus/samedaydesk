@@ -1,0 +1,109 @@
+{
+  "schema": "root4433.future-wallet-binding.receiving.v1",
+  "recordedAt": "2026-10-23T10:31:31.324360+00:00",
+  "scope": "R4-J02 / ROOT4433 only",
+  "repository": "https://github.com/epistemedeus/samedaydesk.git",
+  "branch": "codex/root4433-future-wallet-binding-20261023",
+  "worktree": "/home/ubuntu/ae14-work/root4433-future-wallet-binding-20261023",
+  "productBase": "79fbd37d31aabdc790248443c576a2f0017e55f0",
+  "productBaseTree": "9e7c8c1bb1f513841117d9d7d3bd5ef49839f501",
+  "sourceAndTestCommit": "28b22b17a4282c9a9cffc0db63a3eb7f38bff8d7",
+  "sourceAndTestTree": "30062832be79b60c82e5a70e25b29d5baa1794f1",
+  "exportEnvelope": "Subsequent documentation-only commit on this same admitted branch; resolve the pushed branch head for the complete export.",
+  "sourceFiles": {
+    "server/scripts/test-r4-wallet-continuation.mjs": {
+      "blob": "16906f88084a282d13f9f882225f152ddea741b5",
+      "sha256": "f38074c324c253ea43789f2b36638ca683e8b5a79ab57aa7a90bca84bf55cb0f"
+    },
+    "vendor/hosted-wallet-market/src/server.mjs": {
+      "blob": "62597a52e331bf453b6abffedc733642dce900fe",
+      "sha256": "48b13523616b4c76f825bfb7df76a11bb91ac19d5a7ca9a2a0e150bf529e4219"
+    },
+    "vendor/hosted-wallet-market/src/wallet-continuation.mjs": {
+      "blob": "cb6038565f7c518e7e3a0b9746d2cb349d1b43f7",
+      "sha256": "53e61b468863a1d1157ce57084e26af7944f4beca8455e6f57a839fc7a3b8221"
+    }
+  },
+  "operatingAndAssignmentCommit": "8aded3ca3bb5f22b32454f962091ef3750715a76",
+  "researchCommit": "75654b3ae7d959ceeddcb240fb2cddc7844b8653",
+  "stagedReceiptSha256": "d2546cea321df1aa5481337f71204022cc22f5fdbdebe41655e1f10fd5ecc38b",
+  "specCheckpointBy": "2026-10-23T13:31:23.085Z",
+  "specRequiredUntil": "2026-10-23T13:46:23.085Z",
+  "admittedNative": {
+    "model": "gpt-6.1-sol",
+    "effort": "xhigh",
+    "provider": "cursor",
+    "agentId": "bc-ec55ab26-6e23-4562-9c7a-649331bdba1f",
+    "bootId": "46920f98-723f-459d-ab1e-985512ebe221",
+    "supervisorPid": 558246,
+    "nativePid": 558254,
+    "additionalModelsStarted": 0
+  },
+  "resources": {
+    "totalReserveKiB": 2097152,
+    "modelChildren": 0,
+    "testsSerial": true,
+    "peakOwnedIncludingNativeRssKiB": 953316,
+    "sampleIntervalMs": 200,
+    "measurement": "Sum RSS for verified owning native supervisor/process and their descendants, receiver processes and the owned PostgreSQL tree. Shared mappings count once per process; this is a sampled RSS bound, not an allocation of extra memory.",
+    "nodeOldSpaceMiBPerFixtureProcess": 384,
+    "postgresSharedBuffersMiB": 32
+  },
+  "runtime": {
+    "node": "v22.23.3",
+    "npm": "10.9.9",
+    "postgres": "16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)",
+    "postgresBinary": "/tmp/root4000-pg/usr/lib/postgresql/16/bin/postgres",
+    "postgresBinarySha256": "201d8daff9a5bd9df70b820471b965c39f5a776d677f395232c477d051270722"
+  },
+  "candidateClosure": {
+    "packageSha256": "8537179c0bc3bedc77b8c44a8903e97ef5c98873e02e9a4dade61f49e8eaf7b2",
+    "hostSha256": "7b6487c325f0d9b1ca4acfd4391e61b7826297acac4af1f0dba87eb5a611c9b0",
+    "generator": "server/scripts/refresh-installed-receiving-source.mjs",
+    "jobLocalOnly": true,
+    "qualified": false,
+    "installed": false
+  },
+  "tests": {
+    "finalHttpPg": {
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0,
+      "log": "19-final-http-pg-with-native-reserve.log"
+    },
+    "requiredRegressions": {
+      "passed": 9,
+      "failed": 0,
+      "skipped": 0,
+      "log": "18-account-profile-regressions.log"
+    },
+    "pinnedOriginalBoundary": {
+      "passedAssertions": 5,
+      "failed": 0,
+      "log": "15-original-retained-session-boundary.log",
+      "nativeRetainedReadStatus": 401,
+      "nativeRetainedReadCode": "unauthenticated"
+    }
+  },
+  "firstFailure": {
+    "command": "node --test --test-concurrency=1 vendor/hosted-wallet-market/test/machine-profile-receiving.test.mjs",
+    "exitCode": 1,
+    "cause": "ERR_MODULE_NOT_FOUND: viem",
+    "log": "00-baseline-prerequisite.log"
+  },
+  "remainingBoundary": {
+    "owner": "Root",
+    "file": "vendor/hosted-wallet-market/src/retained-outcome.mjs",
+    "proposal": "ROOT-SHARED-PORT.md",
+    "applied": false,
+    "proposalTested": false,
+    "effect": "Native machine-session old-result receiving remains blocked by the pre-existing pair/token hash mismatch. Legacy-issued old-result preservation and native dual-control binding pass."
+  },
+  "migrationAdded": false,
+  "sharedPinsExported": false,
+  "locksChanged": false,
+  "productionEffects": false,
+  "rpcMutations": 0,
+  "upstreamPrCreated": false,
+  "deploymentPerformed": false
+}

@@ -1,0 +1,64 @@
+{
+  "schema": "root5950.managed-source-qualification-inputs.v1",
+  "repository": "epistemedeus/samedaydesk",
+  "origin": "https://github.com/epistemedeus/samedaydesk.git",
+  "branch": "codex/root5950-mcp-refusal-reasons-20261024",
+  "buildQualifiedCommit": "40c4c692f5f24f13f056b4ebae4cbf48d91f0890",
+  "buildQualifiedTree": "9dbae27715928c1fb6d422bff9b17618c3873845",
+  "installedBaseline": "f629597d9e865bd6709d4b10d96a9905cc9ea3c3",
+  "installedBuild": "01a16c7b-e563-704f-904f-1b8e966584c9",
+  "buildScript": "build:managed-contributor",
+  "neomorphicCommit": "a0c97a594cebe73236e95caa6c4028bb36a60be9",
+  "neomorphicDeskCommit": "0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556",
+  "controllerCommit": "7c798f18c9f385b51139bcf4f03b1458dc928c56",
+  "sourceCheckout": "/home/ubuntu/ae14-work/root5950-mcp-refusal-reasons-20261024",
+  "qualifiedSourceMembers": 1305,
+  "memberDigest": "1f3a885929197e204d0966ce9e7071d43d14d0a1190a5eef8323a93ab1876da0",
+  "edgeSha256": "a3b0c1f9bdaa8f4a24dd8ab8ed1e1295523d05dc2fbe117773bd75bf53270386",
+  "financialPair": {
+    "members": 112,
+    "sourceSha256": "6766adc9323b547a5b36299fd202487e61cc3d9bf7b0becee7120d2dfad4b647",
+    "hostSha256": "352c286e93effd2283ff3f3b760c65158c3d024609947bba318891244f552cb3"
+  },
+  "changedRuntimeMembers": [
+    {
+      "path": "server/lib/mcp-admission.js",
+      "beforeBlob": "495f9cd2287f1d698c628d44a1248998a7e068ae",
+      "afterBlob": "4f51fd70d1af5c4f22361b23bed3fdc59bc396cb"
+    },
+    {
+      "path": "server/lib/mcp-http.js",
+      "beforeBlob": "9e72c046444f2176eff5a0648ee0838656a36bd3",
+      "afterBlob": "81665fdb35f41782ff3029359360770af2aae421"
+    },
+    {
+      "path": "server/routes/mcp.js",
+      "beforeBlob": "2ce654142e1480628fdcf7df63ef1b47a3896b17",
+      "afterBlob": "b6b3fd5461789116db2cf38f726324c09aa274b4"
+    },
+    {
+      "path": "server/lib/pulse.js",
+      "beforeBlob": "41363e4b4cbb4b2ffdc05afd95fcc47b5cff8d87",
+      "afterBlob": "f1a1540b8d417c00698cce3c1dcf4c2553f62bf5"
+    },
+    {
+      "path": "server/lib/pulse-store/mcp-outcomes.js",
+      "beforeBlob": "3784b65669f16829f7a2049d2baabe4ea022b006",
+      "afterBlob": "57fa2c88c49009ca90aa813cae5dd9c0359d6b71"
+    },
+    {
+      "path": "supabase/migrations/0009_pulse_mcp_refusal_reasons.sql",
+      "beforeBlob": null,
+      "afterBlob": "82e11258cecff4d3493b66819779382861a2042d"
+    }
+  ],
+  "privateReleaseInputs": "Root-held current accepted postimage/config/plan/enrollment are neither read nor replaced by this source qualification. Use their current canonical selectors.",
+  "currentExport": "The controller ROOT6000-WORKER-RESULT.json supplies final clean head/tree and final fresh canonical admission. Later commits after the build pin are documentation-only; all runtime/build inputs remain byte-equal.",
+  "schemaOrder": [
+    "Existing0008 is already applied; do not replay it.",
+    "Root separately applies additive0009 and its schema-owner verify before the new producer.",
+    "Release compatible reader/runtime source, then receive installed epoch and exact WAL drain.",
+    "Rollback behavior/producer only while retaining compatible DB/WAL readers and SQL even after drain; do not strip fields, down-migrate or replay MCP work."
+  ],
+  "productionEffect": false
+}

@@ -1,0 +1,45 @@
+TAP version 13
+# Subtest: startup diagnostic only emits known stages and native codes
+ok 1 - startup diagnostic only emits known stages and native codes
+  ---
+  duration_ms: 1.167277
+  ...
+# Subtest: startup identifies service_import while cleanup and public refusal remain
+ok 2 - startup identifies service_import while cleanup and public refusal remain
+  ---
+  duration_ms: 2.115477
+  ...
+# Subtest: startup identifies service_config while cleanup and public refusal remain
+ok 3 - startup identifies service_config while cleanup and public refusal remain
+  ---
+  duration_ms: 0.547387
+  ...
+# Subtest: startup identifies store_create while cleanup and public refusal remain
+ok 4 - startup identifies store_create while cleanup and public refusal remain
+  ---
+  duration_ms: 0.637434
+  ...
+# Subtest: startup identifies entry_create while cleanup and public refusal remain
+ok 5 - startup identifies entry_create while cleanup and public refusal remain
+  ---
+  duration_ms: 0.52098
+  ...
+# Subtest: startup identifies base_readiness while cleanup and public refusal remain
+ok 6 - startup identifies base_readiness while cleanup and public refusal remain
+  ---
+  duration_ms: 0.507278
+  ...
+# Subtest: startup identifies entry_readiness while cleanup and public refusal remain
+ok 7 - startup identifies entry_readiness while cleanup and public refusal remain
+  ---
+  duration_ms: 0.552757
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 143.158179

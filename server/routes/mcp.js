@@ -20,10 +20,10 @@ import { mcpHeaders } from "../lib/mcp-http.js";
 import { runCheck } from "./tools.js";
 import {
   browseTaskMarketTasks,
-  buildTaskMarketDelegationPlan,
+  planTaskMarketDelegation,
   trackTaskMarketTask,
 } from "../lib/taskmarket.js";
-import { TOOLS } from "../lib/mcp-tool-inventory.js";
+import { MCP_TOOL_NAMES, TOOLS } from "../lib/mcp-tool-inventory.js";
 import { projectDeclaredEvidence, safeCode } from "../lib/funnel-evidence/project-evidence.mjs";
 import { formatAgentReadiness, runAgentReadinessCheck } from "../lib/agent-readiness/service.js";
 import {
@@ -56,6 +56,23 @@ export { TOOLS };
 const okMsg = (id, result) => ({ jsonrpc: "2.0", id, result });
 const errMsg = (id, code, message) => ({ jsonrpc: "2.0", id, error: { code, message } });
 
+const FUNNEL_NEXT = {
+  request_schema: "Next: pass arguments.packet as one object, either a core observation or one consumer plane. This call does not fetch.",
+  private_field: "Next: remove private fields and retry the same declared packet. This call does not fetch.",
+  url_fetch_refused: "Next: remove fetch keys. This tool does not fetch URLs.",
+  oversize: "Next: send a smaller packet. This call does not fetch.",
+  mixed_packet: "Next: send either a core packet or one consumer plane, not both. This call does not fetch.",
+  nested_bound: "Next: reduce nesting and retry. This call does not fetch.",
+  count_bound: "Next: reduce sources, records, or nodes and retry. This call does not fetch.",
+  invalid_body: "Next: send a JSON object packet. This call does not fetch.",
+  projection_failed: "Next: match the declared packet schema and retry. This call does not fetch.",
+};
+
+function funnelErrorText(code) {
+  const next = FUNNEL_NEXT[code] || "Next: correct the packet and retry. This call does not fetch.";
+  return `${code}. ${next}`;
+}
+
 function formatReport(r) {
   const lines = [`AI Readiness for ${r.url}`, `Score: ${r.score}/100   Grade: ${r.grade}`, ""];
   for (const c of r.checks || []) {
@@ -74,6 +91,9 @@ function formatReport(r) {
 }
 
 async function handle(msg, ctx = {}) {
+  // Internal decision metadata only; never attach it to the JSON-RPC reply.
+  // Each concurrently executed batch entry receives its own context.
+  const refused = (reason, reply) => { ctx.refusalReason = reason; return reply; };
   const { id, method, params } = msg || {};
   switch (method) {
     case "initialize":
@@ -96,7 +116,7 @@ async function handle(msg, ctx = {}) {
       if (["plan_taskmarket_delegation", "browse_taskmarket_tasks", "track_taskmarket_task"].includes(name)) {
         try {
           let result;
-          if (name === "plan_taskmarket_delegation") result = buildTaskMarketDelegationPlan(args);
+          if (name === "plan_taskmarket_delegation") result = await planTaskMarketDelegation(args);
           else if (name === "browse_taskmarket_tasks") result = await browseTaskMarketTasks(args);
           else result = await trackTaskMarketTask(args);
           return okMsg(id, {
@@ -104,13 +124,13 @@ async function handle(msg, ctx = {}) {
             structuredContent: result,
           });
         } catch (e) {
-          return okMsg(id, { content: [{ type: "text", text: `TaskMarket tool error: ${e.message}` }], isError: true });
+          return refused("tool_error", okMsg(id, { content: [{ type: "text", text: `TaskMarket tool error: ${e.message}` }], isError: true }));
         }
       }
 
       if (name === "check_agent_readiness") {
         const host = String(args.host || args.url || "").trim();
-        if (!host) return okMsg(id, { content: [{ type: "text", text: "Provide a host, e.g. example.com" }], isError: true });
+        if (!host) return refused("tool_input", okMsg(id, { content: [{ type: "text", text: "Provide a host, e.g. example.com" }], isError: true }));
         try {
           const { payload } = await runAgentReadinessCheck(host, { clientKey: ctx.clientKey });
           return okMsg(id, {
@@ -119,7 +139,7 @@ async function handle(msg, ctx = {}) {
           });
         } catch (e) {
           const safe = e.status === 400 || e.status === 429 ? e.message : `Could not check ${host}`;
-          return okMsg(id, { content: [{ type: "text", text: safe }], isError: true });
+          return refused("tool_error", okMsg(id, { content: [{ type: "text", text: safe }], isError: true }));
         }
       }
 
@@ -140,18 +160,18 @@ async function handle(msg, ctx = {}) {
           });
         } catch (error) {
           const code = safeCode(error);
-          return okMsg(id, {
-            content: [{ type: "text", text: code }],
+          return refused("tool_error", okMsg(id, {
+            content: [{ type: "text", text: funnelErrorText(code) }],
             structuredContent: { error: { code } },
             isError: true,
-          });
+          }));
         }
       }
 
       const url = String(params?.arguments?.url || "").trim();
       if (name !== "check_ai_readiness" && name !== "generate_complete_fix_pack")
-        return errMsg(id, -32602, `Unknown tool: ${name}`);
-      if (!url) return okMsg(id, { content: [{ type: "text", text: "Provide a url, e.g. example.com" }], isError: true });
+        return refused("unknown_tool", errMsg(id, -32602, `Unknown tool: ${name}. Next: call tools/list and use one returned name. Do not send a payment header.`));
+      if (!url) return refused("tool_input", okMsg(id, { content: [{ type: "text", text: "Provide a url, e.g. example.com" }], isError: true }));
 
       if (name === "generate_complete_fix_pack") {
         const license = params?.arguments?.license;
@@ -164,19 +184,19 @@ async function handle(msg, ctx = {}) {
               + (await generateStarterFixPack(url));
           } catch { /* ignore */ }
           const why = license
-            ? "That license code couldn't be verified as a paid Fix Pack (if you just paid, wait ~30s and retry, or contact help@samedaydesk.com)."
+            ? "That license code couldn't be verified as a paid Fix Pack (if you just paid, wait ~30s and retry, or contact contact@neomorphic.io)."
             : "No license provided.";
-          return okMsg(id, {
+          return refused("license_unverified", okMsg(id, {
             content: [{ type: "text", text: `${why}\n\nTo get the complete Fix Pack: buy at ${FIXPACK_LINK} ($39). After paying you'll see your license code; call this tool again with url + that license.${starter}` }],
             isError: true,
-          });
+          }));
         }
         try {
           const pack = await generateCompleteFixPack(url);
           return okMsg(id, { content: [{ type: "text", text: `✅ Verified. Your complete AI-Readiness Fix Pack:\n\n${pack}` }] });
         } catch (e) {
           // Payment is valid but generation failed — never lose a paid order.
-          return okMsg(id, { content: [{ type: "text", text: `Your payment is verified, but auto-generation hit an error (${e.message}). Email help@samedaydesk.com with your url (${url}) and license and we'll deliver your Fix Pack right away.` }], isError: true });
+          return refused("tool_error", okMsg(id, { content: [{ type: "text", text: `Your payment is verified, but auto-generation hit an error (${e.message}). Email contact@neomorphic.io with your url (${url}) and license and we'll deliver your Fix Pack right away.` }], isError: true }));
         }
       }
 
@@ -184,11 +204,11 @@ async function handle(msg, ctx = {}) {
         const r = await runCheck(url);
         return okMsg(id, { content: [{ type: "text", text: formatReport(r) }], structuredContent: r });
       } catch (e) {
-        return okMsg(id, { content: [{ type: "text", text: `Could not check ${url}: ${e.message}` }], isError: true });
+        return refused("tool_error", okMsg(id, { content: [{ type: "text", text: `Could not check ${url}: ${e.message}` }], isError: true }));
       }
     }
     default:
-      return id !== undefined ? errMsg(id, -32601, `Method not found: ${method}`) : null;
+      return id !== undefined ? refused("unknown_method", errMsg(id, -32601, `Method not found: ${method}. Next: use initialize, tools/list, or tools/call.`)) : null;
   }
 }
 
@@ -208,7 +228,8 @@ router.get("/", (req, res) => {
   res.type("text/plain").send(
     "samedaydesk agent tools MCP server (Streamable HTTP).\n" +
       'Add to a remote-MCP-capable client: { "mcpServers": { "samedaydesk": { "url": "https://samedaydesk.com/mcp" } } }\n' +
-      "Tools: free AI-readiness and agent-readiness checks, a paid Fix Pack, plus free TaskMarket delegation planning, task browsing, and task tracking.\n" +
+      `Tools (${MCP_TOOL_NAMES.length}): ${MCP_TOOL_NAMES.join(", ")}.\n` +
+      "Next: POST JSON-RPC initialize, then tools/list, then one tools/call. tools/list is the inventory. Do not send a payment header. generate_complete_fix_pack needs a license bought separately.\n" +
       "TaskMarket integration: https://github.com/epistemedeus/samedaydesk/blob/main/TASKMARKET-INTEGRATION.md\n",
   );
 });
@@ -226,16 +247,17 @@ router.post("/", async (req, res) => {
   const out = (await Promise.all(admission.entries.map(async (message) => {
     if (message.kind === "response") return null;
     if (message.error) {
-      recordMcpProduced(req, message, message.error);
+      recordMcpProduced(req, message, message.error, message.refusalReason);
       return message.kind === "notification" ? null : message.error;
     }
     try {
-      const result = await handle(message.entry, ctx);
-      recordMcpProduced(req, message, result);
+      const entryContext = { ...ctx };
+      const result = await handle(message.entry, entryContext);
+      recordMcpProduced(req, message, result, entryContext.refusalReason);
       return message.kind === "notification" ? null : result;
     } catch {
       const error = errMsg(message.entry.id, -32603, "Internal error");
-      recordMcpProduced(req, message, error);
+      recordMcpProduced(req, message, error, "handler_error");
       return message.kind === "notification" ? null : error;
     }
   }))).filter(Boolean);

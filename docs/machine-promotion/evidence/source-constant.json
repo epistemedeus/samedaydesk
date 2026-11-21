@@ -1,0 +1,10 @@
+{
+  "schema": "sds.h120010.source-constant.v1",
+  "recordedCandidateSourceSha256": "458c129b2397099200be163ea6b11be61926114f9d6842897607cfcb9a771ba8",
+  "measuredCandidateSourceSha256": "8c35b8f13a5cb6ac9399c630ccc2fdace428cd839949d62375127f924f322ad6",
+  "measuredCandidateHostSha256": "a5277b33df3ddf6e780aea3c360d2651312c546d860508d8d96fa463cadf04f3",
+  "recordedSourceConstantAuthority": false,
+  "recordedSourceConstantAgrees": false,
+  "sourceFile": "vendor/hosted-wallet-market/SOURCE.json",
+  "amended": false
+}

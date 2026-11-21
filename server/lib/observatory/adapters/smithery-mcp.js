@@ -11,9 +11,12 @@ import {
   captureErrorRecord,
   classifyFetchAvailability,
   classifyProviderTimestamp,
+  collectionPolicyForDateOnly,
   createEnvelope,
   createMetric,
+  declareDateOnly,
   defaultCoverage,
+  evaluateDeclaredRetirement,
   inspectNumeric,
   isPlainObject,
   specsToUnavailableMetrics,
@@ -46,6 +49,33 @@ const SOURCE_WITHHELD = Object.freeze([
   "paid_demand_population",
   "repeat_demand",
 ]);
+
+const dateOnly = declareDateOnly("2026-10-31");
+export const SMITHERY_ANNOUNCEMENT = Object.freeze({
+  precision: dateOnly.precision,
+  date: dateOnly.date,
+  time: null,
+  timeZone: null,
+  officialInstant: null,
+  sourceUrl: "https://smithery.ai/future",
+});
+export const SMITHERY_COLLECTION_POLICY = collectionPolicyForDateOnly(SMITHERY_ANNOUNCEMENT);
+export const SMITHERY_DECLARED_RETIREMENT = Object.freeze({
+  sourceId,
+  kind: "provider_declared_retirement",
+  announcement: SMITHERY_ANNOUNCEMENT,
+  collectionPolicy: SMITHERY_COLLECTION_POLICY,
+  announcementIsOutage: false,
+  measuredShutdown: null,
+  doesNotEstablish: Object.freeze([
+    "zero_traffic",
+    "empty_catalog",
+    "paid_demand",
+    "temporary_transport_fault",
+    "replacement_population",
+    "official_shutdown_instant",
+  ]),
+});
 
 const SMITHERY_PAID_ACTIVITY = Object.freeze({
   sourceId: "smithery_mcp",
@@ -93,9 +123,19 @@ export const descriptor = Object.freeze({
     "SameDayDesk listings as live usage",
   ]),
   withheldConclusions: SOURCE_WITHHELD,
-  notes: "pageSize=1 is used only to read pagination.totalCount. Server useCount is ignored.",
+  notes: "pageSize=1 is used only to read pagination.totalCount. Server useCount is ignored. Smithery announced a date-only API retirement on 2026-10-31. sourceLifecycle records that announcement and the SDS collection policy.",
   metricKeys: Object.freeze(["registered_servers"]),
+  sourceLifecycle: SMITHERY_DECLARED_RETIREMENT,
 });
+
+export function sourceLifecycle(input = {}) {
+  return evaluateDeclaredRetirement({
+    declaration: SMITHERY_DECLARED_RETIREMENT,
+    fetchedAt: input.fetchedAt ?? null,
+    nowMs: input.nowMs,
+    observedFailure: input.observedFailure ?? null,
+  });
+}
 
 export function observe(capture, ctx = {}) {
   const fetchedAt = capture.fetchedAt ?? null;
@@ -110,6 +150,26 @@ export function observe(capture, ctx = {}) {
     : null;
   const lastModifiedIso = lastModified ? toIsoOrNull(lastModified) : null;
   const picked = classifyProviderTimestamp(lastModifiedIso, fetchedAt, ctx.nowMs);
+  // Inspect the response independently of collection admission. Withholding a
+  // valid count is policy; a malformed response is still an observed failure.
+  const body = capture.body;
+  const pagination = isPlainObject(body) && isPlainObject(body.pagination) ? body.pagination : null;
+  const rawCount = pagination ? pagination.totalCount : undefined;
+  const inspected = inspectNumeric(rawCount, "integer");
+  const schemaFailure = !fetchAvailability
+    ? (!isPlainObject(body) ? "schema_error"
+      : !pagination ? "missing_pagination"
+      : inspected.state === "missing" ? "missing_total_count"
+      : inspected.state !== "ok" ? "invalid_total_count" : null)
+    : null;
+  const lifecycle = sourceLifecycle({
+    fetchedAt,
+    nowMs: ctx.nowMs,
+    observedFailure: observedFailureFrom(capture, fetchAvailability)
+      ?? (schemaFailure ? { code: schemaFailure, availability: "error" } : null),
+  });
+  if (!lifecycle.policyAdmitsCapture) warnings.push(collectionPolicyWarning(lifecycle));
+  else if (lifecycle.capturePlacement === "unplaced") warnings.push(unplacedCaptureWarning());
 
   if (fetchAvailability) {
     return createEnvelope({
@@ -130,10 +190,10 @@ export function observe(capture, ctx = {}) {
       rawSourceLink: upstreamUrl,
       withheldConclusions: SOURCE_WITHHELD,
       paidActivity: SMITHERY_PAID_ACTIVITY,
+      sourceLifecycle: lifecycle,
     });
   }
 
-  const body = capture.body;
   if (!isPlainObject(body)) {
     errors.push({ code: "schema_error", message: "smithery body is not a JSON object" });
     return finish({
@@ -144,18 +204,26 @@ export function observe(capture, ctx = {}) {
       availability: "error",
       errors,
       warnings,
+      lifecycle,
     });
   }
 
-  const pagination = isPlainObject(body.pagination) ? body.pagination : null;
   if (!pagination) {
     errors.push({ code: "missing_pagination", message: "smithery payload has no pagination object" });
   }
 
-  const rawCount = pagination ? pagination.totalCount : undefined;
-  const inspected = rawCount === undefined
-    ? { state: "missing", value: null }
-    : inspectNumeric(rawCount, "integer");
+  if (!lifecycle.policyAdmitsCapture) {
+    return finish({
+      fetchedAt,
+      picked: lastModifiedIso ? picked : { timestamp: null, state: "missing" },
+      capture,
+      metrics: specsToUnavailableMetrics(metricSpecs, schemaFailure ? "error" : "unavailable"),
+      availability: schemaFailure ? "error" : "unavailable",
+      errors,
+      warnings,
+      lifecycle,
+    });
+  }
 
   const metrics = [
     createMetric({
@@ -207,6 +275,7 @@ export function observe(capture, ctx = {}) {
     availability,
     errors,
     warnings,
+    lifecycle,
     rawExcerpt: boundRawExcerpt({ pagination: { totalCount: inspected.value }, servers: Array.isArray(body.servers) ? body.servers.slice(0, 1).map(row => ({
       id: typeof row?.id === "string" ? row.id.slice(0, 160) : null,
       qualifiedName: typeof row?.qualifiedName === "string" ? row.qualifiedName.slice(0, 160) : null,
@@ -215,7 +284,7 @@ export function observe(capture, ctx = {}) {
   });
 }
 
-function finish({ fetchedAt, picked, capture, metrics, availability, errors, warnings, rawExcerpt }) {
+function finish({ fetchedAt, picked, capture, metrics, availability, errors, warnings, rawExcerpt, lifecycle }) {
   return createEnvelope({
     sourceId,
     sourceKind,
@@ -235,7 +304,33 @@ function finish({ fetchedAt, picked, capture, metrics, availability, errors, war
     withheldConclusions: SOURCE_WITHHELD,
     rawExcerpt,
     paidActivity: SMITHERY_PAID_ACTIVITY,
+    sourceLifecycle: lifecycle,
   });
+}
+
+function observedFailureFrom(capture, fetchAvailability) {
+  if (!fetchAvailability) return null;
+  const code = capture && capture.error && capture.error.code
+    ? String(capture.error.code)
+    : (Number.isInteger(capture && capture.httpStatus) ? `http_${capture.httpStatus}` : fetchAvailability);
+  return { code, availability: fetchAvailability };
+}
+
+function collectionPolicyWarning(lifecycle) {
+  return {
+    code: "collection_policy",
+    message: "Catalog count withheld by the SDS collection policy. The policy clock is the UTC start of Smithery's date-only retirement announcement. Official shutdown time is unknown.",
+    capturePlacement: lifecycle.capturePlacement,
+    admitBefore: lifecycle.collectionPolicy.admitBefore,
+    timeBasis: lifecycle.collectionPolicy.timeBasis,
+  };
+}
+
+function unplacedCaptureWarning() {
+  return {
+    code: "capture_time_unplaced",
+    message: "Capture fetchedAt is not a timestamp, so this count is not placed on the collection-policy clock.",
+  };
 }
 
 function coverage() {
@@ -245,6 +340,10 @@ function coverage() {
     window: WINDOW,
     notes: "pagination.totalCount is catalog registrations, not runtime heartbeats or traffic.",
   });
+}
+
+export function failureCoverage() {
+  return coverage();
 }
 
 function toIsoOrNull(value) {

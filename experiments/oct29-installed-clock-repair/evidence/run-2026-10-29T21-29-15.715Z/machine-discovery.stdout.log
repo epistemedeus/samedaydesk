@@ -1,0 +1,46 @@
+
+> samedaydesk@1.0.0 test:machine-discovery
+> node --test server/scripts/test-machine-discovery-journey.js
+
+TAP version 13
+# [route-shells] missing /x402, /x402/seller-conformance, /x402/verified, /tools/ai-readiness, /for-agents, /for-agents/record-repeat, /for-agents/distribution-repair, /for-agents/consumer-repeat, /for-agents/useful-jobs, /terms, /privacy, /login, /signup, /dashboard, /checkout under /tmp/machine-guide-source-uLh5nY
+# Subtest: machine guide source serves the active contact over the production static path
+ok 1 - machine guide source serves the active contact over the production static path
+  ---
+  duration_ms: 24.281708
+  ...
+# Subtest: explicit client build emits and serves the exact active machine guide
+ok 2 - explicit client build emits and serves the exact active machine guide # SKIP no explicit client build supplied; source/static transport is tested separately
+  ---
+  duration_ms: 0.122703
+  ...
+# Subtest: discovery documents are acquired over HTTP and a free tool returns a useful plan
+ok 3 - discovery documents are acquired over HTTP and a free tool returns a useful plan
+  ---
+  duration_ms: 71.329764
+  ...
+# {"source":"server/lib/apex-declarations.js","responses":{"/openapi.json":{"status":200,"sha256":"9f0ee5168bde5dfa600a744d0f027eeae5b1c8e9b9b813e2283cb3a7a43fc2dd"},"/skill.md":{"status":200,"sha256":"4a4b5d8a062a6d28251d938ce7170203d05dda65bc649c55427acdbf9c176db3"},"/.well-known/api-catalog":{"status":200,"sha256":"f9661789e211aa92b3d0905fd31653e0fc630e800feb151df27722673ab96be0"}},"get_health":{"status":200,"sha256":"25f3cd6cdf595bede0515188327644e7e50aab80fa914d5d9c740863830d3621"},"mcp_initialize":{"status":200,"sha256":"9af0d5c9a15d78e9439652f6aea39478cb0abb53ea72ed923dc3b9f98607a44f"},"mcp_tools_list":{"status":200,"sha256":"d37abd58916e2d31373eb196483b675307b7ec80057e52da5180b1d16117a0ca"},"plan_taskmarket_delegation":{"status":200,"sha256":"fbb138310c553c50e13a2ed0ab47ad4906dafb682b3c65c2271f336fd6d352d4"},"changedPlan":{"plan_id":"13132ae20fe6c8afa44d86837b3fd9c35312c50845364c66cc3c297f81f07bc4","executed":false},"checker":{"warn":["discovery.robots: No response was recorded for /robots.txt. The robots.txt was not read, so this is not evidence it is absent or invalid. Agent rules are therefore unknown.","identity.consistency: 3 of 44 operations appear on every naming surface.","apiCatalog.links: 7 of 15 catalog links resolve inside this bundle.","usability.mcp.props: Properties missing a type or description: plan_taskmarket_delegation.mode, plan_taskmarket_delegation.tags, browse_taskmarket_tasks.status, browse_taskmarket_tasks.mode +1 more.","usability.mcp.required: Tools with inputs but no required array: browse_taskmarket_tasks.","usability.mcp.output: Tools without outputSchema: check_ai_readiness, generate_complete_fix_pack, plan_taskmarket_delegation, browse_taskmarket_tasks +2 more.","usability.openapi.errors: Operations with no 4xx response or a 4xx without schema: getHealth, describeMcpEndpoint, getAgentCard, getMcpRegistryAuth +6 more."],"fail":["discovery.llms: No response was recorded for /llms.txt. The document was not read, so this is not evidence it is absent or invalid.","x402.parses: No response was recorded for /.well-known/x402. The document was not read, so this is not evidence it is absent or invalid."]},"pulse":{"declarationFetchDelta":{"/openapi.json":1,"/skill.md":1,"/.well-known/api-catalog":1},"toolAttemptDelta":4,"humansUnchanged":true,"deliveryStoredInPulse":false}}
+# Subtest: published response variants match the actual HTTP transports
+ok 4 - published response variants match the actual HTTP transports
+  ---
+  duration_ms: 12.038885
+  ...
+# Subtest: production fallback keeps declarations out of the HTML shell and preserves old routes
+ok 5 - production fallback keeps declarations out of the HTML shell and preserves old routes
+  ---
+  duration_ms: 1458.200426
+  ...
+# Subtest: refusal and truncated retrieval stay distinct from a missing declaration
+ok 6 - refusal and truncated retrieval stay distinct from a missing declaration
+  ---
+  duration_ms: 1.03282
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 1980.915003

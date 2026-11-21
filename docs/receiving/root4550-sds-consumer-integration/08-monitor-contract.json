@@ -1,0 +1,45 @@
+{
+  "command": [
+    "env",
+    "NODE_OPTIONS=--max-old-space-size=512",
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "--test-name-pattern=checked-in machine and API contracts",
+    "server/vendor/continuous-monitoring/test/04-entitlement-contract.test.mjs"
+  ],
+  "cwd": "/home/ubuntu/ae14-work/root4550-sds-consumer-integration-20261023",
+  "exitCode": 0,
+  "startedUtc": "2026-10-23T11:26:57Z",
+  "elapsedSeconds": 0.31,
+  "peakOwnedRssKiB": 518744,
+  "reserveKiB": 4194304,
+  "nativeObserved": [
+    576692,
+    576693
+  ],
+  "peakPids": [
+    576692,
+    576693,
+    576700,
+    577317,
+    578295,
+    578719,
+    578885,
+    579317,
+    579481,
+    579916,
+    580115,
+    580134,
+    580146,
+    580322,
+    580323,
+    580324,
+    580330,
+    580342
+  ],
+  "sampleIntervalMs": 100,
+  "samples": 4,
+  "modelChildren": 0,
+  "scope": "Exact admitted native/supervisor PID+start time, their descendants and newly created detached fixture PostgreSQL. Shared pages repeat in summed RSS; between-sample peaks unmeasured."
+}

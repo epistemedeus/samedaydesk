@@ -1,0 +1,31 @@
+{
+  "schema": "pilot.composed-source-receiving.v1",
+  "at": "2026-11-04T04:55:44.899Z",
+  "source": "45e1c3fc23dcffd07a01c95e7b4a009d05159fc2",
+  "sourceSha256": "2fc7a9888654d617b51f1268b3554abfdc1595c676d90a65d8450a311d920d82",
+  "hostSha256": "8f8ce3b387382df228a01b2caf7943d5e72840cd481264093b8897731e3fa654",
+  "independentReplay": "ROOT62682",
+  "enrollmentReplay": "ROOT27946",
+  "independentPassed": 54,
+  "enrolledPassed": 54,
+  "failed": 0,
+  "skipped": 0,
+  "originalCountercaseFailures": [
+    "committed catalog retains history and the separate proposal stays unreceived",
+    "current tree treats the cafd packet as stale and does not rewrite it",
+    "historical-only, received H142, and the pending measurement candidate stay distinct"
+  ],
+  "corrected": "Pending negatives copy the registry without this profile. Actual received slots retain exact Root identity and packet agreement.",
+  "normalSelect": 0,
+  "normalDecode": 0,
+  "preservedHuman": {
+    "files": 352,
+    "bytes": 59951737,
+    "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5",
+    "viteInvoked": false
+  },
+  "originalWriterUnchanged": true,
+  "sourceQualified": true,
+  "installed": false,
+  "financialActivation": false
+}

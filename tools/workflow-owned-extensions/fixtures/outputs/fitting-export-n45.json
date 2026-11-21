@@ -1,0 +1,115 @@
+{
+  "schema": "samedaydesk.workflow-owned-extension-invocation.v1",
+  "ok": true,
+  "fitting": true,
+  "capabilityApplied": true,
+  "capability": "result-reuse",
+  "capabilitySource": "tools/result-reuse",
+  "extensionId": "dify-result-reuse",
+  "extensionVersion": "0.1.0",
+  "consumerKind": "workflow_runtime_embedding",
+  "tool": "export_reuse",
+  "runtime": "dify",
+  "runtimeAvailable": false,
+  "runtimeProbed": false,
+  "runtimeCalled": false,
+  "runtimeExecutionStatus": "not yet executed on runtime",
+  "installationStatus": "source_only_not_installed",
+  "catalogListed": false,
+  "hostedCodeExecution": false,
+  "executionPath": "direct_sdk_fallback",
+  "message": "executed through tools/result-reuse because the runtime path is unavailable",
+  "usefulDirectRoute": {
+    "package": "tools/result-reuse",
+    "cli": "node tools/result-reuse/cli.mjs preview --input <accepted-result.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC>",
+    "exportCli": "node tools/result-reuse/cli.mjs export --input <accepted-result.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --opt-in --out <observation.json>",
+    "decideCli": "node tools/result-reuse/cli.mjs decide-or-reuse --input <before-work.json> --produced <decision.json> --out <observation.json> --task-id <id> --subject <id> --sequence <n> --clock <ISO-UTC> --horizon <hours> --opt-in",
+    "requiredInput": "extract-batch, page-change brief, record report, or n45 page-change result JSON",
+    "note": "Neither Dify nor Ghost is required. The existing local result-reuse CLI is the useful direct path when a workflow runtime is unavailable or the task does not fit."
+  },
+  "sdk": {
+    "ok": true,
+    "mode": "export",
+    "kind": "n45_page_change_result",
+    "incomplete": false,
+    "publicSafeCertified": false,
+    "evidenceKind": "user_selected_unverified",
+    "purchaseRequiresPublish": false,
+    "optInRequiredToWrite": true,
+    "included": [
+      "schema",
+      "url",
+      "status",
+      "title",
+      "sourceContentHash",
+      "bytes",
+      "fetchedAt",
+      "sourceResultAssertions",
+      "contentHash"
+    ],
+    "omitted": [],
+    "sourceDisclosure": {
+      "originalEvidenceUrlAvailable": true,
+      "sourceRole": "original_evidence_url"
+    },
+    "n45": {
+      "class": "observation",
+      "subject": "n45-example-com-result",
+      "correctsSequence": null
+    },
+    "observation": {
+      "schema": "neomorphic.task-memory.observation.v1",
+      "contractVersion": 1,
+      "observationId": "obs_3d28ba006763f201d4a5c9564290db88",
+      "revisionId": "rev_1",
+      "taskScope": {
+        "taskId": "n45-example-com",
+        "taskFamily": "samedaydesk.result-reuse",
+        "ownerScope": "samedaydesk.result-reuse"
+      },
+      "source": {
+        "uri": "https://example.com/",
+        "version": "sha256:c0d107af29f62e018ca10823019a5149a46eef18bbaef99e917dc7a3124901a3",
+        "retrievedAt": {
+          "instant": "2026-09-09T08:00:00.000Z",
+          "domain": "source_server"
+        }
+      },
+      "epistemicStatus": "observed",
+      "lifecycleStatus": "active",
+      "statement": "reuse n45_page_change_result",
+      "payload": {
+        "schema": "pilot.task-commons.page-change-result.v1",
+        "url": "https://example.com/",
+        "status": 200,
+        "title": "Example Domain",
+        "sourceContentHash": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+        "bytes": 512,
+        "fetchedAt": "2026-09-09T08:00:00.000Z",
+        "sourceResultAssertions": {
+          "originMarkedPublicSafe": true,
+          "originMarkedCredentialFree": true,
+          "originMarkedNoLiveParticipant": true,
+          "originMarkedNoPayment": true
+        },
+        "contentHash": "sha256:c0d107af29f62e018ca10823019a5149a46eef18bbaef99e917dc7a3124901a3",
+        "reuseProvenance": {
+          "originalEvidenceUrlAvailable": true,
+          "sourceRole": "original_evidence_url"
+        }
+      },
+      "recordedAt": {
+        "instant": "2026-09-09T08:00:00.000Z",
+        "domain": "wall_utc"
+      },
+      "execute": false
+    },
+    "pins": {
+      "mapping": "n45 n49-adapter field map",
+      "observationSchema": "neomorphic.task-memory.observation.v1"
+    },
+    "optIn": true
+  },
+  "recognizedKind": "n45_page_change_result",
+  "runtimeNote": "not yet executed on runtime"
+}

@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Neomorphic: agent commerce laboratory</title>
+  <meta name="description" content="Neomorphic builds policy, conformance, and evidence infrastructure for inspectable machine commerce.">
+  <link rel="canonical" href="https://neomorphic.io/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Neomorphic">
+  <meta property="og:title" content="Neomorphic: agent commerce laboratory">
+  <meta property="og:description" content="Neomorphic builds policy, conformance, and evidence infrastructure for inspectable machine commerce.">
+  <meta property="og:url" content="https://neomorphic.io/">
+  <meta property="og:image" content="https://neomorphic.io/apple-touch-icon.png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://neomorphic.io/#organization",
+        "name": "Neomorphic LLC",
+        "legalName": "Neomorphic LLC",
+        "alternateName": ["Neomorphic"],
+        "url": "https://neomorphic.io",
+        "email": "contact@neomorphic.io",
+        "description": "Neomorphic LLC operates the public laboratory at neomorphic.io and is the legal operator of SameDayDesk. It is not the CSS neumorphism design trend, a payment network, marketplace, custodian, certification authority, or production agent gateway.",
+        "logo": "https://neomorphic.io/apple-touch-icon.png",
+        "contactPoint": [
+          {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "email": "contact@neomorphic.io",
+            "url": "https://neomorphic.io/contact/"
+          }
+        ],
+        "brand": {
+          "@type": "Brand",
+          "name": "SameDayDesk",
+          "url": "https://samedaydesk.com/"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://neomorphic.io/#website",
+        "url": "https://neomorphic.io",
+        "name": "Neomorphic",
+        "description": "Neomorphic builds policy, conformance, and evidence infrastructure for inspectable machine commerce.",
+        "inLanguage": "en",
+        "publisher": { "@id": "https://neomorphic.io/#organization" }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://neomorphic.io/",
+        "url": "https://neomorphic.io/",
+        "name": "Neomorphic: agent commerce laboratory",
+        "description": "Neomorphic builds policy, conformance, and evidence infrastructure for inspectable machine commerce.",
+        "inLanguage": "en",
+        "isPartOf": { "@id": "https://neomorphic.io/#website" },
+        "about": { "@id": "https://neomorphic.io/#organization" },
+        "publisher": { "@id": "https://neomorphic.io/#organization" }
+      }
+    ]
+  }
+  </script>
+  <meta name="twitter:card" content="summary">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#F4F0E6" data-dynamic>
+  <link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Self-hosted, subset, variable. No external font calls. -->
+  <link rel="preload" href="fonts/fraunces-roman.woff2"  as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/newsreader-roman.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/plexmono-400.woff2"     as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles/main.css?v=3">
+  <link rel="stylesheet" href="styles/office.css?v=2">
+
+  <!-- Resolve theme + arm motion before first paint (no FOUC, no flash of light).
+       Both are wrapped so a failure never traps the page hidden or unthemed. -->
+  <script>
+    (function(){
+      var h=document.documentElement;
+      try{
+        var saved=localStorage.getItem('neo-theme');
+        var theme=saved || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+        h.setAttribute('data-theme',theme);
+        var tc=document.querySelector('meta[name=theme-color][data-dynamic]');
+        if(tc) tc.setAttribute('content', theme==='dark'?'#0f0f12':'#F4F0E6');
+      }catch(e){}
+      try{
+        if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        h.classList.add('anim');
+        addEventListener('load',function(){
+          setTimeout(function(){
+            if(!h.classList.contains('anim-ready')) h.classList.remove('anim');
+          },2000);
+        });
+      }catch(e){}
+    })();
+  </script>
+</head>
+<body>
+
+  <!-- ───────── decorative material layers (engraved parchment skin) ───────── -->
+  <div class="grain"   aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="gridlines" aria-hidden="true"></div>
+  <div class="frame"   aria-hidden="true"></div>
+  <div class="cursor"  aria-hidden="true" data-cursor></div>
+
+  <a class="skip-link" href="#instrument">Skip to the instrument</a>
+
+  <!-- ════════════════════════ HERO · certificate head ════════════════════════ -->
+  <header class="hero" role="banner">
+
+    <div class="register">
+      <span class="register__tag" data-load="corner">Bona&nbsp;Fide</span>
+      <span class="register__right" data-load="corner">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark theme" title="Dark">
+          <svg class="ti ti--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path>
+          </svg>
+          <svg class="ti ti--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.2"></circle>
+            <path d="M12 2v2.6M12 19.4V22M4.2 4.2l1.9 1.9M17.9 17.9l1.9 1.9M2 12h2.6M19.4 12H22M4.2 19.8l1.9-1.9M17.9 6.1l1.9-1.9"></path>
+          </svg>
+        </button>
+        <span class="register__tag register__tag--right">Sub&nbsp;Rosa</span>
+      </span>
+    </div>
+
+    <div class="masthead">
+      <!-- guilloché rosette engraves in behind the nameplate -->
+      <div class="guilloche" data-guilloche aria-hidden="true"></div>
+
+      <svg class="rule rule--double" data-rule viewBox="0 0 1000 7" preserveAspectRatio="none" aria-hidden="true">
+        <line class="rule__heavy" x1="0" y1="2"   x2="1000" y2="2"></line>
+        <line class="rule__fine"  x1="0" y1="5.5" x2="1000" y2="5.5"></line>
+      </svg>
+
+      <h1 class="nameplate" data-nameplate aria-label="Neomorphic">
+        <span class="nameplate__ink">Neomorphic</span>
+      </h1>
+
+      <svg class="rule rule--double rule--flip" data-rule viewBox="0 0 1000 7" preserveAspectRatio="none" aria-hidden="true">
+        <line class="rule__heavy" x1="0" y1="5"   x2="1000" y2="5"></line>
+        <line class="rule__fine"  x1="0" y1="1.5" x2="1000" y2="1.5"></line>
+      </svg>
+    </div>
+
+    <div class="hero__tagline" data-load="tagline">
+      <p class="lede">A custodial institution of good standing.<br>
+        We keep the corpus; what is built upon it endures.</p>
+      <p class="lede__sub"><em>Of record longer than the record itself.</em></p>
+    </div>
+
+  </header>
+
+  <main id="instrument">
+
+    <!-- ──────────────────── § 01 · On Custody ──────────────────── -->
+    <section class="clause reveal" id="custody" aria-labelledby="custody-head">
+      <p class="clause__label"><span class="mark">§&nbsp;01</span><span class="clause__rule" aria-hidden="true"></span>On&nbsp;Custody</p>
+
+      <h2 class="clause__head" id="custody-head">A thing held well is seldom seen.</h2>
+
+      <div class="prose" data-margins>
+        <p class="prose__p">
+          <span class="dropcap">A</span>n enterprise has a corpus<span class="gloss" data-gloss>
+            <button class="gloss__mark" type="button" aria-expanded="false" aria-controls="g-corpus"><sup>1</sup></button>
+            <span class="gloss__note" id="g-corpus" role="note">What is held, not spent. In a trust, the principal kept whole; the yield is what may be drawn from it.</span>
+          </span> and a yield: the body of the thing, and what it throws off. We were made to hold the corpus — the charter, the structure, the part that must remain intact for anything to be drawn from it at all — and to keep it well, in good faith and at arm&rsquo;s&nbsp;length<span class="gloss" data-gloss>
+            <button class="gloss__mark" type="button" aria-expanded="false" aria-controls="g-arm"><sup>2</sup></button>
+            <span class="gloss__note" id="g-arm" role="note">At a remove sufficient that custody is never mistaken for control. We hold; we do not direct.</span>
+          </span>, across the years it is meant to last.
+        </p>
+        <p class="prose__p">
+          A founder builds. We see to it that there is something for the building to rest upon, and someone to inherit it. We have done so, without interruption, for as long as has been necessary. The work is custodial by nature, and custodial work is quiet.
+        </p>
+      </div>
+
+      <p class="signoff">We are, as ever, with you.</p>
+    </section>
+
+    <!-- ──────────────────── § 02 · In Our Keeping ──────────────────── -->
+    <section class="clause reveal" id="keeping" aria-labelledby="keeping-head">
+      <p class="clause__label"><span class="mark">§&nbsp;02</span><span class="clause__rule" aria-hidden="true"></span>In&nbsp;Our&nbsp;Keeping</p>
+
+      <h2 class="clause__head" id="keeping-head">Foundations laid to be inherited.</h2>
+
+      <dl class="schedule" data-schedule>
+        <div class="schedule__row reveal">
+          <dt class="schedule__term"><span class="schedule__num">I</span><span class="schedule__name">Formation</span></dt>
+          <dd class="schedule__gloss">enterprises brought into legal being</dd>
+        </div>
+        <div class="schedule__row reveal">
+          <dt class="schedule__term"><span class="schedule__num">II</span><span class="schedule__name">Custody</span></dt>
+          <dd class="schedule__gloss">holdings kept in confidence</dd>
+        </div>
+        <div class="schedule__row reveal">
+          <dt class="schedule__term"><span class="schedule__num">III</span><span class="schedule__name">Structure</span></dt>
+          <dd class="schedule__gloss">instruments built to outlast their authors</dd>
+        </div>
+        <div class="schedule__row reveal">
+          <dt class="schedule__term"><span class="schedule__num">IV</span><span class="schedule__name">Succession</span></dt>
+          <dd class="schedule__gloss">the part that does not pass into other hands</dd>
+        </div>
+      </dl>
+    </section>
+
+  </main>
+
+  <!-- ════════════════════════ FOOTER · the filed close ════════════════════════ -->
+  <footer class="colophon" role="contentinfo">
+
+    <nav class="home-docket" aria-label="Neomorphic office">
+      <a href="/commerce/">Commerce</a>
+      <a href="/instruments/">Instruments</a>
+      <a href="/registry/">Register</a>
+      <a href="/services/">Services</a>
+      <a href="/labs/">Laboratory</a>
+      <a href="/docs/">Docs</a>
+    </nav>
+
+    <p class="colophon__wordmark">Neomorphic</p>
+
+    <p class="colophon__statement">The ground is settled.<br>
+      What rises upon it is yours to pass on.</p>
+
+    <div class="imprint">
+      <span class="imprint__cell">Office of Record, by correspondence</span>
+      <span class="imprint__sep" aria-hidden="true">·</span>
+      <span class="imprint__cell">© 2026 Neomorphic LLC</span>
+      <span class="imprint__sep" aria-hidden="true">·</span>
+      <span class="imprint__cell"><span class="badge">Held in Trust</span></span>
+    </div>
+
+    <!-- embossed monogram seal -->
+    <svg class="seal" viewBox="0 0 96 96" aria-hidden="true">
+      <circle class="seal__ring" cx="48" cy="48" r="43"></circle>
+      <circle class="seal__ring seal__ring--inner" cx="48" cy="48" r="37"></circle>
+      <text class="seal__letter" x="48" y="50">N</text>
+    </svg>
+
+    <p class="ref">
+      <span class="ref__no">Ref. N-0001</span>
+      <a class="ref__contact" href="mailto:contact@neomorphic.io">contact@neomorphic.io</a>
+    </p>
+
+    <!-- oversized quiet echo in negative space -->
+    <p class="echo" aria-hidden="true">Neomorphic</p>
+  </footer>
+
+  <!-- self-hosted GSAP (free, incl. commercial) -->
+  <script defer src="vendor/gsap.min.js"></script>
+  <script defer src="vendor/DrawSVGPlugin.min.js"></script>
+  <script defer src="vendor/SplitText.min.js"></script>
+  <script defer src="scripts/main.js?v=3"></script>
+</body>
+</html>

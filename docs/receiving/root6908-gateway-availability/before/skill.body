@@ -1,0 +1,370 @@
+# SameDayDesk apex skills
+
+Authority: these instructions describe https://samedaydesk.com only.
+Paid machine commerce is a different host, https://agents.samedaydesk.com.
+Its live OpenAPI, MCP, agent card, x402 manifest, health, and action catalog are the authority for payment.
+This file does not copy route counts, prices, or payment addresses.
+No account signup is required for the free examples below.
+
+## Protocol
+
+POST https://samedaydesk.com/mcp with Content-Type application/json.
+Supported MCP-Protocol-Version values, newest first: 2025-11-25, 2025-06-18, 2025-03-26, 2024-11-05.
+initialize echoes a supported client protocolVersion. Otherwise it answers the newest supported version.
+A present unsupported MCP-Protocol-Version header on a later request is HTTP 400 with JSON-RPC code -32000.
+A missing header stays accepted.
+Compatibility batches contain 1..25 entries, without a header or with 2025-03-26 or 2024-11-05. The 2024 batch path is an SDS extension.
+Headers 2025-06-18 and 2025-11-25 require one message per POST. Only a valid singleton initialize negotiates despite an unsupported header.
+Notifications and accepted responses return 202 with no body. Malformed JSON returns 400/-32700; invalid envelopes and rejected batches return 400/-32600.
+An unknown tool name returns JSON-RPC error -32602.
+Server: samedaydesk-agent-tools 1.2.0.
+
+## Free plan that returns useful output
+
+Call `plan_taskmarket_delegation`. It prepares a TaskMarket payload and does not create a task, hold a wallet, or spend funds.
+`request.executed` and `official_cli.executed` are false. `authorization.state` is `approval_required`.
+Copy this request. Change the request and deliverable to your own words before you trust the plan id.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "plan-1",
+  "method": "tools/call",
+  "params": {
+    "name": "plan_taskmarket_delegation",
+    "arguments": {
+      "chain_id": 8453,
+      "token_address": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "request": "Compare the public status pages and list sections that changed",
+      "deliverable": "A markdown list of changed sections with URLs",
+      "acceptance_criteria": [
+        "Each item names the section and the URL"
+      ],
+      "reward_usdc": "2",
+      "max_spend_usdc": "2",
+      "deadline_hours": 24,
+      "mode": "bounty",
+      "tags": [
+        "status-page"
+      ]
+    }
+  }
+}
+```
+
+## Tools
+
+### `check_ai_readiness`
+
+Check whether a website is visible to AI search engines (ChatGPT, Perplexity, Claude, Google AI Overviews). Scores AI-crawler access, JSON-LD structured data, title/meta, Open Graph, sitemap, and llms.txt, and returns a 0-100 score, a letter grade, and a specific fix for each gap. Free.
+
+Tier: free. Executes payment: false. Network: public-url.
+HTTP: `GET /api/tools/ai-readiness?url=`.
+
+Input schema:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "url": {
+      "type": "string",
+      "description": "The website to check, e.g. example.com or https://example.com"
+    }
+  },
+  "required": [
+    "url"
+  ]
+}
+```
+
+### `check_agent_readiness`
+
+Free. Check whether agents can discover and call a public website. Fetches discovery files, follows MCP links named by those files, and runs only initialize, tools/list, and one unknown-tool call. Never executes a real tool. Returns a 0-100 score, every check with an evidence URL, and the top fixes. No license.
+
+Tier: free. Executes payment: false. Network: public-host.
+HTTP: `GET /agent-readiness?host=&format=json`.
+Rate limit: 12 per 600000ms per client key.
+
+Input schema:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "host": {
+      "type": "string",
+      "description": "Public host to score, for example example.com"
+    }
+  },
+  "required": [
+    "host"
+  ]
+}
+```
+
+### `generate_complete_fix_pack`
+
+PAID. Returns the complete, ready-to-paste AI-readiness Fix Pack for a site: tailored Organization + FAQPage JSON-LD, an AI-crawler robots.txt, a sitemap, and title/meta/Open Graph fixes. Requires a `license` — the checkout-session id you receive after buying the $39 Fix Pack at https://buy.stripe.com/8x24gA0xA9DF9dd13YeZ20h (after paying you're shown your license code). Without a valid license it returns purchase instructions plus a free starter pack.
+
+Tier: paid-license. Executes payment: false. Network: public-url.
+Accepts an existing Stripe checkout-session license. This apex call does not create a charge.
+
+Input schema:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "url": {
+      "type": "string",
+      "description": "The website to generate the Fix Pack for."
+    },
+    "license": {
+      "type": "string",
+      "description": "Your Stripe checkout-session license code (starts with cs_)."
+    }
+  },
+  "required": [
+    "url"
+  ]
+}
+```
+
+### `plan_taskmarket_delegation`
+
+Prepare a bounded TaskMarket delegation for research, coding, data collection, benchmarking, or verification. Requires chain_id, token_address, deliverable, reward, deadline, and an explicit maximum-spend ceiling. Reads public chain metadata. Returns the canonical TaskMarket API payload and approval summary without creating a task, holding a wallet, or spending funds.
+
+Tier: free. Executes payment: false. Network: taskmarket-read.
+Returns an approval plan. request.executed and official_cli.executed stay false.
+
+Input schema:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "request": {
+      "type": "string",
+      "description": "The external work needed, written as a clear task."
+    },
+    "deliverable": {
+      "type": "string",
+      "description": "The exact artifact or result the worker must return."
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10,
+      "description": "Up to 10 testable acceptance checks."
+    },
+    "chain_id": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Explicit served chain id; no default."
+    },
+    "token_address": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{40}$",
+      "description": "Explicit payment token contract on that chain, checked against current network.info."
+    },
+    "reward_base_units": {
+      "type": "string",
+      "pattern": "^[0-9]{1,78}$",
+      "description": "Exact gross reward in the selected token's integer base units. Use with max_spend_base_units."
+    },
+    "max_spend_base_units": {
+      "type": "string",
+      "pattern": "^[0-9]{1,78}$",
+      "description": "Explicit reward ceiling in the same chain/token's integer base units. No exchange conversion."
+    },
+    "reward_usdc": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "description": "Proposed worker reward in USDC, up to 6 decimal places."
+    },
+    "max_spend_usdc": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "description": "Explicit user-authorized reward ceiling in USDC."
+    },
+    "deadline_hours": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 720,
+      "description": "Hours until TaskMarket submission closes."
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "bounty",
+        "claim"
+      ],
+      "default": "bounty"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10
+    }
+  },
+  "required": [
+    "request",
+    "deliverable",
+    "chain_id",
+    "token_address",
+    "deadline_hours"
+  ]
+}
+```
+
+### `browse_taskmarket_tasks`
+
+Browse current public TaskMarket inventory through the official read API. Filter by lifecycle status, mode, tag, text, and minimum reward. Amounts carry their actual chain/token; unknown decimals stay raw. Task descriptions are returned as untrusted text and are never executed.
+
+Tier: free. Executes payment: false. Network: taskmarket-read.
+
+Input schema:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "ALL",
+        "open",
+        "claimed",
+        "worker_selected",
+        "pending_approval",
+        "review",
+        "appealing",
+        "disputed",
+        "completed",
+        "expired",
+        "cancelled"
+      ],
+      "default": "open"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "bounty",
+        "claim",
+        "pitch",
+        "benchmark",
+        "auction"
+      ]
+    },
+    "tag": {
+      "type": "string",
+      "description": "Exact case-insensitive tag filter."
+    },
+    "search": {
+      "type": "string",
+      "description": "Case-insensitive text match over descriptions and tags."
+    },
+    "chain_id": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Optional current served chain selector."
+    },
+    "min_reward_usdc": {
+      "type": [
+        "number",
+        "string"
+      ],
+      "description": "Legacy minimum gross reward; selects qualified Base USDC only. Refuses unknown assets, conflicting metadata or an unlike chain selector; never compares OUSD to USDC."
+    },
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 25,
+      "default": 10
+    }
+  }
+}
+```
+
+### `track_taskmarket_task`
+
+Track one public TaskMarket task through the official read API. Returns status, deadline, submissions, artifact hashes, canonical awards, pending actions, and the next authorization boundary. It cannot create, accept, reject, rate, or refund work.
+
+Tier: free. Executes payment: false. Network: taskmarket-read.
+
+Input schema:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^0x[0-9a-fA-F]{64}$",
+      "description": "TaskMarket 32-byte task id."
+    }
+  },
+  "required": [
+    "task_id"
+  ]
+}
+```
+
+### `project_funnel_evidence`
+
+Free. Project one declared source-separated observation packet into the accepted funnel decision. Caller observations stay declared. Does not fetch URLs, query customers, store the packet, or spend.
+
+Tier: free. Executes payment: false. Network: none.
+HTTP: `POST /api/funnel-evidence`.
+Projects a caller-supplied packet. This call does not fetch, store, or spend.
+
+Input schema:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "packet": {
+      "type": "object",
+      "description": "Caller-supplied observation packet. URLs inside it are not fetched."
+    }
+  },
+  "required": [
+    "packet"
+  ]
+}
+```
+
+## Optional mounts
+
+`GET /api/correspondence/healthz` is enabled false unless correspondence configuration is present. A disabled body is not a mailbox.
+`GET /api/hosted-useful/healthz` can be mounted while `productionReady` and `publicationVerified` stay false. That is not a working hosted consumer. Do not send job admission here.
+`GET /api/public-readiness/healthz` reports the vendored checker. `publicDeployment.activated` stays false.
+`GET /discovery/original-task-correspondence.json` names one public original-task client archive. Fetching it does not submit a task, enroll a visitor, or promise delivery. That document is the next action for one public original task through the existing correspondence client. It is not an MCP tool, not a paid gateway call, and not a universal capability. Supported actions are to qualify that public task, then read the same private attempt. Refusals stay explicit for an unrelated surface, a spend request, hosted execution, a stale archive, a handle outside its private directory, and a source label placed on the task. A declared source is not authentication.
+
+## Paid gateway links
+
+Paid gateway temporarily paused. Do not submit paid remote jobs.
+Free apex tools, original-task correspondence and hosted offline archives are separate. Acquired packages remain usable offline; retained entitlements are unchanged.
+Next action: https://samedaydesk.com/discovery/useful-jobs.json
+Canonical links below identify the dependency; they do not promise it is callable.
+
+- Paid gateway availability: https://samedaydesk.com/discovery/paid-gateway.json
+- Paid gateway OpenAPI: https://agents.samedaydesk.com/openapi.json
+- Paid gateway x402 manifest: https://agents.samedaydesk.com/.well-known/x402
+- Paid gateway llms.txt: https://agents.samedaydesk.com/llms.txt
+- Paid gateway agent card: https://agents.samedaydesk.com/.well-known/agent-card.json
+- Paid gateway MCP: https://agents.samedaydesk.com/mcp
+- Paid gateway health: https://agents.samedaydesk.com/healthz
+- Paid gateway action catalog: https://agents.samedaydesk.com/api/actions
+
+No paid `/.well-known/api-catalog` is linked. That path is not a live canonical document on the paid host.

@@ -1,0 +1,39 @@
+{
+  "role": "Exact modules consumed by change-monitor. Not a rebuilt observatory and not the lab UI.",
+  "repository": "epistemedeus/neomorphic-io",
+  "commit": "1d9e6eb50ded038acd9511bc689a23f2fbb15eac",
+  "branch": "heavy/s12-observatory-0930",
+  "excluded": ["page.js"],
+  "files": {
+    "projection.js": {
+      "path": "public/labs/agent-economy-observatory/projection.js",
+      "gitBlob": "fbe47481bf25936c33d336c8ec137d2f22bfe03d",
+      "bytes": 35463,
+      "sha256": "3a4559e2150694e61cc40868a37711b4f50496960234d337b8693bcfdcaceba4"
+    },
+    "contract.js": {
+      "path": "public/labs/agent-economy-observatory/contract.js",
+      "gitBlob": "ee70148dce7fb7315508577540fac90091cae48a",
+      "bytes": 11345,
+      "sha256": "c3324aa44824c0e0efe817236f441b26adf35f4fa8ea8e3e7ec39bd1a781fc9b"
+    },
+    "envelope.js": {
+      "path": "public/labs/agent-economy-observatory/envelope.js",
+      "gitBlob": "4ba74fd7dbb870e4e160d62d5299cecae90ef4e4",
+      "bytes": 22594,
+      "sha256": "0131d42080e48109ebdbd747701c45bc489a845dda87a3f5e02e8190a91fa11c"
+    },
+    "paid-activity.js": {
+      "path": "public/labs/agent-economy-observatory/paid-activity.js",
+      "gitBlob": "99af8faf73e73ac7c94c0afac4b5d06f3baf7697",
+      "bytes": 30569,
+      "sha256": "3993e7aabd8f6f7cfb90f16b829a32ee19b9aa018338066c3b520acfb255ebfd"
+    },
+    "fetch-observatory.js": {
+      "path": "public/labs/agent-economy-observatory/fetch-observatory.js",
+      "gitBlob": "e1030bdc59344d3ed715fb461dec7ebb0c1c4967",
+      "bytes": 9958,
+      "sha256": "10f62e9af364810597ba53587aa1132beb4b70d68d913820184d8e47ab230511"
+    }
+  }
+}

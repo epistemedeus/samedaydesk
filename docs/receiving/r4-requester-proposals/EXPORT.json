@@ -1,0 +1,205 @@
+{
+  "schema": "samedaydesk.root4432.source-export.v1",
+  "at": "2026-10-23T10:18:51.652545+00:00",
+  "scope": "R4-J01 only",
+  "repository": "https://github.com/epistemedeus/samedaydesk.git",
+  "branch": "codex/root4432-requester-proposals-20261023",
+  "base": "79fbd37d31aabdc790248443c576a2f0017e55f0",
+  "baseTree": "9e7c8c1bb1f513841117d9d7d3bd5ef49839f501",
+  "sourceHead": "3e8adb481eb13134fca4c5b3146f69bee2b3557a",
+  "sourceTree": "3b762bfa7c0d8c3985ba76811c25d0639138c9de",
+  "files": {
+    "vendor/hosted-wallet-market/src/machine-market.mjs": {
+      "blob": "e9bde2863d78cb25841f4e5cfe2c160cc4a6cd55",
+      "sha256": "dd3823ebaa96fe4728c23d75e35f386a55a503927a9b7b1e25d886033afcb9f4"
+    },
+    "vendor/hosted-wallet-market/src/market-interest-read.mjs": {
+      "blob": "c4a6ab58e1eed540cd31ecf7f2f5b307a45cb064",
+      "sha256": "0bee17f9e32fffbed6b12aa07b1a05c0ffddae686e3842fe563f01cbcaa3efb1"
+    },
+    "server/scripts/test-r4-requester-proposal-review.mjs": {
+      "blob": "b047e55e366327a1964324c6f29922016ed5567e",
+      "sha256": "bdb3b727e3951be767b810a3aff431af68f0a70a2dd3058fd6f446dfe5517faf"
+    }
+  },
+  "unchangedInstalledContracts": {
+    "vendor/hosted-wallet-market/SOURCE.json": "5cce7906277b1afd8188fd6c6e0f33cfa6116e5c77795b94c7c82067b5fd8d77",
+    "vendor/hosted-wallet-market/contracts/machine-runtime.json": "56046aa486bdd5f43fd8dc2e6b13f409d13d0d96ac52c25e06f570c2bcd3e50f",
+    "server/foundry/activation/private-control-pin.json": "e6d25ff238660379a4360050c328b88256a7cff60aa793e777dcd2d6d1fbf25a",
+    "package.json": "3b0226227c64c9510d72f25546cf1f578d4342b5c29d52edcc078afbe61ea74d",
+    "package-lock.json": "03f3901d0b1720a10c77f12682b5eac089bee12faba8e5444bcc90f4e1d4d1bc",
+    "vendor/hosted-wallet-market/examples/cold-requester.mjs": "d123797ae1294d87cddf7804354185e9c262d17e6202ecc8efd788a45b6509e3",
+    "vendor/hosted-wallet-market/src/server.mjs": "045958b6158d5c3f62ab8dd9026e78140ae19246747948adee41ac6790c6a382",
+    "vendor/hosted-wallet-market/runtime/agent-economy-market/src/market.mjs": "ab401b98b67eb8d4a3c8189c7b8f892c4cf654beeb4d75efee9ada4cd3dfc9bd",
+    "vendor/hosted-wallet-market/runtime/agent-economy-market/src/store.mjs": "7ad1fa54b213857d82a1c3f104971cba738f87ada841644a59a6c17db5ec970e",
+    "vendor/hosted-wallet-market/runtime/agent-economy-market/migrations/001-market.sql": "f90297e4bd85adfeaaff10ad3a9ac124bdfd87a3cf1b7b5c50dad9062abd6487",
+    "server/scripts/test-root425-cold-mutation.mjs": "35b09bb8bc0f06fd1696070910b4918316578217a85b8b578b6c09141e7190bb"
+  },
+  "candidateClosure": {
+    "candidatePackageSha256": "2c72b86a4ca1892f8c62eb8159258fa76eb4233c46c912505f001d28aa0f92b2",
+    "candidateHostSha256": "0497804f5b74c9eeeb69cc6c3ba5a7ccc0c48a12da661736aa75a4a2642b1972",
+    "candidatePinSha256": "168ababa8310ed736ea6f2c123bd18e47231ce777b1741fa78338fec210e9ed5",
+    "qualified": false,
+    "installed": false
+  },
+  "evidence": [
+    {
+      "path": "docs/receiving/r4-requester-proposals/01-prerequisite-failure.tap",
+      "sha256": "5dd2b3ed19c35b121c0e8a7a39087ff270d6fd421b19e3cdbb7f505d08527f61",
+      "summary": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "startupFailedWithoutFinalSummary": false
+    },
+    {
+      "path": "docs/receiving/r4-requester-proposals/05-existing-baseline.tap",
+      "sha256": "910b3d6f48b078ea2768eee465e5ab522a68b5c3df10023bda7b292ebd5e3924",
+      "summary": {
+        "tests": 17,
+        "pass": 17,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "startupFailedWithoutFinalSummary": false
+    },
+    {
+      "path": "docs/receiving/r4-requester-proposals/06-proposal-gap-baseline.tap",
+      "sha256": "dcd03d122c91eb26899ee51ec81c2577070a5119f63289229aea8f616d21417c",
+      "summary": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "startupFailedWithoutFinalSummary": false
+    },
+    {
+      "path": "docs/receiving/r4-requester-proposals/07-proposal-receiving.tap",
+      "sha256": "badb8f214ba2c737fb8c4f60f15188fd536e71a5ef6a588cb8c6c1d75e218480",
+      "summary": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "startupFailedWithoutFinalSummary": false
+    },
+    {
+      "path": "docs/receiving/r4-requester-proposals/09-proposal-gap-baseline.tap",
+      "sha256": "482ca7f23752d513eeab2a5ab0d747d2c78f7639f1b768aefb7414a37b9f5012",
+      "summary": {
+        "tests": 2,
+        "pass": 2,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "startupFailedWithoutFinalSummary": false
+    },
+    {
+      "path": "docs/receiving/r4-requester-proposals/10-proposal-receiving.tap",
+      "sha256": "4efa6a0caeebde1f007c8bfac3e42f71a90cb2cda6190f4a54c12795423500a6",
+      "summary": {
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "startupFailedWithoutFinalSummary": false
+    },
+    {
+      "path": "docs/receiving/r4-requester-proposals/11-proposal-final.tap",
+      "sha256": "d2e8f4769147c579c24db05dadc76f77dc6e3e7d405a13591e48107c7261c956",
+      "summary": {
+        "tests": 11,
+        "pass": 11,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "startupFailedWithoutFinalSummary": false
+    },
+    {
+      "path": "docs/receiving/r4-requester-proposals/12-existing-requester-final.tap",
+      "sha256": "1728609603ab719e42173f904c464152e2697dc720af2ec5a3ca3c0552c7f898",
+      "summary": {
+        "tests": 17,
+        "pass": 17,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "startupFailedWithoutFinalSummary": false
+    },
+    {
+      "path": "docs/receiving/r4-requester-proposals/13-existing-receipts-final.tap",
+      "sha256": "2e82c20572366e8817e90696390ea0a9f472d1e210576d290cec1442e68c138f",
+      "summary": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "startupFailedWithoutFinalSummary": false
+    },
+    {
+      "path": "docs/receiving/r4-requester-proposals/14-existing-receipts-baseline.tap",
+      "sha256": "c2d14982adc6cd2717e17ba3c96ee55747630182aca3b6fe2728e93b04f12e48",
+      "summary": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "startupFailedWithoutFinalSummary": false
+    },
+    {
+      "path": "docs/receiving/r4-requester-proposals/15-existing-receipts-fixture-corrected.tap",
+      "sha256": "15ee65900cd3f3d60e658cdc1880371de0262abd58a4e2175f0481e9481d4842",
+      "summary": {
+        "tests": 21,
+        "pass": 21,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0
+      },
+      "startupFailedWithoutFinalSummary": false
+    }
+  ],
+  "resource": {
+    "reserveTotalKiB": 2097152,
+    "modelChildren": 0,
+    "serialTests": true,
+    "nodeMaxOldSpaceMiB": 512,
+    "sampledOwnedFixturePeakKiB": 560188,
+    "nativeControllerSeparateObservedRssKiB": 216744,
+    "peakScope": "Node runner, test, CLI descendants and detached owned PostgreSQL; excludes native controller; shared pages double counted"
+  },
+  "lifetime": {
+    "checkpointBy": "2026-10-23T13:31:23.085Z",
+    "requiredUntil": "2026-10-23T13:46:23.085Z",
+    "completedBeforeCheckpoint": true
+  },
+  "verification": {
+    "proposalFinal": "11/11",
+    "existingRequesterFinal": "17/17",
+    "extraReceiptSuiteOriginal": "runtime_schema_unready on both installed baseline and candidate, before cases",
+    "extraReceiptSuiteWithProposedDisposableFixtureCorrection": "21/21",
+    "syntaxAndDiffCheck": "passed",
+    "sharedContractsUnchanged": true
+  },
+  "remainingBoundary": "Root composes source, regenerates shared canonical closure, optionally accepts the exported ROOT425 fixture correction, and performs installed qualification. No production action was taken.",
+  "installed": false,
+  "outsideUseReceived": false,
+  "revenueReceived": false
+}

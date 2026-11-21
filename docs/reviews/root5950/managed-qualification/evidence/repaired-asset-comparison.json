@@ -1,0 +1,18 @@
+{
+  "frontend": {
+    "members": 352,
+    "rawEqual": 352,
+    "html": 139,
+    "extra": [],
+    "missing": [],
+    "different": []
+  },
+  "desk": {
+    "members": 46,
+    "rawEqual": 46,
+    "html": 8,
+    "extra": [],
+    "missing": [],
+    "different": []
+  }
+}

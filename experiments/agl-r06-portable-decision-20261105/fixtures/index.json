@@ -1,0 +1,61 @@
+{
+  "label": "All captures are synthetic fixtures derived from tools/recurring-job-recipes/fixtures/priors/verify.prior.json and current/verify-candidate-*.json. They are not real outside data. example.com is a reserved documentation domain.",
+  "cases": [
+    {
+      "case": "c01",
+      "label": "synthetic fixture, not real outside data",
+      "note": "same capture, unchanged vs prior",
+      "retireBeforeImport": false,
+      "consumerBCaptureDiffers": false
+    },
+    {
+      "case": "c02",
+      "label": "synthetic fixture, not real outside data",
+      "note": "same capture, unchanged vs prior",
+      "retireBeforeImport": false,
+      "consumerBCaptureDiffers": false
+    },
+    {
+      "case": "c03",
+      "label": "synthetic fixture, not real outside data",
+      "note": "same capture, changed vs prior",
+      "retireBeforeImport": false,
+      "consumerBCaptureDiffers": false
+    },
+    {
+      "case": "c04",
+      "label": "synthetic fixture, not real outside data",
+      "note": "same capture, hash-only change vs prior",
+      "retireBeforeImport": false,
+      "consumerBCaptureDiffers": false
+    },
+    {
+      "case": "c05",
+      "label": "synthetic fixture, not real outside data",
+      "note": "same capture, unchanged vs prior",
+      "retireBeforeImport": false,
+      "consumerBCaptureDiffers": false
+    },
+    {
+      "case": "c06",
+      "label": "synthetic fixture, not real outside data",
+      "note": "same capture, manifest retired by publisher",
+      "retireBeforeImport": true,
+      "consumerBCaptureDiffers": false
+    },
+    {
+      "case": "c07",
+      "label": "synthetic fixture, not real outside data",
+      "note": "consumer B captured later bytes: hash-only change",
+      "retireBeforeImport": false,
+      "consumerBCaptureDiffers": true
+    },
+    {
+      "case": "c08",
+      "label": "synthetic fixture, not real outside data",
+      "note": "consumer B captured later bytes: title and hash change",
+      "retireBeforeImport": false,
+      "consumerBCaptureDiffers": true
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "schema": "sds.h120010.release-contract.v1",
+  "repository": "https://github.com/epistemedeus/samedaydesk.git",
+  "source": {
+    "baselineCommit": "aa861e980df0f75a782ff30996450cf15870f2e7",
+    "candidateCommit": "6bde3ec4df57df5f0783fec38f39eacbadfb6d9e",
+    "baselineSourceSha256": "5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2",
+    "baselineHostSha256": "4c0614fc44913b35278757904647b62e0dc35fe6fe0f18a49eae4c9f7b3e4177",
+    "measuredCandidateSourceSha256": "8c35b8f13a5cb6ac9399c630ccc2fdace428cd839949d62375127f924f322ad6",
+    "measuredCandidateHostSha256": "a5277b33df3ddf6e780aea3c360d2651312c546d860508d8d96fa463cadf04f3",
+    "recordedCandidateSourceSha256": "458c129b2397099200be163ea6b11be61926114f9d6842897607cfcb9a771ba8",
+    "recordedSourceConstantAuthority": false,
+    "recordedSourceConstantAgrees": false
+  },
+  "runtime": {
+    "journeyCommit": "427f5a08e3b294a8f15fb9d148f7de46ca7cb538",
+    "deskCommit": "0cebdb9a77c5bda9b2fb811f6efd1dfe35e75556",
+    "journeySource": "vendor/neomorphic-contributor-journey/SOURCE.json",
+    "deskSource": "vendor/neomorphic-contributor-desk/SOURCE.json"
+  },
+  "client": {
+    "version": "0.3.1",
+    "sha256": "accb4b22a02a0752028d883b8e501b11c677f6f0ee342a8ffcc9d1874cd5d7b9",
+    "bytes": 30187,
+    "repository": "epistemedeus/neomorphic-io",
+    "commit": "b79f985e83e829288a675407a4b4124e58a11f3a",
+    "path": "clients/cold-requester-0.3.1.mjs"
+  },
+  "descriptor": {
+    "schema": "neomorphic.machine-participation.acquisition.v1",
+    "sha256": "1b6e9c1099f1420d53564674f71e15544333812dcc2c682062aae7af2f5295c4",
+    "bytes": 2327,
+    "requiredProfile": {
+      "money": "unfunded",
+      "participation": "voluntary-artifact-v1",
+      "sourceSha256": "5901396f689599405791d35cd706af2e54724ab285f5890124b4f018bba691d2",
+      "hostSha256": "4c0614fc44913b35278757904647b62e0dc35fe6fe0f18a49eae4c9f7b3e4177"
+    },
+    "source": {
+      "repository": "epistemedeus/neomorphic-io",
+      "commit": "b79f985e83e829288a675407a4b4124e58a11f3a",
+      "path": "clients/cold-requester-0.3.1.mjs"
+    }
+  },
+  "endpoints": {
+    "profile": "https://samedaydesk.com/api/neomorphic-contributor-journey/v1/market/profile",
+    "participationContract": "https://samedaydesk.com/api/neomorphic-contributor-journey/v1/market/participation-contract"
+  },
+  "flags": {
+    "publicReads": "0",
+    "fundedTasks": "off",
+    "payments": "off",
+    "humanAssets": "off",
+    "money": "unfunded",
+    "signerAuthority": false
+  },
+  "human": {
+    "build": "server/scripts/publish-preserved-client.mjs",
+    "viteInvoked": false,
+    "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5",
+    "files": 352,
+    "bytes": 59951737
+  },
+  "installedHostinger": "01a19731-bfd7-7095-9ec8-7c3218fb8aec",
+  "releaseOrder": {
+    "artifacts": ["code-bundle", "acquisition-descriptor"],
+    "descriptorPublication": "after-measured-candidate-identity",
+    "partialCodeRepair": "progress-journal",
+    "pinLastAloneAtomic": false,
+    "schema011": "separate-sql-not-dropped-on-code-rollback",
+    "rule": "Install the code bundle only onto a tree that still measures as the baseline identity. Publish the acquisition descriptor only after that tree measures as the candidate identity named here. A baseline descriptor on candidate code, or a candidate descriptor on baseline code, fails closed with acquisition_profile_mismatch. That refusal is not continuity. An interrupted code install finishes to the exact candidate or returns to the exact predecessor from the task progress journal. Pin-last is not atomic. File repair does not touch credentials, obligations, terms, or database authority. Schema 011 is applied once as SQL and is not dropped when code rolls back. If code is rolled back, restore the baseline descriptor in the same decision."
+  }
+}

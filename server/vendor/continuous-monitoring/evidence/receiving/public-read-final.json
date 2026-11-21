@@ -1,0 +1,62 @@
+{
+  "schema": "continuous-monitoring.public-read.v1",
+  "capturedAt": "2026-10-15T06:38:44.268Z",
+  "node": "v22.14.0",
+  "source": "https://samedaydesk.com/api/observatory/snapshot",
+  "sourceId": "moltjobs",
+  "demoException": false,
+  "upstreamMethod": "GET",
+  "deployed": false,
+  "naturalCustomerDemand": false,
+  "outcome": "evidence_unavailable",
+  "failure": "partial_metrics",
+  "consumerHttpStatus": 200,
+  "delivery": {
+    "transition": "evidence_unavailable",
+    "failureCode": "partial_metrics",
+    "acknowledged": true,
+    "attempts": 1
+  },
+  "metrics": {
+    "bytes": 33783,
+    "requests": 1,
+    "durationMs": 630,
+    "unknown": false,
+    "chargedBytes": 33783,
+    "chargedRuntimeMs": 630
+  },
+  "usage": {
+    "schema": "continuous-monitoring.usage.v1",
+    "checksReserved": 1,
+    "sourceRequestsKnown": 1,
+    "sourceRequestsUnknownUpperBound": 0,
+    "receivedBytesKnown": 33783,
+    "runtimeMsKnown": 630,
+    "budgetBytesCharged": 33783,
+    "budgetRuntimeMsCharged": 630,
+    "deliveryAttempts": 1,
+    "acknowledgedEvents": 1,
+    "transitions": {
+      "checks": 1,
+      "unchanged": 0,
+      "baselinesEstablished": 0,
+      "usefulEvents": 1,
+      "contentChanged": 0,
+      "serviceRestored": 0,
+      "evidenceUnavailable": 1,
+      "suppressedByBudget": 0,
+      "admissionsRefused": 0
+    },
+    "cost": {
+      "currency": null,
+      "total": null,
+      "sourcePrice": null,
+      "infrastructureRate": null,
+      "laborRate": null,
+      "billable": false,
+      "automaticCharge": false,
+      "basis": "measured inputs; provider, storage, operations and subscription economics unknown"
+    }
+  },
+  "limitation": "one public baseline or unavailable-evidence read; no public change or customer subscription claimed"
+}

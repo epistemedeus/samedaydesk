@@ -1,0 +1,326 @@
+{
+  "schema": "root4550.owned-cleanup.v1",
+  "sourceCopies": [
+    {
+      "path": "/tmp/root4550-qualification/baseline",
+      "head": "79fbd37d31aabdc790248443c576a2f0017e55f0",
+      "trackedCleanAfterBuild": true
+    },
+    {
+      "path": "/tmp/root4550-qualification/candidate",
+      "head": "b8e43f83c11d3a0613af886d0705dea93cc536e7",
+      "trackedCleanAfterBuild": true
+    },
+    {
+      "path": "/tmp/root4550-qualification/final",
+      "head": "d3fa21acfdf4d5af47ab0962e4123d784c65b6c4",
+      "trackedCleanAfterBuild": true
+    }
+  ],
+  "liveOwnedPostgres": 0,
+  "liveOwnedTestNodes": [],
+  "exitedPostgresAwaitingSupervisorReap": [
+    {
+      "pid": 578295,
+      "parent": 576692,
+      "startTime": 11073125,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 578719,
+      "parent": 576692,
+      "startTime": 11076415,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 578885,
+      "parent": 576692,
+      "startTime": 11085351,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 579317,
+      "parent": 576692,
+      "startTime": 11088737,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 579481,
+      "parent": 576692,
+      "startTime": 11093269,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 579916,
+      "parent": 576692,
+      "startTime": 11096687,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 580115,
+      "parent": 576692,
+      "startTime": 11101479,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 580134,
+      "parent": 576692,
+      "startTime": 11101549,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 580146,
+      "parent": 576692,
+      "startTime": 11101664,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 580423,
+      "parent": 576692,
+      "startTime": 11104273,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 580674,
+      "parent": 576692,
+      "startTime": 11105300,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 580962,
+      "parent": 576692,
+      "startTime": 11105971,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 581487,
+      "parent": 576692,
+      "startTime": 11115232,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 581947,
+      "parent": 576692,
+      "startTime": 11118838,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 585040,
+      "parent": 576692,
+      "startTime": 11124234,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 585513,
+      "parent": 576692,
+      "startTime": 11127813,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 585803,
+      "parent": 576692,
+      "startTime": 11131580,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 585943,
+      "parent": 576692,
+      "startTime": 11132225,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 586402,
+      "parent": 576692,
+      "startTime": 11135798,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 586511,
+      "parent": 576692,
+      "startTime": 11136222,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 586530,
+      "parent": 576692,
+      "startTime": 11136293,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 586545,
+      "parent": 576692,
+      "startTime": 11136407,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 590573,
+      "parent": 576692,
+      "startTime": 11168219,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 590592,
+      "parent": 576692,
+      "startTime": 11168292,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 590606,
+      "parent": 576692,
+      "startTime": 11168407,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 590856,
+      "parent": 576692,
+      "startTime": 11169101,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 591105,
+      "parent": 576692,
+      "startTime": 11170177,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 591403,
+      "parent": 576692,
+      "startTime": 11170881,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 591935,
+      "parent": 576692,
+      "startTime": 11176400,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 592396,
+      "parent": 576692,
+      "startTime": 11180029,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 592561,
+      "parent": 576692,
+      "startTime": 11180723,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 593029,
+      "parent": 576692,
+      "startTime": 11184350,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 593142,
+      "parent": 576692,
+      "startTime": 11184776,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 593161,
+      "parent": 576692,
+      "startTime": 11184846,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 593175,
+      "parent": 576692,
+      "startTime": 11184961,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 593907,
+      "parent": 576692,
+      "startTime": 11198669,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    },
+    {
+      "pid": 593967,
+      "parent": 576692,
+      "startTime": 11198853,
+      "state": "Z",
+      "comm": "postgres",
+      "rssKiB": 0
+    }
+  ],
+  "temporaryRootsRemoved": [
+    "/tmp/root4550-qualification",
+    "/tmp/root4550-operating"
+  ],
+  "otherJobsTouched": false,
+  "note": "Fixtures stopped their exact owned postmasters. Exited Z/RSS0 entries are children of the admitted supervisor and can only be reaped by it on normal job termination; no foreign or native supervisor was signalled."
+}

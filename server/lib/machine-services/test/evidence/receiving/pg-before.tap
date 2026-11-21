@@ -1,0 +1,144 @@
+TAP version 13
+# (node:673244) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: received PG: admission COMMIT finishing at the persisted deadline cannot enter a provider
+not ok 1 - received PG: admission COMMIT finishing at the persisted deadline cannot enter a provider
+  ---
+  duration_ms: 149.754021
+  location: '/home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/integration.test.mjs:384:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    1 !== 0
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/integration.test.mjs:395:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: received PG: awaiting possible-payment COMMIT cannot enter settlement after deadline
+not ok 2 - received PG: awaiting possible-payment COMMIT cannot enter settlement after deadline
+  ---
+  duration_ms: 23.993666
+  location: '/home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/integration.test.mjs:399:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    1 !== 0
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/integration.test.mjs:416:49)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: received PG: cancel after dispatch claim and before socket entry emits no request
+not ok 3 - received PG: cancel after dispatch claim and before socket entry emits no request
+  ---
+  duration_ms: 61.841743
+  location: '/home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/integration.test.mjs:421:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    1 !== 0
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/integration.test.mjs:424:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: received PG: revoke then regrant cannot revive a live old generation
+not ok 4 - received PG: revoke then regrant cannot revive a live old generation
+  ---
+  duration_ms: 32.794721
+  location: '/home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/integration.test.mjs:427:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    true !== false
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/integration.test.mjs:430:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: received PG: async fence awaited during DNS refuses a committed revocation before socket entry
+not ok 5 - received PG: async fence awaited during DNS refuses a committed revocation before socket entry
+  ---
+  duration_ms: 54.04562
+  location: '/home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/integration.test.mjs:434:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    1 !== 0
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/integration.test.mjs:446:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+# Subtest: received PG: notification failures and malformed/missing/duplicate projections preserve baseline and privacy
+not ok 6 - received PG: notification failures and malformed/missing/duplicate projections preserve baseline and privacy
+  ---
+  duration_ms: 41.019646
+  location: '/home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/integration.test.mjs:449:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    true !== false
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///home/ubuntu/root-sol-window100337/243001/source/server/lib/machine-services/test/integration.test.mjs:472:14)
+    process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    async Test.run (node:internal/test_runner/test:980:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:677:7)
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 0
+# fail 6
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 525.771776

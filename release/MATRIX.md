@@ -65,7 +65,7 @@ C4 mail: a private preview defaults to the synthetic outbox. For the authorized 
 set `SDS_PREVIEW_RESEND=1`, supply `RESEND_API_KEY` and remove `SDS_PREVIEW_MAIL_OUTBOX`. This route
 permits only Resend's delivered/bounced/complained test addresses and `contact@samedaydesk.com`;
 it rejects customer addresses, cc/bcc and other-brand senders before calling the provider. Install
-`0012_mail_events.sql` in Supabase and the preview Care database. `RESEND_WEBHOOK_SECRET` verifies
+`0015_mail_events.sql` in Supabase and the preview Care database. `RESEND_WEBHOOK_SECRET` verifies
 raw provider signatures at `/api/webhooks/resend`; the signed event ID is stored once in
 `public.mail_events`, without recipients or message bodies. An unavailable store returns 503.
 `node --test server/scripts/test-resend-preview.mjs` and the Care PostgreSQL acceptance cover
@@ -90,7 +90,7 @@ transaction exclusions. Without it, the public policy check is partial and D rem
 The report is `release/out/receipts-chain.json`. A scheduled rebuild separately needs `BASE_RPC`,
 that private export and `SDS_RECEIPTS_SNAPSHOT_PATH`; the static test write is not a chain rebuild.
 
-F4 uses migration `0011_commerce_journey.sql`: the five commerce events are persisted in
+F4 uses migration `0014_commerce_journey.sql`: the five commerce events are persisted in
 `public.journey_events`, separate from the diagnostic UI counters. Production uses the existing
 server Supabase client. A private preview writes only to its loopback Care database, and every row
 has `test=true`. Apply the migration to both stores before enabling the new checkout. The Care

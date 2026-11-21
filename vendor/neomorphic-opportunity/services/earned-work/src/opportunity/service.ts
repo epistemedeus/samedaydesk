@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import {assertContinuationHolder} from "./continuation.js";
 import type pg from "pg";
 import { hashRequest, newId } from "../crypto.js";
 import { ApiError } from "../errors.js";
@@ -553,6 +554,7 @@ export class OpportunityService {
     },
     contributor: ContributorPrincipal,
     idempotencyKey: string,
+    options?: {requireContinuationScope:boolean},
   ) {
     assertNoPrivate(body, "submission");
     const evidenceJson = JSON.stringify(body.evidence);
@@ -560,6 +562,7 @@ export class OpportunityService {
     const requestHash = hashRequest({ claimId, ...body });
     return this.kernel.withOpportunityClient(async (client) => {
       const round = await this.lockRound(client, roundKey, body.provenance);
+      if(options?.requireContinuationScope)await assertContinuationHolder(client,{roundKey,claimId,provenance:body.provenance},contributor,this.kernel.now());
       const replay = await loadIdempotency(client, "opportunity_submit", round.id, idempotencyKey, requestHash, contributor.id);
       if (replay.hit) return { replayed: true, statusCode: replay.statusCode, body: replay.body };
       await this.expireUnlearned(client, round.id);

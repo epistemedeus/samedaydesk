@@ -1,0 +1,1 @@
+import{n as e}from"./client.S7oMDpEG.js";e(document);

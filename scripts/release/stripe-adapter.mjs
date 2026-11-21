@@ -26,7 +26,7 @@ export async function start(ctx) {
   execFileSync(join(pg, "initdb"), ["-A", "trust", "-D", join(scratch, "data")], { stdio: "ignore" });
   execFileSync(join(pg, "pg_ctl"), ["-D", join(scratch, "data"), "-l", join(scratch, "pg.log"), "-o", `-F -p ${pgPort} -k ${scratch} -c listen_addresses=127.0.0.1`, "-w", "start"], { stdio: "ignore" });
   dsn = `postgresql://${os.userInfo().username}@127.0.0.1:${pgPort}/postgres`;
-  for (const m of ["0008_task_requests.sql", "0009_care_orders.sql", "0010_task_quotes.sql", "0011_commerce_journey.sql", "0012_mail_events.sql"]) {
+  for (const m of ["0011_task_requests.sql", "0012_care_orders.sql", "0013_task_quotes.sql", "0014_commerce_journey.sql", "0015_mail_events.sql"]) {
     execFileSync("psql", ["-X", "-q", "-v", "ON_ERROR_STOP=1", dsn, "-f", join(root, "supabase/migrations", m)], { stdio: "ignore" });
   }
   server = spawn(process.execPath, ["server/index.js"], {

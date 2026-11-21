@@ -1,0 +1,70 @@
+{
+  "source": "first-use/MAINTAINED-CALLS-owner-qa.json",
+  "label": "owner-qa:r2",
+  "host": "neomorphic.io",
+  "score": 45,
+  "topFixes": [
+    {
+      "title": "MCP initialize succeeds",
+      "fix": "Expose an MCP endpoint at /mcp that answers the initialize handshake.",
+      "category": "mcp"
+    },
+    {
+      "title": "Agent card is valid JSON with name and description",
+      "fix": "Publish an A2A agent card at /.well-known/agent-card.json with name and description.",
+      "category": "agentCard"
+    },
+    {
+      "title": "RFC 9727 api-catalog published",
+      "fix": "Publish an RFC 9727 linkset at /.well-known/api-catalog listing every machine surface.",
+      "category": "apiCatalog"
+    }
+  ],
+  "checks": [
+    {
+      "id": "discovery.llms.links",
+      "category": "discovery",
+      "title": "llms.txt links API, MCP and agent card",
+      "status": "pass",
+      "reason": "llms.txt links the API, the MCP endpoint and the agent card.",
+      "fix": "Add absolute links to /openapi.json, /mcp and /.well-known/agent-card.json inside llms.txt.",
+      "evidenceUrl": "https://neomorphic.io/llms.txt"
+    },
+    {
+      "id": "mcp.initialize",
+      "category": "mcp",
+      "title": "MCP initialize succeeds",
+      "status": "fail",
+      "reason": "No MCP server (/mcp returned 200).",
+      "fix": "Expose an MCP endpoint at /mcp that answers the initialize handshake.",
+      "evidenceUrl": "https://neomorphic.io/mcp"
+    },
+    {
+      "id": "agentCard.present",
+      "category": "agentCard",
+      "title": "Agent card is valid JSON with name and description",
+      "status": "fail",
+      "reason": "No agent card at /.well-known/agent-card.json or /.well-known/agent.json.",
+      "fix": "Publish an A2A agent card at /.well-known/agent-card.json with name and description.",
+      "evidenceUrl": "https://neomorphic.io/.well-known/agent-card.json"
+    },
+    {
+      "id": "x402.parses",
+      "category": "x402",
+      "title": "x402 payment manifest parses",
+      "status": "pass",
+      "reason": "/.well-known/x402 parsed as JSON.",
+      "fix": "Publish a JSON x402 manifest at /.well-known/x402, even if it lists no paid resources yet.",
+      "evidenceUrl": "https://neomorphic.io/.well-known/x402"
+    },
+    {
+      "id": "x402.resources",
+      "category": "x402",
+      "title": "Paid resource list is truthful",
+      "status": "warn",
+      "reason": "The manifest has no resources and does not say whether that is intentional.",
+      "fix": "List paid resources, or keep an empty list with a note stating there are no paid endpoints.",
+      "evidenceUrl": "https://neomorphic.io/.well-known/x402"
+    }
+  ]
+}

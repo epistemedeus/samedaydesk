@@ -1,3 +1,4 @@
+import { networkInfo } from "./helpers/taskmarket-fixtures.js";
 import assert from "node:assert/strict";
 import dns from "node:dns/promises";
 import http from "node:http";
@@ -67,7 +68,8 @@ async function rejected(body, code, status = 400, headers = {}) {
 
 before(async () => {
   dns.lookup = async () => [{ address: "8.8.8.8", family: 4 }];
-  globalThis.fetch = async () => {
+  globalThis.fetch = async (url) => {
+    if (url === "https://api.taskmarket.dev/trpc/network.info") return Response.json(networkInfo());
     siteFetches++;
     return new Response('<title>Fixture</title><meta name="description" content="A controlled local fixture for paid delivery and free checks."><h1>Fixture</h1>', { status: 200 });
   };
@@ -132,7 +134,8 @@ test("invalid params and supplied argument types are rejected before paid valida
   const unknownTool = await request({ body: paidCall({ params: { name: "not_real", arguments: {} } }) });
   assert.equal(unknownTool.status, 200);
   assert.equal(unknownTool.json.error.code, -32602);
-  assert.match(unknownTool.json.error.message, /Unknown tool/);
+  assert.match(unknownTool.json.error.message, /Unknown tool: not_real\. Next: call tools\/list/);
+  assert.match(unknownTool.json.error.message, /payment header/);
 });
 
 test("all accepted notifications and responses have empty 202 bodies", async () => {
@@ -208,8 +211,10 @@ test("MCP parse/budget errors are machine errors without body/query console leak
   try {
     const before = counts();
     const malformed = await rejected('{"license":"cs_test_boundary_secret",', -32700);
-    assert.deepEqual(malformed.json, { jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error" } });
-    await rejected(JSON.stringify({ ...paidCall(), padding: "x".repeat(1024 * 1024) }), -32000, 413);
+    assert.deepEqual(malformed.json, { jsonrpc: "2.0", id: null, error: { code: -32700, message: "Parse error. Next: send one JSON-RPC 2.0 object. Do not send a payment header." } });
+    const oversized = await rejected(JSON.stringify({ ...paidCall(), padding: "x".repeat(1024 * 1024) }), -32000, 413);
+    assert.match(oversized.json.error.message, /^Request body exceeds 1mb\. Next:/);
+    assert.match(oversized.json.error.message, /payment header/);
     await rejected("{}", -32000, 415, { "content-type": "application/json; charset=iso-8859-1" });
     await rejected("corrupt compressed body", -32000, 400, { "content-encoding": "gzip" });
     assert.equal(counts().messages, before.messages);

@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: missing, arbitrary, duplicate, malformed and spoofed source stay bounded with unchanged output
+ok 1 - missing, arbitrary, duplicate, malformed and spoofed source stay bounded with unchanged output
+  ---
+  duration_ms: 52.487493
+  type: 'test'
+  ...
+# Subtest: real requests and returned bodies leave no raw data in WAL, durable aggregate or summary
+ok 2 - real requests and returned bodies leave no raw data in WAL, durable aggregate or summary
+  ---
+  duration_ms: 16.491412
+  type: 'test'
+  ...
+# Subtest: mixed batch, invalid params, protocol/parser error, notification and non-tool replies count at their own boundaries
+ok 3 - mixed batch, invalid params, protocol/parser error, notification and non-tool replies count at their own boundaries
+  ---
+  duration_ms: 13.935463
+  type: 'test'
+  ...
+# Subtest: thrown handler produces a JSON-RPC error and subsequent free work recovers
+ok 4 - thrown handler produces a JSON-RPC error and subsequent free work recovers
+  ---
+  duration_ms: 13.652473
+  type: 'test'
+  ...
+# Subtest: real disconnect before handler completion records production separately from local finish
+ok 5 - real disconnect before handler completion records production separately from local finish
+  ---
+  duration_ms: 45.658876
+  type: 'test'
+  ...
+# Subtest: ambiguous flush failure, duplicate replay and process-state restart preserve the new dimension
+ok 6 - ambiguous flush failure, duplicate replay and process-state restart preserve the new dimension
+  ---
+  duration_ms: 11.856031
+  type: 'test'
+  ...
+# Subtest: failed file write retains in-memory outcomes and recovers into the existing WAL
+ok 7 - failed file write retains in-memory outcomes and recovers into the existing WAL
+  ---
+  duration_ms: 10.006253
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 515.031084
