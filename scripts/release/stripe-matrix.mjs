@@ -119,7 +119,7 @@ async function within(page, selector, ms = 15000, buttonText = null) {
         const rect = el.getBoundingClientRect();
         const style = getComputedStyle(el);
         return !el.disabled && rect.width > 0 && rect.height > 0 && style.visibility !== "hidden" && style.display !== "none" &&
-          (!text || new RegExp(text, "i").test(el.textContent.trim()));
+          (!text || new RegExp(text, "i").test((el.innerText || el.textContent).trim()));
       }), selector, buttonText));
       const h = handle?.asElement();
       if (!h) { await handle?.dispose(); continue; }
@@ -199,7 +199,7 @@ async function payHosted(page, url, card, { threeDS } = {}) {
   await typeInto("#payment-postalCodeInput, #billingPostalCode", "10001", false);
   const optIn = await within(page, "#payment-linkOptInInput, #enableStripePass", 2000);
   if (optIn && await optIn.h.evaluate((e) => e.checked)) await optIn.h.click();
-  const submit = await within(page, '[data-testid="payment-form-submit-button"], button[type=submit].SubmitButton, button[type=submit]', 15000, "^(subscribe|pay(?:\\s|$))");
+  const submit = await within(page, '[data-testid="payment-form-submit-button"], button[type=submit].SubmitButton, button[type=submit]', 15000, "^(subscribe|pay(?:\\s|processing|$))");
   if (!submit) throw new Error("hosted page: no enabled Pay or Subscribe action");
   // Use the focused control's keyboard action. Remote desktop geometry can
   // differ from the cross-origin frame's coordinates; a coordinate click may
@@ -399,10 +399,13 @@ try {
           const shouldPay = name === "success" || name === "3ds-pass";
           let hosted = null;
           await payHosted(page, a.url, CARDS[name], { threeDS: name.startsWith("3ds") ? name.slice(4) : null });
-          if (shouldPay) {
+          if (shouldPay && !["quote", "link"].includes(a.kind)) {
             let back = false;
             for (let w = 0; w < 120 && !back; w++) { back = Boolean(page.returnedTo) || page.url().startsWith(preview); if (!back) await sleep(500); }
             if (!back) hosted = await buyerSaw(page, `${offer.id}-${name}-hosted`);
+          }
+          if (shouldPay && ["quote", "link"].includes(a.kind)) {
+            await page.waitForFunction(() => /Payment received/i.test(document.body.innerText), { timeout: 45000 });
           }
           if (!shouldPay) { await sleep(6000); hosted = await buyerSaw(page, `${offer.id}-${name}-hosted`); }
           const session = await stripe("GET", `checkout/sessions/${a.sessionId}`);

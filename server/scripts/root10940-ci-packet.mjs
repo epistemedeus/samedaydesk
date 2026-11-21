@@ -13,7 +13,7 @@ export const DESCRIPTOR_SCHEMA = 'neomorphic.machine-participation.acquisition.v
 export const INDEX_SCHEMA = 'pilot.root10940.approved-ci-packet-index.v1';
 export const ENROLLMENT_SCHEMA = 'pilot.root10940.ci-enrollment-request.v1';
 export const CLIENT_VERSION = '0.3.0';
-export const CURRENT_PROPOSAL_DIR = 'docs/receiving/sds-hosted-orders-20261121';
+export const CURRENT_PROPOSAL_DIR = 'docs/receiving/sds-account-checkout-20261121';
 export function enrollmentCommand(proposalDir = CURRENT_PROPOSAL_DIR) {
   if (!/^docs\/receiving\/[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(proposalDir)) {
     throw new PacketError('proposal directory must be one shell-safe child of docs/receiving', 2);
