@@ -105,23 +105,11 @@ async function within(page, selector, ms = 15000) {
   }
   return null;
 }
-// Stripe's hosted form sometimes renders blank (seen about one load in four on this VM); fill it again
-// after a fresh load once before calling the case failed.
-async function payHosted(page, url, card, options = {}) {
-  try { await payHostedOnce(page, url, card, options); }
-  catch (e) {
-    if (!/hosted page: (no |the payment form)|Navigation timeout/.test(e.message)) throw e;
-    await payHostedOnce(page, url, card, options);
-  }
-}
-async function payHostedOnce(page, url, card, { threeDS } = {}) {
-  // The payment form sometimes stays blank after load; wait for it, then reload once.
-  const formReady = "#linkAuthentication-emailInput, #email, #payment-numberInput, #cardNumber, [data-value=\"card\"]";
+// A hosted form is loaded once. A blank form or failed navigation is a failed case.
+async function payHosted(page, url, card, { threeDS } = {}) {
+  const formReady = '#linkAuthentication-emailInput, #email, #payment-numberInput, #cardNumber, [data-value="card"]';
   await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
-  if (!(await within(page, formReady, 30000))) {
-    await page.reload({ waitUntil: "networkidle2", timeout: 60000 });
-    if (!(await within(page, formReady, 45000))) throw new Error("hosted page: the payment form did not appear");
-  }
+  if (!(await within(page, formReady, 45000))) throw new Error("hosted page: the payment form did not appear");
   const typeInto = async (sel, text, need = true) => {
     const x = await within(page, sel, need ? 15000 : 2500);
     if (!x) { if (need) throw new Error(`hosted page: no ${sel}`); return; }
@@ -248,15 +236,9 @@ try {
           const a = await adapter.open(ctx, offer);
           const shouldPay = name === "success" || name === "3ds-pass";
           let hosted = null;
-          // The hosted page occasionally sits on its loading state; one more attempt on the same open session.
-          for (let attempt = 1; attempt <= 2; attempt++) {
-            await payHosted(page, a.url, CARDS[name], { threeDS: name.startsWith("3ds") ? name.slice(4) : null });
-            if (!shouldPay) break;
-            let back = false;
-            for (let w = 0; w < 120 && !back; w++) { back = Boolean(page.returnedTo) || page.url().startsWith(preview); if (!back) await sleep(500); }
-            if (back) { hosted = null; break; }
-            hosted = { attempt, ...(await buyerSaw(page, `${offer.id}-${name}-hosted-${attempt}`)) };
-            if ((await stripe("GET", `checkout/sessions/${a.sessionId}`)).status !== "open") break;
+          await payHosted(page, a.url, CARDS[name], { threeDS: name.startsWith("3ds") ? name.slice(4) : null });
+          if (shouldPay) {
+            await page.waitForFunction((origin) => location.href.startsWith(origin), { timeout: 60000 }, preview);
           }
           if (!shouldPay) { await sleep(6000); hosted = await buyerSaw(page, `${offer.id}-${name}-hosted`); }
           const session = await stripe("GET", `checkout/sessions/${a.sessionId}`);
