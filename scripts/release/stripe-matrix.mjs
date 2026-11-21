@@ -100,17 +100,18 @@ const browser = await puppeteer.launch({ executablePath: chrome, headless: !args
 // Stripe's hosted Checkout page: the payment form lives in one Elements frame. Link opt-in is on by
 // default and would ask for a phone number, so it is switched off.
 const CARDS = { success: "4242424242424242", decline: "4000000000000002", block: "4100000000000019", "3ds-pass": "4000000000003220", "3ds-fail": "4000000000003220" };
-async function within(page, selector, ms = 15000) {
+async function within(page, selector, ms = 15000, buttonText = null) {
   const end = Date.now() + ms;
   while (Date.now() < end) {
     for (const f of page.frames()) {
       // Query in the frame's main realm. Stripe's helper frames can prevent
       // Puppeteer's isolated selector realm from starting, stalling every field.
-      const handle = await f.evaluateHandle((sel) => [...document.querySelectorAll(sel)].find((el) => {
+      const handle = await f.evaluateHandle((sel, text) => [...document.querySelectorAll(sel)].find((el) => {
         const rect = el.getBoundingClientRect();
         const style = getComputedStyle(el);
-        return !el.disabled && rect.width > 0 && rect.height > 0 && style.visibility !== "hidden" && style.display !== "none";
-      }), selector).catch(() => null);
+        return !el.disabled && rect.width > 0 && rect.height > 0 && style.visibility !== "hidden" && style.display !== "none" &&
+          (!text || new RegExp(text, "i").test(el.textContent.trim()));
+      }), selector, buttonText).catch(() => null);
       const h = handle?.asElement();
       if (!h) { await handle?.dispose(); continue; }
       if (h && await h.boundingBox().catch(() => null)) return { f, h };
@@ -145,7 +146,8 @@ async function payHosted(page, url, card, { threeDS } = {}) {
   await typeInto("#payment-postalCodeInput, #billingPostalCode", "10001", false);
   const optIn = await within(page, "#payment-linkOptInInput, #enableStripePass", 2000);
   if (optIn && await optIn.h.evaluate((e) => e.checked)) await optIn.h.click();
-  const submit = await within(page, '[data-testid="payment-form-submit-button"], button[type=submit].SubmitButton, button[type=submit]');
+  const submit = await within(page, '[data-testid="payment-form-submit-button"], button[type=submit].SubmitButton, button[type=submit]', 15000, "^(subscribe|pay(?:\\s|$))");
+  if (!submit) throw new Error("hosted page: no enabled Pay or Subscribe action");
   await submit.h.click();
   if (threeDS) {
     // Stripe's 3D Secure 2 test page: a Complete and a Fail button inside nested frames.
@@ -168,7 +170,11 @@ async function payHosted(page, url, card, { threeDS } = {}) {
 async function buyerSaw(page, name) {
   const file = join(out, `${name}.png`);
   await page.screenshot({ path: file, fullPage: true }).catch(() => {});
-  const frames = await Promise.all(page.frames().map((f) => f.evaluate(() => document.body?.innerText ?? "").catch(() => "")));
+  const frames = await Promise.all(page.frames().map((f) => f.evaluate(() => {
+    const body = document.body?.cloneNode(true);
+    body?.querySelectorAll("select option").forEach((el) => el.remove());
+    return body?.textContent ?? "";
+  }).catch(() => "")));
   return { url: page.url().replace(/#.*/, "#<capability>"), screenshot: file.slice(root.length + 1), text: frames.join("\n").replace(/\s+\n/g, "\n").slice(0, 1500) };
 }
 
@@ -224,7 +230,9 @@ try {
     for (const name of cases) {
       if (offer.cases && !offer.cases.includes(name)) continue;
       const page = await browser.newPage();
-      await page.setViewport({ width: 1280, height: 1000 });
+      // Stripe's narrow layout keeps the hosted form in one column, including
+      // on a remote desktop whose physical window is smaller than the preview.
+      await page.setViewport({ width: 800, height: 1000 });
       // A site whose success URL is its production origin (EIN.LLC refuses a loopback PUBLIC_URL): the
       // return navigation is recorded and stopped here, so the run never loads the live site.
       page.returnedTo = null;
