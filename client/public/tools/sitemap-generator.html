@@ -52,16 +52,16 @@
   <h1>XML Sitemap Generator</h1>
   <p class="lead">Paste your page URLs and get a valid <code>sitemap.xml</code>, so Google, Bing (which feeds ChatGPT Search), and AI crawlers can find every page. Free, no signup.</p>
 
-  <label>Your page URLs (one per line)</label>
+  <label for="urls">Your page URLs (one per line)</label>
   <textarea id="urls" rows="8" placeholder="https://yourdomain.com/&#10;https://yourdomain.com/about&#10;https://yourdomain.com/pricing&#10;https://yourdomain.com/blog/post-1"></textarea>
 
   <div class="row">
     <div>
-      <label>Default change frequency</label>
+      <label for="freq">Default change frequency</label>
       <select id="freq"><option value="">(none)</option><option>daily</option><option selected>weekly</option><option>monthly</option><option>yearly</option></select>
     </div>
     <div>
-      <label>Last modified date</label>
+      <label for="lastmod">Last modified date</label>
       <input id="lastmod" type="date" />
     </div>
   </div>

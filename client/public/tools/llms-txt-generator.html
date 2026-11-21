@@ -91,7 +91,7 @@
   const $ = (id) => document.getElementById(id);
   function secRow(title="Docs", links="Getting started | https://yourdomain.com/docs | Start here\nAPI reference | https://yourdomain.com/api"){
     const d = document.createElement("div"); d.className="secRow";
-    d.innerHTML = '<label>Section name</label><input class="st"><label>Links, one per line: <code>title | url | optional note</code></label><textarea class="sl" rows="3"></textarea>';
+    d.innerHTML = '<label>Section name<input class="st"></label><label>Links, one per line: <code>title | url | optional note</code><textarea class="sl" rows="3"></textarea></label>';
     d.querySelector(".st").value=title; d.querySelector(".sl").value=links;
     d.querySelectorAll("input,textarea").forEach(el=>el.addEventListener("input", render));
     return d;

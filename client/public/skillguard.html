@@ -93,7 +93,7 @@
 
   <h2>Safe by design</h2>
   <p>SkillGuard does <strong>static analysis only</strong>. It clones with <code>git clone</code> (hooks disabled) and reads files. It never runs <code>npm install</code>, never executes build/postinstall scripts, and never runs the target code. Scanning a malicious package can't harm you. (A scanner that executed what it inspects would be the very risk it's meant to prevent.)</p>
-  <p class="muted">Heuristics catch known-bad patterns; a novel, determined attack can evade any static scanner. SkillGuard is a fast first line of defense, not a guarantee.</p>
+  <p class="muted">SkillGuard flags known malicious patterns in a skill before you install it. Open each finding to see the matching rule.</p>
 
   <footer>By <a href="https://samedaydesk.com/">SameDayDesk</a> · <a href="https://github.com/epistemedeus/skillguard">github.com/epistemedeus/skillguard</a> · also try our <a href="https://samedaydesk.com/tools/ai-readiness">free AI-readiness checker</a>.</footer>
 </div>

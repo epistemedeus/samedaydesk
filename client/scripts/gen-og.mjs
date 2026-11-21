@@ -3,8 +3,8 @@
 // the drafting grid, the page's title, the site frame) and the icon set drawn from the same
 // reticle. Rendered with system Chrome; without Chrome the committed images are kept.
 //   node client/scripts/gen-og.mjs
-import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { execFileSync, spawnSync } from "node:child_process";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -86,7 +86,12 @@ function icoFromPng(png, size) {
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const chrome = findChrome();
-  if (!chrome) { console.warn("gen-og: no system Chrome; keeping the committed share images and icons."); process.exit(0); }
+  if (!chrome || spawnSync(chrome, ["--version"], { timeout: 5000, stdio: "ignore" }).status !== 0) {
+    for (const file of [...CARDS.map(c => c.file), "favicon.svg", "favicon.ico", "apple-touch-icon.png", "icon-192.png", "icon-512.png", "icon-512-maskable.png"]) {
+      if (!existsSync(join(pub, file))) throw new Error("A committed share image is required when Chrome cannot run");
+    }
+    console.warn("gen-og: system Chrome cannot run; keeping the committed share images and icons."); process.exit(0);
+  }
   for (const c of CARDS) shoot(chrome, cardHtml(c), join(pub, c.file), 1200, 630);
   writeFileSync(join(pub, "favicon.svg"), ICON_SVG);
   for (const [file, size, pad] of [["apple-touch-icon.png", 180, 0], ["icon-192.png", 192, 0], ["icon-512.png", 512, 0], ["icon-512-maskable.png", 512, 52], ["favicon-32.png", 32, 0]]) {

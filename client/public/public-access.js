@@ -13,7 +13,7 @@
   let scheduled = false;
   const scan = () => {
     scheduled = false;
-    document.querySelectorAll('pre, [class*="tableWrap"], [class*="table-wrap"]').forEach(element => {
+    document.querySelectorAll('pre, [class*="tableWrap"], [class*="table-wrap"], [class*="overflow-x-auto"]').forEach(element => {
       if (!watched.has(element)) { watched.add(element); resize.observe(element); receive(element); }
     });
   };

@@ -44,8 +44,8 @@ export default function Services() {
                           <a className={styles.cover} href={href || `/signup?offer=${o.slug}`} onClick={pick}>{o.plain}</a>
                         </h4>
                         <div className={styles.price}>
-                          <span className={styles.cur}>$</span>
                           <span className={clsx("mono", styles.amount)}>{o.price}</span>
+                          <span className={styles.cur}>&nbsp;USD</span>
                           {o.per && <span className={styles.cur}>{o.per}</span>}
                         </div>
                       </div>
@@ -70,10 +70,10 @@ export default function Services() {
                         variant={o.flagship ? "primary" : "ghost"}
                         magnetic={o.flagship}
                         className={styles.cardCta}
-                        ariaLabel={`Buy ${o.plain} for $${o.price}${o.per ? " a month" : ""}`}
+                        ariaLabel={`Buy ${o.plain} for ${o.price} USD${o.per ? " a month" : ""}`}
                         onClick={pick}
                       >
-                        {o.per ? `Start · $${o.price}${o.per}` : `Buy · $${o.price}`} <span aria-hidden="true">→</span>
+                        {o.per ? `Start · ${o.price} USD${o.per}` : `Buy · ${o.price} USD`} <span aria-hidden="true">→</span>
                       </MagneticButton>
                     </article>
                   );
