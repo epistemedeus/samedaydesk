@@ -39,7 +39,7 @@ async function copyRoot(name) {
   const target = path.join(dir, name); await mkdir(target);
   await cp(path.join(root, vendor), path.join(target, vendor), { recursive: true,
     filter: p => !['.runtime', '.python-standalone', '.build'].includes(path.basename(p)) });
-  const tracked=await runBounded('git',['ls-files','server','tools/hosted-useful-journey-100346','tools/l08-agent-repair','tools/result-reuse','tools/recurring-job-recipes','client/src/data'],{cwd:root,capture:true,stdoutLimit:100000});assert.equal(tracked.code,0);assert.equal(tracked.reason,null);
+  const tracked=await runBounded('git',['ls-files','server','tools/hosted-useful-journey-100346','tools/l08-agent-repair','tools/result-reuse','tools/recurring-job-recipes','tools/browser-smoke','client/src/data','client/public/discovery'],{cwd:root,capture:true,stdoutLimit:100000});assert.equal(tracked.code,0);assert.equal(tracked.reason,null);
   for(const file of tracked.stdout.trim().split('\n')){await mkdir(path.dirname(path.join(target,file)),{recursive:true});await cp(path.join(root,file),path.join(target,file));}
   await mkdir(path.join(target, 'server/scripts/fixtures'), { recursive: true });
   await cp(path.join(root, 'server/scripts/fixtures/generation-host.mjs'), path.join(target, 'server/scripts/fixtures/generation-host.mjs'));
@@ -436,6 +436,7 @@ test('actual managed-host named receive build receives the same private unconsum
   const result = await runBounded('npm', ['run', 'build:managed-foundry-receive'], { cwd: managedRoot,
     env: { ...inherited, ...f.env, ...env, PATH: `${path.dirname(node218)}:${inherited.PATH}` },
     timeoutMs: 180000, capture: true, stdoutLimit: 1048576, outputLimit: 2097152 });
+  if (process.env.FOUNDRY_GENERATION_BUILD_LOG) await writeFile(process.env.FOUNDRY_GENERATION_BUILD_LOG, result.stdout, { mode: 0o600 });
   assert.equal(result.reason, null); assert.equal(result.code, 0);
   const installed = JSON.parse(result.stdout.trim().split('\n').at(-1));
   assert.equal(installed.receiving.replayed, false); assert.equal(installed.installed, true);

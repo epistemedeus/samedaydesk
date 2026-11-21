@@ -33,6 +33,9 @@ test("SPA history authority is the explicit App.tsx list, not any extensionless 
     "/signup",
     "/dashboard",
     "/checkout",
+    "/care/buy",
+    "/care/intake",
+    "/care/subscription",
     "/terms",
     "/privacy",
   ]);

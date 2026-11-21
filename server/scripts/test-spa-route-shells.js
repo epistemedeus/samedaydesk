@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import http from "node:http";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
@@ -520,4 +520,36 @@ test("production entrypoint serves the apex A2A card from the tool inventory", a
   assert.equal(body.skills.some((skill) => skill.id === "check_agent_readiness"), true);
   assert.equal(card.body.includes('"skills":[]'), false);
   assert.match(body.description, /agents\.samedaydesk\.com\/\.well-known\/agent-card\.json/);
+});
+
+
+test("published Rust references reach an emitted page and symbol", () => {
+  const dir = join(here, "../../client/dist/docs/rust-itertools");
+  const pages = new Map(readdirSync(dir).filter(name => name.endsWith(".html")).map(name => {
+    const html = readFileSync(join(dir, name), "utf8");
+    return [name, { html, ids: new Set([...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1])) }];
+  }));
+  for (const [name, { html }] of pages) for (const match of html.matchAll(/<a\b[^>]*\bhref="([^"]+)"/g)) {
+    const url = new URL(match[1].replaceAll("&amp;", "&"), `https://samedaydesk.com/docs/rust-itertools/${name}`);
+    if (url.origin !== "https://samedaydesk.com" || !url.pathname.startsWith("/docs/rust-itertools/") || !url.pathname.endsWith(".html")) continue;
+    const target = pages.get(url.pathname.split("/").at(-1));
+    assert.ok(target, `${name}: missing page ${url.pathname}`);
+    if (url.hash) assert.ok(target.ids.has(decodeURIComponent(url.hash.slice(1))), `${name}: missing symbol ${url.href}`);
+  }
+});
+
+test("published seller-report slash URLs redirect once with their finding or result intact", async (t) => {
+  const dist = mkdtempSync(join(tmpdir(), "route-report-redirect-"));
+  t.after(() => rmSync(dist, { recursive: true, force: true }));
+  writeFileSync(join(dist, "index.html"), asBuiltIndex()); writeRouteShells(dist);
+  const app = express(); mountProductionClient(app, dist);
+  const { server, port } = await listen(app); t.after(() => new Promise(resolve => server.close(resolve)));
+  for (const query of ["?finding=hypernatt-liq-radar-20260830", "?resolved=public-result", "?finding=encoded%2Fvalue%3Fextra%3D1"]) {
+    for (const method of ["GET", "HEAD"]) {
+      const old = await request(port, "/x402/seller-conformance/" + query, method);
+      assert.equal(old.status, 301); assert.equal(old.headers.location, "/x402/seller-conformance" + query);
+      assert.equal((await request(port, old.headers.location, method)).status, 200);
+    }
+  }
+  assert.notEqual((await request(port, "/x402/seller-conformance/?finding=public", "POST")).status, 301);
 });

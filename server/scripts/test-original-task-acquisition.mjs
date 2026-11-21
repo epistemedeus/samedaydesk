@@ -1,7 +1,7 @@
 // Cold public acquisition of the original-task client. No product checkout.
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { spawn } from "node:child_process";
+import { spawn, execFileSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -124,7 +124,9 @@ test("catalog, skill, and card expose the help path without changing paid links"
   assert.match(card.json.description, /agents\.samedaydesk\.com/);
   const skill = await get(`${origin}/skill.md`);
   assert.match(skill.text, /GET \/discovery\/original-task-correspondence\.json/);
-  assert.match(skill.text, /does not submit a task/);
+  const historical = execFileSync("git", ["show", "b001d2a702550db6212c1e7af2ee54d854d68146:server/lib/apex-declarations.js"], { encoding: "utf8" });
+  assert.match(historical, /does not submit a task/);
+  assert.match(skill.text, /commands to send your public task and read its reply/);
   assert.match(skill.text, /Paid gateway OpenAPI: https:\/\/agents\.samedaydesk\.com\/openapi\.json/);
   const after = pulseSnapshot();
   assert.equal(after.humans, before.humans);

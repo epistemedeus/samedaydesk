@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { CareError } from "../lib/care-contract.js";
+import { reportRequestError } from "../lib/journey-events.js";
 
 export function createCareRouter(care, clock = Date.now) {
   const router = Router();
@@ -14,6 +15,7 @@ export function createCareRouter(care, clock = Date.now) {
     catch (error) {
       if (error instanceof CareError) return res.status(error.status).json({ error: error.message, code: error.code });
       console.error("[care] request failed", error?.type || error?.name || "Error");
+      void reportRequestError("care_request");
       return res.status(503).json({ error: "We could not complete that step. Please try the same request again." });
     }
   };

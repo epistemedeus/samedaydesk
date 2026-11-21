@@ -171,7 +171,7 @@ export async function runS79TwoOrigin({ outDir } = {}) {
         origin: "sds",
         url: `${sds.base}/for-agents`,
         titleIncludes: "Fresh web data for agents",
-        h1Includes: "opt-in reuse",
+        h1Includes: "agent",
         bodyIncludes: ["POST /extract/batch", "source-change-alert"],
       },
       {

@@ -478,7 +478,7 @@ function apexPaths(catalog, skillMarkdown) {
         responses: {
           "200": {
             description: "OpenAPI 3.1 document.",
-            content: { "application/openapi+json": { schema: { type: "object", required: ["openapi", "info", "paths"] }, example: { openapi: "3.1.0", info: { title: "SameDayDesk apex", version: SERVER_INFO.version }, paths: {} } } },
+            content: { "application/openapi+json": { schema: { type: "object", required: ["openapi", "info", "paths"] }, example: { openapi: "3.1.0", info: { title: "SameDayDesk tools", version: SERVER_INFO.version }, paths: {} } } },
           },
         },
       }),
@@ -724,13 +724,22 @@ export function apexSkillMarkdown() {
   const tools = mcpToolDeclarations();
   const plan = copyableNoKeyExamples().find((example) => example.id === "plan_taskmarket_delegation");
   const lines = [
-    "# SameDayDesk apex skills",
+    "# SameDayDesk tools",
     "",
-    `Authority: these instructions describe ${APEX_ORIGIN} only.`,
-    `Paid machine commerce is a different host, ${PAID_ORIGIN}.`,
-    "Its live OpenAPI, MCP, agent card, x402 manifest, health, and action catalog are the authority for payment.",
-    "This file does not copy route counts, prices, or payment addresses.",
-    "No account signup is required for the free examples below.",
+    "Check whether your customers' AI can read your website. Free. Receive each check and the fixes.",
+    "",
+    "## First action",
+    "",
+    `Run: curl -s "${APEX_ORIGIN}/api/tools/ai-readiness?url=https://example.com"`,
+    "",
+    `For MCP, POST to ${APEX_ORIGIN}/mcp with Content-Type application/json:`,
+    "",
+    "```json",
+    JSON.stringify(jsonRpc("check-1", "tools/call", { name: "check_ai_readiness", arguments: { url: "https://example.com" } }), null, 2),
+    "```",
+    "",
+    `Open ${APEX_ORIGIN}/tools/ai-readiness to use the form. For a fixed-price build, choose your offer at ${APEX_ORIGIN}/llms.txt.`,
+    `For web data priced per call in USDC, read the current prices and payment instructions at ${PAID_ORIGIN}/llms.txt.`,
     "",
     "## Protocol",
     "",
@@ -768,18 +777,17 @@ export function apexSkillMarkdown() {
     lines.push("", "Input schema:", "", "```json", JSON.stringify(tool.inputSchema, null, 2), "```", "");
   }
   lines.push(
-    "## Optional mounts",
+    "## Send one public task",
     "",
-    "`GET /api/correspondence/healthz` is enabled false unless correspondence configuration is present. A disabled body is not a mailbox.",
-    "`GET /api/hosted-useful/healthz` can be mounted while `productionReady` and `publicationVerified` stay false. That is not a working hosted consumer. Do not send job admission here.",
-    "`GET /api/public-readiness/healthz` reports the vendored checker. `publicDeployment.activated` stays false.",
-    "`GET /discovery/original-task-correspondence.json` names one public original-task client archive. Fetching it does not submit a task, enroll a visitor, or promise delivery. That document is the next action for one public original task through the existing correspondence client. It is not an MCP tool, not a paid gateway call, and not a universal capability. Supported actions are to qualify that public task, then read the same private attempt. Refusals stay explicit for an unrelated surface, a spend request, hosted execution, a stale archive, a handle outside its private directory, and a source label placed on the task. A declared source is not authentication.",
+    "`GET /discovery/original-task-correspondence.json` returns the client download, digest and commands to send your public task and read its reply.",
     "",
-    "## Paid gateway links",
+    "## HTTP contracts and paid web data",
     "",
+    `HTTP inputs, outputs and errors: ${APEX_ORIGIN}/openapi.json`,
+    `Paid web data and prices per call: ${PAID_ORIGIN}/llms.txt`,
   );
   for (const link of PAID_GATEWAY_LINKS) lines.push(`- ${link.title}: ${link.href}`);
-  lines.push("", "No paid `/.well-known/api-catalog` is linked. That path is not a live canonical document on the paid host.", "");
+  lines.push("");
   return lines.join("\n");
 }
 
@@ -789,17 +797,13 @@ export function apexOpenApiDocument() {
   return {
     openapi: "3.1.0",
     info: {
-      title: "SameDayDesk apex",
+      title: "SameDayDesk tools",
       version: SERVER_INFO.version,
       description: [
-        "Free apex HTTP and MCP tools on samedaydesk.com.",
-        `Paid machine commerce stays on ${PAID_ORIGIN}. This document links that host and does not copy its route count, prices, or payment authority.`,
-        "Account, checkout, upload, and webhook routes exist for signed-in people or provider signatures. They are not free tools and have no copyable example here.",
-        "GET /scan is an HTML proof page for people.",
-        "GET /api/observatory and GET /api/market-observations read fixed upstreams and can report those upstreams unavailable. They are not the free apex tools in /skill.md.",
-        "GET /discovery/original-task-correspondence.json is the no-spend next action for one public original task through existing correspondence. It is not an MCP tool and not a paid gateway operation.",
-        "GET routes on this list also answer HEAD with the same headers and an empty body. The declaration routes answer OPTIONS with CORS.",
-        "Optional mounts stay explicit: correspondence, hosted useful journey, and public readiness health do not become a hosted consumer because their source is mounted.",
+        "Check whether your customers' AI can read your website. Free. Receive each check and the fixes.",
+        `Start with GET ${APEX_ORIGIN}/api/tools/ai-readiness?url=https://example.com or call check_ai_readiness through MCP.`,
+        `Choose a fixed-price build at ${APEX_ORIGIN}/llms.txt. For web data priced per call in USDC, use ${PAID_ORIGIN}/llms.txt.`,
+        "GET routes also answer HEAD with the same headers and an empty body. Declaration routes answer OPTIONS with CORS.",
       ].join(" "),
     },
     servers: [{ url: APEX_ORIGIN, description: "Apex free tools" }],

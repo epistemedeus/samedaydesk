@@ -27,7 +27,7 @@ export default function Hero() {
 
         <p className={styles.sub} data-hero-fade>
           When people ask ChatGPT or Claude to book, buy or look something up, your service answers
-          and gets paid. Fixed prices, working the same day.
+          and gets paid. Fixed prices. Ready for your customers.
         </p>
 
         <div data-hero-fade>

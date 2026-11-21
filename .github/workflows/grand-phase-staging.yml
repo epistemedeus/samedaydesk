@@ -5,6 +5,11 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      private_agent_origin:
+        description: Temporary private production preview for a cold external caller
+        required: false
+        default: ""
 permissions:
   contents: read
 jobs:
@@ -115,3 +120,19 @@ jobs:
       - run: npm run test:seller-repair-checkout
       - run: npm run test:verified-feed
         if: success() || failure()
+
+  cold-private-agent:
+    if: github.event_name == 'workflow_dispatch' && inputs.private_agent_origin != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - name: Read the actual start file and complete its free first action
+        env:
+          PRIVATE_AGENT_ORIGIN: ${{ inputs.private_agent_origin }}
+        run: node .github/qa/cold-entry.mjs "$PRIVATE_AGENT_ORIGIN"

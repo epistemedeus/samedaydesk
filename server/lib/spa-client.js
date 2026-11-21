@@ -7,6 +7,14 @@ import { mountReceiptSnapshot } from "./receipt-snapshot.js";
 
 export function mountProductionClient(app, clientDist) {
   mountReceiptSnapshot(app, clientDist);
+  // Keep the already published finding and resolved-report URLs usable on reload.
+  app.use((req, res, next) => {
+    if ((req.method === "GET" || req.method === "HEAD") && req.path === "/x402/seller-conformance/") {
+      const search = new URL(req.originalUrl, "http://private").search;
+      return res.redirect(301, "/x402/seller-conformance" + search);
+    }
+    next();
+  });
   // This mount runs after the API. Compress built public documents and browser
   // code without changing a signed receipt, range response or identity client.
   app.use(compression({

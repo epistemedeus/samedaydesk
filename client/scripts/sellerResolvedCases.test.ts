@@ -113,7 +113,10 @@ test("SellerConformance presents the resolved case without a repair purchase CTA
   assert.match(source, /findSellerResolvedCase/);
   assert.match(source, /sellerResolvedCases/);
   assert.match(source, /resolved diagnostic/i);
-  assert.match(source, /Not a repair sale/);
+  assert.doesNotMatch(source, /Not a repair sale/);
+  // The resolved panel retains public proof and the working diagnostic; a
+  // redundant warning is forbidden customer copy. Purchase controls stay absent.
+  assert.match(source, /selectedResolved\.firstStep\.command/);
   assert.match(source, /selectedResolved\.firstStep\.command/);
   assert.match(source, /selectedResolved\.paidFollowOn/);
   assert.doesNotMatch(source, /sellerRepairFixedScopeUrl\(selectedResolved/);

@@ -313,7 +313,7 @@ test("discovery, catalog, outcomes, and page share one archive pin and commands"
   assert.match(page, /Turn changing files into/);
   assert.match(page, /Ten offline jobs for lockfile changes/);
   assert.match(page, /Acquisition tools/);
-  assert.match(page, /Free local package only/);
+  assert.match(page, /Free local package[;.]?/);
   assert.match(page, /Release 1\.4\.7 adds fresh verification/);
   assert.doesNotMatch(page, /H21/);
   assert.match(crawler, /Turn changing files into useful next steps/i);

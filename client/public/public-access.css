@@ -1,0 +1,62 @@
+/* Shared by the existing static references and React routes. */
+pre:focus-visible, [aria-label="Scrollable table"]:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+/* Sourcey keeps its existing reference layout and colours. These small captions
+   and required-field labels carry information, so they need text contrast. */
+#sourcey a { min-width: 0; overflow-wrap: anywhere; }
+#sourcey #content-area { overflow-wrap: anywhere; }
+#sourcey :not(pre) > code { white-space: normal; overflow-wrap: anywhere; }
+#sourcey a.group.flex.flex-col { flex: 1 1 0; }
+#sourcey .card-item-content p[style*="opacity:0.5"] { opacity: 1 !important; }
+#sourcey .card-item-content code { color: #555861; }
+#sourcey .text-red-600 { color: #b91c1c; }
+html.dark #sourcey .card-item-content code { color: #bfc3cb; }
+html.dark #sourcey .text-red-600 { color: #fca5a5; }
+.sdd-scroll-table { max-width: 100%; overflow-x: auto; }
+html.dark #sourcey { --color-gray-500: 162 166 175; }
+html.dark #sourcey .godoc-doc { color: #c4c7cf; }
+html.dark #sourcey .godoc-toc a, html.dark #sourcey .godoc-toc h4 { color: #bfc3cb; }
+#sourcey a.nav-link.active { color: #006980; }
+html.dark #sourcey a.nav-link.active { color: #91d4e3; }
+html.dark #sourcey .godoc-symbol,
+html.dark #sourcey .godoc-field-sig,
+html.dark #sourcey .godoc-field-type,
+html.dark #sourcey .godoc-field-doc,
+html.dark #sourcey .godoc-fields > summary { color: #c4c7cf; }
+/* The existing copy control has its own toolbar space above generated text. */
+.out > pre { padding-top: 3.5rem; }
+
+/* Search results and key hints convey navigation, including in the open dialog. */
+#sourcey .search-category,
+#sourcey .search-result-tag,
+#sourcey .search-footer-hint,
+#sourcey .search-footer kbd,
+#sourcey #search-open kbd { color: #555861; }
+html.dark #sourcey .search-category,
+html.dark #sourcey .search-result-tag,
+html.dark #sourcey .search-footer-hint,
+html.dark #sourcey .search-footer kbd,
+html.dark #sourcey #search-open kbd { color: #bfc3cb; }
+
+/* Sourcey's desktop anchor has no box when the mobile search button is shown. */
+@media (max-width: 1023px) {
+  #sourcey #search-dialog.open .search-dialog-inner {
+    left: 1rem !important;
+    right: 1rem !important;
+    top: 4.5rem !important;
+    width: auto !important;
+    max-width: calc(100vw - 2rem) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #sourcey *, #sourcey *::before, #sourcey *::after,
+  .mobile-nav-dialog, .mobile-nav-dialog::backdrop {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
