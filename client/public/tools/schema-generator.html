@@ -47,25 +47,25 @@
   <h1>JSON-LD Schema Generator</h1>
   <p class="lead">Generate copy-paste structured data so AI search engines (ChatGPT, Perplexity, Google AI) and Google can classify and quote your site. Add the output to your page's <code>&lt;head&gt;</code>. Free, no signup.</p>
 
-  <div class="tabs" role="tablist">
-    <button class="tab" role="tab" aria-selected="true" data-tab="org">Organization</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="faq">FAQ</button>
+  <div class="tabs" role="tablist" aria-label="Schema type">
+    <button class="tab" role="tab" id="tab-org" aria-controls="org" aria-selected="true" tabindex="0" data-tab="org">Organization</button>
+    <button class="tab" role="tab" id="tab-faq" aria-controls="faq" aria-selected="false" tabindex="-1" data-tab="faq">FAQ</button>
   </div>
 
-  <div id="org">
-    <label>Organization / site name</label>
+  <div id="org" role="tabpanel" aria-labelledby="tab-org">
+    <label for="o_name">Organization / site name</label>
     <input id="o_name" placeholder="Acme Inc." />
-    <label>Website URL</label>
+    <label for="o_url">Website URL</label>
     <input id="o_url" placeholder="https://acme.com" />
-    <label>One-sentence description</label>
+    <label for="o_desc">One-sentence description</label>
     <input id="o_desc" placeholder="Acme builds project-management software for design teams." />
-    <label>Logo URL (optional)</label>
+    <label for="o_logo">Logo URL (optional)</label>
     <input id="o_logo" placeholder="https://acme.com/logo.png" />
-    <label>Social / profile URLs (optional, comma-separated)</label>
+    <label for="o_same">Social / profile URLs (optional, comma-separated)</label>
     <input id="o_same" placeholder="https://twitter.com/acme, https://linkedin.com/company/acme" />
   </div>
 
-  <div id="faq" hidden>
+  <div id="faq" role="tabpanel" aria-labelledby="tab-faq" hidden>
     <p class="hint">FAQ schema can meaningfully raise your odds of appearing in AI answers and Google's AI Overviews. Add the questions buyers actually ask.</p>
     <div id="faqRows"></div>
     <button class="act add" id="addFaq" type="button">+ Add question</button>
@@ -94,14 +94,21 @@
 
   document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => {
     mode = t.dataset.tab;
-    document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected", x===t ? "true":"false"));
+    document.querySelectorAll(".tab").forEach((x) => { x.setAttribute("aria-selected", x===t ? "true":"false"); x.tabIndex=x===t ? 0:-1; });
     $("org").hidden = mode!=="org"; $("faq").hidden = mode!=="faq";
     render();
   }));
 
+  document.querySelectorAll(".tab").forEach((tab, i, tabs) => tab.addEventListener("keydown", (event) => {
+    const next = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 :
+      event.key === "ArrowRight" ? (i + 1) % tabs.length : event.key === "ArrowLeft" ? (i + tabs.length - 1) % tabs.length : null;
+    if (next === null) return;
+    event.preventDefault(); tabs[next].click(); tabs[next].focus();
+  }));
+
   function faqRow(q="", a="") {
     const d = document.createElement("div"); d.className="faqRow";
-    d.innerHTML = '<label>Question</label><input class="fq" placeholder="Do you offer refunds?"><label>Answer</label><textarea class="fa" rows="2" placeholder="Yes, within 30 days."></textarea>';
+    d.innerHTML = '<label>Question<input class="fq" placeholder="Do you offer refunds?"></label><label>Answer<textarea class="fa" rows="2" placeholder="Yes, within 30 days."></textarea></label>';
     d.querySelector(".fq").value=q; d.querySelector(".fa").value=a;
     d.querySelectorAll("input,textarea").forEach((el)=>el.addEventListener("input", render));
     return d;

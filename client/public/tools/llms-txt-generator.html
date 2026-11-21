@@ -53,7 +53,7 @@
 
   <div class="note"><strong>Straight talk:</strong> <code>llms.txt</code> is documentation hygiene, not a ranking hack. There's no solid evidence it boosts AI citations. Ship it as a clean index for agents that fetch it, and rely on crawlability + structured data + answer-shaped content for actual visibility. (We'd rather tell you the truth than sell you a myth.)</div>
 
-  <label>Auto-generate from your URL <span class="hint" style="font-weight:400">(we read your sitemap/homepage and draft it for you)</span></label>
+  <label for="name">Auto-generate from your URL <span class="hint" style="font-weight:400">(we read your sitemap/homepage and draft it for you)</span></label>
   <div style="display:flex;gap:.5rem;flex-wrap:wrap">
     <input id="autoUrl" placeholder="https://yourdomain.com" style="flex:1;min-width:12rem" />
     <button class="act" id="autoBtn" type="button" style="background:#15181d;color:#fff;border:none">Auto-generate</button>
@@ -63,9 +63,9 @@
   <p class="hint" style="border-top:1px solid var(--line);padding-top:1rem">…or build it by hand:</p>
   <label>Site / project name</label>
   <input id="name" placeholder="Acme Inc." />
-  <label>One-line summary (becomes the blockquote)</label>
+  <label for="summary">One-line summary (becomes the blockquote)</label>
   <input id="summary" placeholder="Acme builds project-management software for design teams." />
-  <label>Longer description (optional)</label>
+  <label for="desc">Longer description (optional)</label>
   <textarea id="desc" rows="2" placeholder="Acme helps design teams plan, track, and ship work in one place."></textarea>
 
   <div id="sections"></div>
