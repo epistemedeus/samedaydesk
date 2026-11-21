@@ -18,3 +18,10 @@ html.dark #sourcey .text-red-600 { color: #fca5a5; }
 html.dark #sourcey { --color-gray-500: 162 166 175; }
 html.dark #sourcey .godoc-doc { color: #c4c7cf; }
 html.dark #sourcey .godoc-toc a, html.dark #sourcey .godoc-toc h4 { color: #bfc3cb; }
+#sourcey a.nav-link.active { color: #006980; }
+html.dark #sourcey a.nav-link.active { color: #91d4e3; }
+html.dark #sourcey .godoc-symbol,
+html.dark #sourcey .godoc-field-sig,
+html.dark #sourcey .godoc-field-type,
+html.dark #sourcey .godoc-field-doc,
+html.dark #sourcey .godoc-fields > summary { color: #c4c7cf; }
