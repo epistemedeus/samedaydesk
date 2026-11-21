@@ -1,15 +1,7 @@
 name: Grand phase SameDayDesk private preview
 on:
-  push:
-    branches: [grand-phase/redo]
-  pull_request:
-    branches: [main]
+  # Heavy: runs only on request (16 §4). Push and pull request events keep fast jobs only.
   workflow_dispatch:
-    inputs:
-      private_agent_origin:
-        description: Temporary private production preview for a cold external caller
-        required: false
-        default: ""
 permissions:
   contents: read
 jobs:

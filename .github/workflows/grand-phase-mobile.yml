@@ -1,13 +1,6 @@
 name: Grand phase SameDayDesk mobile performance
 on:
-  push:
-    branches: [grand-phase/redo]
-    paths:
-      - 'client/**'
-      - 'server/**'
-      - 'package*.json'
-      - '.github/qa/mobile-performance.mjs'
-      - '.github/workflows/grand-phase-mobile.yml'
+  # Heavy: runs only on request (16 §4). Push and pull request events keep fast jobs only.
   workflow_dispatch:
 permissions:
   contents: read
