@@ -62,6 +62,7 @@ try {
       });
       assert.equal((await page.goto(new URL(path, base).href)).status(), 200);
       await page.waitForFunction(() => performance.getEntriesByName('sdd:react-ready').length > 0);
+      assert.deepEqual(errors, [], `${path} (${theme})`);
       assert.equal(await page.evaluate(() => window.__sddInitialHeading === document.querySelector('#root main h1')), true, path);
       assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), theme);
       const direction = theme === 'dark' ? 'Switch to Drafting Table (light) theme' : 'Switch to Engineered Speed (dark) theme';

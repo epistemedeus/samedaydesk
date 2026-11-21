@@ -68,6 +68,8 @@ jobs:
           node-version: '22'
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm run build
+        env:
+          NODE_ENV: development
       - run: node --test tests/private-static-compression.test.mjs
       - run: node --test --test-name-pattern='canonical public HTML' server/scripts/test-spa-route-shells.js
       - name: Built Node app on a private runner
