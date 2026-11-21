@@ -150,6 +150,7 @@ const ignoredRequest = (u) => ignoredRequests.some((r) => r.test(u));
 async function loadAndInspect(browser, path, { width = 1440, height = 900, theme = "light", reducedMotion = false, axe = true, expectedStatus = 200 } = {}) {
   const page = await browser.newPage();
   await page.bringToFront();
+  await page.setCacheEnabled(false);
   const requestedUrl = new URL(path, preview).href;
   const fixtureHandoffs = new Set();
   if (flag("--fixture-handoffs")) {

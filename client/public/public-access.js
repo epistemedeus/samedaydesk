@@ -12,6 +12,7 @@
     root.dataset.theme = theme;
     root.style.colorScheme = theme === "dark" ? "dark" : "light";
     if (document.body.id === "sourcey") {
+      try { localStorage.setItem("sourcey-theme", theme === "dark" ? "dark" : "light"); } catch { /* storage is optional */ }
       root.classList.toggle("dark", theme === "dark");
       new MutationObserver(() => {
         const next = root.classList.contains("dark") ? "dark" : "drafting";
