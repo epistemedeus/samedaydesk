@@ -128,6 +128,7 @@
     {
       "name": "not-found",
       "path": "/this-page-does-not-exist",
+      "status": 404,
       "why": "404",
       "lighthouse": false
     },

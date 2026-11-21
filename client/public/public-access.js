@@ -1,6 +1,26 @@
 // Native keyboard scrolling for code/table panes, including content added by a
 // React route. Only overflowing panes enter the tab sequence.
 (() => {
+  // Standalone pages share the site's saved preference. Sourcey also uses a
+  // class for its existing dark styles and keeps its own toggle working.
+  if (!document.getElementById("root")) {
+    const root = document.documentElement;
+    let saved;
+    try { saved = localStorage.getItem("sdd-theme"); } catch { /* storage is optional */ }
+    const theme = saved === "dark" || saved === "drafting" ? saved
+      : root.classList.contains("dark") ? "dark" : "drafting";
+    root.dataset.theme = theme;
+    root.style.colorScheme = theme === "dark" ? "dark" : "light";
+    if (document.body.id === "sourcey") {
+      root.classList.toggle("dark", theme === "dark");
+      new MutationObserver(() => {
+        const next = root.classList.contains("dark") ? "dark" : "drafting";
+        root.dataset.theme = next;
+        root.style.colorScheme = next === "dark" ? "dark" : "light";
+        try { localStorage.setItem("sdd-theme", next); } catch { /* storage is optional */ }
+      }).observe(root, { attributes: true, attributeFilter: ["class"] });
+    } else root.dataset.standalone = "";
+  }
   const watched = new WeakSet();
   const receive = (element) => {
     if (element.scrollWidth <= element.clientWidth + 1 && element.scrollHeight <= element.clientHeight + 1) return;

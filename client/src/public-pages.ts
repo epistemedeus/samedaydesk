@@ -9,6 +9,7 @@ const definitions: ReadonlyArray<readonly [string, string, PageLoader]> = [
   ["/x402", "src/pages/Mcp.tsx", () => import("./pages/Mcp")],
   ["/x402/seller-conformance", "src/pages/SellerConformance.tsx", () => import("./pages/SellerConformance")],
   ["/x402/verified", "src/pages/VerifiedRoutes.tsx", () => import("./pages/VerifiedRoutes")],
+  ["/receipts", "src/pages/Receipts.tsx", () => import("./pages/Receipts")],
   ["/for-agents", "src/pages/ForAgents.tsx", () => import("./pages/ForAgents")],
   ["/for-agents/record-repeat", "src/pages/RecordRepeat.tsx", () => import("./pages/RecordRepeat")],
   ["/for-agents/distribution-repair", "src/pages/DistributionRepair.tsx", () => import("./pages/DistributionRepair")],

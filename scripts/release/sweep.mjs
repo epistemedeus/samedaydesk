@@ -99,6 +99,9 @@ function stop() { stopping = true; if (server) try { process.kill(-server.pid, "
 process.on("exit", stop);
 process.on("SIGINT", () => { stop(); process.exit(130); });
 const origin = new URL(config.origin).origin;
+if (flag("--fixture-handoffs") && (!fixtures.length || !/^http:\/\/127\.0\.0\.1:\d+$/.test(preview))) {
+  throw new Error("Fixture handoffs require explicit fixtures and an isolated loopback preview");
+}
 const toPreview = (u) => { const x = new URL(u, preview); if (x.origin === origin) return new URL(x.pathname + x.search, preview).href; return x.href; };
 const localPath = (u) => { const x = new URL(u); return x.pathname + x.search; };
 
@@ -144,11 +147,27 @@ async function pool(items, n, fn) {
 const ignoredConsole = (config.ignoreConsole ?? []).map((x) => new RegExp(x.pattern ?? x));
 const ignoredRequests = (config.ignoreRequests ?? []).map((x) => new RegExp(x.pattern ?? x));
 const ignoredRequest = (u) => ignoredRequests.some((r) => r.test(u));
-async function loadAndInspect(browser, path, { width = 1440, height = 900, theme = "light", reducedMotion = false, axe = true } = {}) {
+async function loadAndInspect(browser, path, { width = 1440, height = 900, theme = "light", reducedMotion = false, axe = true, expectedStatus = 200 } = {}) {
   const page = await browser.newPage();
+  await page.bringToFront();
+  const requestedUrl = new URL(path, preview).href;
+  const fixtureHandoffs = new Set();
+  if (flag("--fixture-handoffs")) {
+    await page.setRequestInterception(true);
+    page.on("request", request => {
+      if (request.isNavigationRequest() && request.frame() === page.mainFrame() &&
+          ["checkout.stripe.com", "billing.stripe.com"].includes(new URL(request.url()).hostname)) {
+        fixtureHandoffs.add(request.url());
+        void request.abort("aborted");
+      } else void request.continue();
+    });
+  }
   const consoleErrors = [], failed = [];
   page.on("console", (m) => {
     if (m.type() !== "error" || ignoredConsole.some((r) => r.test(m.text()))) return;
+    if (/^Failed to load resource/.test(m.text()) &&
+        (fixtureHandoffs.has(m.location()?.url) || (expectedStatus === 404 &&
+          m.location()?.url === requestedUrl && /\b404\b/.test(m.text())))) return;
     if (/^Failed to load resource/.test(m.text()) && ignoredRequest(m.location()?.url ?? "")) return;
     consoleErrors.push(m.text().slice(0, 300));
   });
@@ -167,6 +186,17 @@ async function loadAndInspect(browser, path, { width = 1440, height = 900, theme
     const res = await page.goto(new URL(path, preview).href, { waitUntil: "networkidle2", timeout: 45000 });
     status = res?.status() ?? null;
   } catch (e) { consoleErrors.push(`navigation: ${e.message.slice(0, 200)}`); }
+  // Inspect the finished initial paint, including short entrance animations.
+  // Continuous motion remains active for the separate pause/reduced-motion check.
+  try {
+    await page.evaluate(async () => {
+      await document.fonts.ready;
+      await Promise.all(document.getAnimations().filter(animation => {
+        const end = animation.effect?.getComputedTiming().endTime;
+        return Number.isFinite(end) && end <= 5000;
+      }).map(animation => animation.finished));
+    });
+  } catch (e) { consoleErrors.push(`initial paint: ${e.message.slice(0, 200)}`); }
   let violations = [];
   const isHtml = await page.evaluate(() => document.contentType === "text/html").catch(() => false);
   const appliedTheme = isHtml ? await page.evaluate(() => document.documentElement.getAttribute("data-theme")) : null;
@@ -181,7 +211,7 @@ async function loadAndInspect(browser, path, { width = 1440, height = 900, theme
     } catch (e) { violations = [{ id: "axe-error", impact: "critical", nodes: 0, sample: e.message.slice(0, 200) }]; }
   }
   const links = await page.$$eval("a[href]", (as) => as.map((a) => a.href)).catch(() => []);
-  return { page, status, appliedTheme, consoleErrors, failed, violations, links };
+  return { page, status, appliedTheme, consoleErrors, failed, violations, links, fixtureHandoffs };
 }
 
 async function checkLinks(allLinks) {
@@ -328,18 +358,19 @@ async function key() {
       mkdirSync(dir, { recursive: true });
       const row = { name: t.name, path: t.path.split("#")[0], fixture: t.state?.fixture ?? t.page.fixture, captures: [], problems: [] };
       for (const width of [390, 768, 1440]) for (const theme of ["light", "dark"]) {
-        const r = await loadAndInspect(browser, t.path, { width, height: width === 390 ? 844 : 900, theme });
+        const r = await loadAndInspect(browser, t.path, { width, height: width === 390 ? 844 : 900, theme, expectedStatus: t.page.status ?? 200 });
         const geo = await r.page.evaluate(() => ({ sideways: document.documentElement.scrollWidth > window.innerWidth + 1, scrollWidth: document.documentElement.scrollWidth }));
         const file = join(dir, `${width}-${theme}.png`);
         await r.page.screenshot({ path: file, fullPage: true });
         row.captures.push({ width, theme, appliedTheme: r.appliedTheme, file: file.slice(root.length + 1), status: r.status, sideways: geo.sideways, axe: r.violations, consoleErrors: r.consoleErrors });
+        if (r.status !== (t.page.status ?? 200)) row.problems.push(`status ${r.status} at ${width} ${theme}; expected ${t.page.status ?? 200}`);
         if (geo.sideways) row.problems.push(`sideways scroll at ${width} ${theme} (${geo.scrollWidth}px)`);
         for (const v of r.violations) row.problems.push(`axe ${v.impact} ${v.id} at ${width} ${theme}`);
         for (const c of r.consoleErrors) row.problems.push(`console at ${width} ${theme}: ${c}`);
         await r.page.close();
       }
       // Actions, keyboard and motion at 1440 light.
-      const r = await loadAndInspect(browser, t.path, { axe: false });
+      const r = await loadAndInspect(browser, t.path, { axe: false, expectedStatus: t.page.status ?? 200 });
       const pageUrl = r.page.url();
       const before = r.consoleErrors.length;
       const buttons = await r.page.$$('button:not([type="submit"]):not([disabled]), [role="button"], summary');
@@ -352,7 +383,7 @@ async function key() {
         await sleep(150);
         if (r.page.url() !== pageUrl) { await r.page.goto(pageUrl, { waitUntil: "networkidle2" }); break; }
       }
-      row.actions = { pressed, consoleErrors: r.consoleErrors.slice(before) };
+      row.actions = { pressed, consoleErrors: r.consoleErrors.slice(before), fixtureHandoffs: [...r.fixtureHandoffs].map(u => new URL(u).origin), providerEvidence: false };
       for (const c of row.actions.consoleErrors) row.problems.push(`console after an action: ${c}`);
       await r.page.goto(pageUrl, { waitUntil: "networkidle2" });
       const focus = [];
@@ -399,7 +430,7 @@ else {
   console.log(`${paths.length} pages`);
   result = { pages: paths.length, ...(await cheap(paths)) };
 }
-const report = { site: config.site, commit: sha, mode, preview, startedAt, finishedAt: new Date().toISOString(), loadAverage: os.loadavg(), result };
+const report = { site: config.site, commit: sha, mode, selection: value("--key-pages")?.split(",") ?? "all configured pages", preview, startedAt, finishedAt: new Date().toISOString(), loadAverage: os.loadavg(), result };
 const passed = mode === "key"
   ? result.B1_B3.every((r) => r.ok) && result.B4_lighthouse.every((l) => l.ok)
   : Object.values(result).filter((x) => x && typeof x === "object" && "ok" in x).every((x) => x.ok) && result.other.every((c) => c.ok);
