@@ -61,6 +61,16 @@ Commands: `npm run release:check`, `npm run release:sweep -- --cheap|--key`, `np
 
 ### Signed-in and capability states
 
+C4 mail: a private preview defaults to the synthetic outbox. For the authorized external test,
+set `SDS_PREVIEW_RESEND=1`, supply `RESEND_API_KEY` and remove `SDS_PREVIEW_MAIL_OUTBOX`. This route
+permits only Resend's delivered/bounced/complained test addresses and `contact@samedaydesk.com`;
+it rejects customer addresses, cc/bcc and other-brand senders before calling the provider. Install
+`0012_mail_events.sql` in Supabase and the preview Care database. `RESEND_WEBHOOK_SECRET` verifies
+raw provider signatures at `/api/webhooks/resend`; the signed event ID is stored once in
+`public.mail_events`, without recipients or message bodies. An unavailable store returns 503.
+`node --test server/scripts/test-resend-preview.mjs` and the Care PostgreSQL acceptance cover
+the boundary. They are synthetic tests, not the required real Resend delivery or inbox headers.
+
 | Screen | State | Fixture | At foundation |
 | --- | --- | --- | --- |
 | /care/intake | paid | `release:stripe --cases success` | buyer screen captured ("Paid: 249 USD.") |

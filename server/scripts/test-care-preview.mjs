@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { randomUUID } from "node:crypto";
+import { createHmac, randomBytes, randomUUID } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { once } from "node:events";
 import { setTimeout as wait } from "node:timers/promises";
@@ -368,4 +368,20 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.deepEqual(firstVisit.utm, { utm_source: "release" });
   console.log("COMMERCE_JOURNEY_OK " + JSON.stringify({ events: [...new Set(rows.map(row => row.event))],
     allTest: true, invalidPaymentRejected: true, replayDeduplicated: true, buyerFieldsExcluded: true }));
+
+  const mailKey = randomBytes(32), mailId = "msg_" + randomUUID(), emailId = randomUUID();
+  process.env.RESEND_WEBHOOK_SECRET = "whsec_" + mailKey.toString("base64");
+  const mailPayload = JSON.stringify({ type: "email.bounced", data: { email_id: emailId, to: ["bounced@resend.dev"] } });
+  const timestamp = String(Math.floor(Date.now() / 1000));
+  const signature = createHmac("sha256", mailKey).update(`${mailId}.${timestamp}.${mailPayload}`).digest("base64");
+  const mailEvent = (valid) => fetch(origin + "/api/webhooks/resend", { method: "POST", body: mailPayload,
+    headers: { "Content-Type": "application/json", "svix-id": mailId, "svix-timestamp": timestamp,
+      "svix-signature": "v1," + (valid ? signature : "invalid") } });
+  assert.equal((await mailEvent(false)).status, 400);
+  assert.equal((await db.query("select count(*)::int as n from public.mail_events")).rows[0].n, 0);
+  assert.equal((await mailEvent(true)).status, 200);
+  assert.equal((await mailEvent(true)).status, 200);
+  const mailRows = (await db.query("select event_id,email_id,event_type,test from public.mail_events")).rows;
+  assert.deepEqual(mailRows, [{ event_id: mailId, email_id: emailId, event_type: "email.bounced", test: true }]);
+  console.log("MAIL_BOUNCE_STORAGE_OK signed synthetic bounce stored once; invalid signature refused");
 });
