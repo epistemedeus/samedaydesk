@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, type FormEvent } from "react";
+import { useLocation } from "react-router-dom";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import { track } from "../lib/posthog";
@@ -17,8 +18,11 @@ type Result = {
 const STATUS_ICON: Record<Check["status"], string> = { pass: "✓", warn: "!", fail: "✕" };
 
 export default function AiReadiness() {
-  const [url, setUrl] = useState("");
-  const [result, setResult] = useState<Result | null>(null);
+  const carried = (useLocation().state as { readiness?: Result } | null)?.readiness;
+  const initial = carried && typeof carried.url === "string" && typeof carried.score === "number" &&
+    typeof carried.grade === "string" && Array.isArray(carried.checks) ? carried : null;
+  const [url, setUrl] = useState(initial?.url || "");
+  const [result, setResult] = useState<Result | null>(initial);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
