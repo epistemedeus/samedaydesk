@@ -23,6 +23,9 @@
 .pause[aria-pressed="true"] { border-color: var(--lime); background: var(--bg-2); }
 
 .screen { position: relative; height: 19rem; overflow: hidden; mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent); }
+@supports (content-visibility: auto) {
+  .screen { content-visibility: auto; }
+}
 .reel { position: relative; will-change: transform; }
 .list { margin: 0; padding: 0; list-style: none; }
 

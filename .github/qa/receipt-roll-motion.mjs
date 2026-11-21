@@ -15,6 +15,21 @@ const screen = '#receipt-roll-screen';
 try {
   const page = await chrome.newPage();
   await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
+  await page.evaluateOnNewDocument(() => {
+    window.__offscreenRollReads = 0;
+    const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetHeight');
+    Object.defineProperty(HTMLElement.prototype, 'offsetHeight', {
+      ...original,
+      get() {
+        const box = this.parentElement?.parentElement;
+        if (box?.id === 'receipt-roll-screen') {
+          const rect = box.getBoundingClientRect();
+          if (rect.top >= innerHeight || rect.bottom <= 0) window.__offscreenRollReads++;
+        }
+        return original.get.call(this);
+      },
+    });
+  });
   await page.setRequestInterception(true);
   page.on('request', (request) => {
     const url = new URL(request.url());
@@ -23,11 +38,15 @@ try {
   });
   assert.equal((await page.goto(base.href)).status(), 200);
   await page.waitForSelector(button, { visible: true });
+  await page.waitForFunction(() => performance.getEntriesByName('sdd:react-ready').length > 0);
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  assert.equal(await page.evaluate(() => window.__offscreenRollReads), 0);
   await page.$eval(screen, (el) => el.scrollIntoView({ block: 'center' }));
   await page.waitForFunction((sel) => {
     const style = document.querySelector(sel)?.firstElementChild?.style;
     return style?.transform && style.transform !== 'translate3d(0, 0px, 0)';
   }, { timeout: 5000 }, screen);
+  const screenHeight = await page.$eval(screen, (el) => el.getBoundingClientRect().height);
   await page.focus(button);
   await page.keyboard.press('Space');
   await page.waitForFunction((sel) => document.querySelector(sel)?.dataset.paused === 'true', {}, screen);
@@ -48,7 +67,11 @@ try {
   assert.equal(await page.$eval(button, (el) => getComputedStyle(el).display), 'none');
   assert.equal(await page.$eval(screen, (el) => getComputedStyle(el).overflowY), 'auto');
   assert.equal(await page.$eval(screen, (el) => getComputedStyle(el.firstElementChild).transform), 'none');
-  console.log('SDS_ROLL_MOTION_OK keyboard_pause=true keyboard_scroll=true resume=true reduced_motion=true');
+  assert.equal(await page.$eval(screen, (el) => el.getBoundingClientRect().height), screenHeight);
+  const lastLink = `${screen} ol:first-child li:last-child a`;
+  await page.focus(lastLink);
+  assert.equal(await page.$eval(lastLink, (el) => document.activeElement === el), true);
+  console.log('SDS_ROLL_MOTION_OK offscreen_layout_reads=0 keyboard_pause=true keyboard_scroll=true resume=true reduced_motion=true last_receipt_focus=true');
 } finally {
   await chrome.close();
 }
