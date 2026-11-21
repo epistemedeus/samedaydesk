@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { careSchema, careTable, careTables } from "../lib/care-database.js";
 
 export const careMigrations = ["0011_task_requests.sql", "0012_care_orders.sql", "0013_task_quotes.sql",
-  "0014_commerce_journey.sql", "0015_mail_events.sql"];
+  "0014_commerce_journey.sql", "0015_mail_events.sql", "0016_hosted_orders.sql"];
 
 export function careEnrollment(schema, role) {
   careSchema({ SDS_CARE_SCHEMA: schema });

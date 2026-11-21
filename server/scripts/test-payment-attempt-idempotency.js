@@ -173,6 +173,22 @@ test("create retry with same attempt identity reuses one PaymentIntent", async (
   assert.equal(first.intent.metadata.payment_attempt_id, first.attemptId);
 });
 
+test("private account payments carry the run tag and production payments ignore it", async (t) => {
+  const saved = { preview: process.env.SDS_PRIVATE_PREVIEW, run: process.env.RELEASE_RUN };
+  t.after(() => {
+    for (const [key, value] of [["SDS_PRIVATE_PREVIEW", saved.preview], ["RELEASE_RUN", saved.run]]) {
+      if (value === undefined) delete process.env[key]; else process.env[key] = value;
+    }
+  });
+  process.env.RELEASE_RUN = "SDS-account-isolation";
+  const create = () => createOfferPaymentIntent({ stripeClient: fakeStripe(), store: createMemoryPaymentAttemptStore(),
+    uid: "release-account", email: "buyer@example.test", offerSlug: "agent_workflow" });
+  process.env.SDS_PRIVATE_PREVIEW = "1";
+  assert.equal((await create()).intent.metadata.release_run, "SDS-account-isolation");
+  delete process.env.SDS_PRIVATE_PREVIEW;
+  assert.equal(Object.hasOwn((await create()).intent.metadata, "release_run"), false);
+});
+
 test("unknown retrieve preserves the attempt without reissuing Stripe create", async () => {
   const store = createMemoryPaymentAttemptStore();
   let createCount = 0;

@@ -127,8 +127,7 @@ export default function EnergySurface() {
 
       let gl: import("ogl").OGLRenderingContext | undefined;
       try {
-        const dpr = Math.min(1.5, Math.floor((window.devicePixelRatio || 1) * 2) / 2);
-        const renderer = new Renderer({ alpha: true, dpr, powerPreference: "low-power" });
+        const renderer = new Renderer({ alpha: true, dpr: 1, powerPreference: "low-power" });
         gl = renderer.gl;
         gl.clearColor(0, 0, 0, 0);
         const canvas = gl.canvas as HTMLCanvasElement;
@@ -144,6 +143,9 @@ export default function EnergySurface() {
 
         const resize = () => {
           const r = el.getBoundingClientRect();
+          // This soft background needs no full-screen, high-density raster.
+          renderer.dpr = Math.min(window.devicePixelRatio || 1, 1,
+            Math.sqrt(250_000 / Math.max(1, r.width * r.height)));
           renderer.setSize(r.width, r.height);
           program.uniforms.uResolution.value = [gl!.drawingBufferWidth, gl!.drawingBufferHeight];
         };
@@ -151,7 +153,7 @@ export default function EnergySurface() {
         window.addEventListener("resize", resize);
         cleanups.push(() => window.removeEventListener("resize", resize));
 
-        let raf = 0;
+        let raf = 0, timer = 0;
         let running = false;
         // Accumulate animation time from per-frame deltas, not the absolute rAF clock.
         // Pausing (IntersectionObserver / hidden tab) freezes time; resuming continues from
@@ -171,10 +173,11 @@ export default function EnergySurface() {
           program.uniforms.uVel.value = u + (velTarget - u) * (1 - Math.exp(-6.0 * dt));
 
           renderer.render({ scene: mesh });
-          raf = requestAnimationFrame(loop);
+          // Leave an idle interval after each frame even on a software renderer.
+          timer = window.setTimeout(() => { raf = requestAnimationFrame(loop); }, 1000 / 24);
         };
         const play = () => { if (!running) { running = true; lastFrame = 0; raf = requestAnimationFrame(loop); } };
-        const pause = () => { if (running) { running = false; cancelAnimationFrame(raf); } };
+        const pause = () => { if (running) { running = false; clearTimeout(timer); cancelAnimationFrame(raf); } };
 
         const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
         const startMotion = () => {

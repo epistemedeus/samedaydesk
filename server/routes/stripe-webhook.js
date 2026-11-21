@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { stripe, isStripeConfigured } from "../lib/stripe.js";
 import { fulfillFromIntent } from "../lib/fulfill.js";
-import { notifyAdmin } from "../lib/notify.js";
+import { notifyAdmin, sendReceipt } from "../lib/notify.js";
 import { belongsToAnotherRun } from "../lib/release-run.js";
 import {
   configuredNeomorphicSellerConformancePaymentLinkId,
@@ -98,12 +98,21 @@ export function createStripeWebhookRouter({
         const piId = session.payment_intent;
         let intent = {};
         let fulfillment = null;
+        let notifyUnlinked = true;
         if (piId) {
           intent = await stripeClient.paymentIntents.retrieve(piId);
           fulfillment = await fulfill(intent);
         }
 
-        if (!fulfillment?.ok) {
+        if (!fulfillment?.ok && piId && care?.recordHosted) {
+          const hosted = await care.recordHosted(session, intent);
+          notifyUnlinked = hosted.isNew;
+          if (hosted.isNew && !hosted.held) await sendReceipt({ to: session.customer_details?.email || intent.receipt_email,
+            label: session.metadata?.label || intent.metadata?.label || "Hosted work", amount: session.amount_total,
+            orderId: hosted.orderId });
+        }
+
+        if (!fulfillment?.ok && notifyUnlinked) {
           if (attribution) {
             const {
               amountDisplay,

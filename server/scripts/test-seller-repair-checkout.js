@@ -41,6 +41,7 @@ test("buildSellerRepairCheckoutSessionParams stamps server-owned checkout fields
     "https://samedaydesk.com",
   );
   assert.equal(params.mode, "payment");
+  assert.deepEqual(params.branding_settings, { display_name: "SameDayDesk" });
   assert.equal(params.client_reference_id, SAMPLE_FINDING);
   assert.equal(params.integration_identifier, SELLER_REPAIR_INTEGRATION_ID);
   assert.equal(params.line_items[0].price_data.unit_amount, 49000);

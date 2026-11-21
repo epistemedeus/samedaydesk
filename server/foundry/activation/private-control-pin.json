@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "a07ebe475d439f258cafd4ce40ed326415eab199",
+  "base": "1ae4b46c1a131ffe71e9e8d7bcc6bc3843570b47",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
@@ -9,7 +9,7 @@
     "client/src/data/receiptPages.mjs": "92705522d6c767523b6bedc356b60e1e364d6d20efa237f90a9d6e3950160d23",
     "client/src/data/receipts.json": "09c3e7065672b8d62a3a5fbc1641ad170aea74c1a88c0ba48b86e5143f737821",
     "package-lock.json": "98c27a329c069022cec7b52bfb44dbd62d317759b2dbda9c0bf7f9a2c32593f8",
-    "package.json": "73834dcdcd8effb9545f6b5cfe8addc2edaa4f9139c6e584c017c347f081b205",
+    "package.json": "e72c8863dfa8b236e335e667c4b25fe743cc83eb16c2d6ef518fe9fabce2f071",
     "server/app.js": "c6d302bbb2325f1369b84b5551db6355f5cec8d9f26a1ef0b861e1b92004b145",
     "server/contributor-desk-host.mjs": "a491467e92ea0de1f931dbdd53b0b83f3819e8a6cc8c9c10533820761e7956cb",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
@@ -47,11 +47,11 @@
     "server/lib/agent-readiness/x402-entries.js": "d49cdc2ee437ca06b6f712e41c6ae9f8a07e04c585c0ba5050ff766c35b703b0",
     "server/lib/apex-agent-card.js": "f7657e87aecfc8d62ac484098e9a2d47a18f96c912fbb486b9b1af5853366d0d",
     "server/lib/apex-declarations.js": "2f9b4f35c4341daa60e49a9cff7003a0cf1a741d7bee2ef5f3502c7dd03d2304",
-    "server/lib/care-contract.js": "cf926bdfcaf45b0a80817da4068a419d0075a947090a0a25ef010736cdbb6139",
+    "server/lib/care-contract.js": "4a20430f5735eef7775fc0ce5cf499dad9d892c2b1834d1db6a0d8c7dae2972a",
     "server/lib/care-mail.js": "547248215996599e737f3b01991891ea994e7c3b098f1f2466e1e620e6397696",
     "server/lib/care-sentinel.js": "95694a6f738e209bd0a32608780e29f41669660a2bfa90471c55434c68e64baa",
-    "server/lib/care-service.js": "688b9e1d615927a60381d1a08c66210f5cecd36c0cc778d6ee24b2832b7fa972",
-    "server/lib/care-store.js": "c56f5eb728c12ce1aa3b13b7782b1db1f11bab391da1e59032d071ea15b36fd7",
+    "server/lib/care-service.js": "8604e7171179c4e1c14f0992ae36b64acbb2c2cd3a86802763726ce46cf9d65c",
+    "server/lib/care-store.js": "08a1f5f1531212b9a0df929546d57e9b71f7643e6f49dd23dda41f5150f408dd",
     "server/lib/commerce-journey.js": "0b9482ec930baaf24c2db92fdc8b5b3527e3a24dbd251c3e7bca9490b46b7723",
     "server/lib/contributor-artifact.js": "72657728eab3b9bab0dfffccb2561dbea5fc3d9cbb886ce84ed83890ff1edc3c",
     "server/lib/contributor-desk-assets.js": "67b379f429ac7223b3e8b2fc923da367ed7b48ebd158552e117885c117c73da5",
@@ -72,7 +72,7 @@
     "server/lib/discovery-log/log.test.js": "a103b9797169673c08d67a1d9e83fe81fbf0139ab51ca2f630f9eaec4ade1de9",
     "server/lib/discovery-log/prepare-host.mjs": "717180011bb61c489c4e6855c1c464709c109578bebd87a8241dfa41caa5965a",
     "server/lib/discovery-log/retain.mjs": "fb60d39928988d6e4e3ab2a7ee3457599f95345d1fce8c450550f2eb33ae9dcc",
-    "server/lib/fulfill.js": "4a8f49613855b4909b5df3c73318fae041223509e107b3715d9ddf18f702d9a3",
+    "server/lib/fulfill.js": "350b78efa8b110d4398416f6f332ee6e87bc8192135dfed5544633b2cc2f737f",
     "server/lib/funded-round-activation.js": "01acf58234f8aa10dcd5f1dddafe44863fb77f6780a1c313fa3433700576f06f",
     "server/lib/hosted-wallet-market-mount.js": "e2f4b590b9d25ff9080ea5e2eee09dc72a4d92edcc8b2f64957b59ea1ec74803",
     "server/lib/journey-events.js": "cea2221fa8a0a80f363817f23d0765abbe254fa2f87c2af02b4498bb8c740018",
@@ -220,7 +220,7 @@
     "server/lib/neomorphic-contributor-journey-mount.js": "799fe5d4d0fbcd62a80f23bd053902b236b63d6f3eee61bd501c4b2a08731157",
     "server/lib/neomorphic-opportunity-mount.js": "ae97f69cbe092cc06cc846abd32bf2cf79e803ec0502abb0582bbca64d4c5043",
     "server/lib/neomorphic-original-continuation-mount.js": "0eb6aad1436563ac0a1f61f6792b797055e84fbb386c35472bb01746f479c210",
-    "server/lib/notify.js": "21b3106d48456fe1cabac6f01d238e30656a76e394af2e128a0dbbc8ed577c7c",
+    "server/lib/notify.js": "5d3c5a28008100cf6ac6e90d13cac26c01b793cb44d46d48ff308c00697d0cff",
     "server/lib/observatory/adapters/smithery-mcp.js": "acf4cfa34a48dbaf58293a3256ac5a4f6e403670602217ded3216b833284786f",
     "server/lib/observatory/contract.js": "a0aa9ae5eca5235f10dd7376b619ba4fd6cbb14a64cee5763a084b37b488031c",
     "server/lib/observatory/convergence.js": "543fcdbea47e3e43c1434ede8e6300d69c23727f2c9184f943f24531e957771d",
@@ -266,8 +266,8 @@
     "server/routes/pulse.js": "30900298a5a5a233c2daaf81a8d5e81ff3c73b2a5f3572a75101784f48eda260",
     "server/routes/requests.js": "9f42868435cfd9e40041a324fb3e272535ee6ca914d8224487434c4a110aec8b",
     "server/routes/resend-webhook.js": "b4b78b2ec212e2ae98c73703fb425d24538fdb2ee51492877a5c07a0d3f79352",
-    "server/routes/stripe-webhook.js": "f72317f2940a62fa77659af31f2e91e3abd9ff9144084361ccac9063b8417ee4",
-    "server/routes/tools.js": "3a07ad67186f072b91c84f120230cf0895606728bbea8ce1b1d3e13770b40788",
+    "server/routes/stripe-webhook.js": "36b0837d0e16a96f4da098044c2f9861703b6fcd86a71a1cacd62d21efe3872a",
+    "server/routes/tools.js": "27450e4e6faf1598ba662e50e73de421c85467951fb0ead6b753b4f6cce69559",
     "server/routes/x402-quote.js": "11caf4fa157443aa171e567a5308dea21e64b161c178300d3c0eb4259be97903",
     "server/scripts/fixtures/hosted-synthetic-upload-100511.json": "b2956cd3f1c2f4bd2b551d216f7aa2b9a627280f8077b00d13756a26e448664a",
     "server/scripts/qualify-contributor-https-edge.mjs": "9068044c60b26037ab346468da68663ca4013bd49b76f47a5ca7ece194e3d16b",
@@ -1521,7 +1521,9 @@
     "vendor/visitor-foundry-receiver/services/correspondence/src/visitor-work-cells/store.ts": "2e0730d1a3c1de1ca1f7e5d40303822912905fbd0e90000b5599717e5891b3a8",
     "vendor/visitor-foundry-receiver/services/correspondence/tsconfig.json": "4c2928d371fa19546ccc4b1dcef7b5109429bb493d1efc3c4a81c05fe2d70b26",
     "server/lib/query-key-discovery.mjs": "0635b0e6ad89de2b6506fc080d45f403802402f5a1e30efae143de56dc299957",
-    "server/lib/care-database.js": "e16e6a58a40e2d5d1fac25186239d34e3afc037658308d94238a5efd763d42f2"
+    "supabase/migrations/0016_hosted_orders.sql": "e38d95bd4270397382834c1a5fa06dc34a05fda7b59e711fe9aa3f0f9343c1bf",
+    "server/lib/care-database.js": "c36fb812abbeffa9a1876093c2ed8fe5ea93799135b3dbf1b7a65ac814d5adb3",
+    "server/lib/seller-repair-checkout.js": "ff785e9c2b07e7eb8c29a4d0040d46aab5d9d6ce7f4197d8ce5e2633ca4936c0"
   },
   "receivedCallerClosures": [
     {
@@ -1763,6 +1765,41 @@
       "base": "a07ebe475d439f258cafd4ce40ed326415eab199",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:dc37b940ac8fbdc241e05a5c0b3f140ea422fda83add468f39dde80f7882271b"
+    },
+    {
+      "base": "68cfe8ebff9162ee9014ef7ef65ae11891e6aed0",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:261ae31c040b7e61e2e93b010c142234a0b22262903632d39b697fa9983f81c0"
+    },
+    {
+      "base": "4cf1a35ebe3fb99f6dec34cba9ab646a624067fe",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:25b5bb0fa7ef1d5c8ca4b070e174e0a13f756225bee9e17aa6120e648222570c"
+    },
+    {
+      "base": "9566334b3661a69bfb15d3ff22d98c47b54c0f57",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:503308e0272b473a31af7b8d9af1799032d83dc185c41bcc15d84b9afcbcd5aa"
+    },
+    {
+      "base": "cb2ed2910a0ee3124d68b5e7a1009eb8029a9bc9",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:b4748ea095269042e66ae7e1c8401561971bd25dd640e668c5573c0225abc7ca"
+    },
+    {
+      "base": "a07ebe475d439f258cafd4ce40ed326415eab199",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:d89ac17207e551a733d5301ff5cc98b3bea832be8ffb2082a26892b825127239"
+    },
+    {
+      "base": "18285f775621eef7ea1da360a0df8cccbf07ce2a",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:aae9edb360cc316e534d8275fca0d902dfa98114261a53e4c732d4884429c815"
+    },
+    {
+      "base": "18285f775621eef7ea1da360a0df8cccbf07ce2a",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:333b568c24d30f0220a15962ddb94b2e1b4e7a302d599f19e70884b8d070795c"
     }
   ]
 }

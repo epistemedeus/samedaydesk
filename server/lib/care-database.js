@@ -13,7 +13,7 @@ export function careSchema(env = process.env) {
 }
 
 export const careTables = ["task_requests", "care_orders", "care_periods", "care_period_holds",
-  "care_mail", "task_quotes", "journey_events", "mail_events"];
+  "care_mail", "task_quotes", "journey_events", "mail_events", "hosted_orders"];
 
 export function careTable(table, schema = careSchema()) {
   // Identifiers cannot be query parameters. Accept only validated schema and known table names.

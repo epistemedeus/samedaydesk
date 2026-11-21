@@ -8,6 +8,7 @@
 // require resolving the existing purchase before a new attempt is admitted.
 import { createHash } from "node:crypto";
 import { getOffer, CURRENCY } from "../pricing.js";
+import { releaseRunOf } from "./release-run.js";
 import {
   PAYMENT_ATTEMPT_STATUS,
   paymentAttemptStoreDeps,
@@ -203,6 +204,7 @@ export async function createOfferPaymentIntent({
           amount: String(offer.amount),
           label: offer.label,
           upload_path: normalizedUpload,
+          ...(releaseRunOf() ? { release_run: releaseRunOf() } : {}),
         },
         automatic_payment_methods: { enabled: true },
       },

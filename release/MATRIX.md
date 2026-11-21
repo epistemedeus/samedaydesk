@@ -7,7 +7,7 @@ commit it names. Update the lane status file (`overview/grand-phase/release/SDS.
 as lines pass; refresh this file when the list itself changes.
 
 Commands: `npm run release:check`, `npm run release:sweep -- --cheap|--key`, `npm run release:stripe`,
-`node scripts/release/post-status.mjs <sha> <state> <log-url>`.
+`npm run release:status -- <sha> <state> <log-url>` (the shared kit, pinned in `release/kit.json`).
 
 In one checkout, start Stripe after release:check's install and build gates finish; it can run
 alongside the remaining gates. npm ci replaces dependencies and Vite replaces build assets, so
@@ -18,6 +18,25 @@ targets an already-running preview. Do not stop another checkout's server to obt
 Machine discovery derives the optional accepted-work collection from the existing reviewed public-read
 profile. When disabled, declarations retain the offline query-key runner and omit that collection.
 Care, commerce and mail writers share one database URL/TLS parser and use private Unix sockets in preview.
+
+Migration `0016_hosted_orders.sql` stores paid hosted work that has no account, with one row per
+PaymentIntent and exact session, amount, currency and mode checks. The receiver reads the current
+charge before sending a receipt, so a refund or dispute arriving first still holds delivery.
+Account storage is opened only for linked users. Quote and fixed-report checks use actual test
+Payment Links; no local Stripe fixture counts as their provider proof.
+
+Account Payment Element proof uses `node scripts/release/account-matrix.mjs`, with
+`SDS_ACCOUNT_PREVIEW_DIR` and `STRIPE_TEST_KEY_FILE`. The existing private Auth/PostgREST
+preview directory supplies `config.private.json`, `provider-run.json`, and the live listener's
+sanitized `provider-deliveries.json`. It must serve the exact clean source on loopback.
+Import only the enrolled test publishable key into its private client build. The runner uses
+fresh synthetic users, fills the actual Payment Element once per offer, and keeps buyer,
+provider, listener and database records. Its four prices come from the existing server catalog.
+
+Receipt rebuild and verification share one paced read-only RPC transport. The default is one
+request per second; `RECEIPTS_RPC_INTERVAL_MS` is an explicit override. There are no automatic
+replays or endpoint fallbacks. `BASE_RPC` owns archive logs and `BASE_HASH_RPC` owns individual
+records; both must confirm Base. A refused archive read stops the rebuild without replacing its snapshot.
 
 ## A. Every page, automated (`release:sweep -- --cheap`, 51 sitemap pages)
 

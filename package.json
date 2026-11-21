@@ -125,10 +125,10 @@
     "check:copy": "node scripts/check-public-copy.mjs",
     "test:keep-list": "node --test tests/keep-list.test.mjs",
     "test:task-requests": "node --test server/scripts/test-task-requests.js",
-    "release:check": "node scripts/release/check.mjs",
-    "release:sweep": "node scripts/release/sweep.mjs",
-    "release:stripe": "node scripts/release/stripe-matrix.mjs",
-    "release:status": "node scripts/release/post-status.mjs"
+    "release:check": "node scripts/release/kit.mjs check",
+    "release:sweep": "node scripts/release/kit.mjs sweep",
+    "release:stripe": "node scripts/release/kit.mjs stripe",
+    "release:status": "node scripts/release/kit.mjs status"
   },
   "dependencies": {
     "@exodus/bytes": "1.16.0",

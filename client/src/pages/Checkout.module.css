@@ -76,9 +76,15 @@
   transition: border-color 0.18s, color 0.18s;
 }
 .upload:hover { border-color: var(--lime); color: var(--ink); }
+.upload:focus-within { outline: 2px solid var(--lime); outline-offset: 3px; }
 .upload input { position: absolute; width: 1px; height: 1px; opacity: 0; }
 
 .payForm { display: flex; flex-direction: column; gap: var(--space-m); }
+.paymentElement {
+  max-height: calc(100svh - 3rem);
+  overflow: auto;
+  scroll-margin-top: var(--space-s);
+}
 .payBtn {
   padding: 0.95em 1.5em;
   border-radius: 99px;

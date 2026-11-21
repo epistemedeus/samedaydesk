@@ -83,7 +83,7 @@ test("production Care schema enrollment and every database consumer respect role
   await denied.end();
   const schemaState = (await admin.query(`select relname,relrowsecurity,relforcerowsecurity,pg_get_userbyid(relowner) as owner
     from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname=$1 and relkind='r'`, [schema])).rows;
-  assert.equal(schemaState.length, 8);
+  assert.equal(schemaState.length, careTables.length);
   assert.ok(schemaState.every(row => row.relrowsecurity && row.relforcerowsecurity && row.owner !== role));
   assert.equal((await admin.query("select count(*)::int as n from pg_tables where schemaname='public' and tablename=any($1::text[])", [careTables])).rows[0].n, 0);
 
@@ -92,6 +92,12 @@ test("production Care schema enrollment and every database consumer respect role
     assert.deepEqual(access, { usage: false, dml: false });
     await assert.rejects(db.query(`set role ${browser}`), { code: "42501" });
   }
+  const hosted = { id: "hosted-schema-fixture", session: "cs_hosted_schema", payment: "pi_hosted_schema",
+    offer: "seller_conformance", label: "Seller Conformance", amount: 49000, currency: "usd", live: true };
+  assert.equal((await store.hostedOrder(hosted)).isNew, true);
+  assert.equal((await store.hostedOrder(hosted)).isNew, false);
+  assert.equal(await store.hostedRefund(hosted.payment, 49000, true), true);
+  assert.equal((await db.query(`select state from ${table("hosted_orders")}`)).rows[0].state, "refunded");
   const id = randomUUID();
   await store.reserve({ id, offer: "keep_it_working", cents: 10000, live: true, expires: new Date(Date.now()+3600000), origin: "https://samedaydesk.com", integrationId: "schema-test" });
   await store.bindSession({ id, sessionId: "cs_schema" });
@@ -139,5 +145,5 @@ test("production Care schema enrollment and every database consumer respect role
   await admin.query("rollback");
   assert.equal((await admin.query("select count(*)::int as n from pg_namespace where nspname='sds_rejected'")).rows[0].n, 0);
   console.log("Actually accessible unrelated PUBLIC relation still refuses enrollment and rolls back.");
-  console.log("Production TLS, eight private tables, create/read/update, all consumers, RLS enforcement, no unrelated access or schema DDL: passed.");
+  console.log("Production TLS, nine private tables, create/read/update, all consumers, RLS enforcement, no unrelated access or schema DDL: passed.");
 });

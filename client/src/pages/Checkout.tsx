@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, type FormEvent, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useState, useMemo, useRef, type FormEvent, type Dispatch, type SetStateAction } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import type { Appearance } from "@stripe/stripe-js";
@@ -6,7 +6,7 @@ import { getStripe } from "../lib/stripe";
 import { getSupabase, authedFetch } from "../lib/supabase";
 import { useAuth } from "../lib/auth";
 import { useTheme, type Theme } from "../lib/theme";
-import { ALL_OFFERS } from "../lib/services";
+import { ALL_OFFERS, careCheckoutFromAccount } from "../lib/services";
 import { track } from "../lib/posthog";
 import styles from "./Checkout.module.css";
 import { journey } from "../lib/journey";
@@ -33,7 +33,8 @@ function appearanceFor(theme: Theme): Appearance {
       rules: {
         ".Tab, .Input, .Block, .CheckboxInput, .CodeInput": { border: "1px solid #c9c4b8" },
         ".Tab:hover": { borderColor: "#b4ae9f" },
-        ".Tab--selected, .Tab--selected:focus": { borderColor: "#9e3b2e", boxShadow: "0 0 0 1px #9e3b2e" },
+        ".Tab--selected": { borderColor: "#9e3b2e", boxShadow: "0 0 0 1px #9e3b2e" },
+        ".Tab:focus, .Tab--selected:focus": { boxShadow: "0 0 0 3px #9e3b2e" },
         ".Label": { color: "#55524c" },
         ".Input:focus": { borderColor: "#9e3b2e", boxShadow: "0 0 0 1px #9e3b2e" },
       },
@@ -50,13 +51,16 @@ function appearanceFor(theme: Theme): Appearance {
       borderRadius: "9px",
       spacingUnit: "4px",
     },
+    rules: { ".Tab:focus, .Tab--selected:focus": { boxShadow: "0 0 0 3px #ccff00" } },
   };
 }
 
 export default function Checkout() {
   const [params] = useSearchParams();
   const slug = params.get("offer") || "agent_mcp_server";
-  const offer = ALL_OFFERS.find((o) => o.slug === slug) || ALL_OFFERS[0];
+  const offer = ALL_OFFERS.find((o) => o.slug === slug);
+  const carePath = careCheckoutFromAccount(slug);
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { theme } = useTheme();
   const appearance = useMemo(() => appearanceFor(theme), [theme]);
@@ -70,6 +74,8 @@ export default function Checkout() {
   const [intakeFrozen, setIntakeFrozen] = useState(false);
 
   useEffect(() => {
+    if (carePath) { navigate(carePath, { replace: true }); return; }
+    if (!offer) return;
     let active = true;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reset the attempt when the product changes, before resuming a stored one
     setClientSecret(null);
@@ -121,7 +127,13 @@ export default function Checkout() {
     return () => {
       active = false;
     };
-  }, [slug, offer.price, user?.id]);
+  }, [slug, offer, carePath, navigate, user?.id]);
+
+  if (carePath) return null;
+  if (!offer) return <main className={styles.wrap}>
+    <h1>Choose a service</h1>
+    <Link to="/#services">Browse services</Link>
+  </main>;
 
   return (
     <main className={styles.wrap}>
@@ -240,6 +252,16 @@ function PayForm({ offerSlug, paymentAttemptId, intake, intakeBusy, busy, setBus
   const elements = useElements();
   const navigate = useNavigate();
   const [err, setErr] = useState<string | null>(null);
+  const payment = useRef<HTMLDivElement>(null);
+
+  function revealPayment() {
+    const container = payment.current;
+    if (!container) return;
+    const bounds = container.getBoundingClientRect();
+    if (bounds.top < 16 || bounds.bottom > window.innerHeight - 16) {
+      container.scrollIntoView({ block: "start", behavior: "instant" });
+    }
+  }
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -287,7 +309,9 @@ function PayForm({ offerSlug, paymentAttemptId, intake, intakeBusy, busy, setBus
 
   return (
     <form onSubmit={submit} className={styles.payForm}>
-      <PaymentElement options={{ layout: "tabs" }} />
+      <div ref={payment} className={styles.paymentElement} data-payment-element>
+        <PaymentElement options={{ layout: "tabs" }} onFocus={revealPayment} />
+      </div>
       {err && <p className={styles.error} role="alert">{err}</p>}
       <button className={styles.payBtn} type="submit" disabled={!stripe || busy || intakeBusy || !paymentAttemptId}>
         {busy ? "Processing…" : "Pay & send my task"}

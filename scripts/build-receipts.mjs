@@ -19,6 +19,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { applyRouteExport } from "./receipts-route-projection.mjs";
 import { writeReceiptSnapshot } from "../server/lib/receipt-snapshot.js";
+import { createReceiptRpc } from "./receipt-rpc.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 // Ranges of old logs need an RPC that serves them (publicnode does, 10,000 blocks a call); single
@@ -42,22 +43,9 @@ const policy = JSON.parse(readFileSync(restrictedPolicyPath, "utf8"));
 if (policy.invalid !== 0 || !Array.isArray(policy.rows)) throw new Error("Incomplete private payment policy projection.");
 const { routes, exclude: privateExcluded } = applyRouteExport(read("data/receipts/routes.json"), policy);
 
-async function rpc(url, method, params, tries = 5) {
-  for (let i = 0; i < tries; i++) {
-    try {
-      const res = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }) });
-      const body = await res.json();
-      if (body.error) throw new Error(JSON.stringify(body.error));
-      return body.result;
-    } catch (error) {
-      if (i === tries - 1) throw error;
-      await new Promise((r) => setTimeout(r, 1500 * (i + 1)));
-    }
-  }
-}
-
-// One transaction, receipt or block: the log RPC first, Base's endpoint for what it will not serve.
-const byHash = (method, params) => rpc(LOG_RPC, method, params, 2).catch(() => rpc(HASH_RPC, method, params));
+const rpc = createReceiptRpc({ intervalMs: Number(process.env.RECEIPTS_RPC_INTERVAL_MS ?? 1000) });
+// The declared hash reader owns individual records; no retry or endpoint fallback.
+const byHash = (method, params) => rpc(HASH_RPC, method, params);
 
 // If the history cannot be read, the build stops rather than shipping a thin tape.
 const topicTo = "0x" + PAY_TO.slice(2).toLowerCase().padStart(64, "0");
@@ -65,6 +53,7 @@ const logs = [];
 let head;
 try {
   if (await rpc(LOG_RPC, "eth_chainId", []) !== "0x2105") throw new Error("Wrong settlement network");
+  if (HASH_RPC !== LOG_RPC && await rpc(HASH_RPC, "eth_chainId", []) !== "0x2105") throw new Error("Wrong record network");
   const finalized = await rpc(LOG_RPC, "eth_getBlockByNumber", ["finalized", false]);
   head = Number.parseInt(finalized?.number ?? "", 16);
   if (!Number.isSafeInteger(head) || head < FROM) throw new Error("Finalized source head unavailable");
@@ -78,7 +67,7 @@ try {
     logs.push(...receipt.logs.filter((l) => l.address.toLowerCase() === USDC && l.topics[0] === TRANSFER && l.topics[2] === topicTo));
   }
 } catch (error) {
-  console.error(`receipts: on-chain history unavailable (${error.name}). BASE_RPC must serve finalized head and old logs.`);
+  console.error(`receipts: on-chain history unavailable (${error.message}). BASE_RPC must serve finalized head and old logs.`);
   process.exit(1);
 }
 

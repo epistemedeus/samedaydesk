@@ -22,6 +22,7 @@ private schema, then applies exactly these source migrations in this order:
 3. `0013_task_quotes.sql`
 4. `0014_commerce_journey.sql`
 5. `0015_mail_events.sql`
+6. `0016_hosted_orders.sql` (redo successor only; the frozen b317eff cut has eight tables)
 
 Only their known `public.TABLE` identifiers are rendered into the selected private
 schema, including foreign keys, indexes and ALTER statements. Historical migration
@@ -37,9 +38,9 @@ fails if the schema or role already exists. The migration owner retains ownershi
 secret process; the emitted SQL contains no password and cannot authorize a login
 until Root enrolls one. Do not save the password or database URL in Git or evidence.
 
-The transaction grants database CONNECT, schema USAGE and table SELECT/INSERT/UPDATE only on eight
+The transaction grants database CONNECT, schema USAGE and table SELECT/INSERT/UPDATE only on nine
 tables: task_requests, care_orders, care_periods, care_period_holds, care_mail,
-task_quotes, journey_events and mail_events. Every table has enabled and forced
+task_quotes, journey_events, mail_events and hosted_orders. Every table has enabled and forced
 RLS with three explicit policies for this server role. The role has NOINHERIT,
 NOSUPERUSER, NOCREATEDB, NOCREATEROLE, NOREPLICATION and NOBYPASSRLS. It receives no
 DELETE, TRUNCATE, schema CREATE, database CREATE, default grants, memberships or
@@ -74,7 +75,7 @@ and restricted connection, including when Care checkout itself is switched off.
 There is no configured-database failure fallback into public Supabase. The original
 Supabase path is retained only when no Care database/schema is configured.
 
-Root reads back the eight tables, migration owner, RLS/forced-RLS flags, exact
+Root reads back the nine tables, migration owner, RLS/forced-RLS flags, exact
 role policies and effective role privileges before enabling the host. It verifies
 no relation access outside the selected schema and no database/schema CREATE.
 The executable regression is `node --test server/scripts/test-care-schema.mjs`:
@@ -102,3 +103,14 @@ identity. Root owns the buyer-facing release decision and live settings readback
 The independent managed-runtime acquisition witness is not invoked by ordinary
 Care checkout, task quote, account checkout, mail or journey buyer paths and does
 not hold this schema amendment. Its earlier CI evidence stays pinned to its source.
+
+## Existing b317eff installation, next redo cut only
+
+Root has installed the original eight-table schema from b317eff. Do not rerun the
+fresh-schema enrollment against that live installation. The redo successor also
+needs 0016_hosted_orders.sql rendered into the same SDS_CARE_SCHEMA by the migration
+owner, then the same forced RLS, SELECT/INSERT/UPDATE grants and three app-role
+policies on hosted_orders. Browser/PUBLIC privileges must remain absent. This is
+an additional migration obligation for the next cut; no live upgrade is performed
+by the lane. The already frozen source, SQL hash and b317eff host qualification
+remain unchanged. Root reviews the exact successor SQL before any next deployment.

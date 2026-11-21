@@ -38,6 +38,7 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
     checkout: { sessions: {
       async create(args, options) {
         creates++;
+        assert.deepEqual(args.branding_settings, { display_name: "SameDayDesk" });
         const id = args.client_reference_id;
         assert.equal(options.idempotencyKey, `sameday-care/${id}`);
         assert.equal(args.line_items[0].quantity, 1);
@@ -195,6 +196,10 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.equal((await (await post("subscription", access(recurring, "cancel"))).json()).canceled, true);
   assert.equal((await (await post("receipt", access(recurring))).json()).subscription.cancelAtPeriodEnd, true);
   assert.equal((await event("charge.refunded", { ...refunded, customer: "cus_keep", payment_intent: "pi_next", amount_refunded: 10000 })).status, 200);
+  // A refunded month keeps the subscription paid; the buyer's receipt still shows the refund.
+  const afterRefund = await (await post("receipt", access(recurring))).json();
+  assert.equal(afterRefund.state, "paid");
+  assert.equal(afterRefund.refundedCents, 10000);
   const next = { ...invoice, id: "in_next", billing_reason: "subscription_cycle",
     lines: { data: [{ amount: 10000, period: { start: first + month, end: first + month * 2 } }] } };
   assert.equal((await event("invoice.paid", next)).status, 200);
@@ -360,6 +365,25 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.equal((await db.query(`select status from ${careTable("task_requests")} where id=$1`, [requestId])).rows[0].status, "paid");
   assert.equal((await event("charge.refunded", { id: "ch_quote", payment_intent: "pi_quote" })).status, 200);
   assert.equal((await store.quotes.order(offer.quoteId)).needs_review, true);
+
+  // Hosted work without an account must survive notification loss and webhook replay.
+  const hostedSession = { id: "cs_test_hosted", livemode: false, mode: "payment", currency: "usd",
+    status: "complete", payment_status: "paid", amount_total: 49000, payment_intent: "pi_hosted",
+    metadata: { offer: "seller_contract_repair", label: "One-route seller contract repair" } };
+  const hostedIntent = { id: "pi_hosted", livemode: false, status: "succeeded", amount: 49000, currency: "usd" };
+  await assert.rejects(() => care.recordHosted({ ...hostedSession, amount_total: 1 }, hostedIntent), { status: 409 });
+  await assert.rejects(() => care.recordHosted({ ...hostedSession, amount_total: 1 }, { ...hostedIntent, amount: 1 }), { status: 409 });
+  await assert.rejects(() => care.recordHosted(hostedSession, { ...hostedIntent, status: "processing" }), { status: 409 });
+  assert.equal((await care.recordHosted(hostedSession, hostedIntent)).isNew, true);
+  assert.equal((await care.recordHosted(hostedSession, hostedIntent)).isNew, false);
+  assert.equal((await db.query(`select count(*)::int as n from ${careTable("hosted_orders")} where payment_intent_id='pi_hosted'`)).rows[0].n, 1);
+  assert.equal(await store.hostedRefund("pi_hosted", 49000, true), true);
+  assert.equal((await db.query(`select state from ${careTable("hosted_orders")} where payment_intent_id='pi_hosted'`)).rows[0].state, "refunded");
+  stripe.charges = { async retrieve(id) {
+    assert.equal(id, "ch_hosted");
+    return { livemode: false, payment_intent: "pi_hosted", refunded: true, amount_refunded: 49000 };
+  } };
+  assert.equal((await care.recordHosted(hostedSession, { ...hostedIntent, latest_charge: "ch_hosted" })).held, true);
 
   // A later paid order from the same verified buyer is a return, even when the
   // older order was refunded. A replay still contributes only one observation.

@@ -1,4 +1,28 @@
 /* Shared by the existing static references and React routes. */
+:where(a[href], button, input, textarea, select, summary):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+html[data-standalone] :is(input, textarea, select):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+html[data-standalone][data-theme="dark"] {
+  --bg: #0a0b0d;
+  --card: #0f1116;
+  --ink: #f4f4f0;
+  --dim: #a6a8ae;
+  --line: #393d46;
+  --oxide: #ccff00;
+  --acc: #ccff00;
+  --good: #90c79c;
+  --ok: #90c79c;
+  --bad: #ff9b91;
+  --warn: #e7cf76;
+}
+html[data-standalone][data-theme="dark"] .A { color: var(--good); }
+html[data-standalone][data-theme="dark"] .B { color: #91d4e3; }
+html[data-standalone][data-theme="dark"] .C { color: var(--oxide); }
 pre:focus-visible, [aria-label="Scrollable table"]:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 3px;

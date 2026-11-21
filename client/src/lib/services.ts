@@ -230,3 +230,7 @@ export const PAYMENT_LINKS: Record<string, string> = {
   keep_it_working: "/care/buy?offer=keep_it_working",
   custom_quote: "https://buy.stripe.com/bJe4gAbcedTV8993c6eZ205",
 };
+
+// These scoped services use their receipt flow rather than account PaymentIntents.
+export const careCheckoutFromAccount = (slug: string) =>
+  slug === "agent_front_door" || slug === "keep_it_working" ? PAYMENT_LINKS[slug] : null;
