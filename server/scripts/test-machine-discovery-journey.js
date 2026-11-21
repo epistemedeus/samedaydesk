@@ -457,3 +457,29 @@ test("refusal and truncated retrieval stay distinct from a missing declaration",
   assert.match(refusedCheck.reason, /not evidence it is absent/);
   assert.equal(classifyRetrieval(refused.responses["/openapi.json"]).kind, "blocked");
 });
+
+
+test("public checkout cards retain the independently approved USD amounts and links", () => {
+  const html = readFileSync(new URL("../../client/public/ai-visibility-audit.html", import.meta.url), "utf8");
+  for (const [id, amount, link] of [
+    ["buy-audit", "199", "3cIbJ2gwy2bdgFFfYSeZ20u"],
+    ["buy-fix", "399", "3cI00kdkmeXZ6118wqeZ20v"],
+    ["buy-sprint", "499", "00w00k1BE9DF2OP282eZ20w"],
+  ]) {
+    const anchor = [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].find(m => m[1].includes(`id="${id}"`));
+    assert.ok(anchor, id);
+    assert.ok(anchor[1].includes(`https://buy.stripe.com/${link}`));
+    assert.match(anchor[2], new RegExp(`\\b${amount} USD\\b`));
+  }
+  assert.doesNotMatch(html, /USD[0-9]/);
+});
+
+test("machine offer prices lead to the current checkout or durable task form", () => {
+  const text = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
+  for (const [amount, slug] of [[149,"agent_workflow"],[349,"agent_mcp_server"],[499,"machine_payment_route"],[999,"agent_storefront"],[249,"agent_front_door"],[100,"keep_it_working"]]) {
+    const line = text.split("\n").find(line => line.includes(`offer=${slug}`));
+    assert.ok(line, slug); assert.ok(line.includes(`${amount} USD`), slug);
+  }
+  assert.ok(text.includes("https://samedaydesk.com/#task"));
+  assert.doesNotMatch(text, /Ask by email|same[ -]day|\d+ to \d+ days|working this week/);
+});

@@ -1,75 +1,37 @@
 # SameDayDesk
 
-> SameDayDesk makes your service usable and payable by AI agents, at a fixed price, working this week. It works or we keep fixing it.
+> Make your service usable and payable by your customers' AI. Choose a fixed-price build or send a task for a written quote.
 
-## Start here
+## Start with a free check
 
-- [Start file for agents](https://samedaydesk.com/start.md): read first. The free route check, the builds and how to order.
-- Hand one job to AI (Agent Workflow Integration): 149 USD, same day.
-- Put your app inside ChatGPT and Claude (Agent-Ready MCP Server): 349 USD, 1 to 2 days.
-- Get paid by AI agents (x402 and MPP Payment Route): 499 USD, 2 to 3 days.
-- A shop AI agents can buy from (Agent Commerce Storefront): 999 USD, 3 to 5 days.
-- One line for your customers' AI (Agent Front Door): 249 USD, 1 to 2 days. Ask by email to contact@samedaydesk.com.
-- Keep it working (monthly care): 100 USD a month for one workflow, MCP server or payment route. Ask by email to contact@samedaydesk.com.
-- [Seller audit](https://samedaydesk.com/x402/seller-conformance): we call your paid endpoint as a buying agent does and send the fixes. 0.01 USDC live audit; 490 USD fixed repair per route.
-- [Homepage](https://samedaydesk.com/): the builds, prices and order links.
-- [Free AI Readiness Checker](https://samedaydesk.com/tools/ai-readiness): crawler access, metadata, structured data, sitemap and llms.txt, with the fix for each.
-- [Resources](https://samedaydesk.com/resources.html): research, guides and free AI-search tools.
+Read https://samedaydesk.com/start.md, then run:
+`curl -s "https://samedaydesk.com/api/tools/ai-readiness?url=https://example.com"`
+The answer includes the checks, your score and the fixes. Open https://samedaydesk.com/tools/ai-readiness to use the form.
 
-## Agent interfaces
+## Choose a build
 
-- [Free MCP server](https://samedaydesk.com/mcp): the AI-readiness checker over Streamable HTTP.
-- [Paid MCP gateway](https://agents.samedaydesk.com/mcp): paid tools, each priced per call in USDC.
-- Fresh web data: `POST https://agents.samedaydesk.com/extract/batch` takes 1 to 5 public HTTPS URLs and the fields you want, 0.01 USDC a batch. Single URL: `GET https://agents.samedaydesk.com/extract?url=https://example.com`.
-- [Web data and free tools for agents](https://samedaydesk.com/for-agents): paid batch extraction, then free local comparison, record mapping, result reuse and recurring page and issue checks (`source-change-alert`, `issue-to-work-brief`, `buyer-setup-trace`). Copyable commands are in the initial HTML.
-- [Paid tools for agents](https://samedaydesk.com/x402): every paid tool, paid with x402 or MPP on Base.
-- [Routes we checked](https://samedaydesk.com/x402/verified): feed of build-time inspection feed of unpaid 402 terms, last check time, contract hash, and OpenAPI / 402 schema / CDP Bazaar agreement.
-- [Agent402 payment receipt](https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json): the paid seller audit Agent402 bought and the result it delivered.
-- [x402 SDK integration reference](https://samedaydesk.com/docs/x402-sdk/): Sourcey-generated Go API reference plus production integration notes for the SDK family used by the live gateway.
-- [x402 data gateway on Smithery](https://smithery.ai/servers/epistemedeus/x402-data-gateway): Managed MCP connection to the current tool surface.
-- [x402 resource manifest](https://agents.samedaydesk.com/.well-known/x402): Live paid x402 inventory on Base mainnet using USDC, plus any labeled alternate access path. 
-- [x402 gateway llms.txt](https://agents.samedaydesk.com/llms.txt): Endpoint descriptions, callable examples, and payment instructions.
-- [x402 service health](https://agents.samedaydesk.com/healthz): Live health, prices, and protocol route counts for the SameDayDesk agent data gateway.
-- [HTTP action catalog](https://agents.samedaydesk.com/api/actions): Live paid HTTP actions.
+- Hand one job to AI: 149 USD. https://samedaydesk.com/checkout?offer=agent_workflow
+- Put your app inside ChatGPT and Claude: 349 USD. https://samedaydesk.com/checkout?offer=agent_mcp_server
+- Get paid by AI agents: 499 USD. https://samedaydesk.com/care/buy?offer=machine_payment_route
+- A shop AI agents can buy from: 999 USD. https://samedaydesk.com/care/buy?offer=agent_storefront
+- One line for your customers' AI: 249 USD. https://samedaydesk.com/care/buy?offer=agent_front_door
+- Keep it working: 100 USD a month for one workflow, tool server or payment route. https://samedaydesk.com/care/buy?offer=keep_it_working
+- A report on your paid tool with the fixes: 490 USD. https://samedaydesk.com/x402/seller-conformance
+- A custom task: send the task and your email at https://samedaydesk.com/#task. Receive a written scope and a fixed price to approve.
 
-## Public work
+## Use the tools
 
-- [OpenScan documentation case study](https://samedaydesk.com/docs-lab/openscan/): Durable, source-backed documentation created from a real open-source project.
-- [GopherJS API documentation case study](https://samedaydesk.com/docs-lab/gopherjs/): Searchable Sourcey reference for 17 packages and 197 exports, generated from pinned GopherJS source with an open upstream adoption PR.
-- [Solana Ecosystem Pulse](https://samedaydesk.com/data-lab/solana-pulse/): Public-data dashboard with synchronized JSON, Markdown, and interactive HTML outputs.
-- [AI Search Readiness Leaderboard](https://samedaydesk.com/reports/ai-search-readiness-leaderboard-2026.html): Original benchmark of 189 companies across 10 industries.
-
-## Useful guides and tools
-
-- [How to get cited by AI search](https://samedaydesk.com/guides/get-cited-by-ai-search.html)
-- [How to hire AI agents](https://samedaydesk.com/guides/how-to-hire-ai-agents-2026.html): Competition versus direct hire, testable acceptance criteria, secret boundaries, evidence review, and disclosed AgentHansa/Clustly routes.
-- [Does llms.txt work?](https://samedaydesk.com/guides/does-llms-txt-work-2026.html)
-- [AI crawler list](https://samedaydesk.com/guides/ai-crawler-list-2026.html)
-- [AI search visibility tools compared](https://samedaydesk.com/guides/ai-search-visibility-tools-2026.html): What a readiness checker can see, and one path to the AI Visibility Audit.
-- [Instagram and WhatsApp DM automation with Manychat](https://samedaydesk.com/guides/instagram-whatsapp-dm-automation-manychat-2026.html): Current plan arithmetic, a one-flow launch recipe, measurement, WhatsApp fee caveats, and a clearly disclosed referral option.
-- [llms.txt generator](https://samedaydesk.com/tools/llms-txt-generator.html)
-- [JSON-LD schema generator](https://samedaydesk.com/tools/schema-generator.html)
-
-## Official identity
-
-- [GitHub](https://github.com/epistemedeus)
-- [X](https://x.com/samedaydesk)
-- Email: contact@samedaydesk.com
-
-Last updated: 2026-09-09
-- [Source/record repeat jobs](https://samedaydesk.com/for-agents/record-repeat): One portable offline package for OpenAPI used-ops, pricing row/unit, keyed CSV, and RSS/Atom comparisons. Machine discovery at https://samedaydesk.com/discovery/record-repeat.json. Free local samples; optional existing paid extract stays separate.
-Last updated: 2026-09-10
-- [Distribution repair diagnosis (lab)](https://samedaydesk.com/for-agents/distribution-repair): Portable offline package that maps caller listing snapshots and a baseline/current route pair into diagnosis and owner repair guidance. Incomplete captures cannot prove global removal. Not a production acquisition. Machine discovery: https://samedaydesk.com/discovery/distribution-repair.json.
-- [Consumer evidence and repeat jobs](https://samedaydesk.com/for-agents/consumer-repeat): One portable offline package for local evidence checks (release brief, table reconcile, procurement brief, and related jobs). Verify size and sha256 before extract. Machine discovery: https://samedaydesk.com/discovery/consumer-repeat.json.
-- [Useful jobs package](https://samedaydesk.com/for-agents/useful-jobs): One Node 22 offline archive (current public 1.4.7) with ten local jobs for lockfile changes, JSON Schema drift, route changes, page changes, pricing snapshots, API upgrades, feed agendas, CI evidence, listing repairs, and repeat-job records. Verify size and sha256 before extract. Labeled samples need `--example` except page-change. Machine discovery: https://samedaydesk.com/discovery/useful-jobs.json.
-- [Original-task correspondence](https://samedaydesk.com/discovery/original-task-correspondence.json): Machine descriptor for one original task through the existing visitor entry. That document names a small public client archive; a repository checkout command is not the acquisition. No wallet, contribution, benchmark, or identity proof. A request stays pending qualification until an operator replies. Not a delivery promise, acceptance, or payment.
-
-## Machine declarations
-
-Generated from the mounted apex tools. These are not the paid gateway.
-
-- OpenAPI: https://samedaydesk.com/openapi.json
+- Free website checks and local tools: https://samedaydesk.com/for-agents
+- Paid web data, priced per call in USDC: https://samedaydesk.com/x402
+- Fresh web data: `POST https://agents.samedaydesk.com/extract/batch` takes 1 to 5 public HTTPS URLs and your fields, 0.01 USDC a batch. Single URL: `GET https://agents.samedaydesk.com/extract?url=https://example.com`.
+- Free MCP tools: https://samedaydesk.com/mcp
+- Paid MCP tools: https://agents.samedaydesk.com/mcp
+- HTTP contracts: https://samedaydesk.com/openapi.json
 - Skill: https://samedaydesk.com/skill.md
 - API catalog: https://samedaydesk.com/.well-known/api-catalog
 - Agent card: https://samedaydesk.com/.well-known/agent-card.json
-- MCP: https://samedaydesk.com/mcp
+- Paid tool inventory and prices: https://agents.samedaydesk.com/.well-known/x402
+- Public API documentation: https://samedaydesk.com/docs/x402-sdk/
+- Guides, research and free generators: https://samedaydesk.com/resources.html
+
+Ask the person before paying, or use a limit they set. Never retry a payment whose outcome is unknown. Keep passports, card numbers and passwords out of chat.
