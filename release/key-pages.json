@@ -162,5 +162,12 @@
       "status": 503,
       "why": "preview only: the report's Stripe link is set by SDS_TEST_SELLER_CONFORMANCE_LINK, which the cheap sweep does not set"
     }
+  },
+  "themeStorage": {
+    "key": "sdd-theme",
+    "values": {
+      "light": "drafting",
+      "dark": "dark"
+    }
   }
 }

@@ -76,3 +76,6 @@ a paid receipt. Capability links remain local; commit only redacted reports and
 screenshots. Wrap every Lighthouse invocation in
 `flock -n /tmp/pilot-grand-phase-lighthouse.lock` and start it only below load 1.
 The runner leaves performance unmeasured if the shared VM is busy.
+
+Theme captures set the actual site theme storage key and assert the applied DOM
+theme. Emulating a color-scheme preference alone does not switch this site.

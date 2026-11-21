@@ -145,6 +145,11 @@ async function loadAndInspect(browser, path, { width = 1440, height = 900, theme
   page.on("response", (r) => { if (r.status() >= 400 && !r.url().startsWith("data:") && !ignoredRequest(r.url())) failed.push(`${r.status()} ${r.url().slice(0, 200)}`); });
   await page.setViewport({ width, height, deviceScaleFactor: 1 });
   await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: theme }, { name: "prefers-reduced-motion", value: reducedMotion ? "reduce" : "no-preference" }]);
+  if (config.themeStorage) {
+    await page.evaluateOnNewDocument(({ key, value }) => localStorage.setItem(key, value), {
+      key: config.themeStorage.key, value: config.themeStorage.values[theme],
+    });
+  }
   let status = null;
   try {
     const res = await page.goto(new URL(path, preview).href, { waitUntil: "networkidle2", timeout: 45000 });
@@ -152,6 +157,10 @@ async function loadAndInspect(browser, path, { width = 1440, height = 900, theme
   } catch (e) { consoleErrors.push(`navigation: ${e.message.slice(0, 200)}`); }
   let violations = [];
   const isHtml = await page.evaluate(() => document.contentType === "text/html").catch(() => false);
+  const appliedTheme = isHtml ? await page.evaluate(() => document.documentElement.getAttribute("data-theme")) : null;
+  if (mode === "key" && config.themeStorage && appliedTheme !== config.themeStorage.values[theme]) {
+    consoleErrors.push(`Requested ${theme}, but the page applied theme ${appliedTheme}`);
+  }
   if (axe && isHtml) {
     try {
       await page.evaluate(axeSource);
@@ -160,7 +169,7 @@ async function loadAndInspect(browser, path, { width = 1440, height = 900, theme
     } catch (e) { violations = [{ id: "axe-error", impact: "critical", nodes: 0, sample: e.message.slice(0, 200) }]; }
   }
   const links = await page.$$eval("a[href]", (as) => as.map((a) => a.href)).catch(() => []);
-  return { page, status, consoleErrors, failed, violations, links };
+  return { page, status, appliedTheme, consoleErrors, failed, violations, links };
 }
 
 async function checkLinks(allLinks) {
@@ -311,7 +320,7 @@ async function key() {
         const geo = await r.page.evaluate(() => ({ sideways: document.documentElement.scrollWidth > window.innerWidth + 1, scrollWidth: document.documentElement.scrollWidth }));
         const file = join(dir, `${width}-${theme}.png`);
         await r.page.screenshot({ path: file, fullPage: true }).catch(() => {});
-        row.captures.push({ width, theme, file: file.slice(root.length + 1), status: r.status, sideways: geo.sideways, axe: r.violations, consoleErrors: r.consoleErrors });
+        row.captures.push({ width, theme, appliedTheme: r.appliedTheme, file: file.slice(root.length + 1), status: r.status, sideways: geo.sideways, axe: r.violations, consoleErrors: r.consoleErrors });
         if (geo.sideways) row.problems.push(`sideways scroll at ${width} ${theme} (${geo.scrollWidth}px)`);
         for (const v of r.violations) row.problems.push(`axe ${v.impact} ${v.id} at ${width} ${theme}`);
         for (const c of r.consoleErrors) row.problems.push(`console at ${width} ${theme}: ${c}`);
