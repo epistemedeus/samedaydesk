@@ -47,6 +47,7 @@ export function careEnrollment(schema, role) {
       SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
       WHERE n.nspname !~ '^pg_' AND n.nspname NOT IN ('information_schema', '${schema}')
       AND c.relkind IN ('r','p','v','m','f')
+      AND has_schema_privilege('${role}', n.oid, 'USAGE')
       AND (has_table_privilege('${role}', c.oid, 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER'))
     ) THEN RAISE EXCEPTION 'Care role inherits unrelated relation privileges; enrollment rolled back'; END IF;
   END $$;`, "COMMIT;");

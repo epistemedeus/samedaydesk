@@ -47,7 +47,9 @@ migration authority. PUBLIC and existing anon/authenticated/service_role grants
 are removed only from the newly created private schema and its tables.
 
 Enrollment rolls back if ambient PUBLIC grants give this new role CREATE on a
-non-system schema/database or any relation privilege outside the private schema.
+non-system schema/database or any relation privilege outside the private schema
+where namespace USAGE is also available. A table/view ACL without namespace USAGE is not effective access;
+an actual query remains forbidden. No extension relations are whitelisted.
 It never rewrites unrelated PUBLIC privileges. If this preflight fails, Root must
 choose an appropriately isolated database/approved grant correction, then review
 and repeat the enrollment. Do not add BYPASSRLS or widen the app role to get past it.

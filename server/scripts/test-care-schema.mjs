@@ -34,6 +34,16 @@ test("production Care schema enrollment and every database consumer respect role
   const schema = "sds_care_disposable", role = "samedaydesk_care_app";
   const table = (name) => careTable(name, schema);
   await admin.query("create table public.unrelated_secret(value text); insert into public.unrelated_secret values ('unrelated')");
+  // Table/view ACLs alone do not confer access without namespace USAGE.
+  await admin.query(`create schema acl_hidden;
+    revoke all on schema acl_hidden from public;
+    create table acl_hidden.unreachable_table(value text);
+    create view acl_hidden.unreachable_view as select 1 as value;
+    grant select on acl_hidden.unreachable_table, acl_hidden.unreachable_view to public`);
+  const inaccessible = (await admin.query(`select c.oid as relation, n.oid as namespace, c.relname
+    from pg_class c join pg_namespace n on n.oid=c.relnamespace
+    where n.nspname='acl_hidden' and c.relkind in ('r','v')`)).rows;
+  assert.equal(inaccessible.length, 2);
   await admin.query("create role anon; create role authenticated; create role service_role bypassrls");
   await admin.query(careEnrollment(schema, role));
   const password = randomBytes(24).toString("hex");
@@ -55,6 +65,14 @@ test("production Care schema enrollment and every database consumer respect role
   const roleRow = (await db.query("select current_user,rolsuper,rolbypassrls,rolcreaterole,rolcreatedb,rolinherit from pg_roles where rolname=current_user")).rows[0];
   assert.deepEqual(roleRow, { current_user: role, rolsuper: false, rolbypassrls: false, rolcreaterole: false, rolcreatedb: false, rolinherit: false });
   assert.equal((await db.query("select ssl from pg_stat_ssl where pid=pg_backend_pid()")).rows[0].ssl, true);
+  for (const relation of inaccessible) {
+    const acl = (await db.query(`select has_table_privilege(current_user,$1::oid,'SELECT') as can_select,
+      has_table_privilege(current_user,$1::oid,'INSERT,UPDATE,DELETE,TRUNCATE') as can_write,
+      has_schema_privilege(current_user,$2::oid,'USAGE') as usage`, [relation.relation, relation.namespace])).rows[0];
+    assert.deepEqual(acl, { can_select: true, can_write: false, usage: false });
+    await assert.rejects(db.query(`select * from acl_hidden.${relation.relname}`), { code: "42501" });
+  }
+  console.log("ACL-visible table and view, namespace USAGE false: enrollment passed; actual SELECT refused 42501.");
   await assert.rejects(db.query("select * from public.unrelated_secret"), { code: "42501" });
   await assert.rejects(db.query(`create table "${schema}".forbidden(id int)`), { code: "42501" });
   await assert.rejects(db.query("create table public.forbidden(id int)"), { code: "42501" });
@@ -113,8 +131,13 @@ test("production Care schema enrollment and every database consumer respect role
   await assert.rejects(defaultTaskRequestStore().insert({ email: "schema@example.test", task: "RLS must reject this new task" }), { code: "42501" });
   // An accidental PUBLIC grant on an unrelated table prevents future enrollment.
   await admin.query("grant select on public.unrelated_secret to public");
+  const effective = (await db.query(`select has_schema_privilege(current_user,'public','USAGE') as usage,
+    has_table_privilege(current_user,'public.unrelated_secret','SELECT') as can_select`)).rows[0];
+  assert.deepEqual(effective, { usage: true, can_select: true });
+  assert.equal((await db.query("select * from public.unrelated_secret")).rows[0].value, "unrelated");
   await assert.rejects(admin.query(careEnrollment("sds_rejected", "sds_rejected_app")), /unrelated relation privileges/);
   await admin.query("rollback");
   assert.equal((await admin.query("select count(*)::int as n from pg_namespace where nspname='sds_rejected'")).rows[0].n, 0);
+  console.log("Actually accessible unrelated PUBLIC relation still refuses enrollment and rolls back.");
   console.log("Production TLS, eight private tables, create/read/update, all consumers, RLS enforcement, no unrelated access or schema DDL: passed.");
 });
