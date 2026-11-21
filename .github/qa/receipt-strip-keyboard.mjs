@@ -24,6 +24,7 @@ try {
     await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: reduced ? 'reduce' : 'no-preference' }]);
     await page.evaluateOnNewDocument(t => localStorage.setItem('sdd-theme', t), theme);
     await page.goto(origin + '/x402', { waitUntil: 'networkidle0' });
+    await page.evaluate(async () => { await document.fonts.ready; await Promise.all(document.getAnimations().filter(animation => animation.effect?.getTiming().iterations !== Infinity).map(animation => animation.finished.catch(() => {}))); });
     await page.$eval('[class*="stripWindow"]', e => e.scrollIntoView({ block: 'center' }));
     await page.bringToFront();
     const links = [];
@@ -46,6 +47,8 @@ try {
           fullViewportTargetWidth: Math.min(a.width, v.width - mask * 2),
           targetWidth: a.width, viewportWidth: v.width, scrollLeft: pane.scrollLeft,
           outline: style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0,
+          outlineVerticallyUnclipped: a.top - parseFloat(style.outlineOffset) - parseFloat(style.outlineWidth) >= v.top && a.bottom + parseFloat(style.outlineOffset) + parseFloat(style.outlineWidth) <= v.bottom,
+          outlineBounds: { top: a.top - parseFloat(style.outlineOffset) - parseFloat(style.outlineWidth), bottom: a.bottom + parseFloat(style.outlineOffset) + parseFloat(style.outlineWidth), clipTop: v.top, clipBottom: v.bottom },
           animation: track.animationName,
         };
       });
@@ -53,6 +56,7 @@ try {
       assert.equal(nativeTab.focused, true);
       assert.ok(nativeTab.visibleUnmaskedWidth > 1, JSON.stringify({ width, theme, reduced, i, nativeTab }));
       assert.equal(nativeTab.outline, true);
+      assert.equal(nativeTab.outlineVerticallyUnclipped, true, JSON.stringify({ width, theme, reduced, i, nativeTab }));
       assert.equal(nativeTab.animation, 'none');
       const item = { nativeTab };
       if (nativeTab.visibleUnmaskedWidth < nativeTab.fullViewportTargetWidth * .9) {
@@ -65,6 +69,8 @@ try {
         assert.ok(after.visibleUnmaskedWidth >= after.fullViewportTargetWidth * .9, JSON.stringify({ width, theme, reduced, i, after }));
         item.actualArrowReveal = { keys, after };
       }
+      item.screenshot = `screenshots/${width}-${theme}-${reduced ? 'reduced' : 'normal'}-focus-${i + 1}.jpg`;
+      await page.screenshot({ path: out + '/' + item.screenshot, type: 'jpeg', quality: 85 });
       focus.push(item);
     }
     // Let the preceding native ArrowRight scroll finish before reversing direction.
