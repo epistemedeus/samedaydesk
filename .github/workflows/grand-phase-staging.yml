@@ -94,6 +94,7 @@ jobs:
           node scripts/check-preview-sitemap.mjs http://127.0.0.1:31861 "$(git rev-parse refs/remotes/origin/main)"
           node .github/qa/public-first-render.mjs http://127.0.0.1:31861
           node .github/qa/receipt-roll-motion.mjs http://127.0.0.1:31861
+          node .github/qa/receipt-strip-keyboard.mjs
           node scripts/check-receipts-refresh.mjs http://127.0.0.1:31861 "$RUNNER_TEMP/receipt-snapshot.json"
           curl -fsS http://127.0.0.1:31861/api/requests -H 'Content-Type: application/json' \
             --data-binary '{"email":"buyer@example.test","task":"Review the example project and agree on scope."}' \
