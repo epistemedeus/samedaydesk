@@ -99,6 +99,7 @@
 /* Setup: three tabs over one code panel. */
 .setup { padding-block: var(--space-l); border-top: 1px solid var(--line); }
 .tabs { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: var(--space-m); border-bottom: 1px solid var(--line-2); }
+.tabs [role="tablist"] { display: flex; flex-wrap: wrap; gap: 0.3rem; }
 .tabs [role="tab"] { min-height: 40px; padding: 0 1rem; border: 1px solid transparent; border-bottom: 0; background: none; color: var(--ink-dim); font-family: var(--font-mono); font-size: var(--step--1); cursor: pointer; }
 .tabs [role="tab"][aria-selected="true"] { border-color: var(--line-2); background: var(--bg-1); color: var(--ink); margin-bottom: -1px; }
 .tabs [role="tab"]:focus-visible, .copy:focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }

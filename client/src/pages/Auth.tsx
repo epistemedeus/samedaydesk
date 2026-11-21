@@ -34,7 +34,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
     setBusy(true);
     try {
       const sb = await getSupabase();
-      if (!sb) throw new Error("Auth isn't configured in this environment yet.");
+      if (!sb) throw new Error("Sign-in could not open. Please try again.");
       const { error } = await sb.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo: `${window.location.origin}${dest()}` },
@@ -55,7 +55,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
     setBusy(true);
     try {
       const sb = await getSupabase();
-      if (!sb) throw new Error("Auth isn't configured in this environment yet.");
+      if (!sb) throw new Error("Sign-in could not open. Please try again.");
       const { data, error } =
         mode === "signup"
           ? await sb.auth.signUp({ email, password })
@@ -93,7 +93,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
 
         {offer && (
           <p className={styles.intent}>
-            You're starting <strong>{offer.name}</strong> · <span className="mono lime">${offer.price}</span>
+            You're starting <strong>{offer.name}</strong> · <span className="mono lime">{offer.price} USD</span>
           </p>
         )}
 
@@ -109,7 +109,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
 
         <div className={styles.divider}><span>or</span></div>
 
-        <form className={styles.form} onSubmit={submit} noValidate>
+        <form className={styles.form} onSubmit={submit}>
           <label className={styles.field}>
             <span>Email</span>
             <input
@@ -136,7 +136,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
 
           {error && <p className={styles.error} role="alert">{error}</p>}
           {notice && <p className={styles.notice} role="status">{notice}</p>}
-          {!isAuthConfigured() && <p className={styles.error}>Auth isn't configured in this environment.</p>}
+          {!isAuthConfigured() && <p className={styles.error}>Sign-in could not open. Please try again.</p>}
 
           <button className={styles.submit} disabled={busy} type="submit">
             {busy ? "One sec…" : mode === "signup" ? "Create account" : "Sign in"}

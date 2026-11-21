@@ -8,6 +8,7 @@ import { receiptId, short, tapeDate, useReceiptFeed, type Receipt } from "../lib
 import { ALL_OFFERS, PAYMENT_LINKS } from "../lib/services";
 import styles from "./Mcp.module.css";
 import x from "./X402.module.css";
+import board from "../data/paidTools.json";
 
 const SMITHERY_URL = "https://smithery.ai/servers/epistemedeus/x402-data-gateway";
 const GATEWAY_URL = "https://agents.samedaydesk.com";
@@ -16,57 +17,7 @@ const TASKMARKET_URL = "https://taskmarket.dev";
 const TASKMARKET_SOURCE = "https://github.com/epistemedeus/samedaydesk/blob/main/TASKMARKET-INTEGRATION.md";
 const QUOTE_URL = `${GATEWAY_URL}/extract?url=https%3A%2F%2Fexample.com`;
 
-type Tool = { name: string; price: string; does: string };
-// Every paid tool, grouped by what the agent needs done, with its price in USDC per call.
-const board: { need: string; tools: Tool[] }[] = [
-  {
-    need: "Read the web",
-    tools: [
-      { name: "extract", price: "0.005", does: "A public page as structured data: title, headings, links, JSON-LD." },
-      { name: "read", price: "0.005", does: "A public page as clean Markdown, without navigation or ads." },
-      { name: "schemaforge", price: "0.25", does: "Paste-ready structured data for a site, and what it is missing." },
-      { name: "scan", price: "0.20", does: "A security read of a public GitHub repository before you install it." },
-    ],
-  },
-  {
-    need: "Check a seller before paying",
-    tools: [
-      { name: "payment_offer_preflight", price: "0.005", does: "Read a seller's payment terms before your agent signs anything." },
-      { name: "seller_integrity_audit", price: "0.01", does: "Check that a paid route takes the input it says and returns what it promises." },
-      { name: "contract_qualified_search", price: "0.01", does: "Find paid services that return the exact fields you need." },
-      { name: "agent_discoverability_audit", price: "0.05", does: "How one paid service appears across directories, with its live terms." },
-      { name: "agent_surface_budget_audit", price: "0.01", does: "How much an MCP or OpenAPI surface costs an agent to load." },
-      { name: "opportunity_preflight", price: "0.05", does: "Whether a paid task is worth your agent's effort, before it starts." },
-    ],
-  },
-  {
-    need: "Check a payment or a wallet",
-    tools: [
-      { name: "settlement_proof", price: "0.005", does: "Confirm a Base USDC payment arrived as claimed." },
-      { name: "transaction_receipt", price: "0.002", does: "One Base or Ethereum transaction, its fees and transfers, in plain fields." },
-      { name: "solana_transaction_receipt", price: "0.002", does: "One Solana transaction, with an optional exact-payment check." },
-      { name: "wallet_policy_conformance", price: "0.01", does: "Test an agent wallet's allow and deny rules, without wallet access." },
-      { name: "stateful_wallet_policy_conformance", price: "0.01", does: "Test spending limits over a sequence of payments." },
-    ],
-  },
-  {
-    need: "Company and wallet profiles",
-    tools: [
-      { name: "enrich", price: "0.05", does: "A company from its domain: identity, technology, contacts, email setup." },
-      { name: "wallet_enrich", price: "0.05", does: "A Base or EVM address: activity, tokens, and what kind of wallet it is." },
-      { name: "deep_audit", price: "0.25", does: "A company profile, its AI-search readiness and a fix list, in one report." },
-    ],
-  },
-  {
-    need: "Lending positions on Base",
-    tools: [
-      { name: "morpho_position", price: "0.02", does: "A Morpho position's loan-to-value and distance to liquidation, under price shocks." },
-      { name: "morpho_protection", price: "0.10", does: "How much to repay or add to survive a given price drop, as unsigned calls." },
-      { name: "morpho_market_underwrite", price: "0.25", does: "A Morpho market's liquidity, borrowers, health and bad debt, cross-checked." },
-      { name: "morpho_preliquidation_replay", price: "0.10", does: "What a past pre-liquidation repaid, seized and cost, from block state." },
-    ],
-  },
-];
+// Grouped prices used by this page and its catalog contract readers.
 
 const taskmarketTools = [
   {
@@ -492,13 +443,15 @@ function Setup({ onCopy }: { onCopy: (tab: string) => void }) {
         <p className="eyebrow">Set it up</p>
         <h2 id="setup-title">Three ways in</h2>
       </div>
-      <div className={x.tabs} role="tablist" aria-label="Setup">
+      <div className={x.tabs}>
+        <div role="tablist" aria-label="Setup">
         {tabs.map((t, i) => (
           <button key={t} id={`setup-tab-${t.replace(/\s+/g, "-")}`} type="button" role="tab" aria-selected={tab === t}
             aria-controls="setup-panel" tabIndex={tab === t ? 0 : -1} onClick={() => { setTab(t); setCopied(false); }} onKeyDown={(e) => move(e, i)}>
             {t}
           </button>
         ))}
+        </div>
         <button type="button" className={x.copy} onClick={copy}>{copied ? "Copied" : "Copy"}</button>
       </div>
       <pre id="setup-panel" role="tabpanel" aria-labelledby={`setup-tab-${tab.replace(/\s+/g, "-")}`} className={x.code} tabIndex={0}><code>{setup[tab]}</code></pre>
