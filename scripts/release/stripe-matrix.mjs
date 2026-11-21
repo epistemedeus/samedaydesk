@@ -43,6 +43,12 @@ const out = join(root, "release/out/stripe", run);
 mkdirSync(out, { recursive: true });
 const offers = config.offers.filter((o) => !value("--offers") || value("--offers").split(",").includes(o.id));
 const cases = (value("--cases") ?? "readback,success,expire,replay,refund").split(",");
+const supportedCases = ["readback", "success", "decline", "block", "3ds-pass", "3ds-fail", "expire", "replay", "lost-response", "refund", "renewal", "cancel"];
+if (!offers.length || cases.some((name) => !supportedCases.includes(name)) ||
+    (cases.includes("renewal") && (offers.length !== 1 || offers[0].mode !== "subscription"))) {
+  console.error("Choose existing offers and supported cases; a clock run needs exactly one subscription offer.");
+  process.exit(2);
+}
 
 // Stripe API, test mode only.
 async function stripe(method, path, params) {
@@ -171,21 +177,16 @@ async function eventFor(type, match, since) {
   return { type, missing: true };
 }
 
-// Stripe retries a delivery the receiver refused with a 5xx (for example invoice.paid that arrives
-// before checkout.session.completed); `stripe listen` does not. Stand in for that retry once per event
-// with Stripe's own resend, and record it.
-const retried = new Map();
-async function retryRefusedDeliveries() {
-  for (const [evt, status] of delivered) {
-    if (status < 500 || retried.has(evt)) continue;
-    const exit = await new Promise((resolve) => {
-      const c = spawn(stripeCli, ["events", "resend", evt], { env: { PATH: process.env.PATH, HOME: process.env.HOME, STRIPE_API_KEY: key }, stdio: "ignore" });
-      c.on("close", resolve);
-    });
-    retried.set(evt, { firstStatus: status, resendExit: exit });
+async function advanceClock(timestamp) {
+  await stripe("POST", `test_helpers/test_clocks/${ctx.clock.id}/advance`, { frozen_time: String(timestamp) });
+  const end = Date.now() + 120000;
+  while (Date.now() < end) {
+    const clock = await stripe("GET", `test_helpers/test_clocks/${ctx.clock.id}`);
+    if (clock.status === "ready") return clock;
+    if (clock.status !== "advancing") throw new Error(`Test clock ${clock.status}`);
+    await sleep(1000);
   }
-  if (retried.size) await sleep(3000);
-  return [...retried].map(([evt, r]) => ({ evt, ...r, afterResend: delivered.get(evt) ?? null }));
+  throw new Error("Test clock did not finish advancing");
 }
 
 function signed(payload) {
@@ -203,6 +204,11 @@ function record(offer, name, rec) {
 }
 
 try {
+  if (cases.includes("renewal")) {
+    ctx.clock = await stripe("POST", "test_helpers/test_clocks", { frozen_time: String(Math.floor(Date.now() / 1000)), name: run });
+    const customer = await stripe("POST", "customers", { test_clock: ctx.clock.id, email: `buyer+${run}@example.test`, "metadata[release_run]": run });
+    ctx.clockCustomer = customer.id;
+  }
   app = await adapter.start(ctx);
   console.log(`preview ${preview} started`);
   const paid = new Map(); // offer id -> { session, order, page }
@@ -243,10 +249,8 @@ try {
           if (!shouldPay) { await sleep(6000); hosted = await buyerSaw(page, `${offer.id}-${name}-hosted`); }
           const session = await stripe("GET", `checkout/sessions/${a.sessionId}`);
           const webhook = shouldPay ? await eventFor("checkout.session.completed", (o) => o.id === a.sessionId, since) : null;
-          let retries = [];
           if (shouldPay) {
             await sleep(2000);
-            retries = await retryRefusedDeliveries();
             await adapter.settled?.(ctx, a);
           }
           const buyer = shouldPay ? await adapter.buyerScreen(ctx, a, page, `${offer.id}-${name}`) : await buyerSaw(page, `${offer.id}-${name}`);
@@ -256,7 +260,7 @@ try {
             : session.status === "open" && session.payment_status === "unpaid" && !adapter.isPaid(stored);
           if (!shouldPay) await stripe("POST", `checkout/sessions/${a.sessionId}/expire`).catch(() => {});
           if (shouldPay && ok) paid.set(offer.id, { a, session });
-          record(offer, name, { state: ok ? "passed" : "failed", why: ok ? undefined : `session ${session.status}/${session.payment_status}, webhook ${webhook?.deliveredThroughListener ?? "none"}, stored ${adapter.describe(stored)}`, buyer, hostedPage: hosted, stripe: pick(session), webhook, retriedDeliveries: retries, stored });
+          record(offer, name, { state: ok ? "passed" : "failed", why: ok ? undefined : `session ${session.status}/${session.payment_status}, webhook ${webhook?.deliveredThroughListener ?? "none"}, stored ${adapter.describe(stored)}`, buyer, hostedPage: hosted, stripe: pick(session), webhook, stored });
         } else if (name === "expire") {
           const a = await adapter.open(ctx, offer);
           const session = await stripe("POST", `checkout/sessions/${a.sessionId}/expire`);
@@ -291,10 +295,59 @@ try {
           const ok = res.status < 300 && count === 1 && JSON.stringify(adapter.comparable(before)) === JSON.stringify(adapter.comparable(after));
           record(offer, name, { state: ok ? "passed" : "failed", why: ok ? undefined : `receiver ${res.status}, orders ${count}, row changed ${JSON.stringify(adapter.comparable(before)) !== JSON.stringify(adapter.comparable(after))}`,
             buyer: null, stripe: pick(p.session), webhook: { id: evt.id, type: evt.type, resentByStripe, replayedWithListenerSecret: true, receiverStatus: res.status }, stored: after, ordersForSession: count });
+        } else if (name === "renewal") {
+          const p = paid.get(offer.id);
+          if (!p || !ctx.clock) throw new Error("Renewal needs a passed hosted success on a test clock");
+          const initial = await adapter.periods(ctx, p.a);
+          if (initial.length !== 1) throw new Error(`Expected one paid initial period, got ${initial.length}`);
+          const boundary = Math.floor(Date.parse(initial[0].period_end) / 1000);
+          const clocks = [await advanceClock(boundary), await advanceClock(boundary + 7200)];
+          const invoices = await stripe("GET", "invoices", { customer: ctx.clockCustomer, subscription: p.session.subscription, limit: "10" });
+          const renewal = invoices.data.find((i) => i.billing_reason === "subscription_cycle");
+          if (!renewal) throw new Error("The clock produced no renewal invoice");
+          const webhook = await eventFor("invoice.paid", (o) => o.id === renewal.id, since);
+          const periods = await adapter.periods(ctx, p.a);
+          const stored = await adapter.storedRow(ctx, p.a);
+          const buyer = await adapter.buyerScreen(ctx, p.a, page, `${offer.id}-renewal`);
+          const ok = renewal.status === "paid" && renewal.amount_paid === offer.cents &&
+            renewal.currency === offer.currency && webhook.deliveredThroughListener === 200 &&
+            periods.length === 2 && periods.some((r) => r.invoice_id === renewal.id && r.status === "ready") && buyer.ok;
+          record(offer, name, { state: ok ? "passed" : "failed", buyer, stripe: { clock: clocks.map(({id, status, frozen_time}) => ({id, status, frozen_time})), invoice: renewal }, webhook, stored, periods });
+        } else if (name === "cancel") {
+          const p = paid.get(offer.id);
+          if (!p) throw new Error("Cancellation needs a passed hosted subscription payment");
+          await page.goto(adapter.cancellationLink(ctx, p.a), { waitUntil: "networkidle2" });
+          await page.click("main button");
+          await page.waitForFunction(() => location.hostname === "billing.stripe.com", { timeout: 30000 });
+          const button = await within(page, '[data-testid="cancel-subscription"], button[type="submit"]', 10000);
+          if (button) await button.h.click();
+          else {
+            const buttons = await page.$$("button");
+            let clicked = false;
+            for (const b of buttons) {
+              if (/cancel subscription/i.test(await b.evaluate((el) => el.textContent)) && await b.boundingBox()) {
+                await b.click(); clicked = true; break;
+              }
+            }
+            if (!clicked) throw new Error("The hosted portal showed no cancellation action");
+          }
+          const webhook = await eventFor("customer.subscription.updated", (o) => o.id === p.session.subscription && o.cancel_at_period_end === true, since);
+          const subscription = await stripe("GET", `subscriptions/${p.session.subscription}`);
+          const stored = await adapter.storedRow(ctx, p.a);
+          const buyer = await adapter.buyerScreen(ctx, p.a, page, `${offer.id}-cancel`);
+          const ok = subscription.cancel_at_period_end === true && stored.cancel_at_period_end === true &&
+            webhook.deliveredThroughListener === 200 && buyer.text.includes("will not renew");
+          record(offer, name, { state: ok ? "passed" : "failed", buyer, stripe: { id: subscription.id, status: subscription.status, cancel_at_period_end: subscription.cancel_at_period_end }, webhook, stored });
         } else if (name === "refund") {
           const p = paid.get(offer.id);
           if (!p) { record(offer, name, { state: "not run", why: "needs a passed success case first" }); continue; }
-          const pi = p.session.payment_intent ?? (await stripe("GET", `checkout/sessions/${p.a.sessionId}`)).payment_intent;
+          let pi = p.session.payment_intent ?? (await stripe("GET", `checkout/sessions/${p.a.sessionId}`)).payment_intent;
+          if (!pi && p.session.subscription) {
+            const subscription = await stripe("GET", `subscriptions/${p.session.subscription}`);
+            const invoice = await stripe("GET", `invoices/${subscription.latest_invoice}`, { "expand[]": "payments" });
+            pi = invoice.payments?.data?.find((p) => p.payment?.type === "payment_intent")?.payment.payment_intent;
+          }
+          if (!pi) throw new Error("The paid invoice has no payment intent to refund");
           const refund = await stripe("POST", "refunds", { payment_intent: pi, "metadata[release_run]": run });
           const webhook = await eventFor("charge.refunded", (o) => o.payment_intent === pi, since);
           await sleep(1500);
@@ -317,4 +370,4 @@ try {
 const summary = { run, lane, startedFor: offers.map((o) => o.id), cases, passed: records.filter((r) => r.state === "passed").length, failed: records.filter((r) => r.state === "failed").length, notRun: records.filter((r) => r.state === "not run").length, records: records.map(({ offer, case: c, state, why }) => ({ offer, case: c, state, why })) };
 writeFileSync(join(out, "summary.json"), JSON.stringify(summary, null, 2) + "\n");
 console.log(`\n${summary.passed} passed, ${summary.failed} failed, ${summary.notRun} not run. Records in release/out/stripe/${run}/`);
-process.exit(summary.failed ? 1 : 0);
+process.exit(summary.failed || summary.notRun ? 1 : 0);

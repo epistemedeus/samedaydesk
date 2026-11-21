@@ -138,10 +138,14 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     if (!id) return null;
     const order = await store.bySubscription(id);
     if (matchesMode(order)) return order;
-    // The initial invoice can arrive before the Checkout session. Only retry
-    // when it carries this integration's binding and a real stored order.
-    if (isOrderId(hint) && matchesMode(await store.order(hint))) {
-      throw new CareError(503, "Waiting for the corresponding Checkout event.");
+    // Events can arrive out of order. Read the bound Checkout from Stripe before
+    // accepting an initial invoice, with the same amount and identity checks.
+    if (isOrderId(hint)) {
+      const pending = await store.order(hint);
+      if (matchesMode(pending) && pending.session_id) {
+        const current = await paidSession(pending, await stripe.checkout.sessions.retrieve(pending.session_id));
+        if (current.subscription_id === id) return current;
+      }
     }
     return null;
   }
