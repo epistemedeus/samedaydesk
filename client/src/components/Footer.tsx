@@ -15,7 +15,7 @@ export default function Footer() {
           </Link>
           <p className={styles.tag}>Agent commerce, built and shipped.</p>
           <a className={styles.contact} href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>
-          <p className={styles.tag}><AgentMark placement="footer" /></p>
+          <div className={styles.tag}><AgentMark placement="footer" /></div>
         </div>
 
         <nav className={styles.col} aria-label="Services">

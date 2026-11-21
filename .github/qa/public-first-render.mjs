@@ -10,7 +10,9 @@ const { default: puppeteer } = await import(pathToFileURL(require.resolve('puppe
 const chrome = await puppeteer.launch({
   headless: true, executablePath: '/usr/bin/google-chrome-stable', args: ['--disable-dev-shm-usage'],
 });
-const cases = ['/', '/for-agents', '/for-agents/record-repeat', '/terms', '/privacy', '/x402/verified', '/tools/ai-readiness'];
+const cases = ['/', '/for-agents', '/for-agents/record-repeat', '/for-agents/distribution-repair',
+  '/for-agents/consumer-repeat', '/for-agents/useful-jobs', '/terms', '/privacy', '/x402',
+  '/x402/seller-conformance', '/x402/verified', '/tools/ai-readiness'];
 const marker = 'name="sdd-public-first-render"';
 try {
   for (const path of cases) {
@@ -27,13 +29,16 @@ try {
     assert.equal(response.status, status, path);
     assert.equal((await response.text()).includes(marker), false, path);
   }
-  for (const [path, theme] of [['/', 'dark'], ['/for-agents', 'drafting'], ['/terms', 'dark']]) {
+  const browserCases = [...cases.map((path) => [path, 'drafting']), ['/', 'dark'], ['/terms', 'dark']];
+  for (const [path, theme] of browserCases) {
     const ctx = await chrome.createBrowserContext();
     try {
       const page = await ctx.newPage();
       const errors = [];
       page.on('pageerror', (error) => errors.push(error.message));
-      page.on('console', (msg) => { if (msg.type() === 'error' && /hydration|Minified React|initial page/.test(msg.text())) errors.push(msg.text()); });
+      page.on('console', (msg) => {
+        if (msg.type() === 'error' && /hydration|minified react|initial page|in html|cannot be (?:a child|a descendant)/i.test(msg.text())) errors.push(msg.text().slice(0, 4200));
+      });
       await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
       await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
       await page.evaluateOnNewDocument((theme) => {
@@ -46,7 +51,12 @@ try {
       }, theme);
       await page.setRequestInterception(true);
       page.on('request', (request) => {
-        const own = new URL(request.url()).origin === base.origin;
+        const url = new URL(request.url());
+        const own = url.origin === base.origin;
+        if (own && url.pathname === '/api/x402-quote') {
+          void request.respond({ status: 503, contentType: 'application/json', body: '{}' }).catch(() => {});
+          return;
+        }
         const read = request.method() === 'GET';
         void (own && read ? request.continue() : request.abort()).catch(() => {});
       });
@@ -62,5 +72,5 @@ try {
       assert.deepEqual(errors, [], path);
     } finally { await ctx.close(); }
   }
-  console.log('SDS_PUBLIC_FIRST_RENDER_OK html=7 hydration=3 private-shells=5 theme-switch=true');
+  console.log(`SDS_PUBLIC_FIRST_RENDER_OK html=${cases.length} hydration=${browserCases.length} private-shells=5 theme-switch=true`);
 } finally { await chrome.close(); }

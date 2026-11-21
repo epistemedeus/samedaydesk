@@ -109,7 +109,7 @@ export default function AgentMark({ placement }: { placement: "nav" | "footer" |
   }
 
   return (
-    <span className={`${styles.desk} ${placement === "nav" ? styles.inNav : styles.inFooter}`}>
+    <div className={`${styles.desk} ${placement === "nav" ? styles.inNav : styles.inFooter}`}>
       <button
         ref={trigger}
         type="button"
@@ -136,6 +136,6 @@ export default function AgentMark({ placement }: { placement: "nav" | "footer" |
         <p className={styles.person}>{PERSON}</p>
         <Rows placement={placement} />
       </div>
-    </span>
+    </div>
   );
 }
