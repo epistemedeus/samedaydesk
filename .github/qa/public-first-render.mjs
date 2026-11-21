@@ -15,6 +15,7 @@ const cases = ['/', '/for-agents', '/for-agents/record-repeat', '/for-agents/dis
   '/x402/seller-conformance', '/x402/verified', '/tools/ai-readiness'];
 const marker = 'name="sdd-public-first-render"';
 try {
+  const typeAssets = new Set();
   for (const path of cases) {
     const response = await fetch(new URL(path, base), { redirect: 'error' });
     assert.equal(response.status, 200);
@@ -22,6 +23,16 @@ try {
     assert.ok(html.includes(`${marker} content="${path}"`), path);
     assert.match(html, /<div id="root">[\s\S]*?<main\b[^>]*\bid="main"/);
     assert.match(html, /rel="modulepreload"/);
+    const fontLinks = [...html.matchAll(/rel="preload" as="font" href="(\/assets\/[^"\s]+\.woff2)" type="font\/woff2" crossorigin/g)];
+    const optIn = /^\/(?:for-agents|x402)(?:\/|$)/.test(path);
+    assert.equal(fontLinks.length, optIn ? 3 : 0, path);
+    for (const [, file] of fontLinks) typeAssets.add(file);
+  }
+  assert.equal(typeAssets.size, 3);
+  for (const file of typeAssets) {
+    const data = await fetch(new URL(file, base), { redirect: 'error' });
+    assert.equal(data.status, 200);
+    assert.equal(Buffer.from(await data.arrayBuffer()).subarray(0, 4).toString(), 'wOF2');
   }
   for (const [path, status] of [['/login', 200], ['/checkout', 200], ['/care/intake', 200],
     ['/x402/seller-conformance?resolved=preview-only', 200], ['/no-such-public-route', 404]]) {

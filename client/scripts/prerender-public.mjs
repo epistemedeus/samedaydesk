@@ -1,4 +1,4 @@
-import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { build } from "vite";
@@ -16,6 +16,16 @@ function declaredAsset(name) {
     throw new Error("Invalid prerender asset path");
   }
   return `/${name}`;
+}
+
+async function criticalTypeLinks() {
+  const built = await readdir(join(dist, "assets"));
+  return ["space-grotesk", "inter", "jetbrains-mono"].map((family) => {
+    const hashPrefix = `${family}-latin-wght-normal-`;
+    const variants = built.filter((name) => name.startsWith(hashPrefix) && name.endsWith(".woff2"));
+    if (variants.length !== 1) throw new Error(`Missing unique Latin type asset: ${family}`);
+    return `<link rel="preload" as="font" href="${declaredAsset(`assets/${variants[0]}`)}" type="font/woff2" crossorigin>`;
+  }).join("\n");
 }
 
 function preloadFor(entry) {
@@ -40,6 +50,7 @@ try {
     emptyOutDir: false, manifest: false, copyPublicDir: false } });
   const { renderPublicPages } = await import(pathToFileURL(join(scratch, "prerender.js")).href);
   const rendered = await renderPublicPages();
+  const typeLinks = await criticalTypeLinks();
   const seen = new Set();
   for (const { path, entry, html } of rendered) {
     const route = routes.get(path);
@@ -52,7 +63,12 @@ try {
     if (shell.split(rootSlot).length !== 2 || shell.includes('name="sdd-public-first-render"')) throw new Error(`Bad render slot: ${path}`);
     const head = `<meta name="sdd-public-first-render" content="${path}">\n${preloadFor(entry)}\n` +
       '<noscript><style>#root { display: none }</style></noscript>\n';
-    const filled = shell.replace(rootSlot, () => `<div id="root">${html}</div>`).replace("</head>", `${head}</head>`);
+    // These templates put all three local faces above the fold. Fetch that
+    // subset before the stylesheets so their first-line wrapping stays stable.
+    const agentHeader = /^\/(?:for-agents|x402)(?:\/|$)/.test(path);
+    if (agentHeader && !shell.includes("</title>")) throw new Error(`Missing title slot: ${path}`);
+    const fontsReady = agentHeader ? shell.replace("</title>", `</title>\n${typeLinks}`) : shell;
+    const filled = fontsReady.replace(rootSlot, () => `<div id="root">${html}</div>`).replace("</head>", `${head}</head>`);
     await mkdir(dirname(target), { recursive: true });
     await writeFile(target, filled);
   }
