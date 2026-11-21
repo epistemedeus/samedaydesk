@@ -2,6 +2,7 @@ import { Router } from "express";
 import { stripe, isStripeConfigured } from "../lib/stripe.js";
 import { fulfillFromIntent } from "../lib/fulfill.js";
 import { notifyAdmin } from "../lib/notify.js";
+import { belongsToAnotherRun } from "../lib/release-run.js";
 import {
   configuredNeomorphicSellerConformancePaymentLinkId,
   expiredNeomorphicSellerRepairAttribution,
@@ -28,6 +29,7 @@ export function createStripeWebhookRouter({
   fulfill = fulfillFromIntent,
   notify = notifyAdmin,
   neomorphicPaymentLinkId = configuredNeomorphicSellerConformancePaymentLinkId(),
+  care,
 } = {}) {
   const router = Router();
 
@@ -49,7 +51,13 @@ export function createStripeWebhookRouter({
       return res.status(400).json({ error: `Bad signature: ${e.message}` });
     }
 
+    // Another private preview's test event on a shared Stripe test account.
+    if (belongsToAnotherRun(event)) return res.json({ received: true, ignored: "another release run" });
+
     try {
+      if (care && await care.eventIsCare(event)) {
+        return res.json({ received: true });
+      }
       if (event.type === "payment_intent.succeeded") {
         await fulfill(event.data.object);
       } else if (event.type === "checkout.session.expired") {

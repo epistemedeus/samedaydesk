@@ -1,59 +1,64 @@
 import { Suspense, lazy, useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
-import Landing from "./pages/Landing";
 import StubPage from "./pages/StubPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DraftingFrame from "./components/DraftingFrame";
+import DraftingCrosshair from "./components/DraftingCrosshair";
 import ScrollToHash from "./components/ScrollToHash";
 import { AuthProvider } from "./lib/auth";
 import { initAnalytics } from "./lib/posthog";
+import { journey, observeBrowserErrors } from "./lib/journey";
 import { useSmoothScroll } from "./motion/useSmoothScroll";
+import { publicPages, type InitialPublicPage } from "./public-pages";
 
 const Auth = lazy(() => import("./pages/Auth"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Checkout = lazy(() => import("./pages/Checkout"));
-const AiReadiness = lazy(() => import("./pages/AiReadiness"));
-const Mcp = lazy(() => import("./pages/Mcp"));
-const ForAgents = lazy(() => import("./pages/ForAgents"));
-const RecordRepeat = lazy(() => import("./pages/RecordRepeat"));
-const DistributionRepair = lazy(() => import("./pages/DistributionRepair"));
-const ConsumerRepeat = lazy(() => import("./pages/ConsumerRepeat"));
-const UsefulJobs = lazy(() => import("./pages/UsefulJobs"));
-const SellerConformance = lazy(() => import("./pages/SellerConformance"));
-const VerifiedRoutes = lazy(() => import("./pages/VerifiedRoutes"));
+const BuyCare = lazy(() => import("./pages/Care").then((module) => ({ default: module.BuyCare })));
+const CareReceipt = lazy(() => import("./pages/Care").then((module) => ({ default: module.CareReceipt })));
+const Receipts = lazy(() => import("./pages/Receipts"));
+const ReceiptPage = lazy(() => import("./pages/ReceiptPage"));
 
-export default function App() {
+export default function App({ initialPage }: { initialPage?: InitialPublicPage }) {
+  const { pathname } = useLocation();
+  useEffect(() => { journey("page_viewed"); }, [pathname]);
+  useEffect(observeBrowserErrors, []);
   useEffect(() => {
+    performance.mark("sdd:react-ready");
     initAnalytics();
   }, []);
   useSmoothScroll();
 
+  const routes = (
+    <Routes>
+      {publicPages.map(({ path, page }) => {
+        const Page = initialPage?.path === path ? initialPage.Page : page;
+        return <Route key={path} path={path} element={<Page />} />;
+      })}
+      <Route path="/login" element={<Auth mode="login" />} />
+      <Route path="/signup" element={<Auth mode="signup" />} />
+      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+      <Route path="/care/buy" element={<BuyCare />} />
+      <Route path="/care/intake" element={<CareReceipt mode="intake" />} />
+      <Route path="/care/subscription" element={<CareReceipt mode="cancel" />} />
+      <Route path="/receipts" element={<Receipts />} />
+      <Route path="/receipts/:id" element={<ReceiptPage />} />
+      <Route path="*" element={<StubPage title="Not found" note="That page doesn't exist." notFound />} />
+    </Routes>
+  );
+
   return (
     <AuthProvider>
       <DraftingFrame />
+      <DraftingCrosshair />
       <ScrollToHash />
-      <Suspense fallback={<div className="route-loading" aria-busy="true" />}>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/tools/ai-readiness" element={<AiReadiness />} />
-          <Route path="/x402" element={<Mcp />} />
-          <Route path="/x402/seller-conformance" element={<SellerConformance />} />
-          <Route path="/x402/verified" element={<VerifiedRoutes />} />
-          <Route path="/for-agents" element={<ForAgents />} />
-          <Route path="/for-agents/record-repeat" element={<RecordRepeat />} />
-          <Route path="/for-agents/distribution-repair" element={<DistributionRepair />} />
-          <Route path="/for-agents/consumer-repeat" element={<ConsumerRepeat />} />
-          <Route path="/for-agents/useful-jobs" element={<UsefulJobs />} />
-          <Route path="/login" element={<Auth mode="login" />} />
-          <Route path="/signup" element={<Auth mode="signup" />} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-          <Route path="/terms" element={<StubPage title="Terms of Service" note="Legal copy coming soon." />} />
-          <Route path="/privacy" element={<StubPage title="Privacy Policy" note="Legal copy coming soon." />} />
-          <Route path="*" element={<StubPage title="Not found" note="That page doesn't exist." notFound />} />
-        </Routes>
-      </Suspense>
+      {/* The build and browser preload this page. Hydrate it with its providers,
+          before effects like the theme preference can change shared state. */}
+      {initialPage?.path === pathname ? routes : (
+        <Suspense fallback={<div className="route-loading" aria-busy="true" />}>{routes}</Suspense>
+      )}
     </AuthProvider>
   );
 }

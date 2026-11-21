@@ -1,0 +1,72 @@
+{
+  "note": "Delivered work for the tape. Each entry copies its facts from the named receiving record and links a public proof. A customer is named only when the work is public.",
+  "entries": [
+    {
+      "kind": "delivered",
+      "date": "2026-08-29",
+      "for": "Agent402",
+      "delivered": "a seller integrity audit; Agent402 then repaired 557 of 560 routes",
+      "amount": "0.01 USDC",
+      "rail": "Base",
+      "paidHow": "x402, paid by Agent402's own client and wallet",
+      "proof": "https://basescan.org/tx/0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7",
+      "more": "https://github.com/MikeyPetrillo/Agent402/issues/1047",
+      "source": "client/public/research/agent402-seller-integrity-validation-2026-08-29.json"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-15",
+      "for": "Vet402",
+      "delivered": "a public recount that makes all 11,840 settled Base payments in the agreed window reproducible",
+      "proof": "https://github.com/kzmttkc/vet402/issues/86#issuecomment-6816657360",
+      "source": "pilot overview/research/phase-20261109/vet402-delivery/ROOT-RECEIVING.md"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-15",
+      "for": "a SwarmMemo requester",
+      "delivered": "a report on a confusing notary receipt; the requester fixed it upstream",
+      "amount": "50 credits",
+      "rail": "SwarmMemo",
+      "paidHow": "platform credits",
+      "proof": "https://swarmmemo.com/work/9af1fd9c80e4df51baac180d5275fe5b",
+      "source": "pilot overview/research/phase-20261114/n8n-output-readback/ROOT-RECEIVING.md"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-15",
+      "for": "AIBTC's x402 API",
+      "delivered": "a relay fix handed back as a pull request, passing 117 of its own unit tests",
+      "proof": "https://github.com/aibtcdev/x402-api/pull/150",
+      "source": "pilot overview/research/phase-20261109/aibtc-relay/ROOT-RECEIVING.md"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-14",
+      "for": "a SwarmMemo requester",
+      "delivered": "a route check declared before the call, with a snippet that fails if the route regresses; rated 80 of 100",
+      "amount": "75 credits",
+      "rail": "SwarmMemo",
+      "paidHow": "platform credits",
+      "proof": "https://swarmmemo.com/work/e58310c30b92f96d48207d4cca7e6123",
+      "source": "the public work page: result 1ce71cc1f8cb by sameday, accepted 2026-11-14 22:58 UTC, 75 credits paid"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-14",
+      "for": "Open WebUI's knowledge-base sync",
+      "delivered": "the lost source link reproduced on the issue, then an opt-in fix handed back as a pull request",
+      "proof": "https://github.com/open-webui/oikb/issues/129#issuecomment-6719615472",
+      "more": "https://github.com/open-webui/oikb/pull/154",
+      "source": "the public issue comment and pull request by epistemedeus (SameDayDesk's GitHub account)"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-10-22",
+      "for": "Nitrosend's TypeScript SDK",
+      "delivered": "a timeout fix handed back as a pull request, with real loopback HTTP tests",
+      "proof": "https://github.com/nitrosend/typescript-sdk/pull/33",
+      "source": "the public pull request by epistemedeus (SameDayDesk's GitHub account)"
+    }
+  ]
+}

@@ -337,3 +337,13 @@
     min-height: 0;
   }
 }
+/* The engineer's part of a first screen, under its own plain heading. */
+.engHead {
+  margin-top: var(--space-l);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}

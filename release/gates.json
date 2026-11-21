@@ -1,0 +1,13 @@
+{
+  "gates": [
+    { "name": "install", "run": "npm ci --ignore-scripts --no-audit --no-fund && npm --prefix client ci --include=dev --no-audit --no-fund" },
+    { "name": "build", "run": "npm run build", "timeoutMinutes": 25 },
+    { "name": "typecheck", "run": "cd client && npx tsc -b" },
+    { "name": "lint", "run": "npm run lint" },
+    { "name": "unit-api", "run": "node --test tests/private-static-compression.test.mjs && node --test --test-name-pattern='canonical public HTML' server/scripts/test-spa-route-shells.js && node --test scripts/receipts-route-projection.test.mjs && npm run test:task-requests && npm run test:checkout-idempotency && npm run test:seller-repair-checkout && npm run test:verified-feed && node --test server/scripts/test-release-run.js" },
+    { "name": "care-preview", "run": "bash scripts/release/care-preview-test.sh" },
+    { "name": "copy", "run": "npm run check:copy" },
+    { "name": "keep-list", "run": "npm run test:keep-list" },
+    { "name": "links", "run": "node scripts/release/sweep.mjs --cheap --no-build", "timeoutMinutes": 30 }
+  ]
+}

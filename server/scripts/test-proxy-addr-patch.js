@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import http from "node:http";
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { mkdtemp, cp, readFile, writeFile, rm, readdir } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import test, { before, after } from "node:test";
 import { createSdsApp } from "../app.js";
 import { acceptedCallerPin, verifyCallerClosure } from "../foundry/activation/remote-private-journey.mjs";
+import { digest } from "../foundry/private-pass-core.mjs";
 import { clientKey, TRUSTED_PROXIES_ENV } from "../lib/agent-readiness/rate-limit.js";
 import { inspectCorrespondenceEnv } from "../lib/correspondence-mount.js";
 import { createApp, loadConfig, MemoryStore } from "@neomorphic/correspondence";
@@ -150,8 +151,16 @@ test("caller closure binds original-task runtime and retains received callers", 
   for (const prior of pin.receivedCallerClosures) {
     assert.equal(acceptedCallerPin(prior, current), true);
   }
+  const predecessor = JSON.parse(execFileSync("git", ["show", `${pin.base}:server/foundry/activation/private-control-pin.json`], { cwd: root, encoding: "utf8" }));
+  // The candidate's old current contract remains usable in addition to its saved history.
+  assert.ok(acceptedCallerPin({ base: predecessor.base, closureDigest: digest(predecessor),
+    sourcePinSha256: predecessor.files["vendor/visitor-foundry-receiver/SOURCE-PIN.json"] }, current));
+  for (const prior of predecessor.receivedCallerClosures) assert.ok(acceptedCallerPin(prior, current));
   assert.ok(pin.files["server/foundry/startup-diagnostic.js"]);
-  for (const name of ["server/lib/original-task/event-guard.mjs", "server/foundry/startup-diagnostic.js"]) {
+  for (const name of ["server/lib/original-task/event-guard.mjs", "server/foundry/startup-diagnostic.js",
+    "server/lib/care-service.js", "server/routes/stripe-webhook.js", "server/lib/spa-client.js",
+    "server/lib/spa-route-shells.js", "client/src/data/receipts.json"]) {
+    assert.ok(pin.files[name], name);
     const member = path.join(root, name);
     const original = await readFile(member);
     try {

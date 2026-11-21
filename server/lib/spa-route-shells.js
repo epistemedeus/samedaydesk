@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { RECEIPT_SHELLS } from "../../client/src/data/receiptPages.mjs";
 import { CONSUMER_REPEAT_SHELL, DISTRIBUTION_REPAIR_SHELL, FOR_AGENTS_SHELL, RECORD_REPEAT_SHELL, USEFUL_JOBS_SHELL, X402_SHELL } from "../../client/src/data/machineEntry.mjs";
 
 // Exact public SPA paths that must return their own crawler-readable HTML.
@@ -7,11 +8,12 @@ import { CONSUMER_REPEAT_SHELL, DISTRIBUTION_REPAIR_SHELL, FOR_AGENTS_SHELL, REC
 // /for-agents and /x402 copy lives in client/src/data/machineEntry.mjs so React pages
 // cannot drift from the initial HTML.
 export const ROUTE_SHELL_DIR = "route-shells";
+const PUBLIC_FIRST_RENDER_DIR = ".public-first-render";
 export const SITE_ORIGIN = "https://samedaydesk.com";
-export const HOME_TITLE = "SameDayDesk: agent commerce, built and shipped";
+export const HOME_TITLE = "SameDayDesk: make your business usable by AI";
 export const HOME_CANONICAL = `${SITE_ORIGIN}/`;
 export const HOME_DESCRIPTION =
-  "Agent-ready workflows, MCP servers, x402 and MPP payment routes, and machine storefronts. Bounded scope, working code, tests, and deployment handoff.";
+  "When people ask ChatGPT or Claude to book, buy or look something up, your service answers and gets paid. Fixed prices from 149 USD, working the same day.";
 
 const PUBLIC_SHELLS = [
   {
@@ -19,6 +21,14 @@ const PUBLIC_SHELLS = [
     title: FOR_AGENTS_SHELL.title,
     description: FOR_AGENTS_SHELL.description,
     crawlerHtml: FOR_AGENTS_SHELL.crawlerHtml,
+    ogImage: "/og/for-agents.png",
+  },
+  {
+    path: "/receipts",
+    title: "Receipts: work delivered and paid for | SameDayDesk",
+    description: "Every paid call settled on Base and every piece of delivered work, each with its proof.",
+    crawlerHtml: "<h1>Work delivered, and paid for.</h1><p>Every line links its proof. For agents: <a href=\"/receipts.json\">/receipts.json</a>.</p>",
+    ogImage: "/og/receipts.png",
   },
   {
     path: RECORD_REPEAT_SHELL.path,
@@ -79,55 +89,50 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
     description: X402_SHELL.description,
     canonical: X402_SHELL.canonical,
     crawlerHtml: X402_SHELL.crawlerHtml,
+    ogImage: "/og/x402.png",
   }),
   Object.freeze({
     path: "/x402/seller-conformance",
-    title: "Seller conformance proof | SameDayDesk",
+    title: "Seller audit: get paid by AI agents | SameDayDesk",
     description:
-      "Inspect SameDayDesk seller-conformance evidence, including one recruited Agent402 payment that led to deployed upstream repairs, without confusing validation with organic or repeat demand.",
+      "We call your paid endpoint the way a buying AI agent does and send you exactly what to fix. Live audit 0.01 USDC; fixed repair of one route 490 USD. Agent402 bought one audit and repaired 557 routes.",
     canonical: `${SITE_ORIGIN}/x402/seller-conformance`,
     crawlerHtml: `
-      <h1>Seller-conformance proof is inspection, not a guarantee</h1>
+      <h1>Find out why AI agents can't pay you, and fix it</h1>
       <p>
-        Existing SameDayDesk seller-conformance proof: inspect unpaid 402 terms, pin the integrity
-        Action SHA, and separate release verification from marketplace listing, merged contract
-        projection, deployment, settlement, demand, and revenue. This page is human-auditable
-        inspection evidence. It is not a product, certificate, or runtime monitor.
+        We call your paid endpoint the way a buying agent does, read the payment terms it gets back,
+        and send you exactly what to change. A live audit is 0.01 USDC a call. A fixed repair of one
+        route is 490 USD, and it works or we keep fixing it.
       </p>
       <p>
-        One recruited Agent402 payment led to deployed upstream repairs. That receipt does not prove
-        organic demand, repeat use, or a repair sale.
+        Agent402 bought one audit, then repaired the seller contract and deployed a catalog repair
+        across 557 of 560 production routes.
       </p>
       <ul>
-        <li><a href="https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json">Agent402 validation receipt</a></li>
-        <li><a href="https://samedaydesk.com/x402/seller-conformance/?resolved=gentech-defi-slash-20260912">Gentech DeFi resolved diagnostic case</a></li>
-        <li><a href="https://samedaydesk.com/x402/verified">Inspected x402 route list</a></li>
-        <li><a href="https://samedaydesk.com/x402">Agent payment infrastructure</a></li>
+        <li><a href="https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json">Agent402 payment receipt</a></li>
+        <li><a href="https://samedaydesk.com/x402/seller-conformance/?resolved=gentech-defi-slash-20260912">Gentech DeFi, fixed in the open</a></li>
+        <li><a href="https://samedaydesk.com/x402/verified">Routes we checked</a></li>
+        <li><a href="https://samedaydesk.com/x402">Paid tools for AI agents</a></li>
       </ul>
     `,
   }),
   Object.freeze({
     path: "/x402/verified",
-    title: "Inspected x402 routes | SameDayDesk",
+    title: "Checked x402 routes | SameDayDesk",
     description:
-      "Build-time inspection list of current SameDayDesk unpaid 402 evidence, including an OpenAPI operation observation and matching fresh CDP Bazaar evidence.",
+      "Every SameDayDesk paid route, checked the way a buying agent meets it: live 402 terms, contract hash, OpenAPI and CDP Bazaar listing, with a machine-readable feed.",
     canonical: `${SITE_ORIGIN}/x402/verified`,
     crawlerHtml: `
-      <h1>Inspected routes, not a certificate</h1>
+      <h1>Every paid route, checked as an agent meets it</h1>
       <p>
-        Build-time list of current SameDayDesk routes from the existing seller-conformance crawl.
-        Each row has a live unpaid 402 check and contract hash. It records whether the operation was
-        observed in OpenAPI and whether a matching CDP Bazaar row was observed within seven days
-        of the crawl. The badge is verified, drift, or unverified.
-      </p>
-      <p>
-        Owner QA is labeled internal. This page is inspection evidence. It is not a product,
-        guarantee, or runtime monitor.
+        Each row is one of our paid routes with its live 402 terms and contract hash, whether its
+        operation appears in our OpenAPI, and whether CDP Bazaar lists it within the last seven days.
+        The badge reads verified, drift or unverified.
       </p>
       <ul>
         <li><a href="https://samedaydesk.com/x402/verified.json">Machine-readable feed</a></li>
         <li><a href="https://samedaydesk.com/x402/verified.schema.json">Feed schema</a></li>
-        <li><a href="https://samedaydesk.com/x402/seller-conformance">Seller conformance proof</a></li>
+        <li><a href="https://samedaydesk.com/x402/seller-conformance">Seller audit</a></li>
       </ul>
     `,
   }),
@@ -137,6 +142,7 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
     description:
       "Free, no-signup AI readiness checker: see whether AI search engines (ChatGPT, Perplexity, Claude, Google AI) can crawl and understand your website. Scores AI crawler access, JSON-LD, metadata, sitemap and llms.txt, with concrete fixes.",
     canonical: `${SITE_ORIGIN}/tools/ai-readiness`,
+    ogImage: "/og/ai-readiness.png",
     crawlerHtml: `
       <h1>Is your site visible to AI search?</h1>
       <p>
@@ -157,6 +163,11 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
   ...PUBLIC_SHELLS.map(Object.freeze),
   ...ACCOUNT_SHELLS.map(Object.freeze),
 ]);
+
+// One shell per tape entry (/receipts/<id>), from the same module the React page reads.
+export const RECEIPT_ROUTE_SHELLS = Object.freeze(
+  RECEIPT_SHELLS.map(({ id: _id, ...route }) => Object.freeze({ ...route, canonical: `${SITE_ORIGIN}${route.path}` })),
+);
 
 export const NOT_FOUND_SHELL = Object.freeze({
   path: "/404",
@@ -179,6 +190,10 @@ export function shellFileName(routePath) {
 
 export function shellFilePath(clientDist, routePath) {
   return path.join(clientDist, ROUTE_SHELL_DIR, shellFileName(routePath));
+}
+
+export function publicFirstRenderPath(clientDist, routePath) {
+  return path.join(clientDist, ROUTE_SHELL_DIR, PUBLIC_FIRST_RENDER_DIR, routePath === "/" ? "home.html" : shellFileName(routePath));
 }
 
 export function assertRouteCatalog(routes = SPA_ROUTE_SHELLS) {
@@ -263,6 +278,10 @@ export function applyRouteShell(indexHtml, route) {
   html = replaceMetaContent(html, "property", "og:url", route.canonical);
   html = replaceMetaContent(html, "name", "twitter:title", ogTitle);
   html = replaceMetaContent(html, "name", "twitter:description", ogDescription);
+  if (route.ogImage) {
+    html = replaceMetaContent(html, "property", "og:image", `${SITE_ORIGIN}${route.ogImage}`);
+    html = replaceMetaContent(html, "name", "twitter:image", `${SITE_ORIGIN}${route.ogImage}`);
+  }
   if (route.robots) html = upsertMetaContent(html, "robots", route.robots);
   html = replaceJsonLd(html, routeJsonLd(route));
   html = replaceNoscript(html, route.crawlerHtml);
@@ -270,7 +289,7 @@ export function applyRouteShell(indexHtml, route) {
   return html;
 }
 
-export function generateRouteShellsFromIndex(indexHtml, routes = [...SPA_ROUTE_SHELLS, NOT_FOUND_SHELL]) {
+export function generateRouteShellsFromIndex(indexHtml, routes = [...SPA_ROUTE_SHELLS, ...RECEIPT_ROUTE_SHELLS, NOT_FOUND_SHELL]) {
   assertRouteCatalog(routes);
   return routes.map((route) => ({
     route,
@@ -279,7 +298,7 @@ export function generateRouteShellsFromIndex(indexHtml, routes = [...SPA_ROUTE_S
   }));
 }
 
-export function writeRouteShells(distDir, routes = [...SPA_ROUTE_SHELLS, NOT_FOUND_SHELL]) {
+export function writeRouteShells(distDir, routes = [...SPA_ROUTE_SHELLS, ...RECEIPT_ROUTE_SHELLS, NOT_FOUND_SHELL]) {
   const indexPath = path.join(distDir, "index.html");
   if (!existsSync(indexPath)) {
     throw new Error(`route-shells: missing ${indexPath}; run the Vite build first`);
@@ -306,9 +325,14 @@ export function writeRouteShells(distDir, routes = [...SPA_ROUTE_SHELLS, NOT_FOU
   return written;
 }
 
-export function createRouteShellMiddleware(clientDist, routes = SPA_ROUTE_SHELLS) {
+export function createRouteShellMiddleware(clientDist, routes = [...SPA_ROUTE_SHELLS, ...RECEIPT_ROUTE_SHELLS]) {
   assertRouteCatalog(routes);
   const map = new Map();
+  const firstRender = new Map();
+  for (const routePath of ["/", ...routes.filter((route) => !route.robots).map((route) => route.path)]) {
+    const file = publicFirstRenderPath(clientDist, routePath);
+    if (existsSync(file)) firstRender.set(routePath, file);
+  }
   for (const route of routes) {
     const file = shellFilePath(clientDist, route.path);
     if (existsSync(file)) map.set(route.path, file);
@@ -319,10 +343,12 @@ export function createRouteShellMiddleware(clientDist, routes = SPA_ROUTE_SHELLS
   }
   return function routeShellMiddleware(req, res, next) {
     if (req.method !== "GET" && req.method !== "HEAD") return next();
-    const file = map.get(req.path);
+    // A query can select different content. Keep that request on the normal
+    // shell so a canonical anonymous snapshot never masks the requested view.
+    const file = (!req.originalUrl.includes("?") && firstRender.get(req.path)) || map.get(req.path);
     if (!file) return next();
     res.setHeader("Cache-Control", "no-cache");
-    res.sendFile(file, (err) => (err ? next(err) : undefined));
+    res.sendFile(file, { dotfiles: "allow" }, (err) => (err ? next(err) : undefined));
   };
 }
 

@@ -9,6 +9,7 @@ import { useTheme, type Theme } from "../lib/theme";
 import { ALL_OFFERS } from "../lib/services";
 import { track } from "../lib/posthog";
 import styles from "./Checkout.module.css";
+import { journey } from "../lib/journey";
 
 type IntakeInput = { details: string; uploadPath: string };
 
@@ -70,13 +71,14 @@ export default function Checkout() {
 
   useEffect(() => {
     let active = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset the attempt when the product changes, before resuming a stored one
     setClientSecret(null);
     setPaymentAttemptId(null);
     setErr(null);
     setIntake({ details: "", uploadPath: "" });
     setIntakeFrozen(false);
     const storageKey = `sdd:payment-attempt:${slug}`;
-    let rememberedAttemptId: string | null = null;
+    let rememberedAttemptId: string | null;
     try {
       rememberedAttemptId = sessionStorage.getItem(storageKey);
     } catch {
@@ -86,6 +88,7 @@ export default function Checkout() {
     const body: Record<string, string> = { offer: slug };
     if (rememberedAttemptId) body.payment_attempt_id = rememberedAttemptId;
 
+    journey("checkout_started", { offer: slug });
     authedFetch("/api/checkout/create-payment-intent", {
       method: "POST",
       body: JSON.stringify(body),
@@ -112,7 +115,9 @@ export default function Checkout() {
         }
         track("checkout_started", { offer: slug, price: offer.price });
       })
-      .catch((e) => active && setErr(e.message));
+      .catch((e) => {
+        if (active) { journey("checkout_failed", { offer: slug }); setErr(e.message); }
+      });
     return () => {
       active = false;
     };
@@ -126,7 +131,7 @@ export default function Checkout() {
         <aside className={styles.summary}>
           <p className="eyebrow">Order summary</p>
           <h1 className={styles.name}>{offer.name}</h1>
-          <p className={styles.turn}>{offer.turnaround} · acceptance-tested handoff</p>
+          <p className={styles.turn}>Tested before it is delivered to you</p>
           <ul className={styles.includes}>
             {offer.includes.map((i) => (
               <li key={i}><span className={styles.check} aria-hidden="true">›</span> {i}</li>
@@ -134,7 +139,7 @@ export default function Checkout() {
           </ul>
           <div className={styles.total}>
             <span>Build total</span>
-            <span className={styles.totalAmt}><span className={styles.cur}>$</span><span className="mono">{offer.price}</span></span>
+            <span className={styles.totalAmt}><span className="mono">{offer.price}</span><span className={styles.cur}> USD</span></span>
           </div>
           <p className={styles.guarantee}>The scoped path passes, or we repair it at no additional charge.</p>
         </aside>

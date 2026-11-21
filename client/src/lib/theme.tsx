@@ -1,5 +1,5 @@
 import {
-  createContext, useContext, useState, useCallback, type ReactNode,
+  createContext, useContext, useState, useEffect, useCallback, type ReactNode,
 } from "react";
 
 // Two named themes. "dark" is the brand-default "Engineered Speed"; "drafting" is the
@@ -38,8 +38,12 @@ function apply(theme: Theme) {
   m.setAttribute("content", META[theme]);
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setState] = useState<Theme>(readDom);
+export function ThemeProvider({ children, initialTheme }: { children: ReactNode; initialTheme?: Theme }) {
+  const [theme, setState] = useState<Theme>(() => initialTheme ?? readDom());
+  // The build and first hydration agree on initial markup. The inline document
+  // theme still applies before paint; adopt it for interactive controls after mount.
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- adopt the pre-paint document theme after hydration (see above)
+  useEffect(() => { if (initialTheme) setState(readDom()); }, [initialTheme]);
 
   const setTheme = useCallback((next: Theme, origin?: Origin) => {
     try { localStorage.setItem(KEY, next); } catch { /* private mode */ }
@@ -87,8 +91,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setTheme(readDom() === "dark" ? "drafting" : "dark", origin);
   }, [setTheme]);
 
-  // Initial state already matches the DOM: the inline <head> script set data-theme before
-  // React mounted, and useState(readDom) read it. No reconcile effect needed.
   return (
     <ThemeContext.Provider value={{ theme, setTheme, toggle }}>
       {children}
@@ -96,6 +98,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- the hook belongs beside its provider
 export function useTheme(): Ctx {
   const ctx = useContext(ThemeContext);
   if (ctx) return ctx;

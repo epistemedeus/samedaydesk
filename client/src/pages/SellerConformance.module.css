@@ -1,5 +1,6 @@
 .wrap {
   max-width: var(--maxw);
+  overflow-wrap: anywhere;
   margin-inline: auto;
   padding: clamp(8rem, 14vw, 11rem) var(--space-s) var(--space-xl);
 }
@@ -199,6 +200,11 @@
   max-width: 62ch;
   margin-top: var(--space-s);
   color: var(--ink-dim);
+}
+
+.prose a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
 }
 
 .offerCard {

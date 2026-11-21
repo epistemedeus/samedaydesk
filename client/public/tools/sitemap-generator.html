@@ -32,6 +32,7 @@
   textarea, input, select { width:100%; padding:.6rem .7rem; font:inherit; background:#fff; border:1px solid var(--line); border-radius:8px; }
   textarea { font:13px/1.5 ui-monospace,monospace; }
   textarea:focus, input:focus { outline:none; border-color:var(--oxide); }
+  input[type="checkbox"]:focus-visible { outline:2px solid var(--oxide); outline-offset:3px; }
   .row { display:flex; gap:1rem; flex-wrap:wrap; } .row > div { flex:1; min-width:9rem; }
   .opts { display:flex; align-items:center; gap:.5rem; margin:.8rem 0; font-size:.9rem; color:var(--dim); }
   button.act { font:inherit; font-weight:700; cursor:pointer; border-radius:8px; border:none; padding:.65rem 1.2rem; background:#15181d; color:#fff; margin-top:.6rem; }
@@ -52,16 +53,16 @@
   <h1>XML Sitemap Generator</h1>
   <p class="lead">Paste your page URLs and get a valid <code>sitemap.xml</code>, so Google, Bing (which feeds ChatGPT Search), and AI crawlers can find every page. Free, no signup.</p>
 
-  <label>Your page URLs (one per line)</label>
+  <label for="urls">Your page URLs (one per line)</label>
   <textarea id="urls" rows="8" placeholder="https://yourdomain.com/&#10;https://yourdomain.com/about&#10;https://yourdomain.com/pricing&#10;https://yourdomain.com/blog/post-1"></textarea>
 
   <div class="row">
     <div>
-      <label>Default change frequency</label>
+      <label for="freq">Default change frequency</label>
       <select id="freq"><option value="">(none)</option><option>daily</option><option selected>weekly</option><option>monthly</option><option>yearly</option></select>
     </div>
     <div>
-      <label>Last modified date</label>
+      <label for="lastmod">Last modified date</label>
       <input id="lastmod" type="date" />
     </div>
   </div>
@@ -76,8 +77,8 @@
 
   <div class="cta">
     <h2>Want the whole AI-search foundation done for you?</h2>
-    <p>The <strong>Fix Pack ($39)</strong> ships your real <code>sitemap.xml</code> <em>and</em> a crawler-welcoming <code>robots.txt</code>, JSON-LD structured data, and clean title/meta/Open Graph tags, installed-ready, today. <a style="color:#ccff00" href="https://samedaydesk.com/tools/ai-readiness">Run the free AI-readiness check first</a>.</p>
-    <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · $39</a>
+    <p>The <strong>Fix Pack (39 USD)</strong> ships your real <code>sitemap.xml</code> <em>and</em> a crawler-welcoming <code>robots.txt</code>, JSON-LD structured data, and clean title/meta/Open Graph tags, ready to install. <a style="color:#ccff00" href="https://samedaydesk.com/tools/ai-readiness">Run the free AI-readiness check first</a>.</p>
+    <a class="btn" href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">Get the Fix Pack · 39 USD</a>
     <a class="btn2" href="https://samedaydesk.com/tools/ai-readiness">Free check first</a>
   </div>
 

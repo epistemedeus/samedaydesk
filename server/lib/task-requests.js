@@ -1,0 +1,44 @@
+// Custom task requests: validated, stored, confirmed to the requester by email and announced to
+// the desk. Storage is Supabase when configured (migration 0008), else process memory, so a
+// local run still answers; email is best-effort through Resend (notify.js).
+import { randomUUID } from "node:crypto";
+import { isSupabaseConfigured, supabaseAdmin } from "./supabase-admin.js";
+
+const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,}$/;
+
+/** Returns { request } with clean fields, or { error } naming the first field to fix. */
+export function validateTaskRequest(body) {
+  const email = String(body?.email ?? "").trim().toLowerCase();
+  const website = String(body?.website ?? "").trim();
+  const task = String(body?.task ?? "").trim();
+  if (!EMAIL.test(email) || email.length > 254) return { error: "email" };
+  if (website.length > 300) return { error: "website" };
+  if (task.length < 10 || task.length > 4000) return { error: "task" };
+  // A filled honeypot field means a form robot; it is accepted silently and not stored.
+  if (String(body?.company_fax ?? "").trim()) return { error: "robot" };
+  return { request: { email, website: website || null, task } };
+}
+
+export function createMemoryTaskRequestStore() {
+  const rows = [];
+  return {
+    rows,
+    async insert(request) {
+      const row = { id: randomUUID(), created_at: new Date().toISOString(), status: "received", ...request };
+      rows.push(row);
+      return row;
+    },
+  };
+}
+
+export function createSupabaseTaskRequestStore() {
+  return {
+    async insert(request) {
+      const { data, error } = await supabaseAdmin().from("task_requests").insert(request).select("id, created_at").single();
+      if (error) throw new Error(error.message);
+      return { ...request, ...data, status: "received" };
+    },
+  };
+}
+
+export const defaultTaskRequestStore = () => (isSupabaseConfigured() ? createSupabaseTaskRequestStore() : createMemoryTaskRequestStore());

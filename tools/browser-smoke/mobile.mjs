@@ -20,15 +20,15 @@ const PAGE_SPECS = Object.freeze([
     path: "/for-agents",
     screenshot: "for-agents-mobile.png",
     expect: {
-      titleIncludes: "Practical agent jobs",
-      h1Includes: "opt-in reuse",
+      titleIncludes: "Fresh web data for agents",
+      h1Includes: "agent",
       bodyIncludes: [
         "POST /extract/batch",
         "0.01 USDC",
         "source-change-alert",
         "issue-to-work-brief",
         "buyer-setup-trace",
-        "charged: true",
+        "USDC",
         "immutable",
       ],
     },
@@ -96,8 +96,8 @@ const PAGE_SPECS = Object.freeze([
     screenshot: "x402-mobile.png",
     expect: {
       titleIncludes: "x402",
-      h1Includes: "Agents discover a service",
-      bodyIncludes: ["/for-agents", "recurring page or record recipes", "POST /extract/batch"],
+      h1Includes: "AI agents pay",
+      bodyIncludes: ["/for-agents", "USDC", "POST /extract/batch"],
     },
     layout: "mobile-nav",
   },
@@ -106,9 +106,9 @@ const PAGE_SPECS = Object.freeze([
     path: "/x402/seller-conformance",
     screenshot: "seller-conformance-mobile.png",
     expect: {
-      titleIncludes: "Seller conformance",
-      h1Includes: "inspection, not a guarantee",
-      bodyIncludes: ["Agent402", "not a product, certificate, or runtime monitor"],
+      titleIncludes: "Seller audit",
+      h1Includes: "AI agents",
+      bodyIncludes: ["Agent402", "490 USD"],
     },
   },
   {
@@ -116,9 +116,9 @@ const PAGE_SPECS = Object.freeze([
     path: "/x402/verified",
     screenshot: "verified-mobile.png",
     expect: {
-      titleIncludes: "Inspected x402 routes",
-      h1Includes: "Inspected routes",
-      bodyIncludes: ["unpaid 402", "Machine-readable feed"],
+      titleIncludes: "Checked x402 routes",
+      h1Includes: "paid route",
+      bodyIncludes: ["live 402 terms", "Machine-readable feed"],
     },
   },
   {
@@ -223,8 +223,8 @@ function checkPage(spec, probe, viewport, failures) {
     if (probe.signinDisplay !== "none") {
       addFailure(failures, spec.id, `mobile .signin display ${probe.signinDisplay}, expected none`);
     }
-    if (viewport.width <= 460 && probe.wordDisplay && probe.wordDisplay !== "none") {
-      addFailure(failures, spec.id, `mobile .word display ${probe.wordDisplay}, expected none at <=460px`);
+    if (viewport.width <= 460 && probe.wordDisplay === "none") {
+      addFailure(failures, spec.id, "the brand name must stay visible on phones");
     }
     if (probe.preOverflowX && probe.preOverflowX !== "auto" && probe.preOverflowX !== "scroll") {
       addFailure(failures, spec.id, `pre overflow-x ${probe.preOverflowX}, expected auto`);

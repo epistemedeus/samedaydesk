@@ -1,0 +1,26 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.25s var(--ease-out);
+}
+.layer[data-state="off"] { opacity: 0; }
+.layer[data-state="faint"] { opacity: 0.25; }
+.v, .h, .tickX, .tickY, .read { position: absolute; top: 0; left: 0; will-change: transform; transition: transform 0.12s var(--ease-out); }
+.v { width: 1px; height: 100%; background: color-mix(in srgb, var(--lime) 30%, transparent); }
+.h { height: 1px; width: 100%; background: color-mix(in srgb, var(--lime) 30%, transparent); }
+/* The margin rulers: a short tick on the top edge for the column, on the left for the row. */
+.tickX { top: var(--nav-h); width: 1px; height: 10px; background: var(--lime); }
+.tickY { width: 10px; height: 1px; background: var(--lime); }
+.read {
+  padding: 1px 4px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--lime);
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  white-space: nowrap;
+}
+:global([data-theme="dark"]) .layer { display: none; }

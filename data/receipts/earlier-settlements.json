@@ -1,0 +1,13 @@
+{
+  "about": "Settlements before the tape's log scan starts (block 51,000,000), named by transaction in our records. Public RPCs serve these by hash, not by range, so the build reads each one and keeps it only if the chain shows an x402 settlement to the gateway.",
+  "transactions": [
+    {
+      "hash": "0x087627d4163b254a6ae19d58d5f9827766041c5ca468d303f0060dcd748ab4d1",
+      "source": "pilot overview/research/PAYAPI-VERIFIED-SETTLEMENT-2026-08-09.md"
+    },
+    {
+      "hash": "0x547f4aec137810f154d4f9a550ab4a54945bde292cd4214e073d2db651fa39d2",
+      "source": "pilot overview/PLATFORM-EXPERIMENT-LEDGER.md (What Agents Buy)"
+    }
+  ]
+}

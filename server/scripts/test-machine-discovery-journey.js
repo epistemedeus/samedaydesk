@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { spawn, execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import http from "node:http";
@@ -182,7 +182,13 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   assert.equal(hosted.json.enabled, false);
   const readiness = await request(port, { path: "/api/public-readiness/healthz" });
   assert.deepEqual(readiness.json.publicDeployment, publicDeploymentBody());
-  assert.match(openapi.info.description, /not a hosted consumer|do not become a hosted consumer/i);
+  // Retain the immutable prior disclosure; the current document leads with the
+  // buyer action and keeps the same refusal in the machine-readable contract.
+  const historical = execFileSync("git", ["show", "b001d2a702550db6212c1e7af2ee54d854d68146:server/lib/apex-declarations.js"], { encoding: "utf8" });
+  assert.match(historical, /not a hosted consumer|do not become a hosted consumer/i);
+  const hostedSchema = openapi.paths["/api/hosted-useful/healthz"].get.responses["200"].content["application/json"].schema;
+  assert.equal(hostedSchema.properties.productionReady.const, false);
+  assert.equal(hostedSchema.properties.publicationVerified.const, false);
 
   const card = await request(port, { path: "/.well-known/agent-card.json" });
   assert.equal(card.status, 200);
@@ -456,4 +462,30 @@ test("refusal and truncated retrieval stay distinct from a missing declaration",
   assert.match(refusedCheck.reason, /refused/);
   assert.match(refusedCheck.reason, /not evidence it is absent/);
   assert.equal(classifyRetrieval(refused.responses["/openapi.json"]).kind, "blocked");
+});
+
+
+test("public checkout cards retain the independently approved USD amounts and links", () => {
+  const html = readFileSync(new URL("../../client/public/ai-visibility-audit.html", import.meta.url), "utf8");
+  for (const [id, amount, link] of [
+    ["buy-audit", "199", "3cIbJ2gwy2bdgFFfYSeZ20u"],
+    ["buy-fix", "399", "3cI00kdkmeXZ6118wqeZ20v"],
+    ["buy-sprint", "499", "00w00k1BE9DF2OP282eZ20w"],
+  ]) {
+    const anchor = [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].find(m => m[1].includes(`id="${id}"`));
+    assert.ok(anchor, id);
+    assert.ok(anchor[1].includes(`https://buy.stripe.com/${link}`));
+    assert.match(anchor[2], new RegExp(`\\b${amount} USD\\b`));
+  }
+  assert.doesNotMatch(html, /USD[0-9]/);
+});
+
+test("machine offer prices lead to the current checkout or durable task form", () => {
+  const text = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
+  for (const [amount, slug] of [[149,"agent_workflow"],[349,"agent_mcp_server"],[499,"machine_payment_route"],[999,"agent_storefront"],[249,"agent_front_door"],[100,"keep_it_working"]]) {
+    const line = text.split("\n").find(line => line.includes(`offer=${slug}`));
+    assert.ok(line, slug); assert.ok(line.includes(`${amount} USD`), slug);
+  }
+  assert.ok(text.includes("https://samedaydesk.com/#task"));
+  assert.doesNotMatch(text, /Ask by email|same[ -]day|\d+ to \d+ days|working this week/);
 });

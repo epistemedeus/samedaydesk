@@ -1,0 +1,2952 @@
+{
+  "schema": "samedaydesk.receipts.v2",
+  "generatedAt": "2026-11-20T08:45:31.183Z",
+  "chainReadThroughBlock": 59868680,
+  "floor": 12,
+  "payTo": "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee",
+  "count": 60,
+  "classes": {
+    "delivered": 7,
+    "paidCalls": 53,
+    "distinctWallets": 25,
+    "independent": 2,
+    "unresolved": 51,
+    "ourOwnWalletsLeftOut": 3
+  },
+  "method": "Each paid call is read from Base: the USDC Transfer to the payout address, made by a transferWithAuthorization call. Payers are classified from cited records; our own wallets are left out; unresolved payers are shown with no claim about who they are.",
+  "entries": [
+    {
+      "kind": "settlement",
+      "date": "2026-11-19",
+      "time": "2026-11-19T21:16:44.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xf2a3fd7a54b91e1efe2f427afdf574903a1d3bff",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xf2a3fd7a54b91e1efe2f427afdf574903a1d3bff",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1795123302",
+          "nonce": "0x6a560be746282659d3db5215ef45a8bc68d250b2e910b02d86313cc16dc1dd4b"
+        },
+        "transactionHash": "0x612c8847b356cea30f9b10421d74d3f5a2b8c2fd3016596e7e2c05567a6a727f",
+        "blockNumber": 59663146,
+        "blockTime": "2026-11-19T21:16:44.000Z",
+        "logIndex": 55,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x612c8847b356cea30f9b10421d74d3f5a2b8c2fd3016596e7e2c05567a6a727f"
+          ]
+        },
+        "expect": "a log at index 55 (0x37) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x612c8847b356cea30f9b10421d74d3f5a2b8c2fd3016596e7e2c05567a6a727f",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-11-17",
+      "time": "2026-11-17T08:04:13.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
+      "amount": "0.01 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x54e163e9b8edda194d83f46add921bfa5fc5f4e0",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x54e163e9b8edda194d83f46add921bfa5fc5f4e0",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "10000",
+          "validAfter": "0",
+          "validBefore": "1794902952",
+          "nonce": "0x7676de37caaa921980840865efbfd46f480e1d13fa200ce163ad4ca21a873c33"
+        },
+        "transactionHash": "0xea00ce2ab60cfe8d5d2479ac896004f51992e0d3adfca3f9df17d9f84ea44768",
+        "blockNumber": 58561391,
+        "blockTime": "2026-11-17T08:04:13.000Z",
+        "logIndex": 29,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xea00ce2ab60cfe8d5d2479ac896004f51992e0d3adfca3f9df17d9f84ea44768"
+          ]
+        },
+        "expect": "a log at index 29 (0x1d) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 2710, which is 10000 units or 0.01 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xea00ce2ab60cfe8d5d2479ac896004f51992e0d3adfca3f9df17d9f84ea44768",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-11-17",
+      "time": "2026-11-17T03:35:42.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "morpho_position: check a lending position on Base",
+      "amount": "0.02 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x79f896ff38691931fc2494610c106ad755e6f758",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/defi/morpho-position",
+        "name": "morpho_position",
+        "what": "check a lending position on Base"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x79f896ff38691931fc2494610c106ad755e6f758",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "20000",
+          "validAfter": "0",
+          "validBefore": "1794886841",
+          "nonce": "0xc4f78c80e836a02d5eb0066a04240b2d0df5ea28c2e4ab4d8926f91db224ca0c"
+        },
+        "transactionHash": "0x84f65d6e7b3b1b531cfb7df4085e0946f2b8dc07f7e343ed527ac5c429a35c2b",
+        "blockNumber": 58480835,
+        "blockTime": "2026-11-17T03:35:42.000Z",
+        "logIndex": 27,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x84f65d6e7b3b1b531cfb7df4085e0946f2b8dc07f7e343ed527ac5c429a35c2b"
+          ]
+        },
+        "expect": "a log at index 27 (0x1b) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 4e20, which is 20000 units or 0.02 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x84f65d6e7b3b1b531cfb7df4085e0946f2b8dc07f7e343ed527ac5c429a35c2b",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-11-17",
+      "time": "2026-11-17T03:25:43.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x79f896ff38691931fc2494610c106ad755e6f758",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x79f896ff38691931fc2494610c106ad755e6f758",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1794886241",
+          "nonce": "0xb91273e844eb03d3eac40a90a10e9462519c838fc1d4bae580ca244f15f68b3e"
+        },
+        "transactionHash": "0xb6aeb95b5a8a0c3eff35a794b86b1d446ddaf9aad3e3ae944d644a26820605ba",
+        "blockNumber": 58477837,
+        "blockTime": "2026-11-17T03:25:43.000Z",
+        "logIndex": 38,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xb6aeb95b5a8a0c3eff35a794b86b1d446ddaf9aad3e3ae944d644a26820605ba"
+          ]
+        },
+        "expect": "a log at index 38 (0x26) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xb6aeb95b5a8a0c3eff35a794b86b1d446ddaf9aad3e3ae944d644a26820605ba",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-11-16",
+      "time": "2026-11-16T04:02:29.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1794802047",
+          "nonce": "0x4315610972446ee8c4bb6240f74c5cb4a4eac48316cd54b19b4f247b1f3b4e06"
+        },
+        "transactionHash": "0xedb220aacd2a1ad20f313c81f2307edcc34bae174149f2ab8593a29392ea7652",
+        "blockNumber": 58056868,
+        "blockTime": "2026-11-16T04:02:29.000Z",
+        "logIndex": 20,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xedb220aacd2a1ad20f313c81f2307edcc34bae174149f2ab8593a29392ea7652"
+          ]
+        },
+        "expect": "a log at index 20 (0x14) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xedb220aacd2a1ad20f313c81f2307edcc34bae174149f2ab8593a29392ea7652",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-11-16",
+      "time": "2026-11-16T03:48:23.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1794801201",
+          "nonce": "0xfcf30d3cf29bb795abbb93ce00ca4d533c571d4c7c2549023ea2becc92fb735f"
+        },
+        "transactionHash": "0xb3e9b4a79b533f99f43e30485fe6057776ca38486c76fa93d2bceaa05e546f9c",
+        "blockNumber": 58052638,
+        "blockTime": "2026-11-16T03:48:23.000Z",
+        "logIndex": 53,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xb3e9b4a79b533f99f43e30485fe6057776ca38486c76fa93d2bceaa05e546f9c"
+          ]
+        },
+        "expect": "a log at index 53 (0x35) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xb3e9b4a79b533f99f43e30485fe6057776ca38486c76fa93d2bceaa05e546f9c",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-15",
+      "for": "Vet402",
+      "delivered": "a public recount that makes all 11,840 settled Base payments in the agreed window reproducible",
+      "proof": "https://github.com/kzmttkc/vet402/issues/86#issuecomment-6816657360",
+      "source": "pilot overview/research/phase-20261109/vet402-delivery/ROOT-RECEIVING.md"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-15",
+      "for": "a SwarmMemo requester",
+      "delivered": "a report on a confusing notary receipt; the requester fixed it upstream",
+      "amount": "50 credits",
+      "rail": "SwarmMemo",
+      "paidHow": "platform credits",
+      "proof": "https://swarmmemo.com/work/9af1fd9c80e4df51baac180d5275fe5b",
+      "source": "pilot overview/research/phase-20261114/n8n-output-readback/ROOT-RECEIVING.md"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-15",
+      "for": "AIBTC's x402 API",
+      "delivered": "a relay fix handed back as a pull request, passing 117 of its own unit tests",
+      "proof": "https://github.com/aibtcdev/x402-api/pull/150",
+      "source": "pilot overview/research/phase-20261109/aibtc-relay/ROOT-RECEIVING.md"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-14",
+      "for": "a SwarmMemo requester",
+      "delivered": "a route check declared before the call, with a snippet that fails if the route regresses; rated 80 of 100",
+      "amount": "75 credits",
+      "rail": "SwarmMemo",
+      "paidHow": "platform credits",
+      "proof": "https://swarmmemo.com/work/e58310c30b92f96d48207d4cca7e6123",
+      "source": "the public work page: result 1ce71cc1f8cb by sameday, accepted 2026-11-14 22:58 UTC, 75 credits paid"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-11-14",
+      "for": "Open WebUI's knowledge-base sync",
+      "delivered": "the lost source link reproduced on the issue, then an opt-in fix handed back as a pull request",
+      "proof": "https://github.com/open-webui/oikb/issues/129#issuecomment-6719615472",
+      "more": "https://github.com/open-webui/oikb/pull/154",
+      "source": "the public issue comment and pull request by epistemedeus (SameDayDesk's GitHub account)"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-11-13",
+      "time": "2026-11-13T23:19:22.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xa1d1c0cf717402ff3651aa4873ccf96410b01978",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xa1d1c0cf717402ff3651aa4873ccf96410b01978",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1794612260",
+          "nonce": "0x0ae060bd90f7f47183a73f098a53ec40340dfd67190ab17a69991cfb10887af8"
+        },
+        "transactionHash": "0xb68f51c92cb793366f83abcc33d8c3baf96ef6c990a7e4f8643fb1d1decfa2a5",
+        "blockNumber": 57107932,
+        "blockTime": "2026-11-13T23:19:22.000Z",
+        "logIndex": 35,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xb68f51c92cb793366f83abcc33d8c3baf96ef6c990a7e4f8643fb1d1decfa2a5"
+          ]
+        },
+        "expect": "a log at index 35 (0x23) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xb68f51c92cb793366f83abcc33d8c3baf96ef6c990a7e4f8643fb1d1decfa2a5",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-11-09",
+      "time": "2026-11-09T03:40:33.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1794195932",
+          "nonce": "0x4362450c3cfc88361d24b042ff7964be381830d6e372868e15b7a533c6bb40f3"
+        },
+        "transactionHash": "0x4dd5827f690f96ad481a5dac076d53c7badefadb22464f15d5e8b2c4dff6acd6",
+        "blockNumber": 55026290,
+        "blockTime": "2026-11-09T03:40:33.000Z",
+        "logIndex": 26,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x4dd5827f690f96ad481a5dac076d53c7badefadb22464f15d5e8b2c4dff6acd6"
+          ]
+        },
+        "expect": "a log at index 26 (0x1a) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x4dd5827f690f96ad481a5dac076d53c7badefadb22464f15d5e8b2c4dff6acd6",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-11-02",
+      "time": "2026-11-02T03:43:31.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1793591309",
+          "nonce": "0x9ac705b706c2c282c5eaebb0b5ed9b1b1e53bc294c54b4989e23b408edb37d63"
+        },
+        "transactionHash": "0xc0b06a577938ad38a0fdf14ea94d5e109a8eb875a7144a27fd1cc5ba897a5838",
+        "blockNumber": 53400832,
+        "blockTime": "2026-11-02T03:43:31.000Z",
+        "logIndex": 495,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xc0b06a577938ad38a0fdf14ea94d5e109a8eb875a7144a27fd1cc5ba897a5838"
+          ]
+        },
+        "expect": "a log at index 495 (0x1ef) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xc0b06a577938ad38a0fdf14ea94d5e109a8eb875a7144a27fd1cc5ba897a5838",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-31",
+      "time": "2026-10-31T01:18:51.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xc0711018c2f6da587afbb050d289bc1cf57a469a",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xc0711018c2f6da587afbb050d289bc1cf57a469a",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1793409829",
+          "nonce": "0xd11e7e0d91bf8db5d978257a23ea57260b6de89afe70a5131bb2ea1eabf72769"
+        },
+        "transactionHash": "0x3204c4a73e5eb1e10dc40ad55c226f0cc0ad05deda9ba2b8cf33d4111944b6f7",
+        "blockNumber": 53310092,
+        "blockTime": "2026-10-31T01:18:51.000Z",
+        "logIndex": 491,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x3204c4a73e5eb1e10dc40ad55c226f0cc0ad05deda9ba2b8cf33d4111944b6f7"
+          ]
+        },
+        "expect": "a log at index 491 (0x1eb) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x3204c4a73e5eb1e10dc40ad55c226f0cc0ad05deda9ba2b8cf33d4111944b6f7",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-29",
+      "time": "2026-10-29T07:18:13.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xa1d1c0cf717402ff3651aa4873ccf96410b01978",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xa1d1c0cf717402ff3651aa4873ccf96410b01978",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1793258590",
+          "nonce": "0xe6499c46bf38dd1d2e16072761d06e416b4eeaafc0478936b3b44ef7094d7b98"
+        },
+        "transactionHash": "0x7ea89226dba1eef10a4d720a9e0372b67a00bd2ac74189107fddd798d4fce57f",
+        "blockNumber": 53234473,
+        "blockTime": "2026-10-29T07:18:13.000Z",
+        "logIndex": 177,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x7ea89226dba1eef10a4d720a9e0372b67a00bd2ac74189107fddd798d4fce57f"
+          ]
+        },
+        "expect": "a log at index 177 (0xb1) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x7ea89226dba1eef10a4d720a9e0372b67a00bd2ac74189107fddd798d4fce57f",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-27",
+      "time": "2026-10-27T20:36:23.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xc0711018c2f6da587afbb050d289bc1cf57a469a",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xc0711018c2f6da587afbb050d289bc1cf57a469a",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1793133679",
+          "nonce": "0xdc074a3c3fae5e62209f608a6b820f78a3506666d375bb40e83477fc910681a0"
+        },
+        "transactionHash": "0x1c27461354a82c9e8c72d01a9996761300b821ba0bafb4a014bbe4339a78e0ea",
+        "blockNumber": 53172018,
+        "blockTime": "2026-10-27T20:36:23.000Z",
+        "logIndex": 111,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x1c27461354a82c9e8c72d01a9996761300b821ba0bafb4a014bbe4339a78e0ea"
+          ]
+        },
+        "expect": "a log at index 111 (0x6f) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x1c27461354a82c9e8c72d01a9996761300b821ba0bafb4a014bbe4339a78e0ea",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-27",
+      "time": "2026-10-27T00:21:59.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x7722dfae6bbed2fd02dc07455c2f5bf14be25e4a",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x7722dfae6bbed2fd02dc07455c2f5bf14be25e4a",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1793060813",
+          "nonce": "0xb6b4479c45e7e8a71b28901f857b10264b891dc7a59ee643ba725a6e91ea5299"
+        },
+        "transactionHash": "0x0f3ef2d8b6e1e0f3cbb78ad51e911740a2336265d021946595389bb64248f174",
+        "blockNumber": 53135586,
+        "blockTime": "2026-10-27T00:21:59.000Z",
+        "logIndex": 47,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x0f3ef2d8b6e1e0f3cbb78ad51e911740a2336265d021946595389bb64248f174"
+          ]
+        },
+        "expect": "a log at index 47 (0x2f) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x0f3ef2d8b6e1e0f3cbb78ad51e911740a2336265d021946595389bb64248f174",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-26",
+      "time": "2026-10-26T10:09:23.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xc0711018c2f6da587afbb050d289bc1cf57a469a",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xc0711018c2f6da587afbb050d289bc1cf57a469a",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1793009661",
+          "nonce": "0x0d59bcaa309f0ef0124fdfe48e9550245b384473f9d34321a0c6818d1b1fa320"
+        },
+        "transactionHash": "0xe9aceb17620bbbbd064036ec2934b94dde647de53973cb794fabf71f95483c71",
+        "blockNumber": 53110008,
+        "blockTime": "2026-10-26T10:09:23.000Z",
+        "logIndex": 897,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xe9aceb17620bbbbd064036ec2934b94dde647de53973cb794fabf71f95483c71"
+          ]
+        },
+        "expect": "a log at index 897 (0x381) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xe9aceb17620bbbbd064036ec2934b94dde647de53973cb794fabf71f95483c71",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-26",
+      "time": "2026-10-26T02:31:45.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1792982202",
+          "nonce": "0x3cbe1d36ce672304b44d114b0759dd5da6bc7e2f8bbfe9816a0c582f798628fa"
+        },
+        "transactionHash": "0xa93088d2d8b99fa163ea94719d3473bd5d7ebd6c1e7641809cb45c051536a2d0",
+        "blockNumber": 53096279,
+        "blockTime": "2026-10-26T02:31:45.000Z",
+        "logIndex": 245,
+        "submittedBy": "0x2772f7f74ac0aca38c6238aa5ece72b27beb8c17",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xa93088d2d8b99fa163ea94719d3473bd5d7ebd6c1e7641809cb45c051536a2d0"
+          ]
+        },
+        "expect": "a log at index 245 (0xf5) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xa93088d2d8b99fa163ea94719d3473bd5d7ebd6c1e7641809cb45c051536a2d0",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-10-22",
+      "for": "Nitrosend's TypeScript SDK",
+      "delivered": "a timeout fix handed back as a pull request, with real loopback HTTP tests",
+      "proof": "https://github.com/nitrosend/typescript-sdk/pull/33",
+      "source": "the public pull request by epistemedeus (SameDayDesk's GitHub account)"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-20",
+      "time": "2026-10-20T04:30:51.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x3ed93a7b87832f04a91137cacb273d39295e430e",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x3ed93a7b87832f04a91137cacb273d39295e430e",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1792470948",
+          "nonce": "0xaab674f2ddad56bd7012e7f4cc7a01bbead51fe04dbffbceff2b1a2cb8f170f6"
+        },
+        "transactionHash": "0x05e8978a93046f3282a7c9acc2deea04d820f3922fd19862b5011658e1f2dc31",
+        "blockNumber": 52840652,
+        "blockTime": "2026-10-20T04:30:51.000Z",
+        "logIndex": 261,
+        "submittedBy": "0x772003a2e9c2ccc8af956870a37a66f64f8cec38",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x05e8978a93046f3282a7c9acc2deea04d820f3922fd19862b5011658e1f2dc31"
+          ]
+        },
+        "expect": "a log at index 261 (0x105) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x05e8978a93046f3282a7c9acc2deea04d820f3922fd19862b5011658e1f2dc31",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-19",
+      "time": "2026-10-19T10:39:07.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
+      "amount": "0.01 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x54e163e9b8edda194d83f46add921bfa5fc5f4e0",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x54e163e9b8edda194d83f46add921bfa5fc5f4e0",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "10000",
+          "validAfter": "0",
+          "validBefore": "1792406643",
+          "nonce": "0x682c08b2b562591cd6b38b52a374858223bf9164a1c84754c855f7a0569bc8da"
+        },
+        "transactionHash": "0xfef68804ac362fe4304aa91c33497b4541bd4776b16d3671c8102c917ca56969",
+        "blockNumber": 52808500,
+        "blockTime": "2026-10-19T10:39:07.000Z",
+        "logIndex": 174,
+        "submittedBy": "0x64cc42b1ce598e3abcfbb64df4688521ddbf1f0a",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xfef68804ac362fe4304aa91c33497b4541bd4776b16d3671c8102c917ca56969"
+          ]
+        },
+        "expect": "a log at index 174 (0xae) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 2710, which is 10000 units or 0.01 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xfef68804ac362fe4304aa91c33497b4541bd4776b16d3671c8102c917ca56969",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-19",
+      "time": "2026-10-19T02:32:41.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x9d42eba8868cfd38a50ba615ee0cf903f1bbece9",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1792377458",
+          "nonce": "0x5333ba726d5e1968d1653cb76f42144c3b18f78dea77f351dddb9b1eea25ac1f"
+        },
+        "transactionHash": "0x1c1f260cd50ef107beb6ecbf308e475a661686f71181d57dfbe0f686af5a869d",
+        "blockNumber": 52793907,
+        "blockTime": "2026-10-19T02:32:41.000Z",
+        "logIndex": 289,
+        "submittedBy": "0x68a96f41ff1e9f2e7b591a931a4ad224e7c07863",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x1c1f260cd50ef107beb6ecbf308e475a661686f71181d57dfbe0f686af5a869d"
+          ]
+        },
+        "expect": "a log at index 289 (0x121) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x1c1f260cd50ef107beb6ecbf308e475a661686f71181d57dfbe0f686af5a869d",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-17",
+      "time": "2026-10-17T09:09:23.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xefa9f8a2e77418da4ad2e0536f95a8afa3a279af",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xefa9f8a2e77418da4ad2e0536f95a8afa3a279af",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1792228460",
+          "nonce": "0x73c9261960ed195ab36d81035f7777b8ea390ea46defcc233e85c8ea531a51c2"
+        },
+        "transactionHash": "0x8c0c448541cbf51db82859fa89a223bf6a47dcbd59479776e4c27089e09fbf58",
+        "blockNumber": 52719408,
+        "blockTime": "2026-10-17T09:09:23.000Z",
+        "logIndex": 368,
+        "submittedBy": "0x67b9ce703d9ce658d7c4ac3c289cea112fe662af",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x8c0c448541cbf51db82859fa89a223bf6a47dcbd59479776e4c27089e09fbf58"
+          ]
+        },
+        "expect": "a log at index 368 (0x170) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x8c0c448541cbf51db82859fa89a223bf6a47dcbd59479776e4c27089e09fbf58",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-16",
+      "time": "2026-10-16T19:50:01.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xcc09c1131c53013f386b0ceaf9319d94f8c540d8",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xcc09c1131c53013f386b0ceaf9319d94f8c540d8",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1792180497",
+          "nonce": "0x0a6c110e653ee1b8a2ae8af91b7ea64def59f1f6c200efa999924d84915ab09d"
+        },
+        "transactionHash": "0xd1f57894670ab83479eef51e7d636b01439796771681956790804244d9f35065",
+        "blockNumber": 52695427,
+        "blockTime": "2026-10-16T19:50:01.000Z",
+        "logIndex": 109,
+        "submittedBy": "0x625d8a65134079f8faaac39a7947c73d93c6ac39",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xd1f57894670ab83479eef51e7d636b01439796771681956790804244d9f35065"
+          ]
+        },
+        "expect": "a log at index 109 (0x6d) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xd1f57894670ab83479eef51e7d636b01439796771681956790804244d9f35065",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-15",
+      "time": "2026-10-15T07:18:25.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x54e163e9b8edda194d83f46add921bfa5fc5f4e0",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x54e163e9b8edda194d83f46add921bfa5fc5f4e0",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1792049003",
+          "nonce": "0xf73e2716e3df0a368c6effc8c4de3ba86b72a143fdf211d4140b5a3ec580e878"
+        },
+        "transactionHash": "0x7d07fcbdc78290d44609f261c06c9023b1648c9b37b142713a7e6a8631f0828c",
+        "blockNumber": 52629679,
+        "blockTime": "2026-10-15T07:18:25.000Z",
+        "logIndex": 524,
+        "submittedBy": "0x2a89407a98a0732b7fd578c4e156b7166540eb5a",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x7d07fcbdc78290d44609f261c06c9023b1648c9b37b142713a7e6a8631f0828c"
+          ]
+        },
+        "expect": "a log at index 524 (0x20c) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x7d07fcbdc78290d44609f261c06c9023b1648c9b37b142713a7e6a8631f0828c",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-14",
+      "time": "2026-10-14T02:55:43.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
+      "amount": "0.01 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x941a98301faf12200c813e76269855558218ff3f",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x941a98301faf12200c813e76269855558218ff3f",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "10000",
+          "validAfter": "1791945941",
+          "validBefore": "1791950141",
+          "nonce": "0xbad60f25e031d18245e14c84858e3d997ec673ab5177bcec141b92ecdd99c8ee"
+        },
+        "transactionHash": "0x7f643ae09cfd7d4fc7f0321935f8d531b62e175e06e4d6f73bd3eeb61ff61f8b",
+        "blockNumber": 52578598,
+        "blockTime": "2026-10-14T02:55:43.000Z",
+        "logIndex": 367,
+        "submittedBy": "0x8cda367232d78c067116e3260da881d2da8ffa39",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x7f643ae09cfd7d4fc7f0321935f8d531b62e175e06e4d6f73bd3eeb61ff61f8b"
+          ]
+        },
+        "expect": "a log at index 367 (0x16f) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 2710, which is 10000 units or 0.01 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x7f643ae09cfd7d4fc7f0321935f8d531b62e175e06e4d6f73bd3eeb61ff61f8b",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-14",
+      "time": "2026-10-14T02:49:53.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x941a98301faf12200c813e76269855558218ff3f",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x941a98301faf12200c813e76269855558218ff3f",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "1791945591",
+          "validBefore": "1791949791",
+          "nonce": "0xeee1308a93d7861159961c98e4a2e6676d0fecf880f16d33ec4055886ed3be53"
+        },
+        "transactionHash": "0xcecd3499f25bbf60054bbe23aa14d3e0318093a82044441ec83b6b8c4e5d341a",
+        "blockNumber": 52578423,
+        "blockTime": "2026-10-14T02:49:53.000Z",
+        "logIndex": 571,
+        "submittedBy": "0x2a89407a98a0732b7fd578c4e156b7166540eb5a",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xcecd3499f25bbf60054bbe23aa14d3e0318093a82044441ec83b6b8c4e5d341a"
+          ]
+        },
+        "expect": "a log at index 571 (0x23b) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xcecd3499f25bbf60054bbe23aa14d3e0318093a82044441ec83b6b8c4e5d341a",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-13",
+      "time": "2026-10-13T03:18:19.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xa1d1c0cf717402ff3651aa4873ccf96410b01978",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xa1d1c0cf717402ff3651aa4873ccf96410b01978",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1791861797",
+          "nonce": "0x23513411d8d789efa3bc144bc99bb4b8c9fafc1e0300924352505ca998681ded"
+        },
+        "transactionHash": "0x4c3f5f42a1745cf8b1e059eb34d5f53d06942e4c9ebff4c7f25a084efc478bd1",
+        "blockNumber": 52536076,
+        "blockTime": "2026-10-13T03:18:19.000Z",
+        "logIndex": 915,
+        "submittedBy": "0x14fda13953fc30428938e6bf950d036e77214e52",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x4c3f5f42a1745cf8b1e059eb34d5f53d06942e4c9ebff4c7f25a084efc478bd1"
+          ]
+        },
+        "expect": "a log at index 915 (0x393) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x4c3f5f42a1745cf8b1e059eb34d5f53d06942e4c9ebff4c7f25a084efc478bd1",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-09",
+      "time": "2026-10-09T06:28:17.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1791527595",
+          "nonce": "0xb92e1c3130c2ef54ffa3237caaf62c83aa3168768e3181278c8c425a289b3790"
+        },
+        "transactionHash": "0xf8b7c57cc8ef52488d1e8ab5e0ac1d10b0a87738209994e0f292df11b5b8a3fa",
+        "blockNumber": 52368975,
+        "blockTime": "2026-10-09T06:28:17.000Z",
+        "logIndex": 434,
+        "submittedBy": "0x93f6601151ccb08f333ab4b1cccfb1e188c0be44",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xf8b7c57cc8ef52488d1e8ab5e0ac1d10b0a87738209994e0f292df11b5b8a3fa"
+          ]
+        },
+        "expect": "a log at index 434 (0x1b2) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xf8b7c57cc8ef52488d1e8ab5e0ac1d10b0a87738209994e0f292df11b5b8a3fa",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-09",
+      "time": "2026-10-09T06:08:03.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1791526380",
+          "nonce": "0xc7c7f1219041ac6eae40c480f0be7f894278d2c490d2fd5aca175bf4f75e1d3f"
+        },
+        "transactionHash": "0x7afa1e3e46ca089c2c8f538baebc536337f09146079b006850cb8165189ffa64",
+        "blockNumber": 52368368,
+        "blockTime": "2026-10-09T06:08:03.000Z",
+        "logIndex": 413,
+        "submittedBy": "0x93f6601151ccb08f333ab4b1cccfb1e188c0be44",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x7afa1e3e46ca089c2c8f538baebc536337f09146079b006850cb8165189ffa64"
+          ]
+        },
+        "expect": "a log at index 413 (0x19d) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x7afa1e3e46ca089c2c8f538baebc536337f09146079b006850cb8165189ffa64",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-08",
+      "time": "2026-10-08T20:56:19.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x0ffab3cea2221070abfb6deb76206946d5e0daaf",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x0ffab3cea2221070abfb6deb76206946d5e0daaf",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1791493277",
+          "nonce": "0xc660af79182ae30ce10c2f7514d0075210336913ead344df14f7e4b68d5ac9cf"
+        },
+        "transactionHash": "0x0fd12ba30cfb0f09ed0f7cbc15f630ab1822aa2a5a4e9a5888fe21484dbc13aa",
+        "blockNumber": 52351816,
+        "blockTime": "2026-10-08T20:56:19.000Z",
+        "logIndex": 520,
+        "submittedBy": "0x4c934c63c786157fefd990945b25ea60a0fb0205",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x0fd12ba30cfb0f09ed0f7cbc15f630ab1822aa2a5a4e9a5888fe21484dbc13aa"
+          ]
+        },
+        "expect": "a log at index 520 (0x208) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x0fd12ba30cfb0f09ed0f7cbc15f630ab1822aa2a5a4e9a5888fe21484dbc13aa",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-08",
+      "time": "2026-10-08T06:14:37.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x6a0b784cf4e3f79e0bca889e35a1b3aa1dc24518",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x6a0b784cf4e3f79e0bca889e35a1b3aa1dc24518",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1791440375",
+          "nonce": "0xe83484923261eb4787621527f94576d722efa64a20b442053dfb6872fd93e08d"
+        },
+        "transactionHash": "0x2754ac7c38397c67972022afe70bf51aeaaa8004ac8504f0b19dbed5ea81ee1e",
+        "blockNumber": 52325365,
+        "blockTime": "2026-10-08T06:14:37.000Z",
+        "logIndex": 503,
+        "submittedBy": "0x67b9ce703d9ce658d7c4ac3c289cea112fe662af",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x2754ac7c38397c67972022afe70bf51aeaaa8004ac8504f0b19dbed5ea81ee1e"
+          ]
+        },
+        "expect": "a log at index 503 (0x1f7) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x2754ac7c38397c67972022afe70bf51aeaaa8004ac8504f0b19dbed5ea81ee1e",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-08",
+      "time": "2026-10-08T05:32:25.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
+      "amount": "0.01 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x6a0b784cf4e3f79e0bca889e35a1b3aa1dc24518",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x6a0b784cf4e3f79e0bca889e35a1b3aa1dc24518",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "10000",
+          "validAfter": "0",
+          "validBefore": "1791437842",
+          "nonce": "0x6b8cbab90fedebbe329c9a7e5fadd567f66d3956683a1f15f7892514cafdd841"
+        },
+        "transactionHash": "0x02396fa05860c07f86f90c0efae6b0e06803c860c8a25379e02fa5098459a5ae",
+        "blockNumber": 52324099,
+        "blockTime": "2026-10-08T05:32:25.000Z",
+        "logIndex": 26,
+        "submittedBy": "0x2a89407a98a0732b7fd578c4e156b7166540eb5a",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x02396fa05860c07f86f90c0efae6b0e06803c860c8a25379e02fa5098459a5ae"
+          ]
+        },
+        "expect": "a log at index 26 (0x1a) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 2710, which is 10000 units or 0.01 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x02396fa05860c07f86f90c0efae6b0e06803c860c8a25379e02fa5098459a5ae",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-08",
+      "time": "2026-10-08T05:32:25.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x6a0b784cf4e3f79e0bca889e35a1b3aa1dc24518",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x6a0b784cf4e3f79e0bca889e35a1b3aa1dc24518",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1791437842",
+          "nonce": "0x93b0e8fc94d03575f478550bd3e719e3e4a2c4a11043e1edf26b1850b8bc9d9c"
+        },
+        "transactionHash": "0xd171feaebe0ecb1777d83d49109e51f69897c416244d61084d0dd41b80722570",
+        "blockNumber": 52324099,
+        "blockTime": "2026-10-08T05:32:25.000Z",
+        "logIndex": 28,
+        "submittedBy": "0x42dd53906b49c202e8e934b059dc019e04634b00",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xd171feaebe0ecb1777d83d49109e51f69897c416244d61084d0dd41b80722570"
+          ]
+        },
+        "expect": "a log at index 28 (0x1c) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xd171feaebe0ecb1777d83d49109e51f69897c416244d61084d0dd41b80722570",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-06",
+      "time": "2026-10-06T12:01:39.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xc9c7b38c0942914fc8ea12063bc92dcd3b581670",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xc9c7b38c0942914fc8ea12063bc92dcd3b581670",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "1791288037",
+          "validBefore": "1791288217",
+          "nonce": "0x38cbd96d2258c34aa05b27a0109bc227429e9ee23341c8c15d3e3d669c3aaec3"
+        },
+        "transactionHash": "0xae02a71f5fa27e255f4bf1138bc1cf0bb026bf74daa28bee83147641b1f71dcd",
+        "blockNumber": 52249376,
+        "blockTime": "2026-10-06T12:01:39.000Z",
+        "logIndex": 856,
+        "submittedBy": "0x2a89407a98a0732b7fd578c4e156b7166540eb5a",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xae02a71f5fa27e255f4bf1138bc1cf0bb026bf74daa28bee83147641b1f71dcd"
+          ]
+        },
+        "expect": "a log at index 856 (0x358) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xae02a71f5fa27e255f4bf1138bc1cf0bb026bf74daa28bee83147641b1f71dcd",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-06",
+      "time": "2026-10-06T03:47:57.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "morpho_position: check a lending position on Base",
+      "amount": "0.02 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x941a98301faf12200c813e76269855558218ff3f",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/defi/morpho-position",
+        "name": "morpho_position",
+        "what": "check a lending position on Base"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x941a98301faf12200c813e76269855558218ff3f",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "20000",
+          "validAfter": "1791257874",
+          "validBefore": "1791262074",
+          "nonce": "0x3db528c6ab6c51c0b7ce9a45134df83fe3c5b00c17204a61cca9ad59b3771e55"
+        },
+        "transactionHash": "0x819b2f890028acd1d1b2efa2ac9aa398994bfe81bee9ad25d8a3afeb47b1038f",
+        "blockNumber": 52234565,
+        "blockTime": "2026-10-06T03:47:57.000Z",
+        "logIndex": 736,
+        "submittedBy": "0x2a89407a98a0732b7fd578c4e156b7166540eb5a",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x819b2f890028acd1d1b2efa2ac9aa398994bfe81bee9ad25d8a3afeb47b1038f"
+          ]
+        },
+        "expect": "a log at index 736 (0x2e0) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 4e20, which is 20000 units or 0.02 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x819b2f890028acd1d1b2efa2ac9aa398994bfe81bee9ad25d8a3afeb47b1038f",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-06",
+      "time": "2026-10-06T03:20:41.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x941a98301faf12200c813e76269855558218ff3f",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x941a98301faf12200c813e76269855558218ff3f",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "1791256238",
+          "validBefore": "1791260438",
+          "nonce": "0xad77375811ce8e2a94c26f069844f76983c975b6005f424522b000b7632a23db"
+        },
+        "transactionHash": "0xd25a99db16a17f3758189bd01b2a0e2fe38834a99265bad308a83b6d6ab86dee",
+        "blockNumber": 52233747,
+        "blockTime": "2026-10-06T03:20:41.000Z",
+        "logIndex": 26,
+        "submittedBy": "0xe72f0af4cf41356d433723547f1412ca27fbb1b8",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xd25a99db16a17f3758189bd01b2a0e2fe38834a99265bad308a83b6d6ab86dee"
+          ]
+        },
+        "expect": "a log at index 26 (0x1a) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xd25a99db16a17f3758189bd01b2a0e2fe38834a99265bad308a83b6d6ab86dee",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-05",
+      "time": "2026-10-05T06:01:39.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "morpho_position: check a lending position on Base",
+      "amount": "0.02 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xc9c7b38c0942914fc8ea12063bc92dcd3b581670",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/defi/morpho-position",
+        "name": "morpho_position",
+        "what": "check a lending position on Base"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xc9c7b38c0942914fc8ea12063bc92dcd3b581670",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "20000",
+          "validAfter": "1791180036",
+          "validBefore": "1791180216",
+          "nonce": "0x1fe1abaa084af61fc59ac99f2aa1417a61943cadc1287dba5612fe9fe6bac7bf"
+        },
+        "transactionHash": "0x2439870db33f6e81157beffed44c26b02aad663aff595424929ac04f9030008d",
+        "blockNumber": 52195376,
+        "blockTime": "2026-10-05T06:01:39.000Z",
+        "logIndex": 322,
+        "submittedBy": "0x59b7ebc67a3d627fabaf06768c818638452ae704",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x2439870db33f6e81157beffed44c26b02aad663aff595424929ac04f9030008d"
+          ]
+        },
+        "expect": "a log at index 322 (0x142) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 4e20, which is 20000 units or 0.02 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x2439870db33f6e81157beffed44c26b02aad663aff595424929ac04f9030008d",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-04",
+      "time": "2026-10-04T15:30:37.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x6031551fc1fe26710fe4b20316d5dc91d9d6c2d1",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x6031551fc1fe26710fe4b20316d5dc91d9d6c2d1",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1791128134",
+          "nonce": "0x9b0a62d2e04db99980b9cd6649f77b1e15509ca46b22b3d4f5934d2669f7af55"
+        },
+        "transactionHash": "0x104467b62ad4edff622eb0f008e9d127b59c75075947ce3962dbf7c4d622887f",
+        "blockNumber": 52169245,
+        "blockTime": "2026-10-04T15:30:37.000Z",
+        "logIndex": 487,
+        "submittedBy": "0x93f6601151ccb08f333ab4b1cccfb1e188c0be44",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x104467b62ad4edff622eb0f008e9d127b59c75075947ce3962dbf7c4d622887f"
+          ]
+        },
+        "expect": "a log at index 487 (0x1e7) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x104467b62ad4edff622eb0f008e9d127b59c75075947ce3962dbf7c4d622887f",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-04",
+      "time": "2026-10-04T14:16:09.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x6031551fc1fe26710fe4b20316d5dc91d9d6c2d1",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x6031551fc1fe26710fe4b20316d5dc91d9d6c2d1",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1791123668",
+          "nonce": "0xfa9d98aef4c4bc1f0598afd39cf629b1d639a3d98111b755bacc88fed6c4d1f4"
+        },
+        "transactionHash": "0x3e3dee90f56fb88f9f1ec334dd4b78b119ab2a408c8181c273e8e22685d12090",
+        "blockNumber": 52167011,
+        "blockTime": "2026-10-04T14:16:09.000Z",
+        "logIndex": 673,
+        "submittedBy": "0xca5e87f82b3fa093800e6ad67d621a427d79c70d",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x3e3dee90f56fb88f9f1ec334dd4b78b119ab2a408c8181c273e8e22685d12090"
+          ]
+        },
+        "expect": "a log at index 673 (0x2a1) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x3e3dee90f56fb88f9f1ec334dd4b78b119ab2a408c8181c273e8e22685d12090",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-04",
+      "time": "2026-10-04T02:53:13.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
+      "amount": "0.01 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "10000",
+          "validAfter": "0",
+          "validBefore": "1791082690",
+          "nonce": "0x9239750ba3fd40fddc071449d63f3502547b01e86e69de19b4ccd82403b0873a"
+        },
+        "transactionHash": "0x1d9f6315c0c0c2c9c5976dc8fa567ca0bb226e360cd3d3c64814f4d8da176b37",
+        "blockNumber": 52146523,
+        "blockTime": "2026-10-04T02:53:13.000Z",
+        "logIndex": 335,
+        "submittedBy": "0x59b7ebc67a3d627fabaf06768c818638452ae704",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x1d9f6315c0c0c2c9c5976dc8fa567ca0bb226e360cd3d3c64814f4d8da176b37"
+          ]
+        },
+        "expect": "a log at index 335 (0x14f) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 2710, which is 10000 units or 0.01 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x1d9f6315c0c0c2c9c5976dc8fa567ca0bb226e360cd3d3c64814f4d8da176b37",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-10-01",
+      "time": "2026-10-01T00:29:35.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
+      "amount": "0.01 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "10000",
+          "validAfter": "0",
+          "validBefore": "1790814872",
+          "nonce": "0x338577e8cb5f0a8bf068da22abbae5fe2dd699ffee3b77d5217f2b953185b03b"
+        },
+        "transactionHash": "0x65b46b6aea8212ba5151f2b41cdb316e3f275f5945034e402ceca8b678b15793",
+        "blockNumber": 52012614,
+        "blockTime": "2026-10-01T00:29:35.000Z",
+        "logIndex": 13,
+        "submittedBy": "0x42dd53906b49c202e8e934b059dc019e04634b00",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x65b46b6aea8212ba5151f2b41cdb316e3f275f5945034e402ceca8b678b15793"
+          ]
+        },
+        "expect": "a log at index 13 (0xd) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 2710, which is 10000 units or 0.01 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x65b46b6aea8212ba5151f2b41cdb316e3f275f5945034e402ceca8b678b15793",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-09-28",
+      "time": "2026-09-28T06:02:23.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
+      "amount": "0.01 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xc9c7b38c0942914fc8ea12063bc92dcd3b581670",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xc9c7b38c0942914fc8ea12063bc92dcd3b581670",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "10000",
+          "validAfter": "1790575279",
+          "validBefore": "1790575459",
+          "nonce": "0xd567f79c4e877c1ea660dd0c8fa6c0c70ad16e534a7a6e5ec825c36963859324"
+        },
+        "transactionHash": "0xa9dcb7fd95423cb2e0ac76e56843d62bdd87f2dda0b61f4fadea2d3cc853a246",
+        "blockNumber": 51892998,
+        "blockTime": "2026-09-28T06:02:23.000Z",
+        "logIndex": 260,
+        "submittedBy": "0x93f6601151ccb08f333ab4b1cccfb1e188c0be44",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xa9dcb7fd95423cb2e0ac76e56843d62bdd87f2dda0b61f4fadea2d3cc853a246"
+          ]
+        },
+        "expect": "a log at index 260 (0x104) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 2710, which is 10000 units or 0.01 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xa9dcb7fd95423cb2e0ac76e56843d62bdd87f2dda0b61f4fadea2d3cc853a246",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-09-28",
+      "time": "2026-09-28T00:20:15.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
+      "amount": "0.01 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xec2abd3eda89bed90124736e317e847d5fb6d034",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "10000",
+          "validAfter": "0",
+          "validBefore": "1790555112",
+          "nonce": "0x7aab18e71ca7ae3ddc5d15e07952cd3f940316491f7e81901b18371586e35885"
+        },
+        "transactionHash": "0x92e6cb0ec58d4085e9f9ddbe776a37deee160750524c74ded783fa6759f2ef04",
+        "blockNumber": 51882734,
+        "blockTime": "2026-09-28T00:20:15.000Z",
+        "logIndex": 1053,
+        "submittedBy": "0xe72f0af4cf41356d433723547f1412ca27fbb1b8",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x92e6cb0ec58d4085e9f9ddbe776a37deee160750524c74ded783fa6759f2ef04"
+          ]
+        },
+        "expect": "a log at index 1053 (0x41d) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 2710, which is 10000 units or 0.01 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x92e6cb0ec58d4085e9f9ddbe776a37deee160750524c74ded783fa6759f2ef04",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-09-22",
+      "time": "2026-09-22T15:50:49.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x72c573fd7de6a3dec3035d48db938ebf733d159b",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x72c573fd7de6a3dec3035d48db938ebf733d159b",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "1790091645",
+          "validBefore": "1790092545",
+          "nonce": "0x36adf515ba6276d4139a0e036f5690d308504f131365b47dffd47f3832129b97"
+        },
+        "transactionHash": "0xd5c6143490371303e13abf21d00061ef609b12a46eefab7eee08aa002af01edd",
+        "blockNumber": 51651451,
+        "blockTime": "2026-09-22T15:50:49.000Z",
+        "logIndex": 126,
+        "submittedBy": "0x93f6601151ccb08f333ab4b1cccfb1e188c0be44",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xd5c6143490371303e13abf21d00061ef609b12a46eefab7eee08aa002af01edd"
+          ]
+        },
+        "expect": "a log at index 126 (0x7e) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xd5c6143490371303e13abf21d00061ef609b12a46eefab7eee08aa002af01edd",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-09-19",
+      "time": "2026-09-19T15:57:15.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "seller_integrity_audit: audit a paid route before buying",
+      "amount": "0.01 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x35ed8c8bf74b610b5d7e401b18420e1760603e59",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/commerce/seller-integrity-audit",
+        "name": "seller_integrity_audit",
+        "what": "audit a paid route before buying"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x35ed8c8bf74b610b5d7e401b18420e1760603e59",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "10000",
+          "validAfter": "0",
+          "validBefore": "1789833733",
+          "nonce": "0x73101cb238e820f06027b578386bc6872445127fcb0e45c5992a6109d713fa69"
+        },
+        "transactionHash": "0xc015efcbbab481e2b6dc2b9e5ae1a260b8f7ca407d38e3071a674520008ec670",
+        "blockNumber": 51522044,
+        "blockTime": "2026-09-19T15:57:15.000Z",
+        "logIndex": 496,
+        "submittedBy": "0xa32ccda98ba7529705a059bd2d213da8de10d101",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xc015efcbbab481e2b6dc2b9e5ae1a260b8f7ca407d38e3071a674520008ec670"
+          ]
+        },
+        "expect": "a log at index 496 (0x1f0) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 2710, which is 10000 units or 0.01 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xc015efcbbab481e2b6dc2b9e5ae1a260b8f7ca407d38e3071a674520008ec670",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-09-17",
+      "time": "2026-09-17T04:03:31.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x7dd81398fac7de0bf843bfd874cbea68face17d2",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x7dd81398fac7de0bf843bfd874cbea68face17d2",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1789618108",
+          "nonce": "0xdec3053b4e903a15469d7819abcf7eaad729983174b50b25ee914bcac515a353"
+        },
+        "transactionHash": "0xbb3929e6581e83a634b6018c83fdb814930f834619ca060637ae6159f26ef517",
+        "blockNumber": 51414232,
+        "blockTime": "2026-09-17T04:03:31.000Z",
+        "logIndex": 93,
+        "submittedBy": "0xe72f0af4cf41356d433723547f1412ca27fbb1b8",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xbb3929e6581e83a634b6018c83fdb814930f834619ca060637ae6159f26ef517"
+          ]
+        },
+        "expect": "a log at index 93 (0x5d) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xbb3929e6581e83a634b6018c83fdb814930f834619ca060637ae6159f26ef517",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-09-15",
+      "time": "2026-09-15T19:50:31.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x9a07cea7ed111c93a233d1d12bbb68a511b59eea",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x9a07cea7ed111c93a233d1d12bbb68a511b59eea",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "1789501763",
+          "validBefore": "1789502123",
+          "nonce": "0x14edbb724dcb26cd902f2e2c5179b61a49138103a047037797886dc449d9ceaa"
+        },
+        "transactionHash": "0x6af5b957314c88fcfd010849afcadb805a74abc9644583869c0a1766c009b24a",
+        "blockNumber": 51356242,
+        "blockTime": "2026-09-15T19:50:31.000Z",
+        "logIndex": 46,
+        "submittedBy": "0x67b9ce703d9ce658d7c4ac3c289cea112fe662af",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x6af5b957314c88fcfd010849afcadb805a74abc9644583869c0a1766c009b24a"
+          ]
+        },
+        "expect": "a log at index 46 (0x2e) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x6af5b957314c88fcfd010849afcadb805a74abc9644583869c0a1766c009b24a",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-09-14",
+      "time": "2026-09-14T18:44:03.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "morpho_position: check a lending position on Base",
+      "amount": "0.02 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xe3badbd4f38214b9eae528a1a5398f6678f63fb3",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/defi/morpho-position",
+        "name": "morpho_position",
+        "what": "check a lending position on Base"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xe3badbd4f38214b9eae528a1a5398f6678f63fb3",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "20000",
+          "validAfter": "0",
+          "validBefore": "1789411740",
+          "nonce": "0xd69cea42272a3048cee9f843a1ad076ecd7823dd0f4c8897fa7729ba25a3bca2"
+        },
+        "transactionHash": "0xb037129d3984f30c88aae69d821303c00a7b668a2769f8b03c747525e423bd5e",
+        "blockNumber": 51311048,
+        "blockTime": "2026-09-14T18:44:03.000Z",
+        "logIndex": 314,
+        "submittedBy": "0x68efafe862d89ce66dd3d7b07d5a3747a0871164",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xb037129d3984f30c88aae69d821303c00a7b668a2769f8b03c747525e423bd5e"
+          ]
+        },
+        "expect": "a log at index 314 (0x13a) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 4e20, which is 20000 units or 0.02 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xb037129d3984f30c88aae69d821303c00a7b668a2769f8b03c747525e423bd5e",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-09-13",
+      "time": "2026-09-13T20:47:29.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x99d5667c7528003d5c5cf063016266843daacf80",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x99d5667c7528003d5c5cf063016266843daacf80",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "1789331845",
+          "validBefore": "1789332745",
+          "nonce": "0xc925746aace880f4adc35034dae48e96f9baf2024de3c6b1b8ffb4fa122d8e44"
+        },
+        "transactionHash": "0x3f0aa1814ddaf7d3661fe85b559e55e65aa29bf9faed98bfc4f83ba3e9053767",
+        "blockNumber": 51271551,
+        "blockTime": "2026-09-13T20:47:29.000Z",
+        "logIndex": 308,
+        "submittedBy": "0x4c934c63c786157fefd990945b25ea60a0fb0205",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x3f0aa1814ddaf7d3661fe85b559e55e65aa29bf9faed98bfc4f83ba3e9053767"
+          ]
+        },
+        "expect": "a log at index 308 (0x134) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x3f0aa1814ddaf7d3661fe85b559e55e65aa29bf9faed98bfc4f83ba3e9053767",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-09-13",
+      "time": "2026-09-13T20:00:11.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x2ebe788c488689795c3b61b38b9f0a209b2a89d3",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x2ebe788c488689795c3b61b38b9f0a209b2a89d3",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1789329899",
+          "nonce": "0x4374abd51c9d216838ed8f2d4167061d1340dbf51ee39839ed83042b9b06e43c"
+        },
+        "transactionHash": "0x5aeaf03314bc977e5af1839fb69588291aba12dc2cf88ce417451ad3e4b70002",
+        "blockNumber": 51270132,
+        "blockTime": "2026-09-13T20:00:11.000Z",
+        "logIndex": 134,
+        "submittedBy": "0x625d8a65134079f8faaac39a7947c73d93c6ac39",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x5aeaf03314bc977e5af1839fb69588291aba12dc2cf88ce417451ad3e4b70002"
+          ]
+        },
+        "expect": "a log at index 134 (0x86) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x5aeaf03314bc977e5af1839fb69588291aba12dc2cf88ce417451ad3e4b70002",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-09-11",
+      "time": "2026-09-11T16:06:45.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x99d5667c7528003d5c5cf063016266843daacf80",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x99d5667c7528003d5c5cf063016266843daacf80",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "1789142201",
+          "validBefore": "1789143101",
+          "nonce": "0x481f44c9766d36de8c8daed520c3d4361370533b62a87a1e3f856bad7c4d65a7"
+        },
+        "transactionHash": "0xf150dadb0526261531cdd544c6ac9e3cbbfc132b4a57d133935bb5c47e7816fd",
+        "blockNumber": 51176729,
+        "blockTime": "2026-09-11T16:06:45.000Z",
+        "logIndex": 166,
+        "submittedBy": "0x67b9ce703d9ce658d7c4ac3c289cea112fe662af",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xf150dadb0526261531cdd544c6ac9e3cbbfc132b4a57d133935bb5c47e7816fd"
+          ]
+        },
+        "expect": "a log at index 166 (0xa6) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xf150dadb0526261531cdd544c6ac9e3cbbfc132b4a57d133935bb5c47e7816fd",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-09-11",
+      "time": "2026-09-11T03:39:57.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x2ebe788c488689795c3b61b38b9f0a209b2a89d3",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x2ebe788c488689795c3b61b38b9f0a209b2a89d3",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1789098294",
+          "nonce": "0xb3cd9ca94e7d5db3e1025fd43789382b1d47eb8981d25b24e597d49b284eb5e4"
+        },
+        "transactionHash": "0x1f2d83208ba246ba0a04ec53a2a2e805e44f4aef455f9f85b803b0d6dad4efae",
+        "blockNumber": 51154325,
+        "blockTime": "2026-09-11T03:39:57.000Z",
+        "logIndex": 605,
+        "submittedBy": "0x93f6601151ccb08f333ab4b1cccfb1e188c0be44",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x1f2d83208ba246ba0a04ec53a2a2e805e44f4aef455f9f85b803b0d6dad4efae"
+          ]
+        },
+        "expect": "a log at index 605 (0x25d) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x1f2d83208ba246ba0a04ec53a2a2e805e44f4aef455f9f85b803b0d6dad4efae",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-09-09",
+      "time": "2026-09-09T16:16:01.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x54e163e9b8edda194d83f46add921bfa5fc5f4e0",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x54e163e9b8edda194d83f46add921bfa5fc5f4e0",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1788970858",
+          "nonce": "0x1e764291cb935dc82b2de716025fccae6082d929bba1226ed90d6750410f9af0"
+        },
+        "transactionHash": "0xf5feb7ad8486f035d2ff0ebbf6810967bd0a205c2bc6480080e12892a1bf7854",
+        "blockNumber": 51090607,
+        "blockTime": "2026-09-09T16:16:01.000Z",
+        "logIndex": 414,
+        "submittedBy": "0x67b9ce703d9ce658d7c4ac3c289cea112fe662af",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xf5feb7ad8486f035d2ff0ebbf6810967bd0a205c2bc6480080e12892a1bf7854"
+          ]
+        },
+        "expect": "a log at index 414 (0x19e) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xf5feb7ad8486f035d2ff0ebbf6810967bd0a205c2bc6480080e12892a1bf7854",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-09-08",
+      "time": "2026-09-08T23:27:53.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xe3badbd4f38214b9eae528a1a5398f6678f63fb3",
+        "class": "unresolved"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xe3badbd4f38214b9eae528a1a5398f6678f63fb3",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1788910370",
+          "nonce": "0x16bfedc58f9ba52e19dd928ab43ed4461c78a4c0df7cdc0c43b253de033af0da"
+        },
+        "transactionHash": "0xdcef8744875355e860f13d13cccf16ca19e8d9b038fbba3ffbc966e1d8be02bb",
+        "blockNumber": 51060363,
+        "blockTime": "2026-09-08T23:27:53.000Z",
+        "logIndex": 209,
+        "submittedBy": "0x625d8a65134079f8faaac39a7947c73d93c6ac39",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0xdcef8744875355e860f13d13cccf16ca19e8d9b038fbba3ffbc966e1d8be02bb"
+          ]
+        },
+        "expect": "a log at index 209 (0xd1) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0xdcef8744875355e860f13d13cccf16ca19e8d9b038fbba3ffbc966e1d8be02bb",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-08-30",
+      "time": "2026-08-30T15:18:53.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.005 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0xc533bf5268a2f64adde58dce380651f70aa92d7a",
+        "class": "independent",
+        "label": "a benchmark",
+        "who": "What Agents Buy's real-wallet market benchmark (receipt wab_c2964c433918bea3)"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0xc533bf5268a2f64adde58dce380651f70aa92d7a",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "5000",
+          "validAfter": "0",
+          "validBefore": "1788103430",
+          "nonce": "0xc47277eb2414378ba4ec29c2ce2f1513a4f7a4f0dc50637fe2ed082123f11dec"
+        },
+        "transactionHash": "0x547f4aec137810f154d4f9a550ab4a54945bde292cd4214e073d2db651fa39d2",
+        "blockNumber": 50656893,
+        "blockTime": "2026-08-30T15:18:53.000Z",
+        "logIndex": 188,
+        "submittedBy": "0x625d8a65134079f8faaac39a7947c73d93c6ac39",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x547f4aec137810f154d4f9a550ab4a54945bde292cd4214e073d2db651fa39d2"
+          ]
+        },
+        "expect": "a log at index 188 (0xbc) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in 1388, which is 5000 units or 0.005 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x547f4aec137810f154d4f9a550ab4a54945bde292cd4214e073d2db651fa39d2",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    },
+    {
+      "kind": "delivered",
+      "date": "2026-08-29",
+      "for": "Agent402",
+      "delivered": "a seller integrity audit; Agent402 then repaired 557 of 560 routes",
+      "amount": "0.01 USDC",
+      "rail": "Base",
+      "paidHow": "x402, paid by Agent402's own client and wallet",
+      "proof": "https://basescan.org/tx/0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7",
+      "more": "https://github.com/MikeyPetrillo/Agent402/issues/1047",
+      "source": "client/public/research/agent402-seller-integrity-validation-2026-08-29.json"
+    },
+    {
+      "kind": "settlement",
+      "date": "2026-08-09",
+      "time": "2026-08-09T12:13:47.000Z",
+      "for": "a paid call to the SameDayDesk gateway",
+      "delivered": "extract: read a web page as structured data",
+      "amount": "0.05 USDC",
+      "rail": "Base",
+      "paidHow": "x402",
+      "payer": {
+        "address": "0x7e6b6556322c4e26c567a867964ac793f5ee2b1c",
+        "class": "independent",
+        "label": "a marketplace check",
+        "who": "PayAPI's listing verifier"
+      },
+      "tool": {
+        "route": "/extract",
+        "name": "extract",
+        "what": "read a web page as structured data"
+      },
+      "chain": {
+        "network": "eip155:8453",
+        "token": "USDC",
+        "tokenContract": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "method": "transferWithAuthorization",
+        "authorization": {
+          "from": "0x7e6b6556322c4e26c567a867964ac793f5ee2b1c",
+          "to": "0x8904df3de6dfee6a7c8cc38619d2f17806213cee",
+          "value": "50000",
+          "validAfter": "1786277024",
+          "validBefore": "1786277924",
+          "nonce": "0xee81ebca4323240419b33cbbc6619385762c924bf42f8b6701cd0fd18dfa135c"
+        },
+        "transactionHash": "0x087627d4163b254a6ae19d58d5f9827766041c5ca468d303f0060dcd748ab4d1",
+        "blockNumber": 49744140,
+        "blockTime": "2026-08-09T12:13:47.000Z",
+        "logIndex": 418,
+        "submittedBy": "0x68a96f41ff1e9f2e7b591a931a4ad224e7c07863",
+        "status": "success",
+        "verifiedAt": "2026-11-20T08:45:31.183Z"
+      },
+      "check": {
+        "rpc": "https://mainnet.base.org",
+        "request": {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "eth_getTransactionReceipt",
+          "params": [
+            "0x087627d4163b254a6ae19d58d5f9827766041c5ca468d303f0060dcd748ab4d1"
+          ]
+        },
+        "expect": "a log at index 418 (0x1a2) from 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913, its topics the Transfer event, the payer and the payout address (each padded to 32 bytes), and its data ending in c350, which is 50000 units or 0.05 USDC"
+      },
+      "proof": "https://basescan.org/tx/0x087627d4163b254a6ae19d58d5f9827766041c5ca468d303f0060dcd748ab4d1",
+      "source": "on-chain USDC transferWithAuthorization to the gateway payout address"
+    }
+  ]
+}

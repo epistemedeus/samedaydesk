@@ -123,6 +123,14 @@ closure before release. Preserve the prior current closure in
 `receivedCallerClosures` so saved private attempts remain readable. The
 pin's `base` names the reviewed source commit before the pin update.
 
+Review the diff from the last admitted runtime, not just the four files named
+by a manifest mismatch. Follow static imports and runtime-loaded files from
+the shared server entry to the changed mounts. Include changed sources and
+new runtime inputs; keep dynamic data covered by its own read boundary rather
+than relaxing verification. Append the exact previously current tuple in
+addition to preserving its prior tuples. The release regression checks both
+the previous current contract and changed-byte refusal on the new scope.
+
 Run `npm run test:proxy-addr` with the production-only install. It checks current
 source, earlier received callers and changed-runtime refusal. Run
 `PULSE_PG_BIN="$(pg_config --bindir)" npm run test:original-task` as well:

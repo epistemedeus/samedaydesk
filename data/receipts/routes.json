@@ -1,0 +1,323 @@
+{
+  "about": "Which gateway route a settlement paid for, where a receiving record joins the transaction to the paid request. Without a join the tape names no route.",
+  "tools": {
+    "/enrich": {
+      "tool": "enrich",
+      "what": "read public company and domain information"
+    },
+    "/wallet-enrich": {
+      "tool": "wallet_enrich",
+      "what": "inspect a public Base wallet or contract"
+    },
+    "/work/opportunity-preflight": {
+      "tool": "opportunity_preflight",
+      "what": "check an agent work listing"
+    },
+    "/distribution/agent-discoverability-audit": {
+      "tool": "agent_discoverability_audit",
+      "what": "check how agents find a service"
+    },
+    "/commerce/payment-offer-preflight": {
+      "tool": "payment_offer_preflight",
+      "what": "compare payment terms for a route"
+    },
+    "/commerce/settlement-proof": {
+      "tool": "settlement_proof",
+      "what": "verify an exact Base USDC settlement"
+    },
+    "/chain/transaction-receipt": {
+      "tool": "transaction_receipt",
+      "what": "inspect a transaction receipt"
+    },
+    "/extract": {
+      "tool": "extract",
+      "what": "read a web page as structured data"
+    },
+    "/defi/morpho-position": {
+      "tool": "morpho_position",
+      "what": "check a lending position on Base"
+    },
+    "/commerce/seller-integrity-audit": {
+      "tool": "seller_integrity_audit",
+      "what": "audit a paid route before buying"
+    }
+  },
+  "joins": {
+    "0x02396fa05860c07f86f90c0efae6b0e06803c860c8a25379e02fa5098459a5ae": {
+      "route": "/commerce/seller-integrity-audit",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x05e8978a93046f3282a7c9acc2deea04d820f3922fd19862b5011658e1f2dc31": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x087627d4163b254a6ae19d58d5f9827766041c5ca468d303f0060dcd748ab4d1": {
+      "route": "/extract",
+      "source": "pilot overview/research/PAYAPI-VERIFIED-SETTLEMENT-2026-08-09.md"
+    },
+    "0x0f3ef2d8b6e1e0f3cbb78ad51e911740a2336265d021946595389bb64248f174": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x0fd12ba30cfb0f09ed0f7cbc15f630ab1822aa2a5a4e9a5888fe21484dbc13aa": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x104467b62ad4edff622eb0f008e9d127b59c75075947ce3962dbf7c4d622887f": {
+      "route": "/extract",
+      "source": "pilot overview/research/phase-20261001/extract-payment-1004/ROOT-VOLUME-JOIN.json"
+    },
+    "0x1c1f260cd50ef107beb6ecbf308e475a661686f71181d57dfbe0f686af5a869d": {
+      "route": "/extract",
+      "source": "pilot overview/EXPERIMENT-RETURN-LEDGER.json (previousMerchantPaymentReceiving)"
+    },
+    "0x1c27461354a82c9e8c72d01a9996761300b821ba0bafb4a014bbe4339a78e0ea": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x1d9f6315c0c0c2c9c5976dc8fa567ca0bb226e360cd3d3c64814f4d8da176b37": {
+      "route": "/commerce/seller-integrity-audit",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x1f2d83208ba246ba0a04ec53a2a2e805e44f4aef455f9f85b803b0d6dad4efae": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x2439870db33f6e81157beffed44c26b02aad663aff595424929ac04f9030008d": {
+      "route": "/defi/morpho-position",
+      "source": "pilot overview/research/phase-20261001/morpho-payment-1005/ROOT-VOLUME-JOIN.json"
+    },
+    "0x2754ac7c38397c67972022afe70bf51aeaaa8004ac8504f0b19dbed5ea81ee1e": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x2916cfe2c5200fca2a21f8b854fe963ef70d4ed90d59c7444cef16dd21056ef7": {
+      "route": "/commerce/seller-integrity-audit",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x3204c4a73e5eb1e10dc40ad55c226f0cc0ad05deda9ba2b8cf33d4111944b6f7": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x3d2e6711fa3d13f16ffeac077416092bc755caf4bb3bb90d2497ecd57a4ab47e": {
+      "route": "/wallet-enrich",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x3e3dee90f56fb88f9f1ec334dd4b78b119ab2a408c8181c273e8e22685d12090": {
+      "route": "/extract",
+      "source": "pilot overview/research/phase-20261001/extract-payment-1004/ROOT-VOLUME-JOIN.json"
+    },
+    "0x3f0aa1814ddaf7d3661fe85b559e55e65aa29bf9faed98bfc4f83ba3e9053767": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x49de9139ba8cdf6d95ee1a1f2dac6cefa4bf426393addacf0c65bb72e8458ee9": {
+      "route": "/defi/morpho-position",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x4c3f5f42a1745cf8b1e059eb34d5f53d06942e4c9ebff4c7f25a084efc478bd1": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x4dd5827f690f96ad481a5dac076d53c7badefadb22464f15d5e8b2c4dff6acd6": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x547f4aec137810f154d4f9a550ab4a54945bde292cd4214e073d2db651fa39d2": {
+      "route": "/extract",
+      "source": "pilot overview/EXPERIMENT-RETURN-LEDGER.json (what-agents-buy-independent-benchmark-2026-08-30)"
+    },
+    "0x5aeaf03314bc977e5af1839fb69588291aba12dc2cf88ce417451ad3e4b70002": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x5b2f875959bf4f0bbfbf71a3862d2ad518d435316c7fadbad66dc0305d28dacf": {
+      "route": "/enrich",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x612c8847b356cea30f9b10421d74d3f5a2b8c2fd3016596e7e2c05567a6a727f": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x65b46b6aea8212ba5151f2b41cdb316e3f275f5945034e402ceca8b678b15793": {
+      "route": "/commerce/seller-integrity-audit",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x6af5b957314c88fcfd010849afcadb805a74abc9644583869c0a1766c009b24a": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x6d6f78609b87bb70b2bd96bfeeff8731ee1c16f6699abd65a2cd5db6923bb29d": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x6e44a90436c6254727c6fca6bb6faa6f0cc7b50bcc02735e9cbb989b815aa9b7": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x7afa1e3e46ca089c2c8f538baebc536337f09146079b006850cb8165189ffa64": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x7d07fcbdc78290d44609f261c06c9023b1648c9b37b142713a7e6a8631f0828c": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x7ea89226dba1eef10a4d720a9e0372b67a00bd2ac74189107fddd798d4fce57f": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x7f643ae09cfd7d4fc7f0321935f8d531b62e175e06e4d6f73bd3eeb61ff61f8b": {
+      "route": "/commerce/seller-integrity-audit",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x819b2f890028acd1d1b2efa2ac9aa398994bfe81bee9ad25d8a3afeb47b1038f": {
+      "route": "/defi/morpho-position",
+      "source": "pilot overview/research/phase-20261001/ordinary-paid-delivery-1006/ROOT-VOLUME-JOIN.json"
+    },
+    "0x84f65d6e7b3b1b531cfb7df4085e0946f2b8dc07f7e343ed527ac5c429a35c2b": {
+      "route": "/defi/morpho-position",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x88480a569fef39f0bf8849d3b767b7653850a296a22ca34b12037c1248a15b47": {
+      "route": "/defi/morpho-position",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x8c0c448541cbf51db82859fa89a223bf6a47dcbd59479776e4c27089e09fbf58": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x92e6cb0ec58d4085e9f9ddbe776a37deee160750524c74ded783fa6759f2ef04": {
+      "route": "/commerce/seller-integrity-audit",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x93bd98a2c098b932d85115db873a835bfc1c429db2908b0a8b830c5d694fc419": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0x9e7ffe0d75667bc72f0b3411e89d355ed6a2cf88b34a8c7118b7b38199c28fd4": {
+      "route": "/defi/morpho-position",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xa21d1f71ff4600d1f7990ac6bb353cd1a9e522adfc6647340414db51cbbc1a9c": {
+      "route": "/defi/morpho-position",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xa93088d2d8b99fa163ea94719d3473bd5d7ebd6c1e7641809cb45c051536a2d0": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xa9dcb7fd95423cb2e0ac76e56843d62bdd87f2dda0b61f4fadea2d3cc853a246": {
+      "route": "/commerce/seller-integrity-audit",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xae02a71f5fa27e255f4bf1138bc1cf0bb026bf74daa28bee83147641b1f71dcd": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xb037129d3984f30c88aae69d821303c00a7b668a2769f8b03c747525e423bd5e": {
+      "route": "/defi/morpho-position",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xb08fa15f6b9645dd3211d3978c1735c1cfd8cf0e7527b3808cef7c6b0971be88": {
+      "route": "/wallet-enrich",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xb3e9b4a79b533f99f43e30485fe6057776ca38486c76fa93d2bceaa05e546f9c": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xb5c21d99ad2a71512b3d0ff589fb785fb6df5a9bf463ae7bc1e840784f4083e5": {
+      "route": "/commerce/payment-offer-preflight",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xb68f51c92cb793366f83abcc33d8c3baf96ef6c990a7e4f8643fb1d1decfa2a5": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xb6aeb95b5a8a0c3eff35a794b86b1d446ddaf9aad3e3ae944d644a26820605ba": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xb9f3e134699ecc0312fe93b317323575834d775a90a377747e1d84f122a0a64c": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xbb3929e6581e83a634b6018c83fdb814930f834619ca060637ae6159f26ef517": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xc015efcbbab481e2b6dc2b9e5ae1a260b8f7ca407d38e3071a674520008ec670": {
+      "route": "/commerce/seller-integrity-audit",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xc0b06a577938ad38a0fdf14ea94d5e109a8eb875a7144a27fd1cc5ba897a5838": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xc16b209a91bb77a30ba7e5ef7aec87b72ac93ad0983138b569c983678dfbd019": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xcecd3499f25bbf60054bbe23aa14d3e0318093a82044441ec83b6b8c4e5d341a": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xcfcbb367fecf27052db9ca855e5146e99cacbce1cab94f20f9f95a74170a8987": {
+      "route": "/commerce/payment-offer-preflight",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xd171feaebe0ecb1777d83d49109e51f69897c416244d61084d0dd41b80722570": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xd1f57894670ab83479eef51e7d636b01439796771681956790804244d9f35065": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xd25a99db16a17f3758189bd01b2a0e2fe38834a99265bad308a83b6d6ab86dee": {
+      "route": "/extract",
+      "source": "pilot overview/research/phase-20261001/ordinary-paid-delivery-1006/ROOT-VOLUME-JOIN.json"
+    },
+    "0xd5c6143490371303e13abf21d00061ef609b12a46eefab7eee08aa002af01edd": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xd8652fa2195aacb9e7fd12418907723d7de792887bed0dd89c5c4b78acc90de6": {
+      "route": "/defi/morpho-position",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xdcef8744875355e860f13d13cccf16ca19e8d9b038fbba3ffbc966e1d8be02bb": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xe9aceb17620bbbbd064036ec2934b94dde647de53973cb794fabf71f95483c71": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xea00ce2ab60cfe8d5d2479ac896004f51992e0d3adfca3f9df17d9f84ea44768": {
+      "route": "/commerce/seller-integrity-audit",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xedb220aacd2a1ad20f313c81f2307edcc34bae174149f2ab8593a29392ea7652": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xf150dadb0526261531cdd544c6ac9e3cbbfc132b4a57d133935bb5c47e7816fd": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xf5feb7ad8486f035d2ff0ebbf6810967bd0a205c2bc6480080e12892a1bf7854": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xf8b7c57cc8ef52488d1e8ab5e0ac1d10b0a87738209994e0f292df11b5b8a3fa": {
+      "route": "/extract",
+      "source": "Railway gateway settlement journal, exact transaction and route"
+    },
+    "0xfef68804ac362fe4304aa91c33497b4541bd4776b16d3671c8102c917ca56969": {
+      "route": "/commerce/seller-integrity-audit",
+      "source": "pilot overview/EXPERIMENT-RETURN-LEDGER.json (latestMerchantPaymentReceiving)"
+    }
+  }
+}

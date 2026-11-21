@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import clsx from "clsx";
 import BrandMark from "./BrandMark";
+import AgentMark from "./AgentMark";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
@@ -14,6 +15,7 @@ export default function Footer() {
           </Link>
           <p className={styles.tag}>Agent commerce, built and shipped.</p>
           <a className={styles.contact} href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>
+          <div className={styles.tag}><AgentMark placement="footer" /></div>
         </div>
 
         <nav className={styles.col} aria-label="Services">
@@ -32,19 +34,17 @@ export default function Footer() {
               does a full navigation instead of React Router hitting the fallback. */}
           <a href="/tools/free-seo-ai-tools.html">All free tools</a>
           <a href="/resources.html">Guides &amp; reports</a>
+          <Link to="/receipts" viewTransition>Receipts</Link>
           <Link to="/#how">How it works</Link>
           <Link to="/#guarantee">Guarantee</Link>
           <Link to="/terms" viewTransition>Terms</Link>
+          <Link to="/privacy" viewTransition>Privacy</Link>
         </nav>
       </div>
 
       <div className={clsx("container", styles.base)}>
         <span className="mono">© {year} SameDayDesk</span>
       </div>
-      <p className={clsx("container", styles.related)}>
-        SameDayDesk is the operating merchant.{" "}
-        <a href="https://ein.llc/">EIN.LLC</a> is a separate formation product.
-      </p>
     </footer>
   );
 }

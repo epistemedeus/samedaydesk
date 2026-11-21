@@ -75,6 +75,11 @@ export const PIN_CITES = Object.freeze([
   {
     id: "machine-entry-discovery",
     rel: "client/src/data/machineEntry.mjs",
+    needles: ["LIVE_INVENTORY", "MERCHANT_INPUT_PIN"],
+  },
+  {
+    id: "machine-entry-evidence-boundary",
+    rel: "docs/agent-sds/EVIDENCE-BOUNDARIES.md",
     needles: ["Discovery is not authorization, settlement,", "demand, or revenue."],
   },
 ]);

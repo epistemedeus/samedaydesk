@@ -4,6 +4,7 @@
   z-index: 101;
   pointer-events: none;
 }
+:global([data-theme="dark"]) .frame { display: none; }
 .mark {
   position: absolute;
   width: 18px;

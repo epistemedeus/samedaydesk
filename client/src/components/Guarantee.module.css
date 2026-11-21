@@ -1,4 +1,4 @@
-.section { padding-block: var(--space-xl); }
+.section { padding-block: calc(var(--section) / 2); }
 .card {
   position: relative;
   padding: var(--space-xl) var(--space-l);
