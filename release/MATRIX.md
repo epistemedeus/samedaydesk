@@ -15,10 +15,10 @@ Commands: `npm run release:check`, `npm run release:sweep -- --cheap|--key`, `np
 | --- | --- | --- |
 | A1 status 200 or one 301 | passed (51/51) | rerun on the final commit |
 | A2 copy check 0 blocked | passed (0 blocked, warnings only) | rerun |
-| A3 internal and external links | failed: `/x402/seller-conformance/?finding=...` and `?resolved=` links 404 (trailing slash; live too); blocked hosts help.manychat.com, manychat.com, www.perplexity.ai; smithery.ai server page 404; clustly.ai answers 402 | drop the trailing slash in `client/src/data/sellerRepairBriefs.ts` and `sellerResolvedCases.ts`; replace or drop the smithery link; list blocked hosts in the status file |
+| A3 internal and external links | passed on `36bd5464` after composing (the Sol branch fixed the trailing-slash links); list the hosts that block bots from release/out/sweep-cheap.json in the status file | rerun |
 | A4 console and failed requests on load | passed | rerun |
-| A5 axe serious or critical | failed: color-contrast on `/` (receipt kind labels), the gopherjs doc and one guide; scrollable code blocks not focusable on `/for-agents` pages and the seller report; missing labels on the llms.txt and sitemap generators; `/x402` tabs missing required children | fix each; rerun `--pages` on those paths |
-| A6 machine files parse and list only what works | passed after the sweep treats URL templates as templates | rerun |
+| A5 axe serious or critical | passed on `36bd5464` | rerun |
+| A6 machine files parse and list only what works | passed on `36bd5464` | rerun |
 | A7 locales | n/a (English only) | |
 
 ## B. Key pages (`release:sweep -- --key`, release/key-pages.json)
@@ -80,4 +80,4 @@ Commands: `npm run release:check`, `npm run release:sweep -- --cheap|--key`, `np
 | F2 uptime heartbeat ready | earlier receipt (private receiver) | |
 | F3 rollback rehearsed | earlier receipt (staging workflow) | rerun on the final commit |
 | F4 five journey events, flagged as tests | not run | |
-| G `release:check` green and `release-check` posted | failed at foundation (links gate) | fix A3 and A5, rerun, post the status |
+| G `release:check` green and status posted | 9/9 passed on `36bd5464`; receipt pushed for the controller (16 §4) | on the final commit: run, push `previews/samedaydesk/release/check-<sha>.log`, the controller posts |
