@@ -376,7 +376,7 @@ async function key() {
       const before = r.consoleErrors.length;
       const buttons = await r.page.$$('button:not([type="submit"]):not([disabled]), [role="button"], summary');
       let pressed = 0;
-      for (const b of buttons.slice(0, 40)) {
+      for (const b of buttons) {
         const visible = await b.evaluate((el) => { const s = getComputedStyle(el); const rect = el.getBoundingClientRect(); return s.visibility !== "hidden" && s.display !== "none" && rect.width > 0 && rect.height > 0 && !el.closest("form[action]"); }).catch(() => false);
         if (!visible) continue;
         await b.click({ delay: 10 });
@@ -388,19 +388,27 @@ async function key() {
       for (const c of row.actions.consoleErrors) row.problems.push(`console after an action: ${c}`);
       await r.page.goto(pageUrl, { waitUntil: "networkidle2" });
       const focus = [];
-      for (let i = 0; i < 60; i++) {
+      let complete = false;
+      await r.page.evaluate(() => { window.__releaseFocusSeen = new Set(); });
+      for (let i = 0; i < 1000; i++) {
         await r.page.keyboard.press("Tab");
         const f = await r.page.evaluate(() => {
           const el = document.activeElement;
-          if (!el || el === document.body) return null;
-          const s = getComputedStyle(el);
-          const visible = (s.outlineStyle !== "none" && parseFloat(s.outlineWidth) > 0) || (s.boxShadow && s.boxShadow !== "none");
+          if (!el || el === document.body || window.__releaseFocusSeen.has(el)) return null;
+          window.__releaseFocusSeen.add(el);
+          let visible = false;
+          for (let indicator = el, depth = 0; indicator && depth < 3; indicator = indicator.parentElement, depth++) {
+            const s = getComputedStyle(indicator);
+            if (Number(s.opacity) === 0 || s.visibility === "hidden") continue;
+            if ((s.outlineStyle !== "none" && parseFloat(s.outlineWidth) > 0) || (s.boxShadow && s.boxShadow !== "none")) visible = true;
+          }
           return { tag: el.tagName.toLowerCase(), label: (el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 40), visible };
         });
-        if (!f) break;
+        if (!f) { complete = true; break; }
         focus.push(f);
       }
-      row.keyboard = { stops: focus.length, withoutVisibleFocus: focus.filter((f) => !f.visible).map((f) => `${f.tag} ${f.label}`) };
+      row.keyboard = { stops: focus.length, complete, withoutVisibleFocus: focus.filter((f) => !f.visible).map((f) => `${f.tag} ${f.label}`) };
+      if (!complete) row.problems.push("keyboard cycle did not finish");
       for (const f of row.keyboard.withoutVisibleFocus) row.problems.push(`no visible focus: ${f}`);
       await r.page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
       await r.page.reload({ waitUntil: "networkidle2" });
