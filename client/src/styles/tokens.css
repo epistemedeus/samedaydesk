@@ -83,7 +83,7 @@
   /* graphite ink */
   --ink:       #1a1a1a; /* headers + body */
   --ink-dim:   #55524c; /* captions, mono labels */
-  --ink-faint: #68645d; /* secondary text, AA on every paper surface */
+  --ink-faint: #625e58; /* secondary text, AA over paper grain and grid lines */
 
   /* signal slot re-bound to oxide-red (scarce annotation only, never body copy) */
   --lime:      #9e3b2e;
