@@ -101,6 +101,11 @@ export function subscriptionOfInvoice(invoice) {
   return providerId(invoice.parent?.subscription_details?.subscription ?? invoice.subscription, "sub");
 }
 
+// The hosted portal can set an exact cancel_at without setting
+// cancel_at_period_end. Both mean that future renewal has been canceled.
+export const subscriptionWillNotRenew = (subscription) => subscription.status === "canceled" ||
+  subscription.cancel_at_period_end === true || (Number.isSafeInteger(subscription.cancel_at) && subscription.cancel_at > 0);
+
 export function carePaidPeriod(invoice, order) {
   const item = invoice.lines?.data?.[0];
   const start = Number(item?.period?.start), end = Number(item?.period?.end);

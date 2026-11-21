@@ -339,13 +339,14 @@ try {
             }
             if (!clicked) throw new Error("The hosted portal showed no cancellation action");
           }
-          const webhook = await eventFor("customer.subscription.updated", (o) => o.id === p.session.subscription && o.cancel_at_period_end === true, since);
+          const scheduled = (o) => o.cancel_at_period_end === true || (Number.isSafeInteger(o.cancel_at) && o.cancel_at > 0);
+          const webhook = await eventFor("customer.subscription.updated", (o) => o.id === p.session.subscription && scheduled(o), since);
           const subscription = await stripe("GET", `subscriptions/${p.session.subscription}`);
           const stored = await adapter.storedRow(ctx, p.a);
           const buyer = await adapter.buyerScreen(ctx, p.a, page, `${offer.id}-cancel`);
-          const ok = subscription.cancel_at_period_end === true && stored.cancel_at_period_end === true &&
+          const ok = scheduled(subscription) && stored.cancel_at_period_end === true &&
             webhook.deliveredThroughListener === 200 && buyer.text.includes("will not renew");
-          record(offer, name, { state: ok ? "passed" : "failed", buyer, stripe: { id: subscription.id, status: subscription.status, cancel_at_period_end: subscription.cancel_at_period_end }, webhook, stored });
+          record(offer, name, { state: ok ? "passed" : "failed", buyer, stripe: { id: subscription.id, status: subscription.status, cancel_at_period_end: subscription.cancel_at_period_end, cancel_at: subscription.cancel_at }, webhook, stored });
         } else if (name === "refund") {
           const p = paid.get(offer.id);
           if (!p) { record(offer, name, { state: "not run", why: "needs a passed success case first" }); continue; }

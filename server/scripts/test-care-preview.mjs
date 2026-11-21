@@ -29,10 +29,10 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   const db = new pg.Pool({ connectionString: process.env.SDS_CARE_DATABASE_URL });
   const store = openCareStore();
   t.after(() => Promise.all([db.end(), store.close()]));
-  let cancellations = false, creates = 0, sequence = 0, advance = 0;
+  let cancellations = false, cancelAt = null, creates = 0, sequence = 0, advance = 0;
   let quotePrice, quoteLink, quoteWrites = 0, priceWrites = 0;
   const sub = () => ({ id: "sub_keep", customer: "cus_keep", livemode: false,
-    status: "active", cancel_at_period_end: cancellations });
+    status: "active", cancel_at_period_end: cancellations, cancel_at: cancelAt });
   const stripe = {
     checkout: { sessions: {
       async create(args, options) {
@@ -177,6 +177,11 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   cancellations = true;
   advance = 1000;
   assert.equal((await event("customer.subscription.updated", sub())).status, 200);
+  assert.equal((await event("customer.subscription.updated", sub())).status, 200);
+  assert.equal((await (await post("subscription", access(recurring, "cancel"))).json()).canceled, true);
+  assert.equal((await (await post("receipt", access(recurring))).json()).subscription.cancelAtPeriodEnd, true);
+  cancellations = false;
+  cancelAt = first + month;
   assert.equal((await event("customer.subscription.updated", sub())).status, 200);
   assert.equal((await (await post("subscription", access(recurring, "cancel"))).json()).canceled, true);
   assert.equal((await (await post("receipt", access(recurring))).json()).subscription.cancelAtPeriodEnd, true);

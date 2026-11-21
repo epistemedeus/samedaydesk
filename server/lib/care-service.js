@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import {
   CARE_OFFERS, CareError, careLink, careOrigin, carePaidPeriod, checkoutArgs, checkedSession,
-  isOrderId, newIntegrationId, providerId, readCareIntake, subscriptionOfInvoice, verifyCareToken,
+  isOrderId, newIntegrationId, providerId, readCareIntake, subscriptionOfInvoice, subscriptionWillNotRenew, verifyCareToken,
 } from "./care-contract.js";
 import { openCareStore } from "./care-store.js";
 import { createTaskQuoteService } from "./task-quotes.js";
@@ -122,7 +122,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     if (!portalConfiguration) throw new CareError(503, "We could not open subscription management. Reply to your receipt for help.");
     const subscription = await stripe.subscriptions.retrieve(order.subscription_id);
     if (subscription.livemode !== live || providerId(subscription.customer, "cus") !== order.customer_id) throw notFound();
-    if (subscription.cancel_at_period_end || subscription.status === "canceled") return { canceled: true };
+    if (subscriptionWillNotRenew(subscription)) return { canceled: true };
     const returnUrl = careLink(order, secret, "cancel");
     const session = await stripe.billingPortal.sessions.create({
       customer: order.customer_id, configuration: portalConfiguration, return_url: returnUrl,
@@ -190,7 +190,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
       // Read current provider state to avoid applying an older event as current.
       const current = await stripe.subscriptions.retrieve(order.subscription_id);
       if (current.livemode !== live || order.customer_id !== providerId(current.customer, "cus")) return false;
-      await store.subscriptionState(order.id, { status: current.status, cancel: current.cancel_at_period_end === true,
+      await store.subscriptionState(order.id, { status: current.status, cancel: subscriptionWillNotRenew(current),
         at: now() });
       return true;
     }
