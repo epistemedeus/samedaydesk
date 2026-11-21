@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { once } from "node:events";
-import { chmod, lstat, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { chmod, lstat, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { test } from "node:test";
@@ -145,6 +145,15 @@ test("private directory and file permissions are required without changing exist
 
 test("host CLI rejects missing configuration with one safe receipt and no stack", () => {
   const child = spawnSync(process.execPath, [new URL("./refresh-receipts.mjs", import.meta.url).pathname], { env: {}, encoding: "utf8" });
+  assert.equal(child.status, 1);
+  assert.equal(JSON.parse(child.stdout).reason, "invalid-rebuild-configuration");
+  assert.equal(child.stderr, "");
+});
+
+test("host current directory symlink executes the CLI instead of silently exiting", async (t) => {
+  const h = await fixture(t);
+  await symlink(resolve("."), join(h.root, "current"), "dir");
+  const child = spawnSync(process.execPath, [join(h.root, "current/scripts/refresh-receipts.mjs")], { env: {}, encoding: "utf8" });
   assert.equal(child.status, 1);
   assert.equal(JSON.parse(child.stdout).reason, "invalid-rebuild-configuration");
   assert.equal(child.stderr, "");

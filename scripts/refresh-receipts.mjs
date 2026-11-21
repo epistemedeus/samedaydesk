@@ -1,8 +1,8 @@
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
-import { lstat, mkdir, mkdtemp, readFile, rm, rmdir, writeFile } from "node:fs/promises";
+import { lstat, mkdir, mkdtemp, readFile, realpath, rm, rmdir, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 import { writeReceiptSnapshot, qualifiedReceiptSnapshot } from "../server/lib/receipt-snapshot.js";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
@@ -113,7 +113,9 @@ export async function refreshReceipts({ env = process.env, builder = runBuilder,
   return receipt;
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+// Hostinger invokes through hbuilds/current; ESM resolves that directory symlink.
+const entry = process.argv[1] && await realpath(process.argv[1]).catch(() => null);
+if (entry && fileURLToPath(import.meta.url) === entry) {
   const controller = new AbortController();
   const interrupt = () => controller.abort();
   process.on("SIGINT", interrupt);

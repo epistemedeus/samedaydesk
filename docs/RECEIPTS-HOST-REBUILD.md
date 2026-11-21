@@ -57,6 +57,8 @@ of the web root and retain its existing permissions. Read back the native job's
 actual output; a saved schedule is not an execution receipt. The prior complete
 existing-builder run took 19 minutes 32 seconds; the wrapper run's measured
 result belongs in its exact-source release receipt.
+The CLI resolves its entry path before comparing it with ESM's resolved module
+URL, so the host's `hbuilds/current` directory symlink is exercised correctly.
 
 **Switch the app snapshot path last.** Only after the first native invocation
 returns `ok:true`, `published:true`, `cleanupComplete:true`, and Root verifies
