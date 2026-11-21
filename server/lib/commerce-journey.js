@@ -3,6 +3,7 @@
 import { randomUUID } from "node:crypto";
 import pg from "pg";
 import { isSupabaseConfigured, supabaseAdmin } from "./supabase-admin.js";
+import { careDatabaseOptions } from "./care-store.js";
 
 const events = new Set(["visit", "checkout_started", "payment_verified", "receipt_sent", "return"]);
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -13,11 +14,7 @@ async function insert(row) {
   // to an ambient production Supabase connection during a private test.
   if (process.env.SDS_PRIVATE_PREVIEW === "1") {
     if (!process.env.SDS_CARE_DATABASE_URL) return false;
-    const url = new URL(process.env.SDS_CARE_DATABASE_URL);
-    if (url.hostname !== "127.0.0.1" || !["postgres:", "postgresql:"].includes(url.protocol) || url.search) {
-      throw new Error("Journey preview requires its isolated loopback database");
-    }
-    previewPool ??= new pg.Pool({ connectionString: url.href, ssl: false, max: 1,
+    previewPool ??= new pg.Pool({ ...careDatabaseOptions(), max: 1,
       connectionTimeoutMillis: 2000, idleTimeoutMillis: 1000, allowExitOnIdle: true });
     await previewPool.query(`insert into public.journey_events
       (event_key,brand,event,session_id,test,order_id,is_agent,referrer,utm)

@@ -29,10 +29,10 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   const db = new pg.Pool({ connectionString: process.env.SDS_CARE_DATABASE_URL });
   const store = openCareStore();
   t.after(() => Promise.all([db.end(), store.close()]));
-  let cancellations = false, creates = 0, sequence = 0, advance = 0;
+  let cancellations = false, cancelAt = null, creates = 0, sequence = 0, advance = 0;
   let quotePrice, quoteLink, quoteWrites = 0, priceWrites = 0;
   const sub = () => ({ id: "sub_keep", customer: "cus_keep", livemode: false,
-    status: "active", cancel_at_period_end: cancellations });
+    status: "active", cancel_at_period_end: cancellations, cancel_at: cancelAt });
   const stripe = {
     checkout: { sessions: {
       async create(args, options) {
@@ -169,8 +169,13 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
     parent: { subscription_details: { subscription: "sub_keep", metadata: { sds_care_order: recurring } } },
     lines: { data: [{ amount: 10000, period: { start: first, end: first + month } }], has_more: false } };
   assert.equal((await event("invoice.paid", invoice)).status, 500);
+  assert.equal((await db.query("select count(*)::int as n from care_periods")).rows[0].n, 0);
   const two = { ...provider.get("cs_test_2"), status: "complete", payment_status: "paid", customer: "cus_keep",
     subscription: "sub_keep", customer_details: { email: "two@example.test" } };
+  provider.set(two.id, two);
+  assert.equal((await event("invoice.paid", { ...invoice, customer: "cus_foreign" })).status, 500);
+  assert.equal((await event("invoice.paid", invoice)).status, 200);
+  assert.equal((await store.order(recurring)).state, "paid");
   assert.equal((await event("checkout.session.completed", two)).status, 200);
   assert.equal((await event("invoice.paid", { ...invoice, amount_paid: 5000 })).status, 500);
   assert.equal((await event("invoice.paid", invoice)).status, 200);
@@ -180,6 +185,11 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   cancellations = true;
   advance = 1000;
   assert.equal((await event("customer.subscription.updated", sub())).status, 200);
+  assert.equal((await event("customer.subscription.updated", sub())).status, 200);
+  assert.equal((await (await post("subscription", access(recurring, "cancel"))).json()).canceled, true);
+  assert.equal((await (await post("receipt", access(recurring))).json()).subscription.cancelAtPeriodEnd, true);
+  cancellations = false;
+  cancelAt = first + month;
   assert.equal((await event("customer.subscription.updated", sub())).status, 200);
   assert.equal((await (await post("subscription", access(recurring, "cancel"))).json()).canceled, true);
   assert.equal((await (await post("receipt", access(recurring))).json()).subscription.cancelAtPeriodEnd, true);

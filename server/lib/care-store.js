@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import { lstatSync } from "node:fs";
+import { isAbsolute } from "node:path";
 import pg from "pg";
 import { CareError } from "./care-contract.js";
 import { createTaskQuoteStore } from "./task-quotes.js";
@@ -6,7 +8,7 @@ import { recordJourney } from "./journey-events.js";
 
 const first = async (query) => (await query).rows[0] ?? null;
 
-export function openCareStore(env = process.env) {
+export function careDatabaseOptions(env = process.env) {
   if (!env.SDS_CARE_DATABASE_URL) return null;
   const url = new URL(env.SDS_CARE_DATABASE_URL);
   if (!["postgresql:", "postgres:"].includes(url.protocol) || !url.hostname ||
@@ -15,9 +17,24 @@ export function openCareStore(env = process.env) {
   }
   const preview = env.SDS_PRIVATE_PREVIEW === "1";
   if (preview && url.hostname !== "127.0.0.1") throw new Error("Use an isolated loopback database for care preview");
+  for (const key of url.searchParams.keys()) {
+    if (!preview || !["host", "port"].includes(key) || url.searchParams.getAll(key).length !== 1) throw new Error("Unexpected Care database URL option");
+  }
+  if (url.searchParams.has("host")) {
+    const socket = url.searchParams.get("host");
+    const stat = isAbsolute(socket) && lstatSync(socket);
+    if (!stat?.isDirectory() || stat.isSymbolicLink() || (stat.mode & 0o077) || stat.uid !== process.getuid()) {
+      throw new Error("Care preview socket requires a private directory owned by this worker user");
+    }
+  }
   if (!preview && !env.SDS_CARE_DATABASE_CA_BASE64) throw new Error("Care database requires its verified TLS CA");
   const ssl = preview ? false : { rejectUnauthorized: true, ca: Buffer.from(env.SDS_CARE_DATABASE_CA_BASE64, "base64").toString("utf8") };
-  return createCareStore(new pg.Pool({ connectionString: url.href, ssl, max: 3, connectionTimeoutMillis: 4000 }));
+  return { connectionString: url.href, ssl, max: 3, connectionTimeoutMillis: 4000 };
+}
+
+export function openCareStore(env = process.env) {
+  const options = careDatabaseOptions(env);
+  return options ? createCareStore(new pg.Pool(options)) : null;
 }
 
 export function createCareStore(pool) {

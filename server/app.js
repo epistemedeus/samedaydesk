@@ -212,12 +212,12 @@ app.get("/.well-known/mcp-registry-auth", (_req, res) =>
 // stays on agents.samedaydesk.com and is named in the description, not copied.
 app.get("/.well-known/agent-card.json", (_req, res) => {
   res.set("Access-Control-Allow-Origin", "*");
-  res.type("application/json").send(apexAgentCard());
+  res.type("application/json").send(apexAgentCard(contributorEnv));
 });
 
 // Machine declarations derived from the mounted tools. Mounted before the SPA
 // so a missing static file cannot turn them into an HTML document.
-mountApexDeclarations(app);
+mountApexDeclarations(app, { env: contributorEnv });
 
 // Existing discovery directory. This descriptor does not call a network endpoint.
 app.get(ORIGINAL_TASK_DESCRIPTOR_PATH, (_req, res) => {

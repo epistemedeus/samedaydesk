@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import { spawn, execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { queryKeyReuseMarkdown } from "../lib/query-key-caller.mjs";
 import http from "node:http";
 import { once } from "node:events";
 import { tmpdir } from "node:os";
@@ -200,7 +199,7 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   assert.match(reuse.reuse.applyCaller, /--input caller\.json$/);
   const reuseLlms = (await request(port, { path: "/llms.txt" })).body;
   assert.ok(reuseLlms.includes(reuse.runner.alternateArchive));
-  assert.ok(reuseLlms.includes(reuse.reuse.applyCaller));
+  assert.ok(reuseLlms.includes(reuse.apply));
   assertMachineDeclarationContract(openapi, skillResponse.body, catalog, TOOLS);
   const acquisition = {
     source: "server/lib/apex-declarations.js",
@@ -490,11 +489,13 @@ test("production fallback keeps declarations out of the HTML shell and preserves
   const staticSource = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
   assert.match(servedGuide.body, /\[[^\]]+\]\(https:\/\/samedaydesk\.com\/start\.md\)/);
   assert.equal((servedGuide.body.match(/\]\(https:\/\/samedaydesk\.com\/start\.md\)/g) || []).length, 1);
-  assert.equal(servedGuide.body, staticSource + queryKeyReuseMarkdown());
-  assert.equal((servedGuide.body.match(/## Reuse an accepted query-key result/g) || []).length, 1);
+  assert.ok(servedGuide.body.startsWith(staticSource));
+  assert.match(servedGuide.body, /## Use query-key locally/);
+  assert.equal((servedGuide.body.match(/## Reuse an accepted query-key result/g) || []).length, 0);
   const declaredReuse = openapi.json["x-query-key-caller"];
-  assert.ok(servedGuide.body.includes(declaredReuse.runner.alternateArchive));
-  assert.ok(servedGuide.body.includes(declaredReuse.reuse.applyCaller));
+  assert.equal(Object.hasOwn(declaredReuse, "acceptedWork"), false, "disabled public reads must not advertise a collection");
+  assert.ok(declaredReuse.runner.alternateArchive);
+  assert.ok(declaredReuse.reuse.applyCaller);
   const headGuide = await request(port, { method: "HEAD", path: "/llms.txt" });
   assert.equal(headGuide.status, 200);
   assert.equal(headGuide.body, "");

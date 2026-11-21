@@ -27,7 +27,10 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
-const source = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+const git = (...args) => execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
+const commit = git("rev-parse", "HEAD");
+if (git("status", "--porcelain", "--untracked-files=no")) throw new Error("Commit the source before a provider test");
+const source = commit;
 const args = process.argv.slice(2);
 const value = (f) => { const i = args.indexOf(f); return i >= 0 ? args[i + 1] : null; };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -45,6 +48,12 @@ const out = join(root, "release/out/stripe", run);
 mkdirSync(out, { recursive: true });
 const offers = config.offers.filter((o) => !value("--offers") || value("--offers").split(",").includes(o.id));
 const cases = (value("--cases") ?? "readback,success,expire,replay,refund").split(",");
+const supportedCases = ["readback", "success", "decline", "block", "3ds-pass", "3ds-fail", "expire", "replay", "lost-response", "refund", "renewal", "cancel"];
+if (!offers.length || cases.some((name) => !supportedCases.includes(name)) ||
+    (cases.includes("renewal") && (offers.length !== 1 || offers[0].mode !== "subscription"))) {
+  console.error("Choose existing offers and supported cases; a clock run needs exactly one subscription offer.");
+  process.exit(2);
+}
 
 // Stripe API, test mode only.
 async function stripe(method, path, params) {
@@ -99,70 +108,37 @@ const browser = await puppeteer.launch({ executablePath: chrome, headless: !args
 // Stripe's hosted Checkout page: the payment form lives in one Elements frame. Link opt-in is on by
 // default and would ask for a phone number, so it is switched off.
 const CARDS = { success: "4242424242424242", decline: "4000000000000002", block: "4100000000000019", "3ds-pass": "4000000000003220", "3ds-fail": "4000000000003220" };
-async function within(page, selector, ms = 15000) {
+async function within(page, selector, ms = 15000, buttonText = null) {
   const end = Date.now() + ms;
   while (Date.now() < end) {
     for (const f of formFrames(page)) {
-      const h = await quick(f.$(selector));
-      if (h && await quick(h.boundingBox())) return { f, h };
+      // Query in the frame's main realm. Stripe's helper frames can prevent
+      // Puppeteer's isolated selector realm from starting, stalling every field.
+      const handle = await quick(f.evaluateHandle((sel, text) => [...document.querySelectorAll(sel)].find((el) => {
+        const rect = el.getBoundingClientRect();
+        const style = getComputedStyle(el);
+        return !el.disabled && rect.width > 0 && rect.height > 0 && style.visibility !== "hidden" && style.display !== "none" &&
+          (!text || new RegExp(text, "i").test(el.textContent.trim()));
+      }), selector, buttonText));
+      const h = handle?.asElement();
+      if (!h) { await handle?.dispose(); continue; }
+      if (h && await h.boundingBox().catch(() => null)) return { f, h };
     }
     await sleep(300);
   }
   return null;
 }
-// The hosted form is ready when the card number input is visible inside Stripe's frame and that frame
-// is wider than 300 px. When the account offers several payment methods the form opens as a list with
-// Card collapsed; Card is clicked once, when its row has not moved for half a second (the wallet buttons
-// load late and push the list down, and an earlier click lands on empty space: 7 of 10 were lost on
-// November 21). A form that is not ready in 30 s fails the case with its evidence: no reload, no second
-// attempt.
-const CARD_INPUT = "#payment-numberInput, #cardNumber";
-const CARD_CHOICE = '[data-value="card"]';
-// Only the page itself and Stripe's Elements frames are asked: a call into one of the other frames
-// (fraud, captcha, wallets) can hang for 30 s, which looked like a form that never appeared.
-const formFrames = (page) => page.frames().filter((f) => f === page.mainFrame() || f.url().startsWith("https://js.stripe.com/v3/elements-inner"));
-const quick = (p) => Promise.race([p.catch(() => null), sleep(2000).then(() => null)]);
-async function formState(page) {
-  const state = { inDom: false, visible: false, frameWidth: 0, choice: null };
-  for (const f of formFrames(page)) {
-    const h = await quick(f.$(CARD_INPUT));
-    const choice = h ? null : await quick(f.$(CARD_CHOICE));
-    if (!h && !choice) continue;
-    const frameEl = f === page.mainFrame() ? null : await quick(f.frameElement());
-    const frameBox = frameEl ? await quick(frameEl.boundingBox()) : await quick(page.evaluate(() => ({ width: innerWidth })));
-    Object.assign(state, { frame: f, frameEl, frameWidth: Math.round(frameBox?.width ?? 0) });
-    if (h) {
-      const box = await quick(h.boundingBox());
-      return { ...state, inDom: true, visible: Boolean(box && box.width > 0 && box.height > 0) };
-    }
-    const box = await quick(choice.boundingBox());
-    if (box) Object.assign(state, { choice, choiceAt: `${Math.round(box.x)},${Math.round(box.y)}` });
-  }
-  return state;
-}
-async function openHosted(page, url) {
-  const t0 = Date.now();
-  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
-  let st, chose = null, at = null, still = 0;
-  while (Date.now() - t0 < 30000) {
-    st = await formState(page);
-    if (st.visible && st.frameWidth > 300) return { ...st, msToReady: Date.now() - t0, msToCardChoice: chose };
-    still = st.choiceAt && st.choiceAt === at ? still + 1 : 0;
-    at = st.choiceAt ?? null;
-    if (!st.inDom && still >= 2 && chose === null && await quick(st.choice.click().then(() => true))) chose = Date.now() - t0;
-    await sleep(250);
-  }
-  const e = new Error(`hosted page: the card form was not ready in 30 s (card input in DOM ${st.inDom}, visible ${st.visible}, frame ${st.frameWidth} px, card choice ${st.choice ? "shown" : "not shown"}${chose !== null ? " and clicked" : ""})`);
-  e.form = { inDom: st.inDom, visible: st.visible, frameWidth: st.frameWidth, cardChoice: Boolean(st.choice), cardChoiceClicked: chose !== null };
-  throw e;
-}
+// A hosted form is loaded once. A blank form or failed navigation is a failed case.
 async function payHosted(page, url, card, { threeDS } = {}) {
-  await openHosted(page, url);
+  const formReady = '#linkAuthentication-emailInput, #email, #payment-numberInput, #cardNumber, [data-value="card"]';
+  await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
+  if (!(await within(page, formReady, 45000))) throw new Error("hosted page: the payment form did not appear");
   const typeInto = async (sel, text, need = true) => {
     const x = await within(page, sel, need ? 15000 : 2500);
     if (!x) { if (need) throw new Error(`hosted page: no ${sel}`); return; }
     // Clear whatever the page or the browser put there first; a triple click can leave text behind.
-    await x.h.click();
+    await x.h.focus();
+    if (!(await x.h.evaluate((el) => document.activeElement === el))) throw new Error(`hosted page: could not focus ${sel}`);
     await page.keyboard.down("Control"); await page.keyboard.press("KeyA"); await page.keyboard.up("Control");
     await page.keyboard.press("Backspace");
     await x.h.type(text, { delay: 20 });
@@ -177,18 +153,14 @@ async function payHosted(page, url, card, { threeDS } = {}) {
   await typeInto("#payment-postalCodeInput, #billingPostalCode", "10001", false);
   const optIn = await within(page, "#payment-linkOptInInput, #enableStripePass", 2000);
   if (optIn && await optIn.h.evaluate((e) => e.checked)) await optIn.h.click();
-  // Unchecking Link moves the Pay button; click it once it has stood still for half a second.
-  const submitSel = '[data-testid="payment-form-submit-button"], button[type=submit].SubmitButton, button[type=submit]';
-  let at = null, still = 0, submit = null;
-  for (const end = Date.now() + 15000; Date.now() < end && still < 2; await sleep(250)) {
-    submit = await within(page, submitSel, 2000);
-    const box = submit && await quick(submit.h.boundingBox());
-    const now = box ? `${Math.round(box.x)},${Math.round(box.y)}` : null;
-    still = now && now === at ? still + 1 : 0;
-    at = now;
-  }
-  if (!submit || still < 2) throw new Error("hosted page: the Pay button did not settle in 15 s");
-  await submit.h.click();
+  const submit = await within(page, '[data-testid="payment-form-submit-button"], button[type=submit].SubmitButton, button[type=submit]', 15000, "^(subscribe|pay(?:\\s|$))");
+  if (!submit) throw new Error("hosted page: no enabled Pay or Subscribe action");
+  // Use the focused control's keyboard action. Remote desktop geometry can
+  // differ from the cross-origin frame's coordinates; a coordinate click may
+  // leave the correctly filled form untouched.
+  await submit.h.focus();
+  if (!(await submit.h.evaluate((el) => document.activeElement === el))) throw new Error("hosted page: could not focus Subscribe or Pay");
+  await page.keyboard.press("Enter");
   if (threeDS) {
     // Stripe's 3D Secure 2 test page: a Complete and a Fail button inside nested frames.
     const label = threeDS === "pass" ? /^(complete|authorize)/i : /^fail/i;
@@ -231,21 +203,16 @@ async function eventFor(type, match, since) {
   return { type, missing: true };
 }
 
-// Stripe retries a delivery the receiver refused with a 5xx (for example invoice.paid that arrives
-// before checkout.session.completed); `stripe listen` does not. Stand in for that retry once per event
-// with Stripe's own resend, and record it.
-const retried = new Map();
-async function retryRefusedDeliveries() {
-  for (const [evt, status] of delivered) {
-    if (status < 500 || retried.has(evt)) continue;
-    const exit = await new Promise((resolve) => {
-      const c = spawn(stripeCli, ["events", "resend", evt], { env: { PATH: process.env.PATH, HOME: process.env.HOME, STRIPE_API_KEY: key }, stdio: "ignore" });
-      c.on("close", resolve);
-    });
-    retried.set(evt, { firstStatus: status, resendExit: exit });
+async function advanceClock(timestamp) {
+  await stripe("POST", `test_helpers/test_clocks/${ctx.clock.id}/advance`, { frozen_time: String(timestamp) });
+  const end = Date.now() + 120000;
+  while (Date.now() < end) {
+    const clock = await stripe("GET", `test_helpers/test_clocks/${ctx.clock.id}`);
+    if (clock.status === "ready") return clock;
+    if (clock.status !== "advancing") throw new Error(`Test clock ${clock.status}`);
+    await sleep(1000);
   }
-  if (retried.size) await sleep(3000);
-  return [...retried].map(([evt, r]) => ({ evt, ...r, afterResend: delivered.get(evt) ?? null }));
+  throw new Error("Test clock did not finish advancing");
 }
 
 function signed(payload) {
@@ -328,13 +295,18 @@ async function formCheck(offer, n) {
 const pick = (s) => s && ({ id: s.id, status: s.status, payment_status: s.payment_status, amount_total: s.amount_total, currency: s.currency, mode: s.mode, livemode: s.livemode, release_run: s.metadata?.release_run, payment_intent: typeof s.payment_intent === "string" ? s.payment_intent : s.payment_intent?.id ?? null, subscription: s.subscription ?? null });
 const records = [];
 function record(offer, name, rec) {
-  const row = { run, source, offer: offer.id, case: name, at: new Date().toISOString(), ...rec };
+  const row = { run, commit, source, offer: offer.id, case: name, at: new Date().toISOString(), ...rec };
   writeFileSync(join(out, `${offer.id}-${name}.json`), JSON.stringify(row, null, 2) + "\n");
   records.push(row);
   console.log(`${row.state.padEnd(7)} ${offer.id} ${name}${row.why ? `: ${row.why}` : ""}`);
 }
 
 try {
+  if (cases.includes("renewal")) {
+    ctx.clock = await stripe("POST", "test_helpers/test_clocks", { frozen_time: String(Math.floor(Date.now() / 1000)), name: run });
+    const customer = await stripe("POST", "customers", { test_clock: ctx.clock.id, email: `buyer+${run}@example.test`, "metadata[release_run]": run });
+    ctx.clockCustomer = customer.id;
+  }
   app = await adapter.start(ctx);
   console.log(`preview ${preview} started`);
   if (value("--form-check")) {
@@ -348,7 +320,9 @@ try {
     for (const name of cases) {
       if (offer.cases && !offer.cases.includes(name)) continue;
       const page = await browser.newPage();
-      await page.setViewport({ width: 1280, height: 1000 });
+      // Stripe's narrow layout keeps the hosted form in one column, including
+      // on a remote desktop whose physical window is smaller than the preview.
+      await page.setViewport({ width: 800, height: 1000 });
       // A site whose success URL is its production origin (EIN.LLC refuses a loopback PUBLIC_URL): the
       // return navigation is recorded and stopped here, so the run never loads the live site.
       page.returnedTo = null;
@@ -389,10 +363,8 @@ try {
           const webhook = shouldPay ? await eventFor("checkout.session.completed", (o) => o.id === a.sessionId, since)
             : await eventFor("payment_intent.payment_failed", o => o.metadata?.release_run === run &&
               (o.id === session.payment_intent || adapter.paymentFailureMatches?.(a, o)), since);
-          let retries = [];
           if (shouldPay) {
             await sleep(2000);
-            retries = await retryRefusedDeliveries();
             await adapter.settled?.(ctx, a);
           }
           const buyer = shouldPay ? await adapter.buyerScreen(ctx, a, page, `${offer.id}-${name}`) : await buyerSaw(page, `${offer.id}-${name}`);
@@ -402,7 +374,7 @@ try {
             : session.status === "open" && session.payment_status === "unpaid" && !adapter.isPaid(stored) && webhook?.deliveredThroughListener === 200;
           if (!shouldPay) await stripe("POST", `checkout/sessions/${a.sessionId}/expire`).catch(() => {});
           if (shouldPay && ok) paid.set(offer.id, { a, session });
-          record(offer, name, { state: ok ? "passed" : "failed", why: ok ? undefined : `session ${session.status}/${session.payment_status}, webhook ${webhook?.deliveredThroughListener ?? "none"}, stored ${adapter.describe(stored)}`, buyer, hostedPage: hosted, stripe: pick(session), webhook, retriedDeliveries: retries, stored });
+          record(offer, name, { state: ok ? "passed" : "failed", why: ok ? undefined : `session ${session.status}/${session.payment_status}, webhook ${webhook?.deliveredThroughListener ?? "none"}, stored ${adapter.describe(stored)}`, buyer, hostedPage: hosted, stripe: pick(session), webhook, stored });
         } else if (name === "expire") {
           const a = await adapter.open(ctx, offer);
           const session = await stripe("POST", `checkout/sessions/${a.sessionId}/expire`);
@@ -437,10 +409,60 @@ try {
           const ok = res.status < 300 && count === 1 && JSON.stringify(adapter.comparable(before)) === JSON.stringify(adapter.comparable(after));
           record(offer, name, { state: ok ? "passed" : "failed", why: ok ? undefined : `receiver ${res.status}, orders ${count}, row changed ${JSON.stringify(adapter.comparable(before)) !== JSON.stringify(adapter.comparable(after))}`,
             buyer: null, stripe: pick(p.session), webhook: { id: evt.id, type: evt.type, resentByStripe, replayedWithListenerSecret: true, receiverStatus: res.status }, stored: after, ordersForSession: count });
+        } else if (name === "renewal") {
+          const p = paid.get(offer.id);
+          if (!p || !ctx.clock) throw new Error("Renewal needs a passed hosted success on a test clock");
+          const initial = await adapter.periods(ctx, p.a);
+          if (initial.length !== 1) throw new Error(`Expected one paid initial period, got ${initial.length}`);
+          const boundary = Math.floor(Date.parse(initial[0].period_end) / 1000);
+          const clocks = [await advanceClock(boundary), await advanceClock(boundary + 7200)];
+          const invoices = await stripe("GET", "invoices", { customer: ctx.clockCustomer, subscription: p.session.subscription, limit: "10" });
+          const renewal = invoices.data.find((i) => i.billing_reason === "subscription_cycle");
+          if (!renewal) throw new Error("The clock produced no renewal invoice");
+          const webhook = await eventFor("invoice.paid", (o) => o.id === renewal.id, since);
+          const periods = await adapter.periods(ctx, p.a);
+          const stored = await adapter.storedRow(ctx, p.a);
+          const buyer = await adapter.buyerScreen(ctx, p.a, page, `${offer.id}-renewal`);
+          const ok = renewal.status === "paid" && renewal.amount_paid === offer.cents &&
+            renewal.currency === offer.currency && webhook.deliveredThroughListener === 200 &&
+            periods.length === 2 && periods.some((r) => r.invoice_id === renewal.id && r.status === "ready") && buyer.ok;
+          record(offer, name, { state: ok ? "passed" : "failed", buyer, stripe: { clock: clocks.map(({id, status, frozen_time}) => ({id, status, frozen_time})), invoice: renewal }, webhook, stored, periods });
+        } else if (name === "cancel") {
+          const p = paid.get(offer.id);
+          if (!p) throw new Error("Cancellation needs a passed hosted subscription payment");
+          await page.goto(adapter.cancellationLink(ctx, p.a), { waitUntil: "networkidle2" });
+          await page.click("main button");
+          await page.waitForFunction(() => location.hostname === "billing.stripe.com", { timeout: 30000 });
+          const button = await within(page, '[data-testid="cancel-subscription"], button[type="submit"]', 10000);
+          if (button) { await button.h.focus(); await page.keyboard.press("Enter"); }
+          else {
+            const buttons = await page.$$("button");
+            let clicked = false;
+            for (const b of buttons) {
+              if (/cancel subscription/i.test(await b.evaluate((el) => el.textContent)) && await b.boundingBox()) {
+                await b.focus(); await page.keyboard.press("Enter"); clicked = true; break;
+              }
+            }
+            if (!clicked) throw new Error("The hosted portal showed no cancellation action");
+          }
+          const scheduled = (o) => o.cancel_at_period_end === true || (Number.isSafeInteger(o.cancel_at) && o.cancel_at > 0);
+          const webhook = await eventFor("customer.subscription.updated", (o) => o.id === p.session.subscription && scheduled(o), since);
+          const subscription = await stripe("GET", `subscriptions/${p.session.subscription}`);
+          const stored = await adapter.storedRow(ctx, p.a);
+          const buyer = await adapter.buyerScreen(ctx, p.a, page, `${offer.id}-cancel`);
+          const ok = scheduled(subscription) && stored.cancel_at_period_end === true &&
+            webhook.deliveredThroughListener === 200 && buyer.text.includes("will not renew");
+          record(offer, name, { state: ok ? "passed" : "failed", buyer, stripe: { id: subscription.id, status: subscription.status, cancel_at_period_end: subscription.cancel_at_period_end, cancel_at: subscription.cancel_at }, webhook, stored });
         } else if (name === "refund") {
           const p = paid.get(offer.id);
           if (!p) { record(offer, name, { state: "not run", why: "needs a passed success case first" }); continue; }
-          const pi = p.session.payment_intent ?? (await stripe("GET", `checkout/sessions/${p.a.sessionId}`)).payment_intent;
+          let pi = p.session.payment_intent ?? (await stripe("GET", `checkout/sessions/${p.a.sessionId}`)).payment_intent;
+          if (!pi && p.session.subscription) {
+            const subscription = await stripe("GET", `subscriptions/${p.session.subscription}`);
+            const invoice = await stripe("GET", `invoices/${subscription.latest_invoice}`, { "expand[]": "payments" });
+            pi = invoice.payments?.data?.find((p) => p.payment?.type === "payment_intent")?.payment.payment_intent;
+          }
+          if (!pi) throw new Error("The paid invoice has no payment intent to refund");
           const refund = await stripe("POST", "refunds", { payment_intent: pi, "metadata[release_run]": run });
           const webhook = await eventFor("charge.refunded", (o) => o.payment_intent === pi, since);
           await sleep(1500);
@@ -460,7 +482,8 @@ try {
   await shutdown();
   writeFileSync(join(out, "listener.log"), listenLog.replace(/whsec_[A-Za-z0-9]+/g, "whsec_<redacted>"));
 }
-const summary = { run, source, lane, startedFor: offers.map((o) => o.id), cases, passed: records.filter((r) => r.state === "passed").length, failed: records.filter((r) => r.state === "failed").length, notRun: records.filter((r) => r.state === "not run").length, records: records.map(({ offer, case: c, state, why }) => ({ offer, case: c, state, why })) };
+const sourceUnchanged = git("rev-parse", "HEAD") === commit && !git("status", "--porcelain", "--untracked-files=no");
+const summary = { run, commit, source, sourceUnchanged, lane, startedFor: offers.map((o) => o.id), cases, passed: records.filter((r) => r.state === "passed").length, failed: records.filter((r) => r.state === "failed").length, notRun: records.filter((r) => r.state === "not run").length, records: records.map(({ offer, case: c, state, why }) => ({ offer, case: c, state, why })) };
 writeFileSync(join(out, "summary.json"), JSON.stringify(summary, null, 2) + "\n");
 console.log(`\n${summary.passed} passed, ${summary.failed} failed, ${summary.notRun} not run. Records in release/out/stripe/${run}/`);
-process.exit(summary.failed ? 1 : 0);
+process.exit(!sourceUnchanged || !records.length || summary.failed || summary.notRun ? 1 : 0);

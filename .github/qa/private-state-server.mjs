@@ -16,7 +16,8 @@ const { createCareService } = await import('../../server/lib/care-service.js');
 const { openCareStore } = await import('../../server/lib/care-store.js');
 const { careToken } = await import('../../server/lib/care-contract.js');
 const { stripe: signer } = await import('../../server/lib/stripe.js');
-const origin='http://127.0.0.1:31861',secret='isolated care access secret sufficient length';
+const origin=process.env.SDS_PREVIEW_ORIGIN||'http://127.0.0.1:31861',secret='isolated care access secret sufficient length';
+if (!/^http:\/\/127\.0\.0\.1:\d+$/.test(origin)) throw new Error('isolated loopback preview required');
 const store=openCareStore(),sessions=new Map(),charges=new Map();
 const stripe={checkout:{sessions:{
  async create(args){const s={id:'cs_test_'+randomUUID().replaceAll('-',''),livemode:false,mode:args.mode,client_reference_id:args.client_reference_id,
@@ -28,7 +29,7 @@ signer.paymentIntents.create=async()=>{throw new Error('Hosted Stripe acceptance
 stripe.charges={async retrieve(id){return charges.get(id);}};
 const care=createCareService({store,stripe,secret,origin,live:false,portalConfiguration:'bpc_fixture'});
 const app=createSdsApp({care}),source=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
-const server=http.createServer((req,res)=>{res.setHeader('X-SDS-Private-Source',source);app(req,res);}).listen(31861,'127.0.0.1');
+const server=http.createServer((req,res)=>{res.setHeader('X-SDS-Private-Source',source);app(req,res);}).listen(Number(new URL(origin).port),'127.0.0.1');
 await new Promise(resolve=>server.once('listening',resolve));
 const links=[];
 async function event(type,object){const payload=JSON.stringify({type,livemode:false,created:Math.floor(Date.now()/1000),data:{object}});

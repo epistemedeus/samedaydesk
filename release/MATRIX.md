@@ -15,6 +15,10 @@ starting the payment preview during those writes is a startup fault. Sweeps sele
 port and verify the private source header. `--port` is an explicit override; `--url` deliberately
 targets an already-running preview. Do not stop another checkout's server to obtain a port.
 
+Machine discovery derives the optional accepted-work collection from the existing reviewed public-read
+profile. When disabled, declarations retain the offline query-key runner and omit that collection.
+Care, commerce and mail writers share one database URL/TLS parser and use private Unix sockets in preview.
+
 ## A. Every page, automated (`release:sweep -- --cheap`, 51 sitemap pages)
 
 | Line | State at foundation | How to pass |

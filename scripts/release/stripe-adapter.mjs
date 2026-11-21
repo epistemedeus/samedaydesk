@@ -24,12 +24,18 @@ export async function start(ctx) {
   pg = execFileSync("pg_config", ["--bindir"], { encoding: "utf8" }).trim();
   const pgPort = 55491;
   execFileSync(join(pg, "initdb"), ["-A", "trust", "-D", join(scratch, "data")], { stdio: "ignore" });
-  execFileSync(join(pg, "pg_ctl"), ["-D", join(scratch, "data"), "-l", join(scratch, "pg.log"), "-o", `-F -p ${pgPort} -k ${scratch} -c listen_addresses=127.0.0.1`, "-w", "start"], { stdio: "ignore" });
-  dsn = `postgresql://${os.userInfo().username}@127.0.0.1:${pgPort}/postgres`;
+  execFileSync(join(pg, "pg_ctl"), ["-D", join(scratch, "data"), "-l", join(scratch, "pg.log"), "-o", `-F -p ${pgPort} -k ${scratch} -c listen_addresses=''`, "-w", "start"], { stdio: "ignore" });
+  dsn = `postgresql://${os.userInfo().username}@127.0.0.1/postgres?host=${encodeURIComponent(scratch)}&port=${pgPort}`;
   for (const m of ["0011_task_requests.sql", "0012_care_orders.sql", "0013_task_quotes.sql", "0014_commerce_journey.sql", "0015_mail_events.sql"]) {
     execFileSync("psql", ["-X", "-q", "-v", "ON_ERROR_STOP=1", dsn, "-f", join(root, "supabase/migrations", m)], { stdio: "ignore" });
   }
-  server = spawn(process.execPath, ["server/index.js"], {
+  const portal = await ctx.stripe("POST", "billing_portal/configurations", {
+    "business_profile[headline]": "Manage your SameDayDesk subscription",
+    "features[subscription_cancel][enabled]": "true",
+    "features[subscription_cancel][mode]": "at_period_end",
+    "metadata[release_run]": run,
+  });
+  server = spawn(process.execPath, [ctx.clockCustomer ? "scripts/release/clock-preview.mjs" : "server/index.js"], {
     cwd: root, stdio: ["ignore", "pipe", "pipe"],
     env: {
       PATH: process.env.PATH, HOME: scratch, NODE_ENV: "production", PORT: String(port),
@@ -37,6 +43,7 @@ export async function start(ctx) {
       SDS_CARE_ORIGIN: `http://127.0.0.1:${port}`, SDS_CARE_ACCESS_SECRET: accessSecret,
       STRIPE_SECRET_KEY: key, STRIPE_WEBHOOK_SECRET: webhookSecret, RELEASE_RUN: run,
       GITHUB_SHA: ctx.source,
+      SDS_CARE_PORTAL_CONFIGURATION: portal.id, RELEASE_CLOCK_CUSTOMER: ctx.clockCustomer,
       SDS_PREVIEW_MAIL_OUTBOX: join(scratch, "outbox.jsonl"), ADMIN_EMAIL: "desk@example.test",
       SDS_RECEIPTS_SNAPSHOT_PATH: join(scratch, "receipt-snapshot.json"),
     },
@@ -84,7 +91,7 @@ export async function open(ctx, offer, { again } = {}) {
 }
 
 export async function storedRow(_ctx, a) {
-  const row = psql(`select row_to_json(o) from (select id, offer, amount_cents, live_mode, state, session_id, payment_intent_id is not null as has_payment, subscription_id is not null as has_subscription, refunded_cents from care_orders where id = '${a.order}') o`);
+  const row = psql(`select row_to_json(o) from (select id, offer, amount_cents, live_mode, state, session_id, payment_intent_id is not null as has_payment, subscription_id is not null as has_subscription, subscription_status, cancel_at_period_end, refunded_cents from care_orders where id = '${a.order}') o`);
   return row ? JSON.parse(row) : null;
 }
 export async function orderCount(_ctx, a) {
@@ -96,6 +103,12 @@ export const isExpired = (row) => row?.state === "expired";
 export const isRefunded = (row) => row?.state === "refunded" && row.refunded_cents === row.amount_cents;
 export const describe = (row) => row ? `${row.state}, refunded ${row.refunded_cents}` : "no row";
 export const comparable = (row) => row && { state: row.state, session_id: row.session_id, refunded_cents: row.refunded_cents, has_payment: row.has_payment };
+
+export function periods(_ctx, a) {
+  return JSON.parse(psql(`select coalesce(json_agg(p order by period_start),'[]') from
+    (select invoice_id,period_start,period_end,status from care_periods where order_id='${a.order}') p`));
+}
+export const cancellationLink = (ctx, a) => careLink({ id: a.order, checkout_origin: ctx.preview }, accessSecret, "cancel");
 
 // The buyer's receipt page, reached by the success URL (its capability key stays in the fragment).
 export async function buyerScreen(ctx, a, page, name) {

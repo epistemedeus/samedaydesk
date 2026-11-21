@@ -6,7 +6,8 @@ import { fileURLToPath } from "node:url";
 import { gatewayAvailability } from "./paid-gateway-availability.js";
 import { APEX_ORIGIN } from "./apex-agent-card.js";
 import { FOR_AGENTS_CRAWLER_HTML } from "../../client/src/data/machineEntry.mjs";
-import { QUERY_KEY_CONSUMER, queryKeyReuseMarkdown } from "./query-key-caller.mjs";
+import { QUERY_KEY_CONSUMER } from "./query-key-caller.mjs";
+import { publicAcceptedWork, queryKeyDiscovery, queryKeyDiscoveryMarkdown } from "./query-key-discovery.mjs";
 import { indexWithStartGuide, START_GUIDE_LINK, START_GUIDE_PATH, startGuideMarkdown } from "./start-guide.js";
 import { DECLARATION_FETCH_PATHS } from "./declaration-paths.js";
 import { DOCUMENTATION_READINESS_FORMAT, DOCUMENTATION_READINESS_SCHEMA } from "./agent-readiness/documentation.js";
@@ -649,13 +650,13 @@ function apexPaths(catalog, skillMarkdown) {
   };
 }
 
-export function apexApiCatalog() {
+export function apexApiCatalog(env = process.env) {
   const apexLinks = [
     { rel: "service-desc", href: `${APEX_ORIGIN}/openapi.json`, type: "application/openapi+json", title: "Apex OpenAPI" },
     { rel: "service-doc", href: `${APEX_ORIGIN}/skill.md`, type: "text/markdown", title: "Apex skill" },
     { rel: "service-doc", href: `${APEX_ORIGIN}/llms.txt`, type: "text/plain", title: "Apex llms.txt" },
     { rel: "describedby", href: `${APEX_ORIGIN}/discovery/original-task-correspondence.json`, type: "application/json", title: "Original-task help descriptor" },
-    { rel: "describedby", href: QUERY_KEY_CONSUMER.acceptedWork, type: "application/json", title: "Accepted work" },
+    ...(publicAcceptedWork(env) ? [{ rel: "describedby", href: QUERY_KEY_CONSUMER.acceptedWork, type: "application/json", title: "Accepted work" }] : []),
     { rel: "service-meta", href: `${APEX_ORIGIN}/.well-known/agent-card.json`, type: "application/json", title: "Apex agent card" },
     { rel: "status", href: `${APEX_ORIGIN}/mcp`, type: "text/plain", title: "Apex MCP" },
     { rel: "status", href: `${APEX_ORIGIN}/api/health`, type: "application/json", title: "Apex health" },
@@ -866,8 +867,8 @@ export function apexSkillMarkdown() {
   return lines.join("\n");
 }
 
-export function apexOpenApiDocument() {
-  const catalog = apexApiCatalog();
+export function apexOpenApiDocument(env = process.env) {
+  const catalog = apexApiCatalog(env);
   const skillMarkdown = apexSkillMarkdown();
   return {
     openapi: "3.1.0",
@@ -930,7 +931,7 @@ export function apexOpenApiDocument() {
       links: PAID_GATEWAY_LINKS.map((link) => ({ rel: link.rel, href: link.href, type: link.type })),
       note: "When available, gateway documents own current terms. Canonical links and historical launches do not establish availability.",
     },
-    "x-query-key-caller": QUERY_KEY_CONSUMER,
+    "x-query-key-caller": queryKeyDiscovery(env),
   };
 }
 
@@ -1077,7 +1078,7 @@ function sendDeclaration(req, res, body, contentType) {
   return res.end(payload);
 }
 
-export function mountApexDeclarations(app) {
+export function mountApexDeclarations(app, { env = process.env } = {}) {
   app.get("/discovery/paid-gateway.json", (_req, res) => {
     res.set("Cache-Control", "no-cache");
     res.set("Access-Control-Allow-Origin", "*");
@@ -1085,9 +1086,9 @@ export function mountApexDeclarations(app) {
   });
   const builders = {
     [START_GUIDE_PATH]: startGuideMarkdown,
-    "/openapi.json": () => JSON.stringify(apexOpenApiDocument()),
+    "/openapi.json": () => JSON.stringify(apexOpenApiDocument(env)),
     "/skill.md": () => apexSkillMarkdown(),
-    "/.well-known/api-catalog": () => JSON.stringify(apexApiCatalog()),
+    "/.well-known/api-catalog": () => JSON.stringify(apexApiCatalog(env)),
   };
   for (const path of Object.keys(builders)) {
     if (!DECLARATION_FETCH_PATHS.includes(path)) throw new Error(`declaration path ${path} is not classified`);
@@ -1104,7 +1105,7 @@ export function mountApexDeclarations(app) {
   // before production static. The managed client trees stay byte-identical.
   const llmsPath = fileURLToPath(new URL("../../client/public/llms.txt", import.meta.url));
   const sendLlms = (req, res) => {
-    const body = Buffer.from(indexWithStartGuide(readFileSync(llmsPath, "utf8")) + queryKeyReuseMarkdown());
+    const body = Buffer.from(indexWithStartGuide(readFileSync(llmsPath, "utf8")) + queryKeyDiscoveryMarkdown(env));
     res.status(200);
     res.set("Cache-Control", "no-cache");
     res.set("Link", START_GUIDE_LINK);
