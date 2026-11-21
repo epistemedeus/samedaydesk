@@ -18,6 +18,9 @@ const require = createRequire(join(AUDIT_MODULES, 'package.json'));
 const { default: lighthouse } = await import(pathToFileURL(require.resolve('lighthouse')).href);
 const { default: puppeteer } = await import(pathToFileURL(require.resolve('puppeteer-core')).href);
 const limits = { lcpMs: 2500, cls: 0.1, tbtMs: 200 };
+const scope = process.env.AUDIT_SCOPE ?? 'sitemap';
+assert.ok(['sitemap', 'homepage-pair'].includes(scope));
+if (scope === 'homepage-pair') assert.equal(shards, 1);
 const reportFor = (name) => join(AUDIT_OUTPUT, name);
 await mkdir(AUDIT_OUTPUT, { recursive: true });
 
@@ -31,7 +34,7 @@ const entries = [...new Set([...((await sitemap.text()).matchAll(/<loc>([^<]+)<\
     return entry.pathname;
   }))].sort();
 assert.ok(entries.length > 1 && entries[0] === '/', 'The homepage and sitemap inventory are required');
-const assigned = entries.filter((_, i) => i % shards === shard);
+const assigned = (scope === 'homepage-pair' ? ['/'] : entries).filter((_, i) => i % shards === shard);
 // A sitemap can also enumerate machine documents. They still need a working
 // route, but Lighthouse's visual budget does not apply to a text file.
 const nonHtml = [];
@@ -109,7 +112,7 @@ async function measure(origin, path, sample, kind) {
         benchmarkIndex: lhr.environment?.benchmarkIndex ?? null,
         navigation: lhr.configSettings.throttlingMethod,
       };
-      if (!onBudget(receipt)) {
+      if (!onBudget(receipt) || process.env.AUDIT_DIAGNOSTICS === '1') {
         const details = lhr.audits['lcp-breakdown-insight']?.details?.items ?? [];
         const timings = details.find((item) => item.type === 'table')?.items ?? [];
         const blockers = lhr.audits['render-blocking-insight']?.details?.items ?? [];
@@ -125,6 +128,13 @@ async function measure(origin, path, sample, kind) {
           blockers: blockers.slice(0, 5).map(({ url, totalBytes, wastedMs }) => [safePath(url), totalBytes, wastedMs]),
           tasks: tasks.slice(0, 5).map(({ url, duration }) => [safePath(url), Math.round(duration)]),
         };
+        if (process.env.AUDIT_DIAGNOSTICS === '1') {
+          slowPage.mainThread = (lhr.audits['mainthread-work-breakdown']?.details?.items ?? [])
+            .map(({ group, duration }) => [group, Math.round(duration)]);
+          slowPage.scripts = (lhr.audits['bootup-time']?.details?.items ?? []).slice(0, 6)
+            .map(({ url, total, scripting, scriptParseCompile }) => [safePath(url),
+              Math.round(total), Math.round(scripting), Math.round(scriptParseCompile)]);
+        }
         if (kind === 'preview' && receipt.cls > limits.cls) {
           const shapes = lhr.audits['layout-shifts']?.details?.items ?? [];
           const element = (node) => node?.type === 'node' && typeof node.selector === 'string'
@@ -195,7 +205,8 @@ try {
 const failures = results.filter((r) => r.kind === 'preview' && !r.withinLimits);
 await writeFile(reportFor('summary.json'), JSON.stringify({
   source: GITHUB_SHA ?? null, version, formFactor: 'mobile', throttling: 'simulate', limits,
-  scope: 'Public sitemap; browser traffic is limited to same-origin GET/HEAD. Authenticated states are not covered.',
+  scope: scope === 'sitemap' ? 'Public sitemap; same-origin GET/HEAD only. No authenticated states.'
+    : 'Homepage pair only; same-origin GET/HEAD only. Not full sitemap acceptance.',
   shard, shards, totalSitemapEntries: entries.length, pagesAudited: paths.length, nonHtml,
   failures: failures.length, compare, results,
 }, null, 2) + '\n');
