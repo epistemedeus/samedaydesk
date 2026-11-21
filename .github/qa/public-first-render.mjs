@@ -62,14 +62,18 @@ try {
       });
       assert.equal((await page.goto(new URL(path, base).href)).status(), 200);
       await page.waitForFunction(() => performance.getEntriesByName('sdd:react-ready').length > 0);
-      assert.equal(await page.evaluate(() => window.__sddInitialHeading === document.querySelector('#root main h1')), true, path);
+      const sameHeading = () => page.evaluate(() => Boolean(window.__sddInitialHeading) && window.__sddInitialHeading === document.querySelector('#root main h1'));
+      const trial = `${path} (${theme})`;
+      assert.deepEqual(errors, [], trial);
+      assert.equal(await sameHeading(), true, `${trial} during hydration`);
       assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), theme);
       const direction = theme === 'dark' ? 'Switch to Drafting Table (light) theme' : 'Switch to Engineered Speed (dark) theme';
       const toggle = `button[aria-label="${direction}"]`;
       await page.waitForSelector(toggle, { visible: true });
       await page.click(toggle);
       await page.waitForFunction((initial) => document.documentElement.dataset.theme !== initial, {}, theme);
-      assert.deepEqual(errors, [], path);
+      assert.deepEqual(errors, [], trial);
+      assert.equal(await sameHeading(), true, `${trial} after theme switch`);
     } finally { await ctx.close(); }
   }
   console.log(`SDS_PUBLIC_FIRST_RENDER_OK html=${cases.length} hydration=${browserCases.length} private-shells=5 theme-switch=true`);
