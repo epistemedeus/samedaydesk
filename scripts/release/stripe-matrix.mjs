@@ -105,7 +105,16 @@ async function within(page, selector, ms = 15000) {
   }
   return null;
 }
-async function payHosted(page, url, card, { threeDS } = {}) {
+// Stripe's hosted form sometimes renders blank (seen about one load in four on this VM); fill it again
+// after a fresh load once before calling the case failed.
+async function payHosted(page, url, card, options = {}) {
+  try { await payHostedOnce(page, url, card, options); }
+  catch (e) {
+    if (!/hosted page: (no |the payment form)|Navigation timeout/.test(e.message)) throw e;
+    await payHostedOnce(page, url, card, options);
+  }
+}
+async function payHostedOnce(page, url, card, { threeDS } = {}) {
   // The payment form sometimes stays blank after load; wait for it, then reload once.
   const formReady = "#linkAuthentication-emailInput, #email, #payment-numberInput, #cardNumber, [data-value=\"card\"]";
   await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
@@ -116,7 +125,10 @@ async function payHosted(page, url, card, { threeDS } = {}) {
   const typeInto = async (sel, text, need = true) => {
     const x = await within(page, sel, need ? 15000 : 2500);
     if (!x) { if (need) throw new Error(`hosted page: no ${sel}`); return; }
-    await x.h.click({ clickCount: 3 });
+    // Clear whatever the page or the browser put there first; a triple click can leave text behind.
+    await x.h.click();
+    await page.keyboard.down("Control"); await page.keyboard.press("KeyA"); await page.keyboard.up("Control");
+    await page.keyboard.press("Backspace");
     await x.h.type(text, { delay: 20 });
   };
   await typeInto("#linkAuthentication-emailInput, #email, input[name=email]", `buyer+${run}@example.com`, false);
@@ -134,9 +146,21 @@ async function payHosted(page, url, card, { threeDS } = {}) {
   const submit = await within(page, '[data-testid="payment-form-submit-button"], button[type=submit].SubmitButton, button[type=submit]');
   await submit.h.click();
   if (threeDS) {
-    const button = await within(page, threeDS === "pass" ? "#test-source-authorize-3ds" : "#test-source-fail-3ds", 30000);
-    if (!button) throw new Error("no 3D Secure test challenge appeared");
-    await button.h.click();
+    // Stripe's 3D Secure 2 test page: a Complete and a Fail button inside nested frames.
+    const label = threeDS === "pass" ? /^(complete|authorize)/i : /^fail/i;
+    let clicked = false;
+    for (let i = 0; i < 60 && !clicked; i++) {
+      for (const f of page.frames()) {
+        const buttons = await f.$$("button").catch(() => []);
+        for (const b of buttons) {
+          const text = (await b.evaluate((el) => el.textContent.trim()).catch(() => "")) ?? "";
+          if (label.test(text) && await b.boundingBox().catch(() => null)) { await b.click(); clicked = true; break; }
+        }
+        if (clicked) break;
+      }
+      if (!clicked) await sleep(500);
+    }
+    if (!clicked) throw new Error("no 3D Secure test challenge appeared");
   }
 }
 async function buyerSaw(page, name) {
@@ -157,6 +181,23 @@ async function eventFor(type, match, since) {
     await sleep(1500);
   }
   return { type, missing: true };
+}
+
+// Stripe retries a delivery the receiver refused with a 5xx (for example invoice.paid that arrives
+// before checkout.session.completed); `stripe listen` does not. Stand in for that retry once per event
+// with Stripe's own resend, and record it.
+const retried = new Map();
+async function retryRefusedDeliveries() {
+  for (const [evt, status] of delivered) {
+    if (status < 500 || retried.has(evt)) continue;
+    const exit = await new Promise((resolve) => {
+      const c = spawn(stripeCli, ["events", "resend", evt], { env: { PATH: process.env.PATH, HOME: process.env.HOME, STRIPE_API_KEY: key }, stdio: "ignore" });
+      c.on("close", resolve);
+    });
+    retried.set(evt, { firstStatus: status, resendExit: exit });
+  }
+  if (retried.size) await sleep(3000);
+  return [...retried].map(([evt, r]) => ({ evt, ...r, afterResend: delivered.get(evt) ?? null }));
 }
 
 function signed(payload) {
@@ -182,6 +223,16 @@ try {
       if (offer.cases && !offer.cases.includes(name)) continue;
       const page = await browser.newPage();
       await page.setViewport({ width: 1280, height: 1000 });
+      // A site whose success URL is its production origin (EIN.LLC refuses a loopback PUBLIC_URL): the
+      // return navigation is recorded and stopped here, so the run never loads the live site.
+      page.returnedTo = null;
+      if (config.successOrigin) {
+        await page.setRequestInterception(true);
+        page.on("request", (r) => {
+          if (r.isNavigationRequest() && r.url().startsWith(config.successOrigin)) { page.returnedTo = r.url().replace(/[?#].*/, "?<redacted>"); r.abort().catch(() => {}); }
+          else r.continue().catch(() => {});
+        });
+      }
       const since = Math.floor(Date.now() / 1000);
       try {
         if (name === "readback" || name === "lost-response") {
@@ -201,7 +252,8 @@ try {
           for (let attempt = 1; attempt <= 2; attempt++) {
             await payHosted(page, a.url, CARDS[name], { threeDS: name.startsWith("3ds") ? name.slice(4) : null });
             if (!shouldPay) break;
-            const back = await page.waitForFunction((p) => location.href.startsWith(p), { timeout: 60000 }, preview).then(() => true, () => false);
+            let back = false;
+            for (let w = 0; w < 120 && !back; w++) { back = Boolean(page.returnedTo) || page.url().startsWith(preview); if (!back) await sleep(500); }
             if (back) { hosted = null; break; }
             hosted = { attempt, ...(await buyerSaw(page, `${offer.id}-${name}-hosted-${attempt}`)) };
             if ((await stripe("GET", `checkout/sessions/${a.sessionId}`)).status !== "open") break;
@@ -209,7 +261,12 @@ try {
           if (!shouldPay) { await sleep(6000); hosted = await buyerSaw(page, `${offer.id}-${name}-hosted`); }
           const session = await stripe("GET", `checkout/sessions/${a.sessionId}`);
           const webhook = shouldPay ? await eventFor("checkout.session.completed", (o) => o.id === a.sessionId, since) : null;
-          if (shouldPay) await adapter.settled?.(ctx, a);
+          let retries = [];
+          if (shouldPay) {
+            await sleep(2000);
+            retries = await retryRefusedDeliveries();
+            await adapter.settled?.(ctx, a);
+          }
           const buyer = shouldPay ? await adapter.buyerScreen(ctx, a, page, `${offer.id}-${name}`) : await buyerSaw(page, `${offer.id}-${name}`);
           const stored = await adapter.storedRow(ctx, a);
           const ok = shouldPay
@@ -217,7 +274,7 @@ try {
             : session.status === "open" && session.payment_status === "unpaid" && !adapter.isPaid(stored);
           if (!shouldPay) await stripe("POST", `checkout/sessions/${a.sessionId}/expire`).catch(() => {});
           if (shouldPay && ok) paid.set(offer.id, { a, session });
-          record(offer, name, { state: ok ? "passed" : "failed", why: ok ? undefined : `session ${session.status}/${session.payment_status}, webhook ${webhook?.deliveredThroughListener ?? "none"}, stored ${adapter.describe(stored)}`, buyer, hostedPage: hosted, stripe: pick(session), webhook, stored });
+          record(offer, name, { state: ok ? "passed" : "failed", why: ok ? undefined : `session ${session.status}/${session.payment_status}, webhook ${webhook?.deliveredThroughListener ?? "none"}, stored ${adapter.describe(stored)}`, buyer, hostedPage: hosted, stripe: pick(session), webhook, retriedDeliveries: retries, stored });
         } else if (name === "expire") {
           const a = await adapter.open(ctx, offer);
           const session = await stripe("POST", `checkout/sessions/${a.sessionId}/expire`);

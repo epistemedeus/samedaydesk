@@ -25,7 +25,16 @@ if (!description) {
   } catch {}
 }
 description ||= state === "success" ? "Release check passed" : "Release check did not pass";
-const body = execFileSync("gh", ["api", "--method", "POST", `repos/${repository}/statuses/${sha}`,
-  "-f", `state=${state}`, "-f", `target_url=${logUrl}`, "-f", `description=${description.slice(0, 140)}`, "-f", "context=release-check"], { encoding: "utf8" });
-const posted = JSON.parse(body);
+let posted;
+try {
+  posted = JSON.parse(execFileSync("gh", ["api", "--method", "POST", `repos/${repository}/statuses/${sha}`,
+    "-f", `state=${state}`, "-f", `target_url=${logUrl}`, "-f", `description=${description.slice(0, 140)}`, "-f", "context=release-check"],
+    { encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] }));
+} catch (error) {
+  // A 403 "Resource not accessible by integration" means the signed-in token cannot write commit
+  // statuses (it needs the statuses or repo scope); sign gh in with one that can.
+  const said = `${error.stdout ?? ""}`.trim() || `${error.stderr ?? ""}`.trim();
+  console.error(`release-check status not posted on ${repository}@${sha.slice(0, 8)}: ${said}`);
+  process.exit(1);
+}
 console.log(`release-check ${posted.state} on ${repository}@${sha.slice(0, 8)}: ${posted.description}`);

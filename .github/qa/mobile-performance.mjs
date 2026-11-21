@@ -173,7 +173,9 @@ try {
       continue;
     }
     const local = [], hosted = [];
-    let liveCheck = true;
+    // Live comparison is a record, not a gate (16 §2.3): the Hostinger CDN refuses headless browsers.
+    // It runs only with AUDIT_COMPARE_LIVE=1.
+    let liveCheck = process.env.AUDIT_COMPARE_LIVE === '1';
     // Interleave exact settings on the same runner. Never reissue a refused
     // live request just to fill the sample count.
     for (let i = 1; i <= 3; i++) {
@@ -187,7 +189,7 @@ try {
     const previewLcpMs = local.every((r) => r.measured) ? median(local.map((r) => r.lcpMs)) : null;
     const liveLcpMs = hosted.length === 3 && hosted.every((r) => r.measured) ? median(hosted.map((r) => r.lcpMs)) : null;
     const ratio = previewLcpMs !== null && liveLcpMs !== null && liveLcpMs > 0 ? previewLcpMs / liveLcpMs : null;
-    compare = { previewLcpMs, liveLcpMs, ratio, pass: ratio !== null && ratio <= 1.10, liveSamples: hosted.length };
+    if (process.env.AUDIT_COMPARE_LIVE === '1') compare = { previewLcpMs, liveLcpMs, ratio, pass: ratio !== null && ratio <= 1.10, liveSamples: hosted.length };
   }
 } finally {
   await browser.close();
@@ -200,4 +202,4 @@ await writeFile(reportFor('summary.json'), JSON.stringify({
   failures: failures.length, compare, results,
 }, null, 2) + '\n');
 console.log('MOBILE_AUDIT_SUMMARY', JSON.stringify({ pagesAudited: paths.length, failures: failures.length, compare }));
-if (failures.length || (compare && !compare.pass)) process.exitCode = 1;
+if (failures.length) process.exitCode = 1;

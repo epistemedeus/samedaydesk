@@ -15,7 +15,7 @@
 // Browser tools live in scripts/release/tools (installed here on first use with npm ci).
 // Output: release/out/sweep-<mode>.json, captures under release/out/key/.
 import { execFileSync, spawn, spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { createWriteStream, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import os from "node:os";
 import { dirname, join } from "node:path";
@@ -46,7 +46,7 @@ const axeSource = readFileSync(req.resolve("axe-core/axe.min.js"), "utf8");
 
 // The preview.
 let preview = value("--url");
-let server;
+let server, stopping = false;
 const variant = mode === "key" && config.preview.keyEnv ? config.preview.keyEnv : {};
 if (!preview) {
   // Preview env values may use {root} (the repository) and {out} (release/out) for absolute paths.
@@ -58,10 +58,16 @@ if (!preview) {
     if (b.status !== 0) throw new Error("preview build failed");
   }
   const port = config.preview.port;
+  // Never measure someone else's server: the port must be free before this preview starts.
+  if (await fetch(`http://127.0.0.1:${port}/`, { signal: AbortSignal.timeout(2000) }).then(() => true, () => false)) {
+    throw new Error(`port ${port} already answers; stop that server (or pass --url to sweep it on purpose)`);
+  }
   server = spawn("bash", ["-c", config.preview.start], { cwd: root, env: { ...env, PORT: String(port) }, stdio: ["ignore", "pipe", "pipe"], detached: true });
   let log = "";
-  server.stdout.on("data", (c) => { log = (log + c).slice(-4000); });
-  server.stderr.on("data", (c) => { log = (log + c).slice(-4000); });
+  const serverLog = createWriteStream(join(out, "preview.log"));
+  server.stdout.on("data", (c) => { log = (log + c).slice(-4000); serverLog.write(c); });
+  server.stderr.on("data", (c) => { log = (log + c).slice(-4000); serverLog.write(c); });
+  server.on("exit", (code, signal) => { if (!stopping) console.error(`preview exited (${code ?? signal}); its output is in release/out/preview.log`); });
   preview = `http://127.0.0.1:${port}`;
   let up = false;
   for (let i = 0; i < 90 && !up; i++) {
@@ -70,7 +76,8 @@ if (!preview) {
   }
   if (!up) { console.error(log); stop(); throw new Error("preview did not start"); }
 }
-function stop() { if (server) try { process.kill(-server.pid, "SIGTERM"); } catch {} }
+// SIGKILL: a preview holds no state, and the EIN entry keeps running after SIGTERM.
+function stop() { stopping = true; if (server) try { process.kill(-server.pid, "SIGKILL"); } catch {} }
 process.on("exit", stop);
 process.on("SIGINT", () => { stop(); process.exit(130); });
 const origin = new URL(config.origin).origin;
@@ -115,14 +122,21 @@ async function pool(items, n, fn) {
   return results;
 }
 
-const ignoredConsole = (config.ignoreConsole ?? []).map((s) => new RegExp(s));
+// Each ignore entry is { "pattern": regex, "why": reason }, kept in release/key-pages.json and reported.
+const ignoredConsole = (config.ignoreConsole ?? []).map((x) => new RegExp(x.pattern ?? x));
+const ignoredRequests = (config.ignoreRequests ?? []).map((x) => new RegExp(x.pattern ?? x));
+const ignoredRequest = (u) => ignoredRequests.some((r) => r.test(u));
 async function loadAndInspect(browser, path, { width = 1440, height = 900, theme = "light", reducedMotion = false, axe = true } = {}) {
   const page = await browser.newPage();
   const consoleErrors = [], failed = [];
-  page.on("console", (m) => { if (m.type() === "error" && !ignoredConsole.some((r) => r.test(m.text()))) consoleErrors.push(m.text().slice(0, 300)); });
+  page.on("console", (m) => {
+    if (m.type() !== "error" || ignoredConsole.some((r) => r.test(m.text()))) return;
+    if (/^Failed to load resource/.test(m.text()) && ignoredRequest(m.location()?.url ?? "")) return;
+    consoleErrors.push(m.text().slice(0, 300));
+  });
   page.on("pageerror", (e) => consoleErrors.push(`pageerror: ${String(e.message ?? e).slice(0, 300)}`));
-  page.on("requestfailed", (r) => { const u = r.url(); if (!u.startsWith("data:") && r.failure()?.errorText !== "net::ERR_ABORTED") failed.push(`${r.failure()?.errorText} ${u.slice(0, 200)}`); });
-  page.on("response", (r) => { if (r.status() >= 400 && !r.url().startsWith("data:")) failed.push(`${r.status()} ${r.url().slice(0, 200)}`); });
+  page.on("requestfailed", (r) => { const u = r.url(); if (!u.startsWith("data:") && !ignoredRequest(u) && r.failure()?.errorText !== "net::ERR_ABORTED") failed.push(`${r.failure()?.errorText} ${u.slice(0, 200)}`); });
+  page.on("response", (r) => { if (r.status() >= 400 && !r.url().startsWith("data:") && !ignoredRequest(r.url())) failed.push(`${r.status()} ${r.url().slice(0, 200)}`); });
   await page.setViewport({ width, height, deviceScaleFactor: 1 });
   await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: theme }, { name: "prefers-reduced-motion", value: reducedMotion ? "reduce" : "no-preference" }]);
   let status = null;
@@ -180,10 +194,18 @@ async function machineFiles() {
     if (/\.json$/.test(p) || /json/.test(r.headers.get("content-type") ?? "")) {
       try { JSON.parse(text); } catch (e) { row.ok = false; row.problems.push(`does not parse: ${e.message}`); }
     }
-    const own = [...new Set([...text.matchAll(/https?:\/\/[^\s)"'<>\]]+/g)].map(([u]) => u.replace(/[.,;:]+$/, "")).filter((u) => !/[={]$|\{[^}]*\}/.test(u)).filter((u) => { try { return new URL(u).origin === origin; } catch { return false; } }))];
+    const own = [...new Set([...text.matchAll(/https?:\/\/[^\s)"'`<>\]]+/g)].map(([u]) => u.replace(/[.,;:]+$/, "")).filter((u) => !/[={]$|\{[^}]*\}/.test(u)).filter((u) => { try { return new URL(u).origin === origin; } catch { return false; } }))];
     for (const u of own) {
-      const lr = await fetch(new URL(localPath(u), preview), { redirect: "follow", signal: AbortSignal.timeout(15000) }).catch(() => null);
-      if (!lr || lr.status >= 400) { row.ok = false; row.problems.push(`lists ${localPath(u)}, which answers ${lr?.status ?? "nothing"}`); }
+      // An endpoint that exists but wants another method or input (405, 400, 401, 402) is listed truly;
+      // a POST-only route that answers GET with 404 is tried once with an empty JSON POST. Answers the
+      // preview cannot give (no database) are listed with their reason in machineExpected.
+      const exists = (r) => r && (r.status < 400 || [400, 401, 402, 405, 415, 422].includes(r.status));
+      const path = localPath(u);
+      let lr = await fetch(new URL(path, preview), { redirect: "follow", signal: AbortSignal.timeout(15000) }).catch(() => null);
+      if (lr?.status === 404) lr = await fetch(new URL(path, preview), { method: "POST", headers: { "content-type": "application/json" }, body: "{}", redirect: "follow", signal: AbortSignal.timeout(15000) }).catch(() => null);
+      const expected = config.machineExpected?.[path.replace(/\/$/, "")];
+      if (expected && lr?.status === expected.status) row.expected = [...(row.expected ?? []), `${path}: ${expected.why}`];
+      else if (!exists(lr)) { row.ok = false; row.problems.push(`lists ${path}, which answers ${lr?.status ?? "nothing"}`); }
     }
     row.ownLinks = own.length;
     return row;
