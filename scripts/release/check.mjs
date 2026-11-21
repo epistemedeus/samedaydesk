@@ -66,12 +66,16 @@ for (const gate of selected) {
   }
 }
 
-const passed = results.every((r) => r.state === "passed");
+const finishedCommit = git("rev-parse", "HEAD");
+const dirtyAtFinish = git("status", "--porcelain", "--untracked-files=no") !== "";
+const passed = results.length > 0 && results.every((r) => r.state === "passed");
 const summary = {
   repository: JSON.parse(readFileSync(join(root, "release/key-pages.json"), "utf8")).site,
   commit: sha,
   dirty,
-  state: passed && !dirty ? "passed" : "failed",
+  dirtyAtFinish,
+  finishedCommit,
+  state: passed && !dirty && !dirtyAtFinish && finishedCommit === sha ? "passed" : "failed",
   finishedAt: new Date().toISOString(),
   node: process.version,
   host: os.hostname(),

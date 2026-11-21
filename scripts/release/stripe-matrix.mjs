@@ -18,7 +18,7 @@
 // The key comes from STRIPE_TEST_KEY or STRIPE_TEST_KEY_FILE and must be a test key (sk_test or
 // rk_test); anything else stops before any call. Never prints the key.
 import { createHmac, randomUUID } from "node:crypto";
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
@@ -26,6 +26,9 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
+const git = (...args) => execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
+const commit = git("rev-parse", "HEAD");
+if (git("status", "--porcelain", "--untracked-files=no")) throw new Error("Commit the source before a provider test");
 const args = process.argv.slice(2);
 const value = (f) => { const i = args.indexOf(f); return i >= 0 ? args[i + 1] : null; };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -211,7 +214,7 @@ function signed(payload) {
 const pick = (s) => s && ({ id: s.id, status: s.status, payment_status: s.payment_status, amount_total: s.amount_total, currency: s.currency, mode: s.mode, livemode: s.livemode, release_run: s.metadata?.release_run, payment_intent: typeof s.payment_intent === "string" ? s.payment_intent : s.payment_intent?.id ?? null, subscription: s.subscription ?? null });
 const records = [];
 function record(offer, name, rec) {
-  const row = { run, offer: offer.id, case: name, at: new Date().toISOString(), ...rec };
+  const row = { run, commit, offer: offer.id, case: name, at: new Date().toISOString(), ...rec };
   writeFileSync(join(out, `${offer.id}-${name}.json`), JSON.stringify(row, null, 2) + "\n");
   records.push(row);
   console.log(`${row.state.padEnd(7)} ${offer.id} ${name}${row.why ? `: ${row.why}` : ""}`);
@@ -384,7 +387,8 @@ try {
   await shutdown();
   writeFileSync(join(out, "listener.log"), listenLog.replace(/whsec_[A-Za-z0-9]+/g, "whsec_<redacted>"));
 }
-const summary = { run, lane, startedFor: offers.map((o) => o.id), cases, passed: records.filter((r) => r.state === "passed").length, failed: records.filter((r) => r.state === "failed").length, notRun: records.filter((r) => r.state === "not run").length, records: records.map(({ offer, case: c, state, why }) => ({ offer, case: c, state, why })) };
+const sourceUnchanged = git("rev-parse", "HEAD") === commit && !git("status", "--porcelain", "--untracked-files=no");
+const summary = { run, commit, sourceUnchanged, lane, startedFor: offers.map((o) => o.id), cases, passed: records.filter((r) => r.state === "passed").length, failed: records.filter((r) => r.state === "failed").length, notRun: records.filter((r) => r.state === "not run").length, records: records.map(({ offer, case: c, state, why }) => ({ offer, case: c, state, why })) };
 writeFileSync(join(out, "summary.json"), JSON.stringify(summary, null, 2) + "\n");
 console.log(`\n${summary.passed} passed, ${summary.failed} failed, ${summary.notRun} not run. Records in release/out/stripe/${run}/`);
-process.exit(summary.failed || summary.notRun ? 1 : 0);
+process.exit(!sourceUnchanged || !records.length || summary.failed || summary.notRun ? 1 : 0);
