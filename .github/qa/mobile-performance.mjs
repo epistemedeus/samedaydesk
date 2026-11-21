@@ -73,26 +73,6 @@ async function measure(origin, path, sample, kind) {
   try {
     const page = await ctx.newPage();
     await page.setBypassServiceWorker(true);
-    if (kind === 'preview') {
-      await page.evaluateOnNewDocument(() => {
-        window.__sdsLayoutChanges = [];
-        const identify = (node) => node instanceof Element
-          ? [node.localName, node.id, [...node.classList].slice(0, 2), node.parentElement?.localName]
-          : [node?.nodeName ?? null];
-        new PerformanceObserver((observations) => {
-          for (const entry of observations.getEntries()) {
-            if (entry.hadRecentInput || window.__sdsLayoutChanges.length >= 24) continue;
-            window.__sdsLayoutChanges.push({
-              ms: Math.round(entry.startTime), score: entry.value,
-              sources: entry.sources.map(({ node, previousRect: a, currentRect: b }) => ({
-                element: identify(node), from: [a.x, a.y, a.width, a.height].map(Math.round),
-                to: [b.x, b.y, b.width, b.height].map(Math.round),
-              })),
-            });
-          }
-        }).observe({ type: 'layout-shift', buffered: true });
-      });
-    }
     await page.setRequestInterception(true);
     page.on('request', (request) => {
       let requestOrigin;
@@ -146,9 +126,18 @@ async function measure(origin, path, sample, kind) {
           tasks: tasks.slice(0, 5).map(({ url, duration }) => [safePath(url), Math.round(duration)]),
         };
         if (kind === 'preview' && receipt.cls > limits.cls) {
-          slowPage.layoutChanges = await page.evaluate(() => (
-            (window.__sdsLayoutChanges ?? []).sort((a, b) => b.score - a.score).slice(0, 3)
-          )).catch(() => []);
+          const shapes = lhr.audits['layout-shifts']?.details?.items ?? [];
+          const element = (node) => node?.type === 'node' && typeof node.selector === 'string'
+            ? node.selector.replace(/\[[^\]]*\]/g, '[]').slice(0, 160) : null;
+          slowPage.layoutChanges = shapes.slice(0, 5).map((shift) => ({
+            score: shift.score,
+            element: element(shift.node),
+            causes: (shift.subItems?.items ?? []).slice(0, 4).map(({ extra, cause }) => ({
+              element: element(extra),
+              asset: extra?.type === 'url' ? safePath(extra.value) : null,
+              cause: typeof cause === 'string' ? cause.slice(0, 80) : null,
+            })),
+          }));
         }
       }
     } else {

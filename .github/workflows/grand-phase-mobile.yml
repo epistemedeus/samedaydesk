@@ -48,5 +48,5 @@ jobs:
           trap 'kill "$pid" 2>/dev/null || true' EXIT
           curl --retry 12 --retry-delay 1 --retry-connrefused -fsS "$AUDIT_PREVIEW_URL/api/health" -o /dev/null
           node .github/qa/mobile-performance.mjs
-      # Only scalar measurements are emitted in the public repo's job log.
+      # Only measurements and bounded public layout hints enter the job log.
       # Do not upload raw preview screenshots or traces from this job.
