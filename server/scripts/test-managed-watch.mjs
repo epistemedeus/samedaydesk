@@ -1669,3 +1669,22 @@ test("receive-time freshness classifies a delayed source at receipt", { timeout:
   assert.equal(ahead.results[0].usefulChange, false);
   assert.notEqual(ahead.results[0].outcome, "baseline_established");
 });
+
+test("an initializing file lock stays owned until its writer releases it", async (t) => {
+  const dir = await mkdtemp(path.join(tmpdir(), "l12-lock-init-"));
+  t.after(() => rm(dir, { recursive: true, force: true }));
+  const store = await openFileWatchStore(dir);
+  const lock = path.join(dir, "watch-store.lock");
+  // Reproduce open(wx) having succeeded before the owner record is written.
+  await writeFile(lock, "", { flag: "wx", mode: 0o600 });
+  let settled = false;
+  const pending = store.seedGrant({ id: "gr_owner", projectId: "projwatch1", role: "owner", tokenHash: hashGrantToken(TOKEN), expiresAt: null, revokedAt: null }).finally(() => { settled = true; });
+  try {
+    await new Promise(resolve => setTimeout(resolve, 120));
+    assert.equal(settled, false, "a contender must wait for an initializing lock");
+    assert.equal(await readFile(lock, "utf8"), "");
+  } finally { await rm(lock, { force: true }); await pending; await store.close(); }
+  const reopened = await openFileWatchStore(dir);
+  assert.equal((await reopened.findGrant(hashGrantToken(TOKEN), "2026-10-07T00:00:00.000Z")).id, "gr_owner");
+  await reopened.close();
+});

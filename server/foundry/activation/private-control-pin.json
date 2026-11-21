@@ -47,7 +47,7 @@
     "server/lib/managed-watch/scheduler.mjs": "aedee9ee25481401186252ac1bf30cc1f06619516d5ec531ccd8f637b49b962a",
     "server/lib/managed-watch/service.mjs": "1bb01758c4405ac232425939a74d0c830bed5fca7fcfca3ade72c9cb4154a604",
     "server/lib/managed-watch/source.mjs": "5f1a31356cd8e0a239c99d3a1c3382892d965fad15e509451b42d181eb70ec05",
-    "server/lib/managed-watch/store-file.mjs": "3f939d41eb9f04ccd5fb9db5df854a873e4a5306276b23d05eaf73891e0fe196",
+    "server/lib/managed-watch/store-file.mjs": "cee41b163cc34729a4cc5c789b092474acbf7f317e05b29e11c14cf11cd8bd27",
     "server/lib/managed-watch/store-pg.mjs": "12b9ca0702a342a1e132acac93d8135c74e424c584bf83ac995d47845e12beb0",
     "server/lib/managed-watch/worker-main.mjs": "475fcb4e2c2c2d0a19fcf2b7ac253e403601ee79a06c745c99d93e8616372c1f",
     "server/lib/neomorphic-opportunity-mount.js": "ae97f69cbe092cc06cc846abd32bf2cf79e803ec0502abb0582bbca64d4c5043",
@@ -699,6 +699,11 @@
       "base": "46d8ff535e56dd461828fe2d8b38d1f8c7f5e73b",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:cf7e423446709fe4bc099e397dabb22a3c6f833955cdc0179a581a97206e2f3f"
+    },
+    {
+      "base": "46d8ff535e56dd461828fe2d8b38d1f8c7f5e73b",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:449c510c76fa57e6cd2d88bd7f92eccbf4b8f5affb25634aad0d166962514ca0"
     }
   ]
 }
