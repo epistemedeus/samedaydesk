@@ -101,6 +101,10 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   t.after(() => new Promise((resolve) => server.close(resolve)));
   await once(server, "listening");
   const origin = `http://127.0.0.1:${server.address().port}`;
+  const visit = await fetch(origin + "/?utm_source=release", { headers: { Referer: "https://example.test/private?email=private" } });
+  assert.equal(visit.status, 200);
+  const cookie = visit.headers.get("set-cookie").split(";", 1)[0];
+  const journeySession = cookie.split("=")[1];
   const seller = (query = "") => fetch(origin + "/api/checkout/seller-conformance" + query, { redirect: "manual" });
   assert.equal((await seller()).status, 503);
   process.env.SDS_TEST_SELLER_CONFORMANCE_LINK = "https://buy.stripe.com/7sY00keoqbLN899282eZ20F";
@@ -112,7 +116,7 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.equal((await seller("?finding=https%3A%2F%2Fexample.test")).headers.get("location"), "https://buy.stripe.com/test_preview");
   delete process.env.SDS_TEST_SELLER_CONFORMANCE_LINK;
   const post = (action, body) => fetch(`${origin}/api/care/${action}`, {
-    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+    method: "POST", headers: { "Content-Type": "application/json", Cookie: cookie }, body: JSON.stringify(body),
   });
   const event = (type, object, valid = true) => {
     const payload = JSON.stringify({ type, livemode: false, created: Math.floor(Date.now() / 1000), data: { object } });
@@ -140,10 +144,14 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.equal((await event("checkout.session.completed", { ...one, amount_total: 1 })).status, 500);
   assert.equal((await event("checkout.session.completed", { ...one, id: "cs_test_foreign" })).status, 500);
   assert.equal((await (await post("receipt", access(primary))).json()).state, "created");
+  assert.equal((await db.query("select count(*)::int as n from journey_events where event='payment_verified'")).rows[0].n, 0,
+    "invalid signatures and mismatched payments must not write payment observations");
   const intake = { surface: "A public MCP URL", outcome: "Tools list and return the declared outcome.", releaseChannel: "npm" };
   assert.equal((await post("intake", { ...access(primary), intake })).status, 409);
   assert.equal((await event("checkout.session.completed", one)).status, 200);
   assert.equal((await event("checkout.session.completed", one)).status, 200);
+  assert.equal((await db.query("select count(*)::int as n from journey_events where event='payment_verified' and order_id=$1", [primary])).rows[0].n, 1);
+  assert.equal((await db.query("select session_id from journey_events where event='payment_verified' and order_id=$1", [primary])).rows[0].session_id, journeySession);
   assert.equal((await post("receipt", { order: recurring, key: access(primary).key })).status, 404);
   assert.equal((await post("intake", { ...access(primary), intake })).status, 200);
   assert.equal((await post("intake", { ...access(primary), intake })).status, 200);
@@ -341,4 +349,23 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.equal((await db.query("select status from public.task_requests where id=$1", [requestId])).rows[0].status, "paid");
   assert.equal((await event("charge.refunded", { id: "ch_quote", payment_intent: "pi_quote" })).status, 200);
   assert.equal((await store.quotes.order(offer.quoteId)).needs_review, true);
+
+  // A later paid order from the same verified buyer is a return, even when the
+  // older order was refunded. A replay still contributes only one observation.
+  const returning = randomUUID();
+  await care.start("agent_front_door", returning, journeySession);
+  const returningOrder = await store.order(returning);
+  const returningSession = { ...provider.get(returningOrder.session_id), status: "complete", payment_status: "paid",
+    payment_intent: "pi_return", customer_details: { email: "one@example.test" } };
+  assert.equal((await event("checkout.session.completed", returningSession)).status, 200);
+  assert.equal((await event("checkout.session.completed", returningSession)).status, 200);
+  const rows = (await db.query("select event,brand,test,session_id,order_id,referrer,utm from journey_events order by event")).rows;
+  assert.deepEqual([...new Set(rows.map(row => row.event))], ["checkout_started", "payment_verified", "receipt_sent", "return", "visit"]);
+  assert.ok(rows.every(row => row.brand === "samedaydesk" && row.test === true));
+  assert.equal(rows.filter(row => row.event === "return" && row.order_id === returning).length, 1);
+  const firstVisit = rows.find(row => row.event === "visit" && row.session_id === journeySession);
+  assert.equal(firstVisit.referrer, "https://example.test");
+  assert.deepEqual(firstVisit.utm, { utm_source: "release" });
+  console.log("COMMERCE_JOURNEY_OK " + JSON.stringify({ events: [...new Set(rows.map(row => row.event))],
+    allTest: true, invalidPaymentRejected: true, replayDeduplicated: true, buyerFieldsExcluded: true }));
 });

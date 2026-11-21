@@ -42,6 +42,6 @@ test("prepared error transport is disabled by default and confirms only a real r
       assert.deepEqual(await reportRequestError("care_request", { SDS_PRIVATE_PREVIEW: "1", SDS_ERROR_TRACKER_URL: base + path }), { enabled: true, received: ok });
     }
     assert.equal(received.length, 3, "lost or redirect response must never send a second event");
-    assert.deepEqual(received[0], { event: "request_error", state: "care_request", path: "/api", service: "samedaydesk", schema: "samedaydesk.error.v1" });
+    assert.deepEqual(received[0], { event: "request_error", state: "care_request", path: "/api", service: "samedaydesk", schema: "samedaydesk.error.v1", environment: "preview" });
   } finally { await new Promise(resolve => server.close(resolve)); }
 });

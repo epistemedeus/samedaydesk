@@ -7,6 +7,7 @@ import { openCareStore } from "./care-store.js";
 import { createTaskQuoteService } from "./task-quotes.js";
 import { releaseRunOf } from "./release-run.js";
 import { recordJourney } from "./journey-events.js";
+import { recordCommerceJourney } from "./commerce-journey.js";
 
 const HOUR = 3600_000;
 const email = (value) => typeof value === "string" && value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? value : null;
@@ -63,13 +64,14 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
       paymentId: payment, subscriptionId: subscription, email: buyer, at: now() });
   }
 
-  async function start(offerKey, id) {
+  async function start(offerKey, id, journeySession = null) {
     if (typeof offerKey !== "string" || !Object.hasOwn(CARE_OFFERS, offerKey) || !isOrderId(id)) {
       throw new CareError(400, "Choose a service and start a new checkout.");
     }
     const offer = CARE_OFFERS[offerKey];
     const order = await store.reserve({ id, offer: offerKey, cents: offer.cents, live, origin,
-      expires: new Date(now().getTime() + 2 * HOUR), integrationId: newIntegrationId() });
+      expires: new Date(now().getTime() + 2 * HOUR), integrationId: newIntegrationId(),
+      journeySession: isOrderId(journeySession) ? journeySession : id });
     const expired = () => new CareError(409, "This checkout expired. You can start a new one.", "checkout_expired");
     if (order.state === "expired") throw expired();
     if (order.state !== "created") throw new CareError(409, "This checkout is no longer open.");
@@ -80,6 +82,8 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
       ? await stripe.checkout.sessions.retrieve(order.session_id)
       : await stripe.checkout.sessions.create(checkoutArgs(order, secret, releaseRun), { idempotencyKey: `sameday-care/${id}` }));
     await store.bindSession({ id, sessionId: session.id });
+    await recordCommerceJourney("checkout_started", { key: session.id, orderId: id,
+      sessionId: order.journey_session || id, live });
     if (session.status === "expired") {
       await store.expire(id, session.id);
       throw expired();
@@ -160,7 +164,14 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
       checkedSession(order, object);
       if (object.status === "expired" || event.type === "checkout.session.async_payment_failed") {
         await store.expire(id, object.id);
-      } else await paidSession(order, object);
+      } else {
+        const paid = await paidSession(order, object);
+        if (object.status === "complete" && object.payment_status === "paid") {
+          const facts = { key: paid.id, orderId: paid.id, sessionId: paid.journey_session || paid.id, live };
+          await recordCommerceJourney("payment_verified", facts);
+          if (await store.paidBefore(paid)) await recordCommerceJourney("return", facts);
+        }
+      }
       return true;
     }
     if (event.type === "payment_intent.succeeded" && isOrderId(object.metadata?.sds_care_order)) return true;

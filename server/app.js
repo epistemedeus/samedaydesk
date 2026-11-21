@@ -29,6 +29,7 @@ import marketObservationsRouter from "./routes/market-observations.js";
 import observatoryRouter from "./routes/observatory.js";
 import { createX402QuoteRouter } from "./routes/x402-quote.js";
 import { pulseMiddleware } from "./lib/pulse.js";
+import { commerceVisit } from "./lib/commerce-journey.js";
 import { mountProductionClient } from "./lib/spa-client.js";
 import { mountCorrespondence } from "./lib/correspondence-mount.js";
 import { mountNeomorphicOpportunity } from "./lib/neomorphic-opportunity-mount.js";
@@ -125,6 +126,7 @@ app.use(express.json({ limit: "1mb" }));
 // 2b) In-memory, no-PII traffic analytics (records page/content GETs). Must run
 //     before the routers so it sees every request, including /scan and the SPA.
 app.use(pulseMiddleware);
+app.use(commerceVisit);
 
 // 3) API routes.
 app.use("/api", healthRouter);

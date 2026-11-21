@@ -29,7 +29,7 @@ export function createCareRouter(care, clock = Date.now) {
       byIp.set(req.ip, limit);
     }
     if (++limit.count > 12) throw new CareError(429, "Please try again in a minute.");
-    return care.start(req.body?.offer, req.body?.order);
+    return care.start(req.body?.offer, req.body?.order, req.journeySession);
   }));
   router.post("/receipt", route((req) => care.read(req.body?.order, req.body?.key)));
   router.post("/intake", route((req) => care.submit(req.body?.order, req.body?.key, req.body?.intake)));

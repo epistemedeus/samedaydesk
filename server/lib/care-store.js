@@ -43,16 +43,19 @@ export function createCareStore(pool) {
     order,
     bySubscription: (id) => first(pool.query("select * from public.care_orders where subscription_id = $1", [id])),
     byPayment: (id) => first(pool.query("select * from public.care_orders where payment_intent_id = $1", [id])),
+    paidBefore: (row) => first(pool.query(`select id from public.care_orders
+      where stripe_email = $1 and id <> $2 and received_at <= $3 limit 1`,
+    [row.stripe_email, row.id, row.received_at])),
     close: () => pool.end(),
     quotes: createTaskQuoteStore(pool, txn),
     taskRequests: { insert: (request) => first(pool.query(`insert into public.task_requests(email,website,task)
       values ($1,$2,$3) returning *`, [request.email, request.website, request.task])) },
 
-    async reserve({ id, offer, cents, live, expires, origin, integrationId }) {
+    async reserve({ id, offer, cents, live, expires, origin, integrationId, journeySession }) {
       await pool.query(`insert into public.care_orders
-        (id, offer, amount_cents, live_mode, checkout_expires_at, checkout_origin, integration_id)
-        values ($1,$2,$3,$4,$5,$6,$7) on conflict (id) do nothing`,
-      [id, offer, cents, live, expires, origin, integrationId]);
+        (id, offer, amount_cents, live_mode, checkout_expires_at, checkout_origin, integration_id, journey_session)
+        values ($1,$2,$3,$4,$5,$6,$7,$8) on conflict (id) do nothing`,
+      [id, offer, cents, live, expires, origin, integrationId, journeySession || id]);
       const row = await order(id);
       if (!row || row.offer !== offer || row.amount_cents !== cents || row.live_mode !== live || row.checkout_origin !== origin) throw conflict();
       return row;

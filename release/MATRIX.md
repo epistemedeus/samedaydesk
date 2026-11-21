@@ -72,6 +72,16 @@ Commands: `npm run release:check`, `npm run release:sweep -- --cheap|--key`, `np
 
 ## D, E, F, G
 
+F4 uses migration `0011_commerce_journey.sql`: the five commerce events are persisted in
+`public.journey_events`, separate from the diagnostic UI counters. Production uses the existing
+server Supabase client. A private preview writes only to its loopback Care database, and every row
+has `test=true`. Apply the migration to both stores before enabling the new checkout. The Care
+session column binds visits, checkout creation, verified webhook payments and accepted receipt mail;
+`return` means another paid order from the same verified buyer. Replays keep one row per event key.
+Run `bash scripts/release/care-preview-test.sh` for the real PostgreSQL receipt, including invalid
+signature rejection, mismatched-payment rejection and replay deduplication. A local mail outbox
+remains synthetic evidence; the external Resend and inbox proof is still required by C4.
+
 | Line | State at foundation | How to pass |
 | --- | --- | --- |
 | D accounts and data (15 §5 C) | route log export received earlier; recheck on the final head | see 15 §5 C |

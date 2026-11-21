@@ -1,4 +1,5 @@
 import { CARE_OFFERS, careLink } from "./care-contract.js";
+import { recordCommerceJourney } from "./commerce-journey.js";
 
 const day = (value) => new Date(value).toISOString().slice(0, 10);
 
@@ -41,6 +42,9 @@ export async function drainCareMail({ store, send, secret, from, replyTo, limit 
       const result = await send(message, { idempotencyKey: `sameday-care/${item.mail_key}` });
       if (result.error || !result.data?.id) throw new Error("Mail not confirmed");
       await store.acceptMail(item.mail_key, item.claim_id, result.data.id);
+      if (item.kind === "receipt") await recordCommerceJourney("receipt_sent", {
+        key: item.mail_key, orderId: order.id, sessionId: order.journey_session || order.id, live: order.live_mode,
+      });
       accepted++;
     } catch { deferred++; }
   }

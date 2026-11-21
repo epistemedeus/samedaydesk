@@ -51,7 +51,8 @@ export function careLink(order, secret, purpose = "intake") {
 export function checkoutArgs(order, secret, releaseRun = null) {
   const offer = CARE_OFFERS[order.offer];
   if (!offer || offer.cents !== order.amount_cents) throw new Error("Stored care offer changed");
-  const metadata = { sds_care_order: order.id, ...(releaseRun ? { release_run: releaseRun } : {}) };
+  const metadata = { sds_care_order: order.id, journey_session: order.journey_session || order.id,
+    ...(releaseRun ? { release_run: releaseRun } : {}) };
   return {
     mode: offer.mode,
     integration_identifier: order.integration_id,

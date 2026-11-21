@@ -51,7 +51,8 @@ export async function reportRequestError(state, env = process.env) {
     if (url.protocol !== "https:" && !(env.SDS_PRIVATE_PREVIEW === "1" && url.hostname === "127.0.0.1")) return { enabled: true, received: false };
     const response = await fetch(url, { method: "POST", redirect: "error", signal: AbortSignal.timeout(4000),
       headers: { "Content-Type": "application/json", ...(env.SDS_ERROR_TRACKER_TOKEN ? { Authorization: `Bearer ${env.SDS_ERROR_TRACKER_TOKEN}` } : {}) },
-      body: JSON.stringify({ ...row, service: "samedaydesk", schema: "samedaydesk.error.v1" }) });
+      body: JSON.stringify({ ...row, service: "samedaydesk", schema: "samedaydesk.error.v1",
+        environment: env.SDS_PRIVATE_PREVIEW === "1" ? "preview" : "production" }) });
     return { enabled: true, received: response.ok };
   } catch { return { enabled: true, received: false }; }
 }
