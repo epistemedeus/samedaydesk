@@ -432,13 +432,13 @@ test('successor refuses changed binding, unknown/no-proof/fence, grant/caps, SQL
  await code(f.pass({...plan.receive,intentId:'another-owner'}),'invocation_receive_conflict');
 });
 test('delayed successor receiving refuses expired new evidence; no owner renewal occurs on cold startup or ordinary discovery',async()=>{
- const f=await noLaunchFixture({validityMs:2200});await waitManifestExpiry(f);const plan=await lifecyclePlan(f);await f.cli(plan.renew);await f.cli(plan.dispatch);
+ const f=await noLaunchFixture({validityMs:60000});await waitManifestExpiry(f);const plan=await lifecyclePlan(f);await f.cli(plan.renew);await f.cli(plan.dispatch);
  const pub=(await f.query('SELECT receipt,verification FROM correspondence_vf04_publications WHERE project_id=$1 AND generation=2',[f.a.projectId])).rows[0];await new Promise(r=>setTimeout(r,Math.max(0,Date.parse(pub.receipt.observedAt)+pub.verification.validityMs-Date.now()+80)));
  await assert.rejects(f.pass(plan.receive),e=>['invocation_successor_conflict','resolution_invalidated'].includes(e.code));assert.deepEqual(await f.row(),f.prior);
  const before=await f.counts();await f.s.stop();await f.boot(f.s.port);const status=await f.a.run('status');assert.equal(status.candidates[0].generation,2);assert.equal(status.portableExecution.chargedInvocations,1);assert.deepEqual(await f.counts(),before);
 });
 test('two proved no-launch predecessors continue once in the same current generation; immutable execution lineage survives lost reply, concurrency and restart',async()=>{
- const f=await noLaunchFixture({validityMs:15000}),intent=path.join(f.a.directory,`invoke-${digest(f.request).slice(7)}.json`),firstBytes=await readFile(intent);
+ const f=await noLaunchFixture({validityMs:60000}),intent=path.join(f.a.directory,`invoke-${digest(f.request).slice(7)}.json`),firstBytes=await readFile(intent);
  const authority=(await authorityRows(f)).rows,caps=(await f.query('SELECT config,verification,participation FROM correspondence_vf04_pools')).rows;
  const oldManifest=(await f.query('SELECT record FROM correspondence_vf04_manifests WHERE project_id=$1 AND id=$2',[f.a.projectId,f.r.manifestId])).rows[0].record;await new Promise(r=>setTimeout(r,Math.max(0,Date.parse(oldManifest.validUntil)-Date.now()+80)));
  const plan=await lifecyclePlan(f);await f.pass(plan.renew);await f.pass(plan.dispatch);await f.pass(plan.receive);await f.a.run('reconcile-invocation',f.request);

@@ -54,7 +54,7 @@ for(const path of selected) {
    await page.keyboard.press('Tab');
    row.focus=await page.evaluate(()=>{
     const elements=[...document.querySelectorAll('a[href],button,input,textarea,select,summary,[tabindex="0"]')].filter(e=>e.getClientRects().length&&!e.disabled&&e.tabIndex>=0);
-    return elements.map(e=>{e.focus();e.scrollIntoView({block:'center',inline:'nearest'});const s=getComputedStyle(e),r=e.getBoundingClientRect();const card=e.closest('[class*="card"]');const outer=card?getComputedStyle(card):null;
+    return elements.map(e=>{e.focus({preventScroll:true});const s=getComputedStyle(e),r=e.getBoundingClientRect();const card=e.closest('[class*="card"]');const outer=card?getComputedStyle(card):null;
       return {tag:e.tagName,label:(e.getAttribute('aria-label')||e.textContent||e.getAttribute('name')||'').trim().slice(0,80),id:e.id,tabIndex:e.tabIndex,focused:document.activeElement===e,outline:s.outlineStyle!=='none'&&parseFloat(s.outlineWidth)>0,shadow:s.boxShadow!=='none',outerFocus:Boolean(outer&&outer.outlineStyle!=='none'),visible:r.width>0&&r.height>0&&r.left>=-2&&r.right<=innerWidth+2,x:Math.round(r.x),y:Math.round(r.y)};});
    });
    await page.evaluate(()=>{document.activeElement?.blur();window.scrollTo(0,0);});
