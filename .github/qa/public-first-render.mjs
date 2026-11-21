@@ -33,7 +33,9 @@ try {
       const page = await ctx.newPage();
       const errors = [];
       page.on('pageerror', (error) => errors.push(error.message));
-      page.on('console', (msg) => { if (msg.type() === 'error' && /hydration|Minified React|initial page/.test(msg.text())) errors.push(msg.text()); });
+      page.on('console', (msg) => {
+        if (msg.type() === 'error' && /hydration|minified react|initial page|in html|cannot be (?:a child|a descendant)/i.test(msg.text())) errors.push(msg.text().slice(0, 4200));
+      });
       await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
       await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
       await page.evaluateOnNewDocument((theme) => {
