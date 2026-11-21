@@ -67,6 +67,17 @@ try {
       }
       focus.push(item);
     }
+    // Let the preceding native ArrowRight scroll finish before reversing direction.
+    await page.$eval('[class*="stripWindow"]', async pane => {
+      let prior = pane.scrollLeft, lastChange = performance.now();
+      const deadline = performance.now() + 3000;
+      while (performance.now() < deadline) {
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        if (pane.scrollLeft !== prior) { prior = pane.scrollLeft; lastChange = performance.now(); }
+        if (performance.now() - lastChange >= 160) return;
+      }
+      throw new Error('Native receipt scrolling did not settle');
+    });
     const before = await page.$eval('[class*="stripWindow"]', e => e.scrollLeft);
     assert.ok(before > 0);
     await page.keyboard.press('ArrowLeft');
