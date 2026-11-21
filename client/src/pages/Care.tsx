@@ -5,7 +5,7 @@ import styles from "./Care.module.css";
 import { journey } from "../lib/journey";
 
 type Receipt = {
-  title: string; state: string; receivedIntake: boolean; amountCents: number;
+  title: string; state: string; receivedIntake: boolean; amountCents: number; refundedCents?: number;
   subscription?: { cancelAtPeriodEnd: boolean; status: string };
 };
 const money = (cents: number) => `${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 2 })} USD`;
@@ -144,6 +144,8 @@ export function CareReceipt({ mode }: { mode: "intake" | "cancel" }) {
     {receipt?.state === "review" && <p>We are reviewing this order. Reply to your receipt if you need help.</p>}
     {receipt?.state === "paid" && <>
       <p>Paid: {money(receipt.amountCents)}{receipt.subscription ? " for the first month" : ""}.</p>
+      {/* A refunded month keeps the subscription; the refund still shows here. */}
+      {Boolean(receipt.refundedCents) && <p>Refunded: {money(receipt.refundedCents!)}.</p>}
       {receipt.subscription?.cancelAtPeriodEnd && <p>Your subscription will not renew.</p>}
       {receipt.receivedIntake && <p role="status">We received your workflow.</p>}
       {!receipt.receivedIntake && !message && <form className={styles.form} onSubmit={submit}>

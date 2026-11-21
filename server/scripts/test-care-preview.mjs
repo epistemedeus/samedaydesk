@@ -196,6 +196,10 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   assert.equal((await (await post("subscription", access(recurring, "cancel"))).json()).canceled, true);
   assert.equal((await (await post("receipt", access(recurring))).json()).subscription.cancelAtPeriodEnd, true);
   assert.equal((await event("charge.refunded", { ...refunded, customer: "cus_keep", payment_intent: "pi_next", amount_refunded: 10000 })).status, 200);
+  // A refunded month keeps the subscription paid; the buyer's receipt still shows the refund.
+  const afterRefund = await (await post("receipt", access(recurring))).json();
+  assert.equal(afterRefund.state, "paid");
+  assert.equal(afterRefund.refundedCents, 10000);
   const next = { ...invoice, id: "in_next", billing_reason: "subscription_cycle",
     lines: { data: [{ amount: 10000, period: { start: first + month, end: first + month * 2 } }] } };
   assert.equal((await event("invoice.paid", next)).status, 200);

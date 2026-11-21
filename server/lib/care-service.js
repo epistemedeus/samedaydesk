@@ -107,7 +107,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     }
     return {
       offer: order.offer, title: CARE_OFFERS[order.offer].title, amountCents: order.amount_cents,
-      state: order.state, receivedIntake: Boolean(order.intake),
+      state: order.state, receivedIntake: Boolean(order.intake), refundedCents: order.refunded_cents ?? 0,
       ...(order.offer === "keep_it_working" && order.state === "paid"
         ? { subscription: { cancelAtPeriodEnd: order.cancel_at_period_end, status: order.subscription_status || "active" } }
         : {}),
