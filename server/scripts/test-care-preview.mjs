@@ -371,9 +371,9 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   await assert.rejects(() => care.recordHosted(hostedSession, { ...hostedIntent, status: "processing" }), { status: 409 });
   assert.equal((await care.recordHosted(hostedSession, hostedIntent)).isNew, true);
   assert.equal((await care.recordHosted(hostedSession, hostedIntent)).isNew, false);
-  assert.equal((await db.query("select count(*)::int as n from hosted_orders where payment_intent_id='pi_hosted'")).rows[0].n, 1);
+  assert.equal((await db.query(`select count(*)::int as n from ${careTable("hosted_orders")} where payment_intent_id='pi_hosted'`)).rows[0].n, 1);
   assert.equal(await store.hostedRefund("pi_hosted", 49000, true), true);
-  assert.equal((await db.query("select state from hosted_orders where payment_intent_id='pi_hosted'")).rows[0].state, "refunded");
+  assert.equal((await db.query(`select state from ${careTable("hosted_orders")} where payment_intent_id='pi_hosted'`)).rows[0].state, "refunded");
   stripe.charges = { async retrieve(id) {
     assert.equal(id, "ch_hosted");
     return { livemode: false, payment_intent: "pi_hosted", refunded: true, amount_refunded: 49000 };

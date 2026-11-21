@@ -51,8 +51,8 @@
     "server/lib/care-mail.js": "547248215996599e737f3b01991891ea994e7c3b098f1f2466e1e620e6397696",
     "server/lib/care-sentinel.js": "95694a6f738e209bd0a32608780e29f41669660a2bfa90471c55434c68e64baa",
     "server/lib/care-service.js": "648bea9831c854c0827bafe3914c5550a0053c07439a11c644ba9aed81e2ad1c",
-    "server/lib/care-store.js": "ce80c06a4c1472b9fee7afd2305e02287fb247a37fb516c48d3d9a5fe356039d",
-    "server/lib/commerce-journey.js": "088e422e6114c41f8e66f0e811820fc0dd9eb71395d98fd9104025892c096279",
+    "server/lib/care-store.js": "08a1f5f1531212b9a0df929546d57e9b71f7643e6f49dd23dda41f5150f408dd",
+    "server/lib/commerce-journey.js": "0b9482ec930baaf24c2db92fdc8b5b3527e3a24dbd251c3e7bca9490b46b7723",
     "server/lib/contributor-artifact.js": "72657728eab3b9bab0dfffccb2561dbea5fc3d9cbb886ce84ed83890ff1edc3c",
     "server/lib/contributor-desk-assets.js": "67b379f429ac7223b3e8b2fc923da367ed7b48ebd158552e117885c117c73da5",
     "server/lib/contributor-environment-packet.js": "07ca0bfd8bfcbb3c4ef0b3ee5f780274ac6e3f4c34392031ab583ad411ff8214",
@@ -198,7 +198,7 @@
     "server/lib/machine-services/test/qa-journey-packet.test.mjs": "4f0b5b89710fe7aebbe66f5ea47b0549101e45a87ead7fc5875697bf42af4217",
     "server/lib/machine-services/test/run.mjs": "a0c9e92bd0a83efcf5e2b7261d8d5cbe0085a0ed67c9bb7b035b428a44c9999b",
     "server/lib/machine-services/test/url-extract.test.mjs": "77805ad7dc5feea6f4de0878c93deb9124c280cbae5ffab65411f7ea5ff110f5",
-    "server/lib/mail-events.js": "c9c2bcfdfddc637de5b73b9b615f0fb334a344c5cf66bcc2dc2f6f453684a6ca",
+    "server/lib/mail-events.js": "f2844851a3548cbc9391dbda0d15caf0fb5587a6a3195f9b1aa291457d5986bc",
     "server/lib/managed-watch/claim.mjs": "bc706b232c49c8704bc8be47234dfff79077d4cf659bd1d1a33779b9f80a2041",
     "server/lib/managed-watch/client.mjs": "e2fe0994ecc72968e8b26932c76a2ef782d29234a1fc8513534a6d7ca9cb0b58",
     "server/lib/managed-watch/direct-alternative.mjs": "fb51b9d3cbe38bd1e61f036b0b9faa868499a7e14f10903982871e2bd4595373",
@@ -255,8 +255,8 @@
     "server/lib/start-guide.js": "e8a1ca5ecd67ca95ddb93526a36c5d281d7ceef7baa029b0dbedf61f05201d62",
     "server/lib/start-guide.md": "bbdd8c0b945d7ec1364b27a975590d43b2f408dec55bf71be96b8ae123b3fbe2",
     "server/lib/stripe.js": "74207f33563ca044c1531d93a36c7e9bbb8218c38f3f240c174f399b2e2ec368",
-    "server/lib/task-quotes.js": "199a2f351e9e95a292e234009ca762969c71d327b9f88e0e3d4b00d57f9daea9",
-    "server/lib/task-requests.js": "54e0350c310639bd9292e1fd6d42d1b57f76df209eca8f5ff9ff44a29d2afc17",
+    "server/lib/task-quotes.js": "0e9a8bec58a1a1afe041e683b1bfe36200ae3c0dfe902d893359586d0cbd35a6",
+    "server/lib/task-requests.js": "3d2ca302b0d17be35876f08fb50ae7771479877d04635375e85a4aed5f3dd873",
     "server/lib/taskmarket-networks.js": "3ea4537e72b61d6acdfcd43fdc61db0f3466a92692a425c57520aa99d16379c7",
     "server/lib/taskmarket.js": "852086cc7a515f7a213903da69529b7d1c2bb181647d13ede9a35e2cf9584311",
     "server/routes/agent-readiness.js": "de888e34d7f68ddbf099cfd5021b850ee9e725f425a9375377af497c5216e312",
@@ -271,7 +271,7 @@
     "server/routes/x402-quote.js": "11caf4fa157443aa171e567a5308dea21e64b161c178300d3c0eb4259be97903",
     "server/scripts/fixtures/hosted-synthetic-upload-100511.json": "b2956cd3f1c2f4bd2b551d216f7aa2b9a627280f8077b00d13756a26e448664a",
     "server/scripts/qualify-contributor-https-edge.mjs": "9068044c60b26037ab346468da68663ca4013bd49b76f47a5ca7ece194e3d16b",
-    "server/scripts/refresh-installed-receiving-source.mjs": "8fbda5723e31253abbe1040030603aa033a1ef52f6a232d03e2b3391ef9cbd85",
+    "server/scripts/refresh-installed-receiving-source.mjs": "88077e167479c7f74108a9d3787677e2289d51a0703f3e48b5439c4ab8eea0f6",
     "server/scripts/resolve-contributor-source.mjs": "303ccf41a660340836a8667ec0764797169ee06713fd51124f0e2be12ff0bd72",
     "server/scripts/test-neomorphic-opportunity-isolation.mjs": "b5e127fdc90906391d491f82681ff40a7d52ae0e027f96c9017163ea4e2fb546",
     "server/scripts/verify-contributor-install.mjs": "ef7926f8a1b00ad71ae374b2726c51a4f711a420bab12086674f9db9e84bd139",
@@ -1521,7 +1521,8 @@
     "vendor/visitor-foundry-receiver/services/correspondence/src/visitor-work-cells/store.ts": "2e0730d1a3c1de1ca1f7e5d40303822912905fbd0e90000b5599717e5891b3a8",
     "vendor/visitor-foundry-receiver/services/correspondence/tsconfig.json": "4c2928d371fa19546ccc4b1dcef7b5109429bb493d1efc3c4a81c05fe2d70b26",
     "server/lib/query-key-discovery.mjs": "0635b0e6ad89de2b6506fc080d45f403802402f5a1e30efae143de56dc299957",
-    "supabase/migrations/0016_hosted_orders.sql": "e38d95bd4270397382834c1a5fa06dc34a05fda7b59e711fe9aa3f0f9343c1bf"
+    "supabase/migrations/0016_hosted_orders.sql": "e38d95bd4270397382834c1a5fa06dc34a05fda7b59e711fe9aa3f0f9343c1bf",
+    "server/lib/care-database.js": "c36fb812abbeffa9a1876093c2ed8fe5ea93799135b3dbf1b7a65ac814d5adb3"
   },
   "receivedCallerClosures": [
     {
@@ -1783,6 +1784,11 @@
       "base": "cb2ed2910a0ee3124d68b5e7a1009eb8029a9bc9",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:b4748ea095269042e66ae7e1c8401561971bd25dd640e668c5573c0225abc7ca"
+    },
+    {
+      "base": "a07ebe475d439f258cafd4ce40ed326415eab199",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:d89ac17207e551a733d5301ff5cc98b3bea832be8ffb2082a26892b825127239"
     }
   ]
 }
