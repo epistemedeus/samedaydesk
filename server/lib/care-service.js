@@ -5,6 +5,7 @@ import {
 } from "./care-contract.js";
 import { openCareStore } from "./care-store.js";
 import { createTaskQuoteService } from "./task-quotes.js";
+import { recordJourney } from "./journey-events.js";
 
 const HOUR = 3600_000;
 const email = (value) => typeof value === "string" && value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? value : null;
@@ -109,6 +110,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
   async function submit(id, key, body) {
     await byCapability(id, key, "intake");
     await store.intake(id, readCareIntake(body));
+    recordJourney("form_received", { path: "/care/intake", state: "intake" }, "server");
     return { received: true };
   }
 

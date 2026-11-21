@@ -108,7 +108,10 @@ export function CareReceipt({ mode }: { mode: "intake" | "cancel" }) {
         setMessage("We received your workflow. Keep this receipt for your records.");
       } else if (data.canceled) setMessage("Your subscription will not renew.");
       else redirect(data.url, "billing.stripe.com");
-    } catch (e) { setError(e instanceof Error ? e.message : "Please try again."); }
+    } catch (e) {
+      if (action === "intake") journey("form_failed", { state: "intake" });
+      setError(e instanceof Error ? e.message : "Please try again.");
+    }
     finally { setBusy(false); }
   }
   useEffect(() => {
