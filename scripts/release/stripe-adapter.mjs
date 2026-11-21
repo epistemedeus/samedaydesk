@@ -17,7 +17,7 @@ async function prepareQuote(ctx) {
   const response = await fetch(ctx.preview + "/api/requests", { method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({ email: ctx.buyerEmail, task: "Verify the release client's documented tool-list workflow." }) });
   if (response.status !== 201) throw new Error("The real task request was not accepted");
-  const requestId = psql(`select id from task_requests where email='${ctx.buyerEmail}' order by created_at desc limit 1`);
+  const requestId = psql(`select id from task_requests where email='${ctx.buyerEmail.toLowerCase()}' order by created_at desc limit 1`);
   const { openCareStore } = await import(pathToFileURL(join(ctx.root, "server/lib/care-store.js")).href);
   const { createTaskQuoteService } = await import(pathToFileURL(join(ctx.root, "server/lib/task-quotes.js")).href);
   const { default: Stripe } = await import("stripe");
