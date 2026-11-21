@@ -33,6 +33,16 @@ The SameDayDesk 490 USD report button redirects to the existing Stripe link cont
 
 ## Receipts refresh
 
+The build also writes anonymous first-render documents under
+`client/dist/route-shells/.public-first-render`. Keep that generated directory in
+the same deployment as its assets. The server selects only known public paths;
+account, receipt capability and arbitrary query views keep their normal shell.
+After the merge, receive the first-render marker on `/`, `/for-agents` and `/x402`,
+then verify heading continuity, both theme controls, receipt keyboard scrolling
+and mobile Lighthouse. Do not count an empty-shell fallback as the new build.
+The roll must remain still outside the viewport and resume when visible.
+Retain the generated pages and runtime together in the slice revert below.
+
 Enable the existing application's private `SDS_RECEIPTS_SNAPSHOT_PATH`, an absolute persistent path outside the webroot. The path's parent must be writable by the scheduled writer and readable by the web process. Use the scheduled runner already available on the current hosting account. Confirm `BASE_RPC` serves finalized Base data and old log ranges before starting. Set `RECEIPTS_PRIVATE_EXPORT` to the most recent qualified restricted route and payer projection. Old proof files and the bundled snapshot stay as a fallback.
 
 The single writer executes from the verified release checkout:
