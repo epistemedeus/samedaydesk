@@ -123,7 +123,7 @@
           "fixture": "no session: shows the sign-in step"
         }
       ],
-      "note": "Signed-in states need a test Supabase session; no fixture exists yet (lane: add one)."
+      "note": "Signed-in states use the separate isolated GoTrue and PostgREST preview with .github/qa/account-actions.mjs; actual Payment Element acceptance uses scripts/release/account-matrix.mjs."
     },
     {
       "name": "not-found",

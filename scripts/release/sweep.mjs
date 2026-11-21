@@ -331,7 +331,7 @@ async function key() {
         const r = await loadAndInspect(browser, t.path, { width, height: width === 390 ? 844 : 900, theme });
         const geo = await r.page.evaluate(() => ({ sideways: document.documentElement.scrollWidth > window.innerWidth + 1, scrollWidth: document.documentElement.scrollWidth }));
         const file = join(dir, `${width}-${theme}.png`);
-        await r.page.screenshot({ path: file, fullPage: true }).catch(() => {});
+        await r.page.screenshot({ path: file, fullPage: true });
         row.captures.push({ width, theme, appliedTheme: r.appliedTheme, file: file.slice(root.length + 1), status: r.status, sideways: geo.sideways, axe: r.violations, consoleErrors: r.consoleErrors });
         if (geo.sideways) row.problems.push(`sideways scroll at ${width} ${theme} (${geo.scrollWidth}px)`);
         for (const v of r.violations) row.problems.push(`axe ${v.impact} ${v.id} at ${width} ${theme}`);
@@ -347,14 +347,14 @@ async function key() {
       for (const b of buttons.slice(0, 40)) {
         const visible = await b.evaluate((el) => { const s = getComputedStyle(el); const rect = el.getBoundingClientRect(); return s.visibility !== "hidden" && s.display !== "none" && rect.width > 0 && rect.height > 0 && !el.closest("form[action]"); }).catch(() => false);
         if (!visible) continue;
-        await b.click({ delay: 10 }).catch(() => {});
+        await b.click({ delay: 10 });
         pressed++;
         await sleep(150);
-        if (r.page.url() !== pageUrl) { await r.page.goto(pageUrl, { waitUntil: "networkidle2" }).catch(() => {}); break; }
+        if (r.page.url() !== pageUrl) { await r.page.goto(pageUrl, { waitUntil: "networkidle2" }); break; }
       }
       row.actions = { pressed, consoleErrors: r.consoleErrors.slice(before) };
       for (const c of row.actions.consoleErrors) row.problems.push(`console after an action: ${c}`);
-      await r.page.goto(pageUrl, { waitUntil: "networkidle2" }).catch(() => {});
+      await r.page.goto(pageUrl, { waitUntil: "networkidle2" });
       const focus = [];
       for (let i = 0; i < 60; i++) {
         await r.page.keyboard.press("Tab");
@@ -371,7 +371,7 @@ async function key() {
       row.keyboard = { stops: focus.length, withoutVisibleFocus: focus.filter((f) => !f.visible).map((f) => `${f.tag} ${f.label}`) };
       for (const f of row.keyboard.withoutVisibleFocus) row.problems.push(`no visible focus: ${f}`);
       await r.page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
-      await r.page.reload({ waitUntil: "networkidle2" }).catch(() => {});
+      await r.page.reload({ waitUntil: "networkidle2" });
       row.motion = await r.page.evaluate(() => document.getAnimations().filter((a) => a.playState === "running").map((a) => { const t = a.effect?.getTiming?.() ?? {}; return { name: a.animationName ?? a.constructor.name, duration: t.duration, iterations: t.iterations }; }).filter((a) => a.iterations === Infinity || (Number(a.duration) * Number(a.iterations || 1)) > 5000));
       for (const m of row.motion) row.problems.push(`motion over five seconds still running under reduced motion: ${m.name}`);
       await r.page.close();

@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "9566334b3661a69bfb15d3ff22d98c47b54c0f57",
+  "base": "cb2ed2910a0ee3124d68b5e7a1009eb8029a9bc9",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
@@ -220,7 +220,7 @@
     "server/lib/neomorphic-contributor-journey-mount.js": "799fe5d4d0fbcd62a80f23bd053902b236b63d6f3eee61bd501c4b2a08731157",
     "server/lib/neomorphic-opportunity-mount.js": "ae97f69cbe092cc06cc846abd32bf2cf79e803ec0502abb0582bbca64d4c5043",
     "server/lib/neomorphic-original-continuation-mount.js": "0eb6aad1436563ac0a1f61f6792b797055e84fbb386c35472bb01746f479c210",
-    "server/lib/notify.js": "21b3106d48456fe1cabac6f01d238e30656a76e394af2e128a0dbbc8ed577c7c",
+    "server/lib/notify.js": "5d3c5a28008100cf6ac6e90d13cac26c01b793cb44d46d48ff308c00697d0cff",
     "server/lib/observatory/adapters/smithery-mcp.js": "acf4cfa34a48dbaf58293a3256ac5a4f6e403670602217ded3216b833284786f",
     "server/lib/observatory/contract.js": "a0aa9ae5eca5235f10dd7376b619ba4fd6cbb14a64cee5763a084b37b488031c",
     "server/lib/observatory/convergence.js": "543fcdbea47e3e43c1434ede8e6300d69c23727f2c9184f943f24531e957771d",
@@ -1773,6 +1773,11 @@
       "base": "4cf1a35ebe3fb99f6dec34cba9ab646a624067fe",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:25b5bb0fa7ef1d5c8ca4b070e174e0a13f756225bee9e17aa6120e648222570c"
+    },
+    {
+      "base": "9566334b3661a69bfb15d3ff22d98c47b54c0f57",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:503308e0272b473a31af7b8d9af1799032d83dc185c41bcc15d84b9afcbcd5aa"
     }
   ]
 }
