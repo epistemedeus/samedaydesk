@@ -258,6 +258,10 @@ async function lighthouseMedian(path) {
   while (runs.filter((r) => r.valid).length < 5 && attempts < 9) {
     attempts++;
     const load = await waitIdle(idleWait);
+    if (!load.idle) {
+      runs.push({ attempt: attempts, load, valid: false, invalidBecause: "load average was 1 or more; Lighthouse was not started" });
+      break;
+    }
     const browser = await puppeteer.launch({ executablePath: chrome, headless: true, args: ["--disable-dev-shm-usage", "--no-first-run"] });
     try {
       const port = new URL(browser.wsEndpoint()).port;
