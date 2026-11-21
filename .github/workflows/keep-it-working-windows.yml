@@ -6,7 +6,13 @@ run-name: Keep it working ${{ inputs.receipt || 'release check' }}
 # read-only tool on a sample folder. The plain-words report is the run's artifact. It reads and
 # runs only: no issue, comment or message is posted anywhere.
 on:
-  # One explicit final run through the approved no-spend route.
+  # The final qualified Sentinel push starts the one release matrix. The manual
+  # route remains available for paid periods after this workflow reaches main.
+  push:
+    branches: [keep-it-working/windows-release-check]
+    paths:
+      - 'tools/keep-it-working/windows/**'
+      - '.github/workflows/keep-it-working-windows.yml'
   workflow_dispatch:
     inputs:
       receipt:
