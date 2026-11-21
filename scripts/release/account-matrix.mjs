@@ -3,7 +3,7 @@ import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';import {createRequi
 const root=fileURLToPath(new URL('../../',import.meta.url)).replace(/\/$/,'');
 const base=process.env.SDS_ACCOUNT_PREVIEW_DIR;if(!base)throw Error('SDS_ACCOUNT_PREVIEW_DIR must name the isolated local Auth preview');
 const cfg=JSON.parse(readFileSync(base+'/config.private.json')),run=JSON.parse(readFileSync(base+'/provider-run.json'));
-const require=createRequire(root+'/scripts/release/tools/package.json'),puppeteer=require('puppeteer-core');
+const require=createRequire(execFileSync(process.execPath,[root+'/scripts/release/kit.mjs','path'],{encoding:'utf8'}).trim()+'/package.json'),puppeteer=require('puppeteer-core');
 const key=readFileSync(process.env.STRIPE_TEST_KEY_FILE,'utf8').trim();if(!/^(sk|rk)_test_/.test(key))throw Error('test key required');
 if(!/^http:\/\/127\.0\.0\.1:\d+$/.test(run.origin)||!/^http:\/\/127\.0\.0\.1:\d+$/.test(cfg.SUPABASE_URL)||new URL(cfg.SDS_LOCAL_DATABASE_URL).hostname!=='127.0.0.1')throw Error('Only isolated loopback previews are allowed');
 if(execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim()!==run.source||execFileSync('git',['status','--porcelain','--untracked-files=no'],{cwd:root,encoding:'utf8'}).trim())throw Error('Commit and start the exact clean preview source before provider tests');

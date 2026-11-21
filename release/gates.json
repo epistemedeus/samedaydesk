@@ -8,6 +8,6 @@
     { "name": "care-preview", "run": "bash scripts/release/care-preview-test.sh" },
     { "name": "copy", "run": "npm run check:copy" },
     { "name": "keep-list", "run": "npm run test:keep-list" },
-    { "name": "links", "run": "node scripts/release/sweep.mjs --cheap --no-build", "timeoutMinutes": 30 }
+    { "name": "links", "run": "node scripts/release/kit.mjs sweep --cheap --no-build", "timeoutMinutes": 30 }
   ]
 }

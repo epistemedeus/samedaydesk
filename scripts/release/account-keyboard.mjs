@@ -23,7 +23,8 @@ const health = await fetch(`${origin}/api/health`);
 assert.equal(health.headers.get("x-sds-private-source"), source, "preview must name this candidate");
 const out = process.env.SDS_ACCOUNT_OUT || join(root, "release/out/account-keyboard");
 await mkdir(out, { recursive: true });
-const req = createRequire(join(root, "scripts/release/tools/package.json"));
+// The shared release kit holds the pinned browser tools.
+const req = createRequire(join(execFileSync(process.execPath, [join(root, "scripts/release/kit.mjs"), "path"], { encoding: "utf8" }).trim(), "package.json"));
 const puppeteer = req("puppeteer-core");
 const email = `keyboard-${randomUUID()}@example.test`, password = `${randomUUID()}Aa9!`;
 const signup = await fetch(`${config.VITE_SUPABASE_URL}/auth/v1/signup`, {

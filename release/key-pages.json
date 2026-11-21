@@ -5,7 +5,6 @@
   "preview": {
     "build": "npm run build",
     "start": "node server/index.js",
-    "port": 31881,
     "ready": "/api/health",
     "env": {
       "NODE_ENV": "production",
@@ -13,7 +12,8 @@
       "SDS_PREVIEW_MAIL_OUTBOX": "{out}/preview-outbox.jsonl",
       "ADMIN_EMAIL": "desk@example.test",
       "SDS_RECEIPTS_SNAPSHOT_PATH": "{out}/receipt-snapshot.json"
-    }
+    },
+    "sourceHeader": "x-sds-private-source"
   },
   "sitemaps": [
     "/sitemap.xml"
@@ -94,7 +94,8 @@
       "name": "care-subscription",
       "path": "/care/subscription",
       "why": "cancel the monthly subscription",
-      "lighthouse": false
+      "lighthouse": false,
+      "fixtureName": "manage-renewal"
     },
     {
       "name": "checkout",

@@ -53,4 +53,3 @@ client/tmp/
 
 # Release harness output and its browser tools
 release/out/
-scripts/release/tools/node_modules/

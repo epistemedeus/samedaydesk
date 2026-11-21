@@ -4,6 +4,7 @@
   "stripeVersion": "2026-11-18.endive",
   "port": 31871,
   "webhookPath": "/api/stripe/webhook",
+  "receiptInbox": "contact@samedaydesk.com",
   "events": [
     "checkout.session.completed",
     "checkout.session.async_payment_succeeded",
