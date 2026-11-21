@@ -25,3 +25,5 @@ html.dark #sourcey .godoc-field-sig,
 html.dark #sourcey .godoc-field-type,
 html.dark #sourcey .godoc-field-doc,
 html.dark #sourcey .godoc-fields > summary { color: #c4c7cf; }
+/* The existing copy control has its own toolbar space above generated text. */
+.out > pre { padding-top: 3.5rem; }
