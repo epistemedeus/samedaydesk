@@ -13,16 +13,19 @@ router.get("/journey", (req, res) => {
   res.set("Cache-Control", "no-store").json(journeySnapshot());
 });
 const limits = new Map();
-router.post("/journey", (req, res) => {
+function boundedSignal(req, res, next) {
   const now = Date.now();
   for (const [key, row] of limits) if (row.until < now) limits.delete(key);
   const row = limits.get(req.ip) || { until: now + 60_000, count: 0 };
   if (limits.size >= 1024 && !limits.has(req.ip) || ++row.count > 180) return res.status(429).end();
   limits.set(req.ip, row);
+  next();
+}
+router.post("/journey", boundedSignal, (req, res) => {
   if (!recordJourney(req.body?.event, req.body?.props)) return res.status(400).json({ error: "Unsupported event" });
   res.status(204).end();
 });
-router.post("/error", (req, res) => {
+router.post("/error", boundedSignal, (req, res) => {
   // Fixed code only: never forward an exception, browser URL or request body.
   if (req.body?.code !== "browser_runtime") return res.status(400).end();
   void reportRequestError("browser_runtime");

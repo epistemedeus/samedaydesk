@@ -223,8 +223,8 @@ function checkPage(spec, probe, viewport, failures) {
     if (probe.signinDisplay !== "none") {
       addFailure(failures, spec.id, `mobile .signin display ${probe.signinDisplay}, expected none`);
     }
-    if (viewport.width <= 460 && probe.wordDisplay && probe.wordDisplay !== "none") {
-      addFailure(failures, spec.id, `mobile .word display ${probe.wordDisplay}, expected none at <=460px`);
+    if (viewport.width <= 460 && probe.wordDisplay === "none") {
+      addFailure(failures, spec.id, "the brand name must stay visible on phones");
     }
     if (probe.preOverflowX && probe.preOverflowX !== "auto" && probe.preOverflowX !== "scroll") {
       addFailure(failures, spec.id, `pre overflow-x ${probe.preOverflowX}, expected auto`);

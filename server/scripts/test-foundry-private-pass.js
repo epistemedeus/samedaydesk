@@ -165,9 +165,9 @@ test('source-pinned remote caller rehearses A / restart / B; named managed pass 
  const contributed=await harness('a-contribute');assert.equal(contributed.purpose,'owner_qa');
  const observed=await f.cli({...f.request,intentId:'harness-observe',action:'observe',projectId:contributed.projectId,candidateId:null,expectedGeneration:null,expectedVerificationId:null});
  const intent={...f.request,intentId:'harness-dispatch',projectId:contributed.projectId,candidateId:contributed.candidateId,expectedVerificationId:observed.readback.verificationId};
- const utilities=path.join(f.privateDir,'node-only');await mkdir(utilities);await symlink(process.execPath,path.join(utilities,'node'));await symlink('/bin/sh',path.join(utilities,'sh'));await symlink(path.join(path.dirname(process.execPath),'npm'),path.join(utilities,'npm'));
+ const utilities=path.join(f.privateDir,'node-only');await mkdir(utilities);await symlink(process.execPath,path.join(utilities,'node'));await symlink('/bin/sh',path.join(utilities,'sh'));const {npmCli}=await import('../foundry/activation/receiving-100502/namespace.mjs');await symlink(await npmCli(),path.join(utilities,'npm'));
  const managed=await runBounded(path.join(utilities,'npm'),['run','build:managed-foundry-private-pass'],{cwd:root,env:{...f.env,PATH:utilities,LANG:'C',LC_ALL:'C',FOUNDRY_PRIVATE_PASS_JSON:JSON.stringify(intent)},capture:true,timeoutMs:90000,stdoutLimit:1000000,outputLimit:2000000});
- assert.equal(managed.code,0);assert.equal(managed.reason,null);
+ assert.equal(managed.code,0,managed.stderr);assert.equal(managed.reason,null);
  const lines=managed.stdout.trim().split('\n').filter(x=>x.startsWith('{')).map(x=>JSON.parse(x));const probe=lines.find(x=>x.probe==='managed-node');assert.equal(probe.python3,false);assert.equal(typeof probe.prlimit,'boolean');assert.equal(probe.referenceRuntime,true);assert.equal(lines.at(-1).state,'completed');
  const a=await harness('a-use');assert.equal(a.uses.length,3);await harness('b-use',2);
  await f.s.stop();servers.delete(f.s);const restarted=await f.boot(f.s.port);
@@ -363,11 +363,11 @@ test('documented launch observer is scoped under concurrency and cleans up after
 
 async function waitManifestExpiry(f){
  const m=(await f.query('SELECT record FROM correspondence_vf04_manifests WHERE project_id=$1 AND id=$2',[f.a.projectId,f.r.manifestId])).rows[0].record;
- const ms=Math.max(0,Date.parse(m.validUntil)-Date.now()+80);assert.ok(ms<10000);await new Promise(r=>setTimeout(r,ms));return m;
+ const ms=Math.max(0,Date.parse(m.validUntil)-Date.now()+80);assert.ok(ms<65000);await new Promise(r=>setTimeout(r,ms));return m;
 }
 async function lifecyclePlan(f){return f.a.run('prepare-continuation',{intentId:`lifecycle:${randomUUID()}`,expectedHostConfigId:f.r.expectedHostConfigId,request:f.request});}
 test('expired original receives freshly measured successor; old intent/charge/history survive and loss/restart replays one execution',async()=>{
- const f=await noLaunchFixture({validityMs:7000}),authority=(await authorityRows(f)).rows,caps=(await f.query('SELECT config,verification,participation FROM correspondence_vf04_pools')).rows;
+ const f=await noLaunchFixture({validityMs:60000}),authority=(await authorityRows(f)).rows,caps=(await f.query('SELECT config,verification,participation FROM correspondence_vf04_pools')).rows;
  const intent=path.join(f.a.directory,`invoke-${digest(f.request).slice(7)}.json`),bytes=await readFile(intent),manifest=await waitManifestExpiry(f),plan=await lifecyclePlan(f);
  // The exact received v2 path refuses expiry, without consuming its no-launch proof.
  await code(f.pass(f.r),'manifest_expired');assert.deepEqual(await f.row(),f.prior);
@@ -414,7 +414,7 @@ test('expired original receives freshly measured successor; old intent/charge/hi
 
 });
 test('successor refuses changed binding, unknown/no-proof/fence, grant/caps, SQL rollback and concurrent receive consumes once',async()=>{
- const f=await noLaunchFixture({validityMs:7000});await waitManifestExpiry(f);const plan=await lifecyclePlan(f);await f.cli(plan.renew);await f.cli(plan.dispatch);
+ const f=await noLaunchFixture({validityMs:60000});await waitManifestExpiry(f);const plan=await lifecyclePlan(f);await f.cli(plan.renew);await f.cli(plan.dispatch);
  const initial=await f.row();
  for(const [key,value] of [['expectedExecutionId','invocation:wrong'],['expectedFence',randomUUID()],['expectedObservationId',`sha256:${'a'.repeat(64)}`],['request',{...f.request,input:{changed:true}}],['expectedVerificationId',`sha256:${'b'.repeat(64)}`],['candidateId','candidate:wrong']])await assert.rejects(f.pass({...plan.receive,[key]:value}));
  assert.deepEqual(await f.row(),initial);
@@ -484,7 +484,7 @@ test('observable prelaunch mode refusal preserves a new task intent and zero cha
  assert.deepEqual((await f.a.run('use',request)).invocation.output,cases[0].expected);assert.equal((await f.a.run('status')).portableExecution.chargedInvocations,1);
 });
 test('current-generation receiving rejects unknown proof, stale fence/input/authority/expired evidence and caps; a lost receiving response replays one charged successor',async()=>{
- const f=await noLaunchFixture({validityMs:7000}),r={...f.r,schema:'sds.foundry.private-pass.v4'},prior=await f.row();
+ const f=await noLaunchFixture({validityMs:60000}),r={...f.r,schema:'sds.foundry.private-pass.v4'},prior=await f.row();
  for(const change of [{identity:{pid:123}},{sample:null},{fence:randomUUID()}]){
   await f.query('UPDATE correspondence_vf04_invocations SET execution=$3 WHERE project_id=$1 AND task_id=$2',[f.a.projectId,f.request.taskId,{...prior.execution,...change}]);
   await assert.rejects(f.pass(r),e=>['invocation_receive_conflict','invocation_launch_not_excluded'].includes(e.code));

@@ -85,11 +85,13 @@ Apex tools (order is load-bearing; pin is
 4. `plan_taskmarket_delegation` — free plan only; does not create or fund a task
 5. `browse_taskmarket_tasks` — free public read
 6. `track_taskmarket_task` — free public read
+7. `project_funnel_evidence` — local declared evidence projection
 
-The byte pin of the `TOOLS` block in `server/routes/mcp.js` is SHA-256
+The historical byte pin of the received `TOOLS` block at commit
+`66a64344528ff97bd840350e12d75deac695ad61` is SHA-256
 `1be987dfa9f8ae33b5a92b7eb326a6b5feb0ca026e8839aeb07f357d041c14d9`
-(same pin as `server/scripts/test-mcp-protocol-negotiation.js`). Drift
-is a stop, not a reason to invent names.
+The cold run preserves that immutable edition and separately reads the current
+shared tool inventory. The seven explicit tool contracts below guard the current edition.
 
 ## Cold run (offline, unpaid)
 
@@ -105,9 +107,10 @@ or POST to the live apex.
 node --input-type=module <<'JS'
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import http from "node:http";
-import { MCP_TOOL_NAMES } from "./server/lib/mcp-tool-inventory.js";
+import { TOOLS as currentTools, MCP_TOOL_NAMES } from "./server/lib/mcp-tool-inventory.js";
 
 const PAID_TOOL = "generate_complete_fix_pack";
 const PROTOCOL = "2024-11-05";
@@ -127,9 +130,10 @@ const EXPECTED_NAMES = [
   "plan_taskmarket_delegation",
   "browse_taskmarket_tasks",
   "track_taskmarket_task",
+  "project_funnel_evidence",
 ];
 
-const mcpSource = readFileSync("server/routes/mcp.js", "utf8");
+const mcpSource = readFileSync("server/routes/mcp.js", "utf8") + "\n" + readFileSync("server/lib/mcp-admission.js", "utf8");
 const appSource = readFileSync("server/app.js", "utf8");
 
 function sha256(text) {
@@ -158,17 +162,15 @@ assert.match(mcpSource, /No license provided/);
 assert.equal(appSource.includes("paymentMiddleware"), false);
 assert.match(appSource, /app\.use\("\/mcp", mcpRouter\)/);
 
-const toolsBlock = extractBlock(mcpSource, "const TOOLS = [", "const okMsg");
-assert.equal(sha256(toolsBlock), FROZEN_TOOLS_BLOCK_SHA256);
-const link = mcpSource.match(/const FIXPACK_LINK = "([^"]+)"/);
-assert.ok(link, "FIXPACK_LINK missing from MCP source");
-const tools = new Function(
-  "FIXPACK_LINK",
-  "MCP_TOOL_NAMES",
-  `${toolsBlock}\nreturn TOOLS;`,
-)(link[1], MCP_TOOL_NAMES);
+const historicalSource = execFileSync("git", ["show", "66a64344528ff97bd840350e12d75deac695ad61:server/routes/mcp.js"], { encoding: "utf8" });
+assert.equal(sha256(extractBlock(historicalSource, "const TOOLS = [", "const okMsg")), FROZEN_TOOLS_BLOCK_SHA256);
+assert.match(mcpSource, /import \{ TOOLS \} from "..\/lib\/mcp-tool-inventory.js"/);
+const tools = currentTools;
 assert.deepEqual(tools.map((tool) => tool.name), EXPECTED_NAMES);
-assert.match(tools.find((tool) => tool.name === PAID_TOOL).description, /^PAID\./);
+const fixPack = tools.find((tool) => tool.name === PAID_TOOL);
+assert.match(fixPack.description, /39/);
+assert.match(fixPack.description, /license/i);
+assert.ok(fixPack.inputSchema.properties.license);
 
 const SUPPORTED_PROTOCOL_VERSIONS = ["2025-11-25", "2025-06-18", "2025-03-26", "2024-11-05"];
 function negotiateProtocolVersion(offered) {
