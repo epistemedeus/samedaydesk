@@ -1025,7 +1025,7 @@ test("http enrollment after an idle arm runs one due and reports scheduler state
   const created = await request(port, "/api/managed-watch/enrollments", {
     method: "POST",
     token: TOKEN,
-    body: enrollment({ taskId: "idle-enroll" }),
+    body: enrollment({ taskId: "idle-enroll", expiresAt: new Date(Date.now() + 3600000).toISOString() }),
   });
   assert.equal(created.status, 201, JSON.stringify(created.json));
   const started = Date.now();
