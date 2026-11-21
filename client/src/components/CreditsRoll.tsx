@@ -27,7 +27,7 @@ export default function CreditsRoll() {
       box.scrollTop = offset.current;
       return () => { offset.current = box.scrollTop; box.scrollTop = 0; };
     }
-    let y = offset.current, v = SPEED, target = SPEED, last = 0, raf = 0, visible = false;
+    let y = offset.current, v = SPEED, target = SPEED, last = 0, raf = 0, visible = true;
     const tick = (t: number) => {
       const dt = last ? Math.min(0.05, (t - last) / 1000) : 0;
       last = t;
@@ -40,7 +40,7 @@ export default function CreditsRoll() {
       track.style.transform = `translate3d(0, ${-y}px, 0)`;
       raf = visible && !document.hidden ? requestAnimationFrame(tick) : 0;
     };
-    const run = () => { if (visible && !document.hidden && !raf) { last = 0; raf = requestAnimationFrame(tick); } };
+    const run = () => { if (!raf) { last = 0; raf = requestAnimationFrame(tick); } };
     const hold = () => { target = 0; };
     const go = () => { if (!box.contains(document.activeElement)) target = SPEED; };
     // Keyboard focus stops the roll and brings the focused entry into the middle of the screen.
@@ -62,8 +62,7 @@ export default function CreditsRoll() {
     seen.observe(box);
     const wake = () => { if (!document.hidden) run(); };
     document.addEventListener("visibilitychange", wake);
-    // Do not measure every receipt while the roll is still below the viewport.
-    // IntersectionObserver starts it when it is actually visible.
+    run();
     return () => {
       cancelAnimationFrame(raf);
       seen.disconnect();
