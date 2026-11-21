@@ -47,10 +47,11 @@ export function careLink(order, secret, purpose = "intake") {
   return `${order.checkout_origin}${path}#${new URLSearchParams({ order: order.id, key: careToken(secret, order.id, purpose) })}`;
 }
 
-export function checkoutArgs(order, secret) {
+// releaseRun tags a private preview's test session for the release harness (metadata.release_run).
+export function checkoutArgs(order, secret, releaseRun = null) {
   const offer = CARE_OFFERS[order.offer];
   if (!offer || offer.cents !== order.amount_cents) throw new Error("Stored care offer changed");
-  const metadata = { sds_care_order: order.id };
+  const metadata = { sds_care_order: order.id, ...(releaseRun ? { release_run: releaseRun } : {}) };
   return {
     mode: offer.mode,
     integration_identifier: order.integration_id,

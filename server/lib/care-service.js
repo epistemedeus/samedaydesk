@@ -5,6 +5,7 @@ import {
 } from "./care-contract.js";
 import { openCareStore } from "./care-store.js";
 import { createTaskQuoteService } from "./task-quotes.js";
+import { releaseRunOf } from "./release-run.js";
 
 const HOUR = 3600_000;
 const email = (value) => typeof value === "string" && value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? value : null;
@@ -31,10 +32,11 @@ export function configuredCareService(env = process.env) {
   if (!store) throw new Error("Care checkout requires its PostgreSQL store");
   const stripe = new Stripe(key, { apiVersion: "2026-11-18.endive", timeout: 8000, maxNetworkRetries: 1 });
   return createCareService({ store, stripe, secret: env.SDS_CARE_ACCESS_SECRET, origin: careOrigin(env),
-    live: /^(sk|rk)_live_/.test(key), portalConfiguration: env.SDS_CARE_PORTAL_CONFIGURATION });
+    live: /^(sk|rk)_live_/.test(key), portalConfiguration: env.SDS_CARE_PORTAL_CONFIGURATION,
+    releaseRun: env.SDS_PRIVATE_PREVIEW === "1" ? releaseRunOf(env) : null });
 }
 
-export function createCareService({ store, stripe, secret, origin, live, portalConfiguration, now = () => new Date() }) {
+export function createCareService({ store, stripe, secret, origin, live, portalConfiguration, releaseRun = null, now = () => new Date() }) {
   const quotes = createTaskQuoteService({ store: store.quotes, stripe, live, now });
   const notFound = () => new CareError(404, "This receipt link is not available.");
   const matchesMode = (order) => order && order.live_mode === live;
@@ -75,7 +77,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     }
     const session = checkedSession(order, order.session_id
       ? await stripe.checkout.sessions.retrieve(order.session_id)
-      : await stripe.checkout.sessions.create(checkoutArgs(order, secret), { idempotencyKey: `sameday-care/${id}` }));
+      : await stripe.checkout.sessions.create(checkoutArgs(order, secret, releaseRun), { idempotencyKey: `sameday-care/${id}` }));
     await store.bindSession({ id, sessionId: session.id });
     if (session.status === "expired") {
       await store.expire(id, session.id);

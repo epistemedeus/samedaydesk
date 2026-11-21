@@ -50,3 +50,7 @@ tools/recurring-job-recipes/artifacts/**
 # Verified-feed refresh candidates stay local until review.
 client/tmp/
 .copy-render/
+
+# Release harness output and its browser tools
+release/out/
+scripts/release/tools/node_modules/
