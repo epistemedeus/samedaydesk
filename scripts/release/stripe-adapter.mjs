@@ -182,7 +182,8 @@ export const failureMatches = (_ctx, a, intent) => intent.metadata?.sds_care_ord
 export const isRenewed = (row) => row?.ready_periods === 2;
 export const isCanceled = (row) => row?.cancel_at_period_end === true;
 export const isExpired = (row) => row?.state === "expired";
-export const isRefunded = (row) => row?.state === "refunded" && row.refunded_cents === row.amount_cents;
+// A one-time order ends refunded; a refunded subscription month keeps the subscription paid.
+export const isRefunded = (row) => row?.refunded_cents === row?.amount_cents && (row.state === "refunded" || row.has_subscription === true && row.state === "paid");
 export const describe = (row) => row ? `${row.state}, refunded ${row.refunded_cents}` : "no row";
 export const comparable = (row) => row && { state: row.state, session_id: row.session_id, refunded_cents: row.refunded_cents, has_payment: row.has_payment };
 
@@ -269,7 +270,7 @@ export async function buyerScreen(ctx, a, page, name) {
     screenshot: file.slice(ctx.root.length + 1),
     text: text.slice(0, 800),
     ok: /Paid: [\d,.]+ USD/.test(text) || /Payment refunded/.test(text) || /expired/i.test(text) || /will not renew/i.test(text),
-    showsRefund: /Payment refunded/.test(text),
+    showsRefund: /Payment refunded|Refunded: [\d,.]+ USD/.test(text),
     showsCanceled: /will not renew/i.test(text),
   };
 }
