@@ -21,8 +21,13 @@ export default function AiReadiness() {
   const carried = (useLocation().state as { readiness?: Result } | null)?.readiness;
   const initial = carried && typeof carried.url === "string" && typeof carried.score === "number" &&
     typeof carried.grade === "string" && Array.isArray(carried.checks) ? carried : null;
-  const [url, setUrl] = useState(initial?.url || "");
-  const [result, setResult] = useState<Result | null>(initial);
+  const [url, setUrl] = useState("");
+  const [result, setResult] = useState<Result | null>(null);
+  // The server shell has no browser history. Restore the actual carried report
+  // after hydration so refresh and back navigation keep matching initial HTML.
+  useEffect(() => {
+    if (initial) { setUrl(initial.url); setResult(initial); }
+  }, [initial]);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
