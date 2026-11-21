@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "04bc88b4729c6bc3be8f3930ce21457aa87f7185",
+  "base": "ab4cb1f638026e943c5293a3989af566ef812e9c",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
@@ -63,7 +63,7 @@
     "server/lib/resend.js": "41dd5e86db83a5380cd61ac7e025b73d949b52211f34c367164750d3133f98e1",
     "server/lib/spa-client.js": "44d65cb644c7635c7b78ee4973a701a7f9f906405f8c6c5e31067f3d279ddfc4",
     "server/lib/spa-fallback.js": "ab553ee04195ef7b2bff2fdefad47215714d50a8d5ce2e53a0e2b9901336ac0a",
-    "server/lib/spa-route-shells.js": "6e80e191a523f84d67cd07cea2c0b549b3c532f0f27f18733028678b06939105",
+    "server/lib/spa-route-shells.js": "ce46e00d1863c3d950f74b4bc840e0df524ee0d78bd7b5ca9b9560d35963c2da",
     "server/lib/stripe.js": "74207f33563ca044c1531d93a36c7e9bbb8218c38f3f240c174f399b2e2ec368",
     "server/lib/task-quotes.js": "199a2f351e9e95a292e234009ca762969c71d327b9f88e0e3d4b00d57f9daea9",
     "server/lib/task-requests.js": "54e0350c310639bd9292e1fd6d42d1b57f76df209eca8f5ff9ff44a29d2afc17",
@@ -681,6 +681,11 @@
       "base": "08b90bdef8dbd198023be447942a3119cb268235",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:855798f4388baf944a6d8d7792d8769303564e00a17ce7bbe36c958df67859b0"
+    },
+    {
+      "base": "04bc88b4729c6bc3be8f3930ce21457aa87f7185",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:50c9439e48f568d543b8ef949f80af2fb3d610946f3e653e34ee72b99ba03b5b"
     }
   ]
 }

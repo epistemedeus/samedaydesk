@@ -158,7 +158,8 @@ test("caller closure binds original-task runtime and retains received callers", 
   for (const prior of predecessor.receivedCallerClosures) assert.ok(acceptedCallerPin(prior, current));
   assert.ok(pin.files["server/foundry/startup-diagnostic.js"]);
   for (const name of ["server/lib/original-task/event-guard.mjs", "server/foundry/startup-diagnostic.js",
-    "server/lib/care-service.js", "server/routes/stripe-webhook.js", "server/lib/spa-client.js", "client/src/data/receipts.json"]) {
+    "server/lib/care-service.js", "server/routes/stripe-webhook.js", "server/lib/spa-client.js",
+    "server/lib/spa-route-shells.js", "client/src/data/receipts.json"]) {
     assert.ok(pin.files[name], name);
     const member = path.join(root, name);
     const original = await readFile(member);
