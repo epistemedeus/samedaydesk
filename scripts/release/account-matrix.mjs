@@ -1,5 +1,5 @@
 // Real Payment Element acceptance against the existing isolated Auth/PostgREST preview.
-import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';import {createRequire} from 'node:module';import {randomUUID} from 'node:crypto';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';import {getOffer} from '../../server/pricing.js';
+import {readFileSync,writeFileSync,mkdirSync,lstatSync} from 'node:fs';import {createRequire} from 'node:module';import {randomUUID} from 'node:crypto';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';import {getOffer} from '../../server/pricing.js';
 const root=fileURLToPath(new URL('../../',import.meta.url)).replace(/\/$/,'');
 const base=process.env.SDS_ACCOUNT_PREVIEW_DIR;if(!base)throw Error('SDS_ACCOUNT_PREVIEW_DIR must name the isolated local Auth preview');
 const cfg=JSON.parse(readFileSync(base+'/config.private.json')),run=JSON.parse(readFileSync(base+'/provider-run.json'));
@@ -23,11 +23,13 @@ async function eventFor(pi){for(let i=0;i<35;i++){
  const list=await api('events',{type:'payment_intent.succeeded',limit:'50'});const e=list.data.find(e=>e.data.object.id===pi&&e.data.object.metadata?.release_run===run.run);
  if(e){for(let n=0;n<30;n++){let delivered;try{delivered=JSON.parse(readFileSync(base+'/provider-deliveries.json')).statuses[e.id];}catch{}if(delivered!==undefined)return{id:e.id,type:e.type,deliveredThroughListener:delivered};await sleep(500);}return{id:e.id,type:e.type,deliveredThroughListener:null};}await sleep(1000);
  }return{missing:true};}
-const email='account-'+randomUUID().slice(0,8)+'@example.test',password=randomUUID()+'Aa9!';
-const signup=await fetch(cfg.SUPABASE_URL+'/auth/v1/signup',{method:'POST',headers:{'content-type':'application/json',apikey:cfg.VITE_SUPABASE_ANON_KEY},body:JSON.stringify({email,password})});const user=(await signup.json()).user;if(!user?.id)throw Error('Actual local signup failed');
+const identityFile=process.env.SDS_ACCOUNT_IDENTITY_FILE;let identity=null;
+if(identityFile){const stat=lstatSync(identityFile);if(!stat.isFile()||(stat.mode&0o077)||stat.uid!==process.getuid())throw Error('A private owned account fixture is required');identity=JSON.parse(readFileSync(identityFile,'utf8'));if(identity.email!=='contact@samedaydesk.com'||!identity.password)throw Error('Only the existing owned brand mailbox may receive the account receipt proof');}
+const email=identity?.email||'account-'+randomUUID().slice(0,8)+'@example.test',password=identity?.password||randomUUID()+'Aa9!';
+if(!identity){const signup=await fetch(cfg.SUPABASE_URL+'/auth/v1/signup',{method:'POST',headers:{'content-type':'application/json',apikey:cfg.VITE_SUPABASE_ANON_KEY},body:JSON.stringify({email,password})});if(!(await signup.json()).user?.id)throw Error('Actual local signup failed');}
 const browser=await puppeteer.launch({executablePath:'/usr/local/bin/google-chrome',headless:true,args:['--disable-dev-shm-usage','--disable-features=IsolateOrigins,site-per-process','--disable-site-isolation-trials']});
 try{
- const page=await browser.newPage();await page.setViewport({width:1440,height:1100});await page.goto(run.origin+'/login',{waitUntil:'networkidle2'});await page.type('input[type=email]',email);await page.type('input[type=password]',password);await page.click('button[type=submit]');await page.waitForFunction(()=>location.pathname==='/dashboard');
+ const page=await browser.newPage();await page.setViewport({width:1440,height:1100});await page.goto(run.origin+(identity?.signup?'/signup':'/login'),{waitUntil:'networkidle2'});await page.type('input[type=email]',email);await page.type('input[type=password]',password);await page.click('button[type=submit]');await page.waitForFunction(()=>location.pathname==='/dashboard');report.accountEntry=identity?.signup?'real UI signup':'real UI login';report.receiptToOwnedMailbox=Boolean(identity);
  for(const offer of ['agent_workflow','agent_mcp_server','machine_payment_route','agent_storefront']){
   const cents=getOffer(offer).amount;
   const row={offer,state:'running'};report.records.push(row);save();
