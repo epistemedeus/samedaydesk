@@ -28,6 +28,12 @@ const flag = (f) => args.includes(f);
 const value = (f) => { const i = args.indexOf(f); return i >= 0 ? args[i + 1] : null; };
 const mode = flag("--key") ? "key" : flag("--pages") ? "pages" : "cheap";
 const config = JSON.parse(readFileSync(join(root, "release/key-pages.json"), "utf8"));
+if (value("--key-pages")) {
+  const names = value("--key-pages").split(",");
+  config.pages = config.pages.filter((p) => names.includes(p.name));
+  if (config.pages.length !== names.length) throw new Error("Unknown key page selection");
+}
+const fixtures = value("--fixtures") ? JSON.parse(readFileSync(value("--fixtures"), "utf8")) : [];
 const out = join(root, "release/out");
 mkdirSync(out, { recursive: true });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -290,9 +296,16 @@ async function key() {
   try {
     const targets = config.pages.flatMap((p) => [{ name: p.name, path: p.path, page: p }, ...(p.states ?? []).map((s) => ({ name: `${p.name}--${s.name}`, path: s.path ?? p.path, page: p, state: s }))]);
     for (const t of targets) {
+      const fixtureName = t.state?.name ?? (t.name === "care-subscription" ? "manage-renewal" : null);
+      const fixture = fixtures.find((f) => f.name === fixtureName);
+      if (fixture) t.path = fixture.path;
+      if (t.state && !t.state.path && !fixture) {
+        rows.push({ name: t.name, path: t.page.path, ok: false, problems: ["This state requires a live fixture; its description is not a receipt link."] });
+        continue;
+      }
       const dir = join(out, "key", t.name.replace(/[^a-z0-9-]+/gi, "-"));
       mkdirSync(dir, { recursive: true });
-      const row = { name: t.name, path: t.path, fixture: t.state?.fixture ?? t.page.fixture, captures: [], problems: [] };
+      const row = { name: t.name, path: t.path.split("#")[0], fixture: t.state?.fixture ?? t.page.fixture, captures: [], problems: [] };
       for (const width of [390, 768, 1440]) for (const theme of ["light", "dark"]) {
         const r = await loadAndInspect(browser, t.path, { width, height: width === 390 ? 844 : 900, theme });
         const geo = await r.page.evaluate(() => ({ sideways: document.documentElement.scrollWidth > window.innerWidth + 1, scrollWidth: document.documentElement.scrollWidth }));
