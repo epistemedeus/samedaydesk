@@ -14,10 +14,11 @@ const read=name=>readFile(path.join(root,name));
 // Receive explicitly named installed source, never infer it from a dirty export.
 // The same predecessor is idempotent; ordinary refresh adds no new descriptor.
 const args=process.argv.slice(2), predecessorRefs=[];
-let joinMeasurement=false;
+let joinMeasurement=false, joinCareSchema=false;
 while(args.length){
   const option=args.shift();
   if(option==='--join-measurement-runtime'){joinMeasurement=true;continue;}
+  if(option==='--join-care-schema'){joinCareSchema=true;continue;}
   const ref=args.shift();
   if(option!=='--receive-caller-from'||!(/^[a-f0-9]{40}$/.test(ref??'')))throw Error('full predecessor commit required');
   execFileSync('git',['merge-base','--is-ancestor',ref,'HEAD'],{cwd:root,stdio:'pipe'});
@@ -26,6 +27,7 @@ while(args.length){
 // These are the host-application bytes the free-tool measurement changed.
 // The full exporter still refuses every other drifted pin member.
 const measurementRuntime=['package.json','server/lib/pulse.js','server/lib/pulse-store/free-tool-outcomes.js','server/lib/pulse-store/schema.js','server/lib/pulse-store/supabase-adapter.js','server/lib/pulse-store/wal-schema.js','server/routes/tools.js','supabase/migrations/0010_pulse_free_tool_outcomes.sql'];
+const careRuntime=['server/lib/care-database.js','server/lib/care-store.js','server/lib/commerce-journey.js','server/lib/mail-events.js','server/lib/task-quotes.js','server/lib/task-requests.js'];
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const manifestName='vendor/hosted-wallet-market/SOURCE.json';
 const manifest=JSON.parse(await read(manifestName));
@@ -62,17 +64,19 @@ const next={...pin.files};
 const hostOwned=new Set(['server/app.js','server/lib/hosted-wallet-market-mount.js','server/lib/neomorphic-contributor-journey-mount.js','server/lib/contributor-desk-assets.js',
   'server/lib/contributor-https-qualification.js','server/scripts/verify-contributor-install.mjs',
   'server/scripts/resolve-contributor-source.mjs','server/scripts/refresh-installed-receiving-source.mjs']);
-if(joinMeasurement){
-  const refreshable=new Set([...hostOwned,...measurementRuntime]);
+if(joinMeasurement||joinCareSchema){
+  if(joinMeasurement&&joinCareSchema)throw Error('select one explicit host runtime scope');
+  const joined=joinCareSchema?careRuntime:measurementRuntime;
+  const refreshable=new Set(joinCareSchema?[...careRuntime,'server/scripts/refresh-installed-receiving-source.mjs']:[...hostOwned,...measurementRuntime]);
   for(const [name,expected] of Object.entries(pin.files)){
     if(refreshable.has(name))continue;
     if(sha(await read(name))!==expected)throw Error('unrelated source pin drift: '+name);
   }
   const ordered={};
   for(const name of Object.keys(pin.files))ordered[name]=refreshable.has(name)?sha(await read(name)):pin.files[name];
-  for(const name of measurementRuntime)if(!Object.hasOwn(ordered,name))ordered[name]=sha(await read(name));
+  for(const name of joined)if(!Object.hasOwn(ordered,name))ordered[name]=sha(await read(name));
   await writeFile(path.join(root,pinName),JSON.stringify({...pin,receivedCallerClosures:received,files:ordered},null,2)+'\n');
-  process.stdout.write(JSON.stringify({joined:measurementRuntime,sourceSha256:installedSourceSha256(),hostSha256:hostSourceSha256(root),qualified:false,installed:false})+'\n');
+  process.stdout.write(JSON.stringify({joined,sourceSha256:installedSourceSha256(),hostSha256:hostSourceSha256(root),qualified:false,installed:false})+'\n');
   process.exit(0);
 }
 const neoPrefix='vendor/neomorphic-contributor-journey/';

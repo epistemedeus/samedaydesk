@@ -1,26 +1,21 @@
 // The release measurement contract. Diagnostic UI signals remain in journey-events.js.
 // These five events describe server-observed commerce, never money authority.
 import { randomUUID } from "node:crypto";
-import pg from "pg";
 import { isSupabaseConfigured, supabaseAdmin } from "./supabase-admin.js";
-import { careDatabaseOptions } from "./care-store.js";
+import { sharedCarePool, careTable } from "./care-database.js";
 
 const events = new Set(["visit", "checkout_started", "payment_verified", "receipt_sent", "return"]);
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-let previewPool;
 
 async function insert(row) {
-  // Preview records use only the explicitly isolated Care database. Never fall through
-  // to an ambient production Supabase connection during a private test.
-  if (process.env.SDS_PRIVATE_PREVIEW === "1") {
-    if (!process.env.SDS_CARE_DATABASE_URL) return false;
-    previewPool ??= new pg.Pool({ ...careDatabaseOptions(), max: 1,
-      connectionTimeoutMillis: 2000, idleTimeoutMillis: 1000, allowExitOnIdle: true });
-    await previewPool.query(`insert into public.journey_events
+  const pool = sharedCarePool();
+  if (pool) {
+    await pool.query(`insert into ${careTable("journey_events")}
       (event_key,brand,event,session_id,test,order_id,is_agent,referrer,utm)
       values ($1,$2,$3,$4,$5,$6,$7,$8,$9) on conflict (event_key) do nothing`,
     [row.event_key, row.brand, row.event, row.session_id, row.test, row.order_id, row.is_agent, row.referrer, row.utm]);
   } else {
+    if (process.env.SDS_PRIVATE_PREVIEW === "1") return false;
     if (!isSupabaseConfigured()) return false;
     const { error } = await supabaseAdmin().from("journey_events")
       .upsert(row, { onConflict: "event_key", ignoreDuplicates: true });

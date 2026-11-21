@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { CareError, isOrderId, providerId } from "./care-contract.js";
 
+import { careSchema, careTable } from "./care-database.js";
+
 const LIMIT = 23 * 3600_000;
 const rowOf = async (query) => (await query).rows[0] || null;
 const email = (value) => typeof value === "string" && value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? value.toLowerCase() : null;
@@ -12,17 +14,18 @@ export function quoteTerms({ amountCents, scope, acceptance }) {
   return { amountCents, scope: scope.trim(), acceptance: acceptance.trim() };
 }
 
-export function createTaskQuoteStore(pool, txn) {
+export function createTaskQuoteStore(pool, txn, schema = careSchema()) {
+  const table = (name) => careTable(name, schema);
   return {
     async reserve(requestId, terms, live) {
       return txn(async (client) => {
-        const request = await rowOf(client.query("select * from public.task_requests where id = $1 for update", [requestId]));
+        const request = await rowOf(client.query(`select * from ${table("task_requests")} where id = $1 for update`, [requestId]));
         if (!request) throw new CareError(404, "Task request not found.");
         const fields = [requestId, terms.amountCents, terms.scope, terms.acceptance, live];
-        if (request.status === "received") await client.query(`insert into public.task_quotes
+        if (request.status === "received") await client.query(`insert into ${table("task_quotes")}
           (id,request_id,amount_cents,scope,acceptance,live_mode) values ($1,$2,$3,$4,$5,$6)
           on conflict (request_id) do nothing`, [randomUUID(), ...fields]);
-        const row = await rowOf(client.query("select * from public.task_quotes where request_id = $1", [requestId]));
+        const row = await rowOf(client.query(`select * from ${table("task_quotes")} where request_id = $1`, [requestId]));
         if (!row || row.paid_at || request.status === "closed" ||
             row.amount_cents !== terms.amountCents || row.scope !== terms.scope ||
             row.acceptance !== terms.acceptance || row.live_mode !== live) {
@@ -31,35 +34,35 @@ export function createTaskQuoteStore(pool, txn) {
         return { ...row, recipient: request.email };
       });
     },
-    price: (id, priceId) => rowOf(pool.query(`update public.task_quotes set stripe_price = $2 where id = $1
+    price: (id, priceId) => rowOf(pool.query(`update ${table("task_quotes")} set stripe_price = $2 where id = $1
       and (stripe_price is null or stripe_price = $2) returning *`, [id, priceId])),
     async offer(id, linkId, url) {
       return txn(async (client) => {
-        const row = await rowOf(client.query(`update public.task_quotes set stripe_link = $2, stripe_url = $3
+        const row = await rowOf(client.query(`update ${table("task_quotes")} set stripe_link = $2, stripe_url = $3
           where id = $1 and (stripe_link is null or stripe_link = $2) returning *`, [id, linkId, url]));
         if (!row) throw new CareError(409, "The quote already has a different link.");
-        await client.query("update public.task_requests set status = 'quoted' where id = $1 and status = 'received'", [row.request_id]);
+        await client.query(`update ${table("task_requests")} set status = 'quoted' where id = $1 and status = 'received'`, [row.request_id]);
         return row;
       });
     },
-    order: (id) => rowOf(pool.query("select * from public.task_quotes where id = $1", [id])),
+    order: (id) => rowOf(pool.query(`select * from ${table("task_quotes")} where id = $1`, [id])),
     async paid(id, { sessionId, paymentId, payer, at }) {
       return txn(async (client) => {
-        const row = await rowOf(client.query("select * from public.task_quotes where id = $1 for update", [id]));
+        const row = await rowOf(client.query(`select * from ${table("task_quotes")} where id = $1 for update`, [id]));
         if (!row) throw new CareError(404, "Quote not found.");
         if (row.paid_at && (row.stripe_session !== sessionId || row.payment_intent !== paymentId)) {
           throw new CareError(409, "A different payment was already recorded for this quote.");
         }
         if (row.paid_at) return;
-        const request = await rowOf(client.query("select email,status from public.task_requests where id = $1", [row.request_id]));
+        const request = await rowOf(client.query(`select email,status from ${table("task_requests")} where id = $1`, [row.request_id]));
         const review = row.needs_review || request.status !== "quoted" || payer !== request.email.toLowerCase();
-        await client.query(`update public.task_quotes set stripe_session = $2,payment_intent = $3,
+        await client.query(`update ${table("task_quotes")} set stripe_session = $2,payment_intent = $3,
           payer_email = $4,paid_at = $5,needs_review = $6 where id = $1`, [id, sessionId, paymentId, payer, at, review]);
-        if (!review) await client.query("update public.task_requests set status = 'paid' where id = $1 and status = 'quoted'", [row.request_id]);
+        if (!review) await client.query(`update ${table("task_requests")} set status = 'paid' where id = $1 and status = 'quoted'`, [row.request_id]);
       });
     },
-    hold: (paymentId) => pool.query("update public.task_quotes set needs_review = true where payment_intent = $1 returning id", [paymentId]),
-    holdBeforeReceipt: (id) => pool.query("update public.task_quotes set needs_review = true where id = $1", [id]),
+    hold: (paymentId) => pool.query(`update ${table("task_quotes")} set needs_review = true where payment_intent = $1 returning id`, [paymentId]),
+    holdBeforeReceipt: (id) => pool.query(`update ${table("task_quotes")} set needs_review = true where id = $1`, [id]),
   };
 }
 

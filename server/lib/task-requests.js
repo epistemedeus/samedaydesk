@@ -1,8 +1,10 @@
 // Custom task requests: validated, stored, confirmed to the requester by email and announced to
-// the desk. Storage is Supabase when configured (migration 0008), else process memory, so a
-// local run still answers; email is best-effort through Resend (notify.js).
+// the desk. The configured private Care database owns new release requests; legacy
+// Supabase and local memory remain available when no Care database is configured.
 import { randomUUID } from "node:crypto";
 import { isSupabaseConfigured, supabaseAdmin } from "./supabase-admin.js";
+
+import { sharedCarePool, careTable } from "./care-database.js";
 
 const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,}$/;
 
@@ -41,4 +43,10 @@ export function createSupabaseTaskRequestStore() {
   };
 }
 
-export const defaultTaskRequestStore = () => (isSupabaseConfigured() ? createSupabaseTaskRequestStore() : createMemoryTaskRequestStore());
+export function defaultTaskRequestStore() {
+  const pool = sharedCarePool();
+  if (pool) return { insert: async (request) => (await pool.query(
+    `insert into ${careTable("task_requests")}(email,website,task) values ($1,$2,$3) returning *`,
+    [request.email, request.website, request.task])).rows[0] };
+  return process.env.SDS_PRIVATE_PREVIEW !== "1" && isSupabaseConfigured() ? createSupabaseTaskRequestStore() : createMemoryTaskRequestStore();
+}
