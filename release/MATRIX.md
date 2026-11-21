@@ -72,6 +72,14 @@ Commands: `npm run release:check`, `npm run release:sweep -- --cheap|--key`, `np
 
 ## D, E, F, G
 
+D: `node scripts/check-receipts-chain.mjs` reads every published settlement from Base and checks
+its finalized block, USDC Transfer, authorization input, payer, amount and timestamp. It never
+signs or sends a transaction. `BASE_HASH_RPC` selects an HTTPS read endpoint; failures are retained,
+with no retry. Supply the admitted `RECEIPTS_PRIVATE_EXPORT` for the current hashed-wallet and
+transaction exclusions. Without it, the public policy check is partial and D remains incomplete.
+The report is `release/out/receipts-chain.json`. A scheduled rebuild separately needs `BASE_RPC`,
+that private export and `SDS_RECEIPTS_SNAPSHOT_PATH`; the static test write is not a chain rebuild.
+
 F4 uses migration `0011_commerce_journey.sql`: the five commerce events are persisted in
 `public.journey_events`, separate from the diagnostic UI counters. Production uses the existing
 server Supabase client. A private preview writes only to its loopback Care database, and every row
