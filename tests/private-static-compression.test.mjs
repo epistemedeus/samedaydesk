@@ -7,10 +7,12 @@ import { test } from 'node:test';
 import { brotliDecompressSync, gunzipSync } from 'node:zlib';
 import express from 'express';
 import { mountProductionClient } from '../server/lib/spa-client.js';
+import { publicFirstRenderPath } from '../server/lib/spa-route-shells.js';
 
 test('built SameDayDesk documents and CSS keep their contents under negotiated static compression', async (t) => {
   const dist = resolve('client/dist');
-  const html = await readFile(resolve(dist, 'index.html'));
+  const html = await readFile(publicFirstRenderPath(dist, '/'));
+  assert.ok(html.includes('name="sdd-public-first-render"'), 'exercise the same homepage artifact the runtime serves');
   const cssPath = html.toString('utf8').match(/<link\b[^>]*rel="stylesheet"[^>]*href="(\/assets\/[^"]+\.css)"/)?.[1];
   assert.ok(cssPath, 'production HTML must name its compiled style');
   const css = await readFile(resolve(dist, '.' + cssPath));
