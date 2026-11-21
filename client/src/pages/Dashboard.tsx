@@ -28,6 +28,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     authedFetch("/api/auth/me").then((r) => (r.ok ? r.json() : null)).then(setMe).catch(() => {});
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- loads the account and orders once on mount
     void loadOrders();
   }, [loadOrders]);
 

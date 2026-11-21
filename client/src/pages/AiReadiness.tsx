@@ -26,6 +26,7 @@ export default function AiReadiness() {
   // The server shell has no browser history. Restore the actual carried report
   // after hydration so refresh and back navigation keep matching initial HTML.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- restore the carried report after hydration (see above)
     if (initial) { setUrl(initial.url); setResult(initial); }
   }, [initial]);
   const [loading, setLoading] = useState(false);

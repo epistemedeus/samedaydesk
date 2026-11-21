@@ -71,13 +71,14 @@ export default function Checkout() {
 
   useEffect(() => {
     let active = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reset the attempt when the product changes, before resuming a stored one
     setClientSecret(null);
     setPaymentAttemptId(null);
     setErr(null);
     setIntake({ details: "", uploadPath: "" });
     setIntakeFrozen(false);
     const storageKey = `sdd:payment-attempt:${slug}`;
-    let rememberedAttemptId: string | null = null;
+    let rememberedAttemptId: string | null;
     try {
       rememberedAttemptId = sessionStorage.getItem(storageKey);
     } catch {

@@ -62,6 +62,7 @@ export default function SellerConformance() {
 
   useEffect(() => {
     const previousTitle = document.title;
+    // eslint-disable-next-line react-hooks/immutability -- the page sets its own document title and restores it on unmount
     document.title = pageTitle;
 
     const description = document.querySelector('meta[name="description"]');

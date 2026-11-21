@@ -116,6 +116,7 @@ export function CareReceipt({ mode }: { mode: "intake" | "cancel" }) {
   }
   useEffect(() => {
     if (window.location.hash) window.history.replaceState(history.state, "", location.pathname);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reads the receipt once per mount from the capability link
     if (hasLink && mode === "intake") void run("receipt");
     // The capability is fixed for this mount. Never read it from query parameters.
     // eslint-disable-next-line react-hooks/exhaustive-deps

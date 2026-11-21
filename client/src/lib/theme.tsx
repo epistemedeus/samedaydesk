@@ -42,6 +42,7 @@ export function ThemeProvider({ children, initialTheme }: { children: ReactNode;
   const [theme, setState] = useState<Theme>(() => initialTheme ?? readDom());
   // The build and first hydration agree on initial markup. The inline document
   // theme still applies before paint; adopt it for interactive controls after mount.
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- adopt the pre-paint document theme after hydration (see above)
   useEffect(() => { if (initialTheme) setState(readDom()); }, [initialTheme]);
 
   const setTheme = useCallback((next: Theme, origin?: Origin) => {
@@ -97,6 +98,7 @@ export function ThemeProvider({ children, initialTheme }: { children: ReactNode;
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- the hook belongs beside its provider
 export function useTheme(): Ctx {
   const ctx = useContext(ThemeContext);
   if (ctx) return ctx;
