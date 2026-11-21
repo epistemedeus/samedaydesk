@@ -1,6 +1,7 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 const immutable = (value) => Object.freeze(value);
+export const CHECKOUT_BRANDING = immutable({ display_name: "SameDayDesk" });
 export const CARE_OFFERS = immutable({
   agent_front_door: immutable({ title: "One line for your customers' AI", cents: 24900, mode: "payment" }),
   machine_payment_route: immutable({ title: "Get paid by AI agents", cents: 49900, mode: "payment" }),
@@ -55,6 +56,7 @@ export function checkoutArgs(order, secret, releaseRun = null) {
     ...(releaseRun ? { release_run: releaseRun } : {}) };
   return {
     mode: offer.mode,
+    branding_settings: CHECKOUT_BRANDING,
     integration_identifier: order.integration_id,
     client_reference_id: order.id,
     expires_at: Math.floor(new Date(order.checkout_expires_at).getTime() / 1000),

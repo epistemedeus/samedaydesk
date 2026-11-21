@@ -38,6 +38,7 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
     checkout: { sessions: {
       async create(args, options) {
         creates++;
+        assert.deepEqual(args.branding_settings, { display_name: "SameDayDesk" });
         const id = args.client_reference_id;
         assert.equal(options.idempotencyKey, `sameday-care/${id}`);
         assert.equal(args.line_items[0].quantity, 1);

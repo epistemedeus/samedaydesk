@@ -1,5 +1,6 @@
 // Unauthenticated hosted Checkout for the fixed seller-contract-repair offer.
 // Finding IDs are bounded to the public brief catalog; amount and label are server-owned.
+import { CHECKOUT_BRANDING } from "./care-contract.js";
 import { stripe } from "./stripe.js";
 import { getOffer, CURRENCY } from "../pricing.js";
 import { sellerRepairFindingIds } from "./pulse.js";
@@ -48,6 +49,7 @@ export function buildSellerRepairCheckoutSessionParams(findingId, offer, baseUrl
 
   return {
     mode: "payment",
+    branding_settings: CHECKOUT_BRANDING,
     client_reference_id: findingId,
     integration_identifier: SELLER_REPAIR_INTEGRATION_ID,
     line_items: [

@@ -8,6 +8,7 @@ import os from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 
+const schema = "sds_stripe_fixture", appRole = "sds_stripe_fixture_app";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let pg, dsn, server, scratch, accessSecret, careLink;
 let nextQuote;
@@ -29,7 +30,7 @@ async function prepareQuote(ctx) {
       metadata: { ...args.payment_intent_data.metadata, release_run: ctx.run } } } : {}) }, options);
   const stripe = { prices: { create: tagged(client.prices.create.bind(client.prices)) },
     paymentLinks: { create: tagged(client.paymentLinks.create.bind(client.paymentLinks)), retrieve: client.paymentLinks.retrieve.bind(client.paymentLinks) } };
-  const store = openCareStore({ SDS_PRIVATE_PREVIEW: "1", SDS_CARE_DATABASE_URL: dsn });
+  const store = openCareStore({ SDS_PRIVATE_PREVIEW: "1", SDS_CARE_DATABASE_URL: dsn, SDS_CARE_SCHEMA: schema });
   try {
     const quote = await createTaskQuoteService({ store: store.quotes, stripe, live: false }).issue(requestId, {
       amountCents: 12300, scope: "Verify the generated client's documented tool-list workflow.",
@@ -40,7 +41,7 @@ async function prepareQuote(ctx) {
 }
 
 function psql(sql) {
-  return execFileSync("psql", ["-X", "-At", "-v", "ON_ERROR_STOP=1", dsn, "-c", sql], { encoding: "utf8" }).trim();
+  return execFileSync("psql", ["-X", "-At", "-v", "ON_ERROR_STOP=1", dsn, "-c", sql], { encoding: "utf8", env: { PATH: process.env.PATH, PGOPTIONS: `-c search_path=${schema}` } }).trim();
 }
 
 export async function start(ctx) {
@@ -54,9 +55,9 @@ export async function start(ctx) {
   execFileSync(join(pg, "initdb"), ["-A", "trust", "-D", join(scratch, "data")], { stdio: "ignore" });
   execFileSync(join(pg, "pg_ctl"), ["-D", join(scratch, "data"), "-l", join(scratch, "pg.log"), "-o", `-F -p ${pgPort} -k ${scratch} -c listen_addresses=''`, "-w", "start"], { stdio: "ignore" });
   dsn = `postgresql://${os.userInfo().username}@127.0.0.1/postgres?host=${encodeURIComponent(scratch)}&port=${pgPort}`;
-  for (const m of ["0011_task_requests.sql", "0012_care_orders.sql", "0013_task_quotes.sql", "0014_commerce_journey.sql", "0015_mail_events.sql", "0016_hosted_orders.sql"]) {
-    execFileSync("psql", ["-X", "-q", "-v", "ON_ERROR_STOP=1", dsn, "-f", join(root, "supabase/migrations", m)], { stdio: "ignore" });
-  }
+  const enrollment = execFileSync(process.execPath, [join(root, "server/scripts/care-enrollment.mjs"), schema, appRole], { encoding: "utf8" });
+  execFileSync("psql", ["-X", "-q", "-v", "ON_ERROR_STOP=1", dsn], { input: enrollment, stdio: ["pipe", "ignore", "pipe"] });
+  dsn = `postgresql://${appRole}@127.0.0.1/postgres?host=${encodeURIComponent(scratch)}&port=${pgPort}`;
   const portal = await ctx.stripe("POST", "billing_portal/configurations", {
     "business_profile[headline]": "Manage your SameDayDesk subscription",
     "features[subscription_cancel][enabled]": "true",
@@ -79,7 +80,7 @@ export async function start(ctx) {
     cwd: root, stdio: ["ignore", "pipe", "pipe"],
     env: {
       PATH: process.env.PATH, HOME: scratch, NODE_ENV: "production", PORT: String(port),
-      SDS_PRIVATE_PREVIEW: "1", SDS_CARE_CHECKOUT: "1", SDS_CARE_DATABASE_URL: dsn,
+      SDS_PRIVATE_PREVIEW: "1", SDS_CARE_CHECKOUT: "1", SDS_CARE_DATABASE_URL: dsn, SDS_CARE_SCHEMA: schema,
       SDS_CARE_ORIGIN: `http://127.0.0.1:${port}`, SDS_CARE_ACCESS_SECRET: accessSecret,
       STRIPE_SECRET_KEY: key, STRIPE_WEBHOOK_SECRET: webhookSecret, RELEASE_RUN: run,
       GITHUB_SHA: ctx.source,

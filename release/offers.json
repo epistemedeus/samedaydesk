@@ -76,7 +76,8 @@
         "readback",
         "success"
       ],
-      "note": "123 USD is the synthetic release quote; production amounts remain set per agreed scope."
+      "note": "123 USD is the synthetic release quote; production amounts remain set per agreed scope.",
+      "displayName": null
     },
     {
       "id": "seller_conformance_report",
@@ -91,7 +92,8 @@
         "readback",
         "success"
       ],
-      "note": "The existing preview setting points to a real run-tagged Stripe test Payment Link."
+      "note": "The existing preview setting points to a real run-tagged Stripe test Payment Link.",
+      "displayName": null
     }
   ],
   "notInHarnessYet": [
@@ -162,5 +164,6 @@
       ],
       "note": "Uses the existing isolated local Auth/PostgREST preview; the private build receives only the enrolled test publishable key."
     }
-  ]
+  ],
+  "displayName": "SameDayDesk"
 }
