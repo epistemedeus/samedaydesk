@@ -160,7 +160,7 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
     amount_paid: 10000, billing_reason: "subscription_create",
     parent: { subscription_details: { subscription: "sub_keep", metadata: { sds_care_order: recurring } } },
     lines: { data: [{ amount: 10000, period: { start: first, end: first + month } }], has_more: false } };
-  assert.equal((await event("invoice.paid", invoice)).status, 200);
+  assert.equal((await event("invoice.paid", invoice)).status, 500);
   assert.equal((await db.query("select count(*)::int as n from care_periods")).rows[0].n, 0);
   const two = { ...provider.get("cs_test_2"), status: "complete", payment_status: "paid", customer: "cus_keep",
     subscription: "sub_keep", customer_details: { email: "two@example.test" } };

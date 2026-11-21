@@ -145,6 +145,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
       if (matchesMode(pending) && pending.session_id) {
         const current = await paidSession(pending, await stripe.checkout.sessions.retrieve(pending.session_id));
         if (current.subscription_id === id) return current;
+        throw new CareError(503, "The corresponding Checkout payment is not confirmed.");
       }
     }
     return null;
