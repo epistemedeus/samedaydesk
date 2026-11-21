@@ -48,7 +48,8 @@ const out = join(root, "release/out/stripe", run);
 mkdirSync(out, { recursive: true });
 const offers = config.offers.filter((o) => !value("--offers") || value("--offers").split(",").includes(o.id));
 const cases = (value("--cases") ?? "readback,success,expire,replay,refund").split(",");
-const supportedCases = ["readback", "success", "decline", "block", "3ds-pass", "3ds-fail", "expire", "replay", "lost-response", "refund", "renewal", "cancel"];
+const buyerEmail = cases.includes("receipt") ? "contact@samedaydesk.com" : `buyer+${run}@example.com`;
+const supportedCases = ["readback", "success", "decline", "block", "3ds-pass", "3ds-fail", "expire", "replay", "lost-response", "refund", "renewal", "cancel", "receipt"];
 if (!offers.length || cases.some((name) => !supportedCases.includes(name)) ||
     (cases.includes("renewal") && (offers.length !== 1 || offers[0].mode !== "subscription"))) {
   console.error("Choose existing offers and supported cases; a clock run needs exactly one subscription offer.");
@@ -122,17 +123,62 @@ async function within(page, selector, ms = 15000, buttonText = null) {
       }), selector, buttonText));
       const h = handle?.asElement();
       if (!h) { await handle?.dispose(); continue; }
-      if (h && await h.boundingBox().catch(() => null)) return { f, h };
+      if (await quick(h.boundingBox())) return { f, h };
+      await h.dispose();
     }
     await sleep(300);
   }
   return null;
 }
+// The hosted form is ready when the card number input is visible inside Stripe's frame and that frame
+// is wider than 300 px. When the account offers several payment methods the form opens as a list with
+// Card collapsed; Card is clicked once, when its row has not moved for half a second (the wallet buttons
+// load late and push the list down, and an earlier click lands on empty space: 7 of 10 were lost on
+// November 21). A form that is not ready in 30 s fails the case with its evidence: no reload, no second
+// attempt.
+const CARD_INPUT = "#payment-numberInput, #cardNumber";
+const CARD_CHOICE = '[data-value="card"]';
+// Only the page itself and Stripe's Elements frames are asked: a call into one of the other frames
+// (fraud, captcha, wallets) can hang for 30 s, which looked like a form that never appeared.
+const formFrames = (page) => page.frames().filter((f) => f === page.mainFrame() || f.url().startsWith("https://js.stripe.com/v3/elements-inner"));
+const quick = (p) => Promise.race([p.catch(() => null), sleep(2000).then(() => null)]);
+async function formState(page) {
+  const state = { inDom: false, visible: false, frameWidth: 0, choice: null };
+  for (const f of formFrames(page)) {
+    const h = await quick(f.$(CARD_INPUT));
+    const choice = h ? null : await quick(f.$(CARD_CHOICE));
+    if (!h && !choice) continue;
+    const frameEl = f === page.mainFrame() ? null : await quick(f.frameElement());
+    const frameBox = frameEl ? await quick(frameEl.boundingBox()) : await quick(page.evaluate(() => ({ width: innerWidth })));
+    Object.assign(state, { frame: f, frameEl, frameWidth: Math.round(frameBox?.width ?? 0) });
+    if (h) {
+      const box = await quick(h.boundingBox());
+      return { ...state, inDom: true, visible: Boolean(box && box.width > 0 && box.height > 0) };
+    }
+    const box = await quick(choice.boundingBox());
+    if (box) Object.assign(state, { choice, choiceAt: `${Math.round(box.x)},${Math.round(box.y)}` });
+  }
+  return state;
+}
+async function openHosted(page, url) {
+  const t0 = Date.now();
+  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
+  let st, chose = null, at = null, still = 0;
+  while (Date.now() - t0 < 30000) {
+    st = await formState(page);
+    if (st.visible && st.frameWidth > 300) return { ...st, msToReady: Date.now() - t0, msToCardChoice: chose };
+    still = st.choiceAt && st.choiceAt === at ? still + 1 : 0;
+    at = st.choiceAt ?? null;
+    if (!st.inDom && still >= 2 && chose === null && await quick(st.choice.click().then(() => true))) chose = Date.now() - t0;
+    await sleep(250);
+  }
+  const e = new Error(`hosted page: the card form was not ready in 30 s (card input in DOM ${st.inDom}, visible ${st.visible}, frame ${st.frameWidth} px, card choice ${st.choice ? "shown" : "not shown"}${chose !== null ? " and clicked" : ""})`);
+  e.form = { inDom: st.inDom, visible: st.visible, frameWidth: st.frameWidth, cardChoice: Boolean(st.choice), cardChoiceClicked: chose !== null };
+  throw e;
+}
 // A hosted form is loaded once. A blank form or failed navigation is a failed case.
 async function payHosted(page, url, card, { threeDS } = {}) {
-  const formReady = '#linkAuthentication-emailInput, #email, #payment-numberInput, #cardNumber, [data-value="card"]';
-  await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
-  if (!(await within(page, formReady, 45000))) throw new Error("hosted page: the payment form did not appear");
+  await openHosted(page, url);
   const typeInto = async (sel, text, need = true) => {
     const x = await within(page, sel, need ? 15000 : 2500);
     if (!x) { if (need) throw new Error(`hosted page: no ${sel}`); return; }
@@ -143,7 +189,7 @@ async function payHosted(page, url, card, { threeDS } = {}) {
     await page.keyboard.press("Backspace");
     await x.h.type(text, { delay: 20 });
   };
-  await typeInto("#linkAuthentication-emailInput, #email, input[name=email]", `buyer+${run}@example.com`, false);
+  await typeInto("#linkAuthentication-emailInput, #email, input[name=email]", buyerEmail, false);
   await typeInto("#payment-numberInput, #cardNumber", card);
   await typeInto("#payment-expiryInput, #cardExpiry", "1234");
   await typeInto("#payment-cvcInput, #cardCvc", "123");
@@ -453,6 +499,14 @@ try {
           const ok = scheduled(subscription) && stored.cancel_at_period_end === true &&
             webhook.deliveredThroughListener === 200 && buyer.text.includes("will not renew");
           record(offer, name, { state: ok ? "passed" : "failed", buyer, stripe: { id: subscription.id, status: subscription.status, cancel_at_period_end: subscription.cancel_at_period_end, cancel_at: subscription.cancel_at }, webhook, stored });
+        } else if (name === "receipt") {
+          const p = paid.get(offer.id);
+          if (!p) throw new Error("A receipt needs a passed hosted success payment first");
+          const mail = await adapter.receiptMail(ctx, p.a);
+          const ok = mail.accepted === 1 && mail.deferred === 0 && mail.messages?.length === 1 &&
+            mail.messages[0].id === mail.stored.provider_id && Boolean(mail.stored.accepted_at);
+          record(offer, name, { state: ok ? "passed" : "failed", buyer: await adapter.buyerScreen(ctx, p.a, page, `${offer.id}-receipt`),
+            stripe: pick(p.session), mail, stored: await adapter.storedRow(ctx, p.a), why: ok ? undefined : "Receipt delivery was not confirmed" });
         } else if (name === "refund") {
           const p = paid.get(offer.id);
           if (!p) { record(offer, name, { state: "not run", why: "needs a passed success case first" }); continue; }
@@ -473,7 +527,7 @@ try {
             buyer, stripe: { refund: { id: refund.id, status: refund.status, amount: refund.amount }, session: pick(p.session) }, webhook, stored });
         }
       } catch (e) {
-        record(offer, name, { state: "failed", why: e.message.slice(0, 300), form: e.form, buyer: await buyerSaw(page, `${offer.id}-${name}-error`) });
+        record(offer, name, { state: "failed", why: e.message.slice(0, 300), form: e.form, buyer: await buyerSaw(page, `${offer.id}-${name}-error`).catch(() => ({ evidenceUnavailable: true })) });
       } finally { await page.close().catch(() => {}); }
     }
   }

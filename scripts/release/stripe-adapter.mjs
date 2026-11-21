@@ -3,7 +3,7 @@
 // care_orders and the private preview mail outbox (no mail leaves the machine).
 import { execFileSync, spawn, spawnSync } from "node:child_process";
 import { randomBytes, randomUUID } from "node:crypto";
-import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, lstatSync, rmSync } from "node:fs";
 import os from "node:os";
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -103,6 +103,25 @@ export const isExpired = (row) => row?.state === "expired";
 export const isRefunded = (row) => row?.state === "refunded" && row.refunded_cents === row.amount_cents;
 export const describe = (row) => row ? `${row.state}, refunded ${row.refunded_cents}` : "no row";
 export const comparable = (row) => row && { state: row.state, session_id: row.session_id, refunded_cents: row.refunded_cents, has_payment: row.has_payment };
+
+export function receiptMail(ctx, a) {
+  const file = process.env.SDS_RELEASE_RESEND_FILE;
+  const stat = file && lstatSync(file);
+  if (!stat?.isFile() || (stat.mode & 0o077) || stat.uid !== process.getuid()) throw new Error("An existing private Resend input is required");
+  const config = JSON.parse(readFileSync(file, "utf8"));
+  if (!config.RESEND_API_KEY || !config.RESEND_FROM_EMAIL) throw new Error("The existing Resend input is incomplete");
+  const result = spawnSync(process.execPath, ["scripts/release/receipt-preview.mjs", a.order], {
+    cwd: ctx.root, encoding: "utf8", timeout: 30000,
+    env: { PATH: process.env.PATH, HOME: scratch, NODE_ENV: "production", SDS_PRIVATE_PREVIEW: "1",
+      SDS_CARE_DATABASE_URL: dsn, SDS_CARE_ACCESS_SECRET: accessSecret, SDS_PREVIEW_RESEND: "1",
+      RESEND_API_KEY: config.RESEND_API_KEY, RESEND_FROM_EMAIL: config.RESEND_FROM_EMAIL,
+      RELEASE_RUN: ctx.run },
+  });
+  if (result.status !== 0) throw new Error("The restricted receipt child did not confirm delivery");
+  const mail = JSON.parse(result.stdout.trim());
+  mail.stored = JSON.parse(psql(`select row_to_json(m) from (select kind,accepted_at,provider_id from care_mail where order_id='${a.order}' and kind='receipt') m`));
+  return mail;
+}
 
 export function periods(_ctx, a) {
   return JSON.parse(psql(`select coalesce(json_agg(p order by period_start),'[]') from
