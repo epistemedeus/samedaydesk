@@ -5,6 +5,7 @@ import { useAuth } from "../lib/auth";
 import { ALL_OFFERS } from "../lib/services";
 import { track } from "../lib/posthog";
 import styles from "./Auth.module.css";
+import { journey } from "../lib/journey";
 
 export default function Auth({ mode }: { mode: "login" | "signup" }) {
   const [params] = useSearchParams();
@@ -28,6 +29,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
   }, [loading, user]);
 
   async function google() {
+    journey("sign_in_started", { state: mode });
     setError(null);
     setBusy(true);
     try {
@@ -39,6 +41,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
       });
       if (error) throw error; // on success the browser redirects to Google
     } catch (err) {
+      journey("sign_in_failed", { state: mode });
       setError(err instanceof Error ? err.message : "Could not start Google sign-in.");
       setBusy(false);
     }
@@ -46,6 +49,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
 
   async function submit(e: FormEvent) {
     e.preventDefault();
+    journey("sign_in_started", { state: mode });
     setError(null);
     setNotice(null);
     setBusy(true);
@@ -57,6 +61,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
           ? await sb.auth.signUp({ email, password })
           : await sb.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      journey("sign_in_completed", { state: mode });
       track(mode === "signup" ? "signup_completed" : "login", { offer: offerSlug });
       if (mode === "signup" && data.session) {
         authedFetch("/api/auth/welcome", { method: "POST" }).catch(() => {}); // best-effort
@@ -64,6 +69,7 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
       if (data.session) navigate(dest(), { replace: true });
       else setNotice("Almost there. Check your email to confirm your account.");
     } catch (err) {
+      journey("sign_in_failed", { state: mode });
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setBusy(false);

@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ALL_OFFERS, PAYMENT_LINKS } from "../lib/services";
 import styles from "./Care.module.css";
+import { journey } from "../lib/journey";
 
 type Receipt = {
   title: string; state: string; receivedIntake: boolean; amountCents: number;
@@ -48,6 +49,7 @@ export function BuyCare() {
   const buy = async () => {
     if (!offer || busy) return;
     setBusy(true); setError("");
+    journey("checkout_started", { offer: offer.slug });
     const storeKey = `sds-care-order:${offer.slug}`;
     try {
       const order = sessionStorage.getItem(storeKey) || crypto.randomUUID();
@@ -55,6 +57,7 @@ export function BuyCare() {
       const result = await send("checkout", { offer: offer.slug, order });
       redirect(result.url, "checkout.stripe.com");
     } catch (e) {
+      journey("checkout_failed", { offer: offer.slug });
       if (e instanceof Error && "code" in e && e.code === "checkout_expired") sessionStorage.removeItem(storeKey);
       setError(e instanceof Error ? e.message : "Checkout could not open.");
       setBusy(false);
@@ -97,9 +100,11 @@ export function CareReceipt({ mode }: { mode: "intake" | "cancel" }) {
     try {
       const data = await send(action, { ...access, ...extra });
       if (action === "receipt") {
+        journey("receipt_opened", { offer: data.offer, state: data.state });
         setReceipt(data);
         if (data.state === "paid") sessionStorage.removeItem(`sds-care-order:${data.offer}`);
       } else if (action === "intake") {
+        journey("form_sent", { state: "intake" });
         setMessage("We received your workflow. Keep this receipt for your records.");
       } else if (data.canceled) setMessage("Your subscription will not renew.");
       else redirect(data.url, "billing.stripe.com");

@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { track } from "../lib/posthog";
+import { journey } from "../lib/journey";
 import styles from "./AgentMark.module.css";
 
 // "For AI agents": a dropdown drawn as a callout on the drafting sheet. Opening it copies
@@ -75,6 +76,7 @@ export default function AgentMark({ placement }: { placement: "nav" | "footer" |
     const onToggle = (event: Event) => {
       const open = (event as ToggleEvent).newState === "open";
       if (open) {
+        journey("agent_dropdown_opened");
         track("quickstart_tab", { site: "samedaydesk", placement });
         // Without anchor positioning, place the callout under its trigger by hand.
         if (!CSS.supports("position-anchor: --a")) {

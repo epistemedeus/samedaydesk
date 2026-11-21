@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import pg from "pg";
 import { CareError } from "./care-contract.js";
 import { createTaskQuoteStore } from "./task-quotes.js";
+import { recordJourney } from "./journey-events.js";
 
 const first = async (query) => (await query).rows[0] ?? null;
 
@@ -65,7 +66,8 @@ export function createCareStore(pool) {
     },
 
     async checkoutPaid({ id, sessionId, customerId, paymentId, subscriptionId, email, at }) {
-      return txn(async (db) => {
+      let paidOffer;
+      const result = await txn(async (db) => {
         const current = await order(id, db, "for update");
         if (!current || (current.session_id && current.session_id !== sessionId) ||
             (current.customer_id && current.customer_id !== customerId) ||
@@ -76,8 +78,11 @@ export function createCareStore(pool) {
           customer_id = $3, payment_intent_id = $4, subscription_id = $5, stripe_email = $6, received_at = $7
           where id = $1 returning *`, [id, sessionId, customerId, paymentId, subscriptionId, email, at]));
         await mail(db, id, `receipt/${id}`, "receipt");
+        paidOffer = current.offer;
         return result;
       });
+      if (paidOffer) recordJourney("payment_confirmed", { path: "/care/intake", offer: paidOffer, state: "paid" }, "server");
+      return result;
     },
 
     async expire(id, sessionId) {

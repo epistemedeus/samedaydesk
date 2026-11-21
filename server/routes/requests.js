@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { defaultTaskRequestStore, validateTaskRequest } from "../lib/task-requests.js";
 import { notifyAdmin, sendTaskRequestReceived } from "../lib/notify.js";
+import { recordJourney, reportRequestError } from "../lib/journey-events.js";
 
 const escape = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
@@ -15,6 +16,7 @@ export function createRequestsRouter({ store = defaultTaskRequestStore(), notify
     if (error) return res.status(400).json({ error: { field: error } });
     try {
       const row = await store.insert(request);
+      recordJourney("form_received", { path: "/", state: "task" }, "server");
       const reference = `SDD-${row.id.slice(0, 8).toUpperCase()}`;
       await notify.sendTaskRequestReceived({ to: row.email, reference, task: row.task });
       await notify.notifyAdmin(
@@ -23,6 +25,7 @@ export function createRequestsRouter({ store = defaultTaskRequestStore(), notify
       );
       return res.status(201).json({ received: true, reference });
     } catch (e) {
+      void reportRequestError("task_store");
       console.error("[requests] store failed", e?.message);
       return res.status(503).json({ error: { field: "server" } });
     }

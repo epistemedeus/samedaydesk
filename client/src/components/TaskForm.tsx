@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { track } from "../lib/posthog";
+import { journey } from "../lib/journey";
 import styles from "./TaskForm.module.css";
 
 // "A harder problem? Tell us the task": an on-page form. The request is stored, confirmed here
@@ -37,11 +38,14 @@ export default function TaskForm() {
           const body = await res.json().catch(() => ({}));
           if (res.ok && body.reference) {
             track("task_request_sent", {});
+            journey("form_sent", { state: "task" });
             setState({ kind: "sent", reference: body.reference });
           } else {
+            journey("form_failed", { state: "task" });
             setState({ kind: "error", field: body?.error?.field || "server" });
           }
         } catch {
+          journey("form_failed", { state: "task" });
           setState({ kind: "error", field: "server" });
         }
       }}
