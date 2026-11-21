@@ -10,7 +10,7 @@ host-only inputs first:
 
 | Variable | Value |
 | --- | --- |
-| SDS_RECEIPTS_PRIVATE_EXPORT_BASE64 | Canonical unwrapped Base64 of the exact reviewed private gateway projection bytes; never source or public files |
+| SDS_RECEIPTS_PRIVATE_EXPORT_GZIP_BASE64 | Canonical unwrapped Base64 of the gzip buffer produced from the exact reviewed private gateway projection; never source or public files |
 | SDS_RECEIPTS_REBUILD_PATH | /home/u188979531/.samedaydesk-receipts/snapshot.json |
 
 The reviewed VM input is
@@ -19,6 +19,36 @@ The reviewed VM input is
 `d66b647fddc59ccc4bd881ff69ce1e5e1bfe9f821c66dd0b9fe087663d305712`.
 It is Root's November 21 15:08:37 UTC gateway projection: 81 records, zero
 invalid. It is not a new gateway export. Keep it private and preserve its bytes.
+
+Hostinger rejected the plain Base64 enrollment with HTTP422 and an observed
+8,192-character per-value limit. The 11,114-byte input's plain Base64 is 14,820
+characters. No host values were installed and no native job ran. Root's rejected
+99-value postimage remains safely saved as VLT-6BD3FDB0596D3EF050364BB0; preserve
+the currently installed 97-value preimage when preparing the corrected postimage.
+
+Use exported `gzipPrivateExport` from `scripts/refresh-receipts.mjs`: it applies
+Node `gzipSync` at level9 directly to the validated original Buffer, without
+reformatting, compaction or reclassification. Encode its returned buffer with
+`toString("base64")`, without wrapping. The reviewed Node22/zlib1.3.1 result is:
+
+- Original: 11,114 bytes, SHA-256 `d66b647fddc59ccc4bd881ff69ce1e5e1bfe9f821c66dd0b9fe087663d305712`.
+- Gzip: 3,678 bytes, SHA-256 `1ee386b30bb2f44e9db698319e0803a2027435fdcda09cfcd0a91b7d9aaacca2`.
+- Canonical Base64: 4,904 characters, below the 8,192-character host limit.
+
+The exact private gzip buffer is available on the VM at
+`/tmp/sds-gzip-host-rebuild-20261121/private/payer-export.json.gz`, mode0600
+inside a mode0700 directory. It is not source, public data or a second ledger.
+Root may reuse those exact buffer bytes or privately regenerate/verify them
+with the exported producer. Verify decoded original byte length/hash as well.
+
+The decoder accepts exactly one of the new gzip field and legacy
+`SDS_RECEIPTS_PRIVATE_EXPORT_BASE64`. Omit the old field entirely for this host;
+an empty old field alongside gzip is also refused. Plain Base64 remains valid
+for smaller exports, subject to the same 8,192-character cap. Both formats must
+be canonical and unwrapped. Gzip uses `gunzipSync` with a 1,048,576-byte
+`maxOutputLength`; truncated/corrupt streams, expansion bombs, oversized values,
+invalid policy, missing input and double input fail before a decoded file or
+builder is created. Decompression restores the exact original bytes.
 
 The wrapper uses the tested public read routes, PublicNode for log ranges and
 Base mainnet for individual records, with 1,000 ms pacing. These values are set
@@ -57,6 +87,10 @@ of the web root and retain its existing permissions. Read back the native job's
 actual output; a saved schedule is not an execution receipt. The prior complete
 existing-builder run took 19 minutes 32 seconds; the wrapper run's measured
 result belongs in its exact-source release receipt.
+The successful 19m29s wrapper run belongs to source7ebf970 with plain input.
+The gzip decoder successor reuses that unchanged builder/child proof; its new
+decoder/CLI/check/build receipts are separately scoped. Root's first actual
+hosted full run qualifies the configured gzip path before switching app reads.
 The CLI resolves its entry path before comparing it with ESM's resolved module
 URL, so the host's `hbuilds/current` directory symlink is exercised correctly.
 

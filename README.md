@@ -156,3 +156,23 @@ new source/build, private health, public guide, status JSON and apex declaration
 No migration, payment, enrollment or Railway restart follows this source repair.
 A pushed source branch is not installed availability.
 
+## Hosted receipt refresh
+
+Root's [private hosted rebuild recipe](docs/RECEIPTS-HOST-REBUILD.md) uses
+`SDS_RECEIPTS_PRIVATE_EXPORT_GZIP_BASE64` and `SDS_RECEIPTS_REBUILD_PATH`, then
+switches `SDS_RECEIPTS_SNAPSHOT_PATH` last after successful native receiving.
+Preserve the complete existing host environment. Hostinger's observed per-value
+limit is 8,192 characters: the original 11,114-byte export becomes 14,820 plain
+Base64 characters, so that attempted enrollment was rejected, not installed.
+
+The exported `gzipPrivateExport` producer uses Node `gzipSync` level9 without
+altering the original bytes. Reviewed buffer: 3,678 bytes, SHA-256
+`1ee386b30bb2f44e9db698319e0803a2027435fdcda09cfcd0a91b7d9aaacca2`;
+canonical unwrapped Base64 is 4,904 characters. Decompression must restore
+11,114 bytes with SHA-256
+`d66b647fddc59ccc4bd881ff69ce1e5e1bfe9f821c66dd0b9fe087663d305712`.
+Exactly one gzip or legacy plain Base64 input is accepted; each value is bounded
+to 8,192 characters and gunzip output to 1 MiB. Missing, double, malformed,
+truncated and excessive inputs fail closed. Policy bytes remain private and
+temporary under 0700/0600; the existing builder and atomic snapshot are unchanged.
+

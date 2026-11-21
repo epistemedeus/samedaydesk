@@ -3,11 +3,42 @@ import { createHash } from "node:crypto";
 import { lstat, mkdir, mkdtemp, readFile, realpath, rm, rmdir, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { gzipSync, gunzipSync } from "node:zlib";
 import { writeReceiptSnapshot, qualifiedReceiptSnapshot } from "../server/lib/receipt-snapshot.js";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const deadlineMs = 27 * 60 * 1000;
 const failure = (reason) => Object.assign(new Error(reason), { safeReason: reason });
+const maxExportValueChars = 8192;
+const maxExportBytes = 1024 * 1024;
+
+function qualifiedPrivateExport(bytes) {
+  if (!Buffer.isBuffer(bytes) || !bytes.length || bytes.length > maxExportBytes) throw failure("invalid-private-export");
+  let policy;
+  try { policy = JSON.parse(bytes.toString("utf8")); } catch { throw failure("invalid-private-export"); }
+  if (policy?.invalid !== 0 || !Array.isArray(policy.rows)) throw failure("invalid-private-export");
+  return bytes;
+}
+
+// Preserve the original bytes. Root's broker encodes this buffer without wrapping.
+export function gzipPrivateExport(bytes) {
+  const compressed = gzipSync(qualifiedPrivateExport(bytes), { level: 9 });
+  if (compressed.toString("base64").length > maxExportValueChars) throw failure("private-export-value-too-large");
+  return compressed;
+}
+
+export function decodePrivateExport(env) {
+  const plain = env.SDS_RECEIPTS_PRIVATE_EXPORT_BASE64;
+  const compressed = env.SDS_RECEIPTS_PRIVATE_EXPORT_GZIP_BASE64;
+  if ((plain !== undefined) === (compressed !== undefined)) throw failure("invalid-private-export");
+  const encoded = plain ?? compressed;
+  if (typeof encoded !== "string" || !encoded || encoded.length > maxExportValueChars) throw failure("invalid-private-export");
+  const bytes = Buffer.from(encoded, "base64");
+  if (!bytes.length || bytes.toString("base64") !== encoded) throw failure("invalid-private-export");
+  try {
+    return qualifiedPrivateExport(compressed === undefined ? bytes : gunzipSync(bytes, { maxOutputLength: maxExportBytes }));
+  } catch { throw failure("invalid-private-export"); }
+}
 
 async function runBuilder({ env, signal }) {
   const child = spawn(process.execPath, [join(root, "scripts/build-receipts.mjs")], {
@@ -44,15 +75,7 @@ export async function refreshReceipts({ env = process.env, builder = runBuilder,
       throw failure("invalid-rebuild-configuration");
     }
     stage = "policy";
-    const encoded = env.SDS_RECEIPTS_PRIVATE_EXPORT_BASE64;
-    if (typeof encoded !== "string" || !encoded || encoded.length > 3 * 1024 * 1024) {
-      throw failure("invalid-private-export");
-    }
-    const bytes = Buffer.from(encoded, "base64");
-    if (!bytes.length || bytes.toString("base64") !== encoded) throw failure("invalid-private-export");
-    let policy;
-    try { policy = JSON.parse(bytes.toString("utf8")); } catch { throw failure("invalid-private-export"); }
-    if (policy?.invalid !== 0 || !Array.isArray(policy.rows)) throw failure("invalid-private-export");
+    const bytes = decodePrivateExport(env);
     await privateDirectory(dirname(target));
     const current = await lstat(target).catch((error) => {
       if (error.code !== "ENOENT") throw error;

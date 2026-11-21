@@ -1,18 +1,57 @@
 import assert from "node:assert/strict";
+import { randomBytes } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { once } from "node:events";
 import { chmod, lstat, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { test } from "node:test";
+import { gzipSync } from "node:zlib";
 import express from "express";
-import { refreshReceipts } from "./refresh-receipts.mjs";
+import { refreshReceipts, decodePrivateExport, gzipPrivateExport } from "./refresh-receipts.mjs";
 import { mountReceiptSnapshot, writeReceiptSnapshot } from "../server/lib/receipt-snapshot.js";
 import { receiptId } from "../client/src/data/receiptPages.mjs";
 
 const policy = JSON.stringify({ invalid: 0, rows: [], privateSentinel: "private-policy-sentinel" });
 const snapshot = JSON.parse(await readFile(new URL("../client/public/receipts.json", import.meta.url), "utf8"));
 const next = { ...snapshot, chainReadThroughBlock: snapshot.chainReadThroughBlock + 1 };
+
+test("plain and gzip encodings preserve exact bytes and use the observed host value limit", () => {
+  const original = Buffer.from(policy + "\n");
+  const plain = original.toString("base64");
+  const gzip = gzipPrivateExport(original);
+  assert.deepEqual(decodePrivateExport({ SDS_RECEIPTS_PRIVATE_EXPORT_BASE64: plain }), original);
+  assert.deepEqual(decodePrivateExport({ SDS_RECEIPTS_PRIVATE_EXPORT_GZIP_BASE64: gzip.toString("base64") }), original);
+  assert.deepEqual(gzipPrivateExport(original), gzip);
+  assert.ok(gzip.toString("base64").length <= 8192);
+  const boundary = Buffer.concat([original, Buffer.alloc(6144 - original.length, 32)]);
+  assert.equal(boundary.toString("base64").length, 8192);
+  assert.deepEqual(decodePrivateExport({ SDS_RECEIPTS_PRIVATE_EXPORT_BASE64: boundary.toString("base64") }), boundary);
+  const noise = Buffer.from(JSON.stringify({ invalid: 0, rows: [], padding: randomBytes(10000).toString("base64") }));
+  assert.throws(() => gzipPrivateExport(noise), /private-export-value-too-large/);
+});
+
+test("missing, double, malformed, noncanonical, truncated, bomb and oversize inputs fail closed", () => {
+  const plain = Buffer.from(policy).toString("base64");
+  const gzip = gzipPrivateExport(Buffer.from(policy));
+  const zipped = gzip.toString("base64");
+  const compressed = (value) => ({ SDS_RECEIPTS_PRIVATE_EXPORT_GZIP_BASE64: value });
+  for (const env of [
+    {}, { SDS_RECEIPTS_PRIVATE_EXPORT_BASE64: plain, ...compressed(zipped) },
+    { SDS_RECEIPTS_PRIVATE_EXPORT_BASE64: "", ...compressed(zipped) },
+    { SDS_RECEIPTS_PRIVATE_EXPORT_BASE64: plain, ...compressed("") },
+    compressed(""), compressed("not-base64"), compressed(zipped + "\n"),
+    compressed(zipped.replace(/=+$/, "") + "!"), compressed("A".repeat(8196)),
+    { SDS_RECEIPTS_PRIVATE_EXPORT_BASE64: "A".repeat(8196) },
+    compressed(Buffer.from(policy).toString("base64")),
+    compressed(gzip.subarray(0, -1).toString("base64")),
+    compressed(Buffer.concat([gzip.subarray(0, -1), Buffer.from([gzip.at(-1) ^ 1])]).toString("base64")),
+    compressed(gzipSync(Buffer.from("not-json")).toString("base64")),
+    compressed(gzipSync(Buffer.from('{"invalid":1,"rows":[]}')).toString("base64")),
+    compressed(gzipSync(Buffer.alloc(2 * 1024 * 1024, 65)).toString("base64")),
+    compressed(gzipSync(Buffer.from(JSON.stringify({ invalid: 0, rows: [], padding: "x".repeat(1024 * 1024) }))).toString("base64")),
+  ]) assert.throws(() => decodePrivateExport(env), /invalid-private-export/);
+});
 
 async function fixture(t) {
   const root = await mkdtemp(join(tmpdir(), "sds-rebuild-test-"));
@@ -86,6 +125,28 @@ test("first enrollment creates a private destination without switching the app s
   assert.equal((await lstat(dirname(target))).mode & 0o777, 0o700);
   assert.equal((await lstat(target)).mode & 0o777, 0o600);
   assert.equal(await readFile(h.target, "utf8"), h.original);
+});
+
+test("gzip reaches the unchanged builder as exact protected bytes and malformed gzip retains last-good", async (t) => {
+  const h = await fixture(t);
+  const env = { ...h.env, SDS_RECEIPTS_PRIVATE_EXPORT_GZIP_BASE64: gzipPrivateExport(Buffer.from(policy)).toString("base64") };
+  delete env.SDS_RECEIPTS_PRIVATE_EXPORT_BASE64;
+  const result = await refreshReceipts({ env, builder: async ({ env: child }) => {
+    assert.equal(child.SDS_RECEIPTS_PRIVATE_EXPORT_GZIP_BASE64, undefined);
+    assert.equal(child.SDS_RECEIPTS_PRIVATE_EXPORT_BASE64, undefined);
+    assert.equal(await readFile(child.RECEIPTS_PRIVATE_EXPORT, "utf8"), policy);
+    assert.equal((await lstat(child.RECEIPTS_PRIVATE_EXPORT)).mode & 0o777, 0o600);
+    await writeReceiptSnapshot(child.SDS_RECEIPTS_SNAPSHOT_PATH, JSON.stringify(next));
+    return { code: 0 };
+  } });
+  assert.equal(result.ok, true);
+  const retained = await readFile(h.target, "utf8");
+  const failed = await refreshReceipts({ env: { ...env, SDS_RECEIPTS_PRIVATE_EXPORT_GZIP_BASE64: "invalid" },
+    builder: () => assert.fail("invalid gzip must not invoke builder") });
+  assert.equal(failed.published, false);
+  assert.equal(failed.cleanupComplete, true);
+  assert.equal(await readFile(h.target, "utf8"), retained);
+  assert.deepEqual(await readdir(h.root), ["snapshot.json"]);
 });
 
 test("partial, invalid and older candidates retain last-good bytes and clean only the owned job", async (t) => {
