@@ -41,6 +41,17 @@ html.dark #sourcey .search-footer-hint,
 html.dark #sourcey .search-footer kbd,
 html.dark #sourcey #search-open kbd { color: #bfc3cb; }
 
+/* Sourcey's desktop anchor has no box when the mobile search button is shown. */
+@media (max-width: 1023px) {
+  #sourcey #search-dialog.open .search-dialog-inner {
+    left: 1rem !important;
+    right: 1rem !important;
+    top: 4.5rem !important;
+    width: auto !important;
+    max-width: calc(100vw - 2rem) !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   #sourcey *, #sourcey *::before, #sourcey *::after,
   .mobile-nav-dialog, .mobile-nav-dialog::backdrop {
