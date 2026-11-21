@@ -34,6 +34,11 @@
 .stripWindow { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
 .stripTrack { display: flex; gap: 2.2rem; width: max-content; margin: 0; padding: 0; list-style: none; animation: drift 70s linear infinite; }
 .stripWindow:hover .stripTrack, .stripWindow:focus-within .stripTrack { animation-play-state: paused; }
+/* Keyboard focus uses the same stable, scrollable row as reduced motion. */
+/* Keep the outer focus ring inside the clip without moving surrounding content. */
+.stripWindow:focus-within { overflow-x: auto; mask-image: none; padding-block: 5px; margin-block: -5px; }
+.stripWindow:focus-within .stripTrack { animation: none; }
+.stripWindow:focus-within .stripTrack li[aria-hidden] { display: none; }
 .stripTrack a { color: var(--ink-dim); text-decoration: none; white-space: nowrap; }
 .stripTrack a span { margin-inline-end: 0.6rem; color: var(--ink-faint); }
 .stripTrack a:hover { color: var(--ink); }
