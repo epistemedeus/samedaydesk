@@ -6,7 +6,7 @@ import { getStripe } from "../lib/stripe";
 import { getSupabase, authedFetch } from "../lib/supabase";
 import { useAuth } from "../lib/auth";
 import { useTheme, type Theme } from "../lib/theme";
-import { ALL_OFFERS } from "../lib/services";
+import { ALL_OFFERS, careCheckoutFromAccount } from "../lib/services";
 import { track } from "../lib/posthog";
 import styles from "./Checkout.module.css";
 import { journey } from "../lib/journey";
@@ -56,7 +56,9 @@ function appearanceFor(theme: Theme): Appearance {
 export default function Checkout() {
   const [params] = useSearchParams();
   const slug = params.get("offer") || "agent_mcp_server";
-  const offer = ALL_OFFERS.find((o) => o.slug === slug) || ALL_OFFERS[0];
+  const offer = ALL_OFFERS.find((o) => o.slug === slug);
+  const carePath = careCheckoutFromAccount(slug);
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { theme } = useTheme();
   const appearance = useMemo(() => appearanceFor(theme), [theme]);
@@ -70,6 +72,8 @@ export default function Checkout() {
   const [intakeFrozen, setIntakeFrozen] = useState(false);
 
   useEffect(() => {
+    if (carePath) { navigate(carePath, { replace: true }); return; }
+    if (!offer) return;
     let active = true;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reset the attempt when the product changes, before resuming a stored one
     setClientSecret(null);
@@ -121,7 +125,13 @@ export default function Checkout() {
     return () => {
       active = false;
     };
-  }, [slug, offer.price, user?.id]);
+  }, [slug, offer, carePath, navigate, user?.id]);
+
+  if (carePath) return null;
+  if (!offer) return <main className={styles.wrap}>
+    <h1>Choose a service</h1>
+    <Link to="/#services">Browse services</Link>
+  </main>;
 
   return (
     <main className={styles.wrap}>

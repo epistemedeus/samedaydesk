@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import { getSupabase, authedFetch } from "../lib/supabase";
-import { CATEGORIES } from "../lib/services";
+import { CATEGORIES, careCheckoutFromAccount } from "../lib/services";
 import styles from "./Dashboard.module.css";
 
 type Me = { uid: string; email: string; emailVerified: boolean };
@@ -41,12 +41,12 @@ export default function Dashboard() {
         <button className={styles.signout} onClick={() => signOut()}>Sign out</button>
       </header>
 
-      {justPaid && <div className={styles.banner}>Open your order below to check payment and delivery.</div>}
+      {justPaid && <div className={styles.banner}>Check payment and delivery in your orders below.</div>}
 
       <h1 className={styles.h1}>Your desk</h1>
       <p className={styles.sub}>
         Signed in as <span className="mono">{user?.email}</span>
-        {me && <span className={styles.ok}> · server-verified ✓</span>}
+        {me?.emailVerified && <span className={styles.ok}> · Email confirmed ✓</span>}
       </p>
 
       <section className={styles.card}>
@@ -63,7 +63,7 @@ export default function Dashboard() {
                     <span className="mono">{(o.amount / 100).toFixed(0)} USD</span> · {new Date(o.created_at).toLocaleDateString()}
                   </p>
                 </div>
-                <span className={styles.status}>{o.status === "intake_required" ? "Paid · task intake needs review. Contact support before delivery." : o.status}</span>
+                <span className={styles.status}>{o.status === "intake_required" ? "Paid · task intake needs review. Contact support before delivery." : o.status.replaceAll("_", " ")}</span>
               </li>
             ))}
           </ul>
@@ -72,7 +72,7 @@ export default function Dashboard() {
             <p className={styles.empty}>No orders yet. Pick a service to send your first task.</p>
             <div className={styles.quick}>
               {CATEGORIES.flatMap((c) => c.offers).map((o) => (
-                <Link key={o.slug} to={`/checkout?offer=${o.slug}`} className={styles.quickItem} viewTransition>
+                <Link key={o.slug} to={careCheckoutFromAccount(o.slug) || `/checkout?offer=${o.slug}`} className={styles.quickItem} viewTransition>
                   {o.name} <span className="mono lime">{o.price} USD</span>
                 </Link>
               ))}

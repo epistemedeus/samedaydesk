@@ -6,6 +6,7 @@ import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createReceiptRpc } from "./receipt-rpc.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const snapshot = JSON.parse(readFileSync(join(root, "client/public/receipts.json"), "utf8"));
@@ -16,21 +17,14 @@ const token = "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913";
 const transfer = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
 const word = (input, i) => input.slice(10 + 64 * i, 10 + 64 * (i + 1));
 const address = (value) => "0x" + value.slice(-40).toLowerCase();
-let sequence = 0;
-async function rpc(method, params) {
-  const response = await fetch(endpoint, { method: "POST", signal: AbortSignal.timeout(15000),
-    headers: { "content-type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: ++sequence, method, params }) });
-  if (!response.ok) throw new Error(`RPC HTTP ${response.status}`);
-  const body = await response.json();
-  if (body.error) throw new Error(`RPC code ${body.error.code}`);
-  assert.ok(body.result, `${method} returned no record`);
-  return body.result;
-}
+const intervalMs = Number(process.env.RECEIPTS_RPC_INTERVAL_MS ?? 1000);
+const readRpc = createReceiptRpc({ intervalMs });
+const rpc = (method, params) => readRpc(endpoint, method, params);
 
 const output = { source: execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim(),
   verifierSha256: createHash("sha256").update(readFileSync(fileURLToPath(import.meta.url))).digest("hex"),
   snapshotSha256: createHash("sha256").update(readFileSync(join(root, "client/public/receipts.json"))).digest("hex"),
-  checkedAt: new Date().toISOString(), rpcOrigin: endpoint.origin, mode: "read only", rows: [],
+  checkedAt: new Date().toISOString(), rpcOrigin: endpoint.origin, intervalMs, mode: "read only", rows: [],
   privatePolicyReceived: Boolean(process.env.RECEIPTS_PRIVATE_EXPORT), state: "failed" };
 try {
   assert.equal(await rpc("eth_chainId", []), "0x2105");

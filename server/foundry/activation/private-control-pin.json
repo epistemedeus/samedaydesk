@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "4cf1a35ebe3fb99f6dec34cba9ab646a624067fe",
+  "base": "9566334b3661a69bfb15d3ff22d98c47b54c0f57",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
@@ -267,7 +267,7 @@
     "server/routes/requests.js": "9f42868435cfd9e40041a324fb3e272535ee6ca914d8224487434c4a110aec8b",
     "server/routes/resend-webhook.js": "b4b78b2ec212e2ae98c73703fb425d24538fdb2ee51492877a5c07a0d3f79352",
     "server/routes/stripe-webhook.js": "36b0837d0e16a96f4da098044c2f9861703b6fcd86a71a1cacd62d21efe3872a",
-    "server/routes/tools.js": "3a07ad67186f072b91c84f120230cf0895606728bbea8ce1b1d3e13770b40788",
+    "server/routes/tools.js": "27450e4e6faf1598ba662e50e73de421c85467951fb0ead6b753b4f6cce69559",
     "server/routes/x402-quote.js": "11caf4fa157443aa171e567a5308dea21e64b161c178300d3c0eb4259be97903",
     "server/scripts/fixtures/hosted-synthetic-upload-100511.json": "b2956cd3f1c2f4bd2b551d216f7aa2b9a627280f8077b00d13756a26e448664a",
     "server/scripts/qualify-contributor-https-edge.mjs": "9068044c60b26037ab346468da68663ca4013bd49b76f47a5ca7ece194e3d16b",
@@ -1768,6 +1768,11 @@
       "base": "68cfe8ebff9162ee9014ef7ef65ae11891e6aed0",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:261ae31c040b7e61e2e93b010c142234a0b22262903632d39b697fa9983f81c0"
+    },
+    {
+      "base": "4cf1a35ebe3fb99f6dec34cba9ab646a624067fe",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:25b5bb0fa7ef1d5c8ca4b070e174e0a13f756225bee9e17aa6120e648222570c"
     }
   ]
 }

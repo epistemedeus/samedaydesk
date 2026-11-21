@@ -95,11 +95,71 @@
   ],
   "notInHarnessYet": [
     {
-      "id": "account_checkout",
-      "name": "Account checkout (/checkout)",
-      "cents": "per product",
-      "entry": "/checkout",
-      "why": "PaymentIntent fulfilment (server/lib/fulfill.js); the lane maps each product and adds it"
+      "id": "legacy_skill_audit",
+      "cents": 2900,
+      "entry": "/skillguard.html",
+      "why": "Existing live Payment Link delivery configuration has no matching test input."
+    },
+    {
+      "id": "legacy_skill_watch",
+      "cents": 1200,
+      "interval": "month",
+      "entry": "/skillguard.html",
+      "why": "Existing watch delivery, renewal and cancellation configuration are outside the enrolled test inputs."
+    },
+    {
+      "id": "legacy_visibility_audit",
+      "cents": 19900,
+      "entry": "/ai-visibility-audit.html",
+      "why": "Existing live Payment Link delivery configuration has no matching test input."
+    },
+    {
+      "id": "legacy_visibility_fix",
+      "cents": 39900,
+      "entry": "/ai-visibility-audit.html",
+      "why": "Existing live Payment Link delivery configuration has no matching test input."
+    },
+    {
+      "id": "legacy_visibility_sprint",
+      "cents": 49900,
+      "entry": "/ai-visibility-audit.html",
+      "why": "Existing live Payment Link delivery configuration has no matching test input."
+    },
+    {
+      "id": "legacy_fix_pack",
+      "cents": 3900,
+      "entry": "/kit/ai-readiness-kit.html",
+      "why": "Existing delivered asset and corresponding test configuration are unavailable."
+    },
+    {
+      "id": "legacy_med_spa_bundle",
+      "cents": 5900,
+      "entry": "/reports/ai-citation-schema-med-spas-2026.html",
+      "why": "Existing delivered asset and corresponding test configuration are unavailable."
+    },
+    {
+      "id": "legacy_readiness_kit",
+      "cents": 900,
+      "entry": "/reports/ai-search-readiness-saas-2026.html",
+      "why": "Existing delivered asset and corresponding test configuration are unavailable."
+    }
+  ],
+  "companionHarnesses": [
+    {
+      "run": "node scripts/release/account-matrix.mjs",
+      "offers": [
+        "agent_workflow",
+        "agent_mcp_server",
+        "machine_payment_route",
+        "agent_storefront"
+      ],
+      "entry": "/checkout?offer=<slug>",
+      "authority": "real browser Payment Element, actual Stripe test PaymentIntents, listener receipts and local PostgREST rows",
+      "inputs": [
+        "SDS_ACCOUNT_PREVIEW_DIR",
+        "STRIPE_TEST_KEY_FILE"
+      ],
+      "note": "Uses the existing isolated local Auth/PostgREST preview; the private build receives only the enrolled test publishable key."
     }
   ]
 }

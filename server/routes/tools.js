@@ -128,17 +128,17 @@ function robotsBlocks(robotsTxt, uaName) {
 }
 
 function attr(tag, name) {
-  const m = tag.match(new RegExp(name + '\\s*=\\s*["\']([^"\']*)["\']', "i"));
-  return m ? m[1].trim() : null;
+  const m = tag.match(new RegExp(`\\s${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s"'\x60=<>]+))`, "i"));
+  return m ? (m[1] ?? m[2] ?? m[3]).trim() : null;
 }
 
-function analyzeHtml(html) {
+export function analyzeHtml(html) {
   const out = { title: null, description: null, canonical: null, lang: null, h1: null, og: 0, jsonldTypes: [], words: 0 };
   if (!html) return out;
   const titleM = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
   if (titleM) out.title = titleM[1].replace(/\s+/g, " ").trim();
-  const langM = html.match(/<html[^>]*\slang\s*=\s*["']([^"']+)["']/i);
-  if (langM) out.lang = langM[1];
+  const htmlTag = html.match(/<html\b[^>]*>/i)?.[0];
+  if (htmlTag) out.lang = attr(htmlTag, "lang") || null;
   const h1M = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
   if (h1M) out.h1 = h1M[1].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim().slice(0, 160);
   for (const tag of html.match(/<meta[^>]+>/gi) || []) {

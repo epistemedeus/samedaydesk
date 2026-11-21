@@ -25,6 +25,19 @@ charge before sending a receipt, so a refund or dispute arriving first still hol
 Account storage is opened only for linked users. Quote and fixed-report checks use actual test
 Payment Links; no local Stripe fixture counts as their provider proof.
 
+Account Payment Element proof uses `node scripts/release/account-matrix.mjs`, with
+`SDS_ACCOUNT_PREVIEW_DIR` and `STRIPE_TEST_KEY_FILE`. The existing private Auth/PostgREST
+preview directory supplies `config.private.json`, `provider-run.json`, and the live listener's
+sanitized `provider-deliveries.json`. It must serve the exact clean source on loopback.
+Import only the enrolled test publishable key into its private client build. The runner uses
+fresh synthetic users, fills the actual Payment Element once per offer, and keeps buyer,
+provider, listener and database records. Its four prices come from the existing server catalog.
+
+Receipt rebuild and verification share one paced read-only RPC transport. The default is one
+request per second; `RECEIPTS_RPC_INTERVAL_MS` is an explicit override. There are no automatic
+replays or endpoint fallbacks. `BASE_RPC` owns archive logs and `BASE_HASH_RPC` owns individual
+records; both must confirm Base. A refused archive read stops the rebuild without replacing its snapshot.
+
 ## A. Every page, automated (`release:sweep -- --cheap`, 51 sitemap pages)
 
 | Line | State at foundation | How to pass |
