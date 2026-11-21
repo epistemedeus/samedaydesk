@@ -2,7 +2,8 @@ import { lazy, type ComponentType } from "react";
 
 // These routes have the same anonymous initial state in the browser and build.
 // Never add an account, receipt capability, authenticated or user-data route here.
-const definitions = [
+type PageLoader = () => Promise<{ default: ComponentType }>;
+const definitions: ReadonlyArray<readonly [string, string, PageLoader]> = [
   ["/", "src/pages/Landing.tsx", () => import("./pages/Landing")],
   ["/tools/ai-readiness", "src/pages/AiReadiness.tsx", () => import("./pages/AiReadiness")],
   ["/x402", "src/pages/Mcp.tsx", () => import("./pages/Mcp")],
@@ -15,7 +16,7 @@ const definitions = [
   ["/for-agents/useful-jobs", "src/pages/UsefulJobs.tsx", () => import("./pages/UsefulJobs")],
   ["/terms", "src/pages/Legal.tsx", () => import("./pages/Legal").then((m) => ({ default: m.Terms }))],
   ["/privacy", "src/pages/Legal.tsx", () => import("./pages/Legal").then((m) => ({ default: m.Privacy }))],
-] as const satisfies readonly (readonly [string, string, () => Promise<{ default: ComponentType }>])[];
+];
 
 export const publicPages = definitions.map(([path, entry, load]) => ({ path, entry, load, page: lazy(load) }));
 

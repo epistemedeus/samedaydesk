@@ -106,6 +106,7 @@ async function measure(origin, path, sample, kind) {
         lcpMs: lhr.audits['largest-contentful-paint']?.numericValue ?? null,
         cls: lhr.audits['cumulative-layout-shift']?.numericValue ?? null,
         tbtMs: lhr.audits['total-blocking-time']?.numericValue ?? null,
+        benchmarkIndex: lhr.environment?.benchmarkIndex ?? null,
         navigation: lhr.configSettings.throttlingMethod,
       };
       if (!onBudget(receipt)) {
@@ -143,6 +144,7 @@ async function measure(origin, path, sample, kind) {
   results.push(result);
   console.log('MOBILE_AUDIT', JSON.stringify({
     path, sample, kind, status: documentStatus, lcpMs: result.lcpMs, cls: result.cls, tbtMs: result.tbtMs,
+    benchmarkIndex: result.benchmarkIndex,
     pass: result.withinLimits, error: reportError,
   }));
   if (slowPage && documentStatus === 200) console.log('MOBILE_CAUSAL_TIMING', JSON.stringify({ path, sample, kind, ...slowPage }));
