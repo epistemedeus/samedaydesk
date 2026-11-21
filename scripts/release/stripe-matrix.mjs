@@ -89,7 +89,7 @@ for (let i = 0; i < 60 && !webhookSecret && listener.exitCode === null; i++) awa
 if (!webhookSecret) { console.error("stripe listen did not start (is the Stripe CLI installed? set STRIPE_CLI)"); process.exit(2); }
 console.log(`run ${run}: listener ready`);
 
-const ctx = { root, source, port, preview, run, key, webhookSecret, stripe, out };
+const ctx = { root, source, port, preview, run, key, webhookSecret, stripe, out, buyerEmail };
 let app;
 const shutdown = async () => { try { await app?.stop(); } catch {} listener.kill("SIGTERM"); };
 process.on("SIGINT", async () => { await shutdown(); process.exit(130); });
@@ -162,7 +162,7 @@ async function formState(page) {
 }
 async function openHosted(page, url) {
   const t0 = Date.now();
-  await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
+  if (url) await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
   let st, chose = null, at = null, still = 0;
   while (Date.now() - t0 < 30000) {
     st = await formState(page);
@@ -287,8 +287,8 @@ async function spread(png, rect) {
 async function formCheck(offer, n) {
   const loads = [];
   for (let i = 1; i <= n; i++) {
-    const a = await adapter.open(ctx, offer);
     const page = await browser.newPage();
+    const a = await adapter.open(ctx, offer, { page });
     await page.setViewport({ width: 1280, height: 1000 });
     const errors = [];
     page.on("console", (m) => { if (m.type() === "error") errors.push(m.text().slice(0, 200)); });
@@ -383,8 +383,8 @@ try {
       try {
         if (name === "readback" || name === "lost-response") {
           const shown = await adapter.shownPrice(ctx, offer, page);
-          const a = await adapter.open(ctx, offer);
-          const b = name === "lost-response" ? await adapter.open(ctx, offer, { again: a }) : null;
+          const a = await adapter.open(ctx, offer, { page });
+          const b = name === "lost-response" ? await adapter.open(ctx, offer, { again: a, page }) : null;
           const session = await stripe("GET", `checkout/sessions/${a.sessionId}`);
           const ok = session.amount_total === offer.cents && session.currency === offer.currency && session.metadata?.release_run === run && shown.cents === offer.cents && (!b || b.sessionId === a.sessionId);
           await stripe("POST", `checkout/sessions/${a.sessionId}/expire`).catch(() => {});
@@ -395,7 +395,7 @@ try {
             buyer: name === "lost-response" ? { shown, afterExpiry: await adapter.buyerScreen(ctx, a, page, `${offer.id}-${name}`) } : shown,
             stripe: pick(session), webhook, stored: await adapter.storedRow(ctx, a) });
         } else if (["success", "decline", "block", "3ds-pass", "3ds-fail"].includes(name)) {
-          const a = await adapter.open(ctx, offer);
+          const a = await adapter.open(ctx, offer, { page });
           const shouldPay = name === "success" || name === "3ds-pass";
           let hosted = null;
           await payHosted(page, a.url, CARDS[name], { threeDS: name.startsWith("3ds") ? name.slice(4) : null });
@@ -422,7 +422,7 @@ try {
           if (shouldPay && ok) paid.set(offer.id, { a, session });
           record(offer, name, { state: ok ? "passed" : "failed", why: ok ? undefined : `session ${session.status}/${session.payment_status}, webhook ${webhook?.deliveredThroughListener ?? "none"}, stored ${adapter.describe(stored)}`, buyer, hostedPage: hosted, stripe: pick(session), webhook, stored });
         } else if (name === "expire") {
-          const a = await adapter.open(ctx, offer);
+          const a = await adapter.open(ctx, offer, { page });
           const session = await stripe("POST", `checkout/sessions/${a.sessionId}/expire`);
           const webhook = await eventFor("checkout.session.expired", (o) => o.id === a.sessionId, since);
           await sleep(1500);

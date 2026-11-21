@@ -10,6 +10,33 @@ import { pathToFileURL } from "node:url";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let pg, dsn, server, scratch, accessSecret, careLink;
+let nextQuote;
+
+async function prepareQuote(ctx) {
+  if (nextQuote) return nextQuote;
+  const response = await fetch(ctx.preview + "/api/requests", { method: "POST", headers: { "content-type": "application/json" },
+    body: JSON.stringify({ email: ctx.buyerEmail, task: "Verify the release client's documented tool-list workflow." }) });
+  if (response.status !== 201) throw new Error("The real task request was not accepted");
+  const requestId = psql(`select id from task_requests where email='${ctx.buyerEmail}' order by created_at desc limit 1`);
+  const { openCareStore } = await import(pathToFileURL(join(ctx.root, "server/lib/care-store.js")).href);
+  const { createTaskQuoteService } = await import(pathToFileURL(join(ctx.root, "server/lib/task-quotes.js")).href);
+  const { default: Stripe } = await import("stripe");
+  const client = new Stripe(ctx.key, { apiVersion: "2026-11-18.endive", maxNetworkRetries: 0 });
+  // Test objects carry the run tag without changing the production quote service.
+  const tagged = (method) => (args, options) => method({ ...args, metadata: { ...args.metadata, release_run: ctx.run },
+    ...(args.payment_intent_data ? { payment_intent_data: { ...args.payment_intent_data,
+      metadata: { ...args.payment_intent_data.metadata, release_run: ctx.run } } } : {}) }, options);
+  const stripe = { prices: { create: tagged(client.prices.create.bind(client.prices)) },
+    paymentLinks: { create: tagged(client.paymentLinks.create.bind(client.paymentLinks)), retrieve: client.paymentLinks.retrieve.bind(client.paymentLinks) } };
+  const store = openCareStore({ SDS_PRIVATE_PREVIEW: "1", SDS_CARE_DATABASE_URL: dsn });
+  try {
+    const quote = await createTaskQuoteService({ store: store.quotes, stripe, live: false }).issue(requestId, {
+      amountCents: 12300, scope: "Verify the generated client's documented tool-list workflow.",
+      acceptance: "The generated client completes one documented tool-list call." });
+    nextQuote = { ...quote, linkId: psql(`select stripe_link from task_quotes where id='${quote.quoteId}'`) };
+    return nextQuote;
+  } finally { await store.close(); }
+}
 
 function psql(sql) {
   return execFileSync("psql", ["-X", "-At", "-v", "ON_ERROR_STOP=1", dsn, "-c", sql], { encoding: "utf8" }).trim();
@@ -73,6 +100,10 @@ async function stop() {
 
 // The price the buy page shows on its pay button.
 export async function shownPrice(ctx, offer, page) {
+  if (offer.kind === "quote") {
+    const q = await prepareQuote(ctx);
+    return { page: "operator-issued written quote", label: `${q.scope} ${q.amountCents / 100} USD`, cents: q.amountCents, acceptance: q.acceptance };
+  }
   await page.goto(`${ctx.preview}${offer.entry}`, { waitUntil: "networkidle2" });
   const text = await page.$$eval("button", (bs) => bs.map((b) => b.textContent).join("\n"));
   const m = text.match(/Continue to pay ([\d,]+(?:\.\d\d)?) USD/);
@@ -81,7 +112,15 @@ export async function shownPrice(ctx, offer, page) {
 }
 
 // The same call the buy page makes. `again` repeats it for the same order (a lost response).
-export async function open(ctx, offer, { again } = {}) {
+export async function open(ctx, offer, { again, page } = {}) {
+  if (offer.kind === "quote") {
+    const q = await prepareQuote(ctx); nextQuote = null;
+    await page.goto(q.url, { waitUntil: "networkidle2", timeout: 60000 });
+    const sessions = await ctx.stripe("GET", "checkout/sessions", { payment_link: q.linkId, limit: "2" });
+    const own = sessions.data.filter(s => s.metadata?.sds_task_quote === q.quoteId && s.metadata?.release_run === ctx.run);
+    if (own.length !== 1) throw new Error("One actual hosted session for the exact quote link is required");
+    return { kind: "quote", order: q.quoteId, requestId: q.requestId, sessionId: own[0].id, url: null };
+  }
   const order = again?.order ?? randomUUID();
   const res = await fetch(`${ctx.preview}/api/care/checkout`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ offer: offer.offer, order }) });
   const body = await res.json();
@@ -91,6 +130,10 @@ export async function open(ctx, offer, { again } = {}) {
 }
 
 export async function storedRow(_ctx, a) {
+  if (a.kind === "quote") return JSON.parse(psql(`select row_to_json(o) from (select q.id,q.amount_cents,q.live_mode,
+    q.stripe_session as session_id,q.payment_intent is not null as has_payment,q.needs_review,
+    r.status as request_state,case when q.paid_at is not null and not q.needs_review and r.status='paid' then 'paid' else 'created' end as state
+    from task_quotes q join task_requests r on r.id=q.request_id where q.id='${a.order}') o`));
   const row = psql(`select row_to_json(o) from (select id, offer, amount_cents, live_mode, state, session_id, payment_intent_id is not null as has_payment, subscription_id is not null as has_subscription, subscription_status, cancel_at_period_end, refunded_cents from care_orders where id = '${a.order}') o`);
   return row ? JSON.parse(row) : null;
 }
@@ -131,6 +174,12 @@ export const cancellationLink = (ctx, a) => careLink({ id: a.order, checkout_ori
 
 // The buyer's receipt page, reached by the success URL (its capability key stays in the fragment).
 export async function buyerScreen(ctx, a, page, name) {
+  if (a.kind === "quote") {
+    const text = await page.evaluate(() => document.body.innerText);
+    const file = join(ctx.out, `${name}.png`); await page.screenshot({ path: file });
+    return { url: page.url().replace(/[?#].*/, "?<redacted>"), screenshot: file.slice(ctx.root.length + 1),
+      text: text.slice(0, 1200), ok: /Payment received/i.test(text) };
+  }
   const link = careLink({ id: a.order, checkout_origin: ctx.preview }, accessSecret);
   await page.goto(link, { waitUntil: "networkidle2" });
   await sleep(1500);

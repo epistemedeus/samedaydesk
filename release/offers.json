@@ -62,16 +62,23 @@
       "entry": "/care/buy?offer=keep_it_working",
       "endpoint": "POST /api/care/checkout",
       "note": "Recurring: the lane adds one renewal through a test clock and one cancellation (16 \u00a73 C2)."
+    },
+    {
+      "id": "task_quote",
+      "kind": "quote",
+      "name": "Fixed quote for a requested task",
+      "cents": 12300,
+      "currency": "usd",
+      "mode": "payment",
+      "entry": "operator-issued written quote",
+      "cases": [
+        "readback",
+        "success"
+      ],
+      "note": "123 USD is the synthetic release quote; production amounts remain set per agreed scope."
     }
   ],
   "notInHarnessYet": [
-    {
-      "id": "task_quote",
-      "name": "Fixed quote for a requested task",
-      "cents": "set per quote",
-      "entry": "one-use Stripe payment link from server/scripts/issue-task-quote.mjs",
-      "why": "operator-issued link, no site checkout call; the lane adds an adapter case"
-    },
     {
       "id": "seller_conformance_report",
       "name": "x402 seller report",
