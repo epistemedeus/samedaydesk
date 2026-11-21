@@ -1,7 +1,7 @@
 import {copyCatalogWithoutProfile} from './root10940-ci-test-fixtures.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {execFile} from 'node:child_process';
+import {execFile, execFileSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {copyFileSync, existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
@@ -153,7 +153,9 @@ function historicalOnly(dir) {
 test('measurement pin matches the bytes the host closure reads', () => {
   const pin = JSON.parse(readFileSync(join(root, PIN), 'utf8'));
   assert.equal(pin.schema, 'sds.foundry.private-control-source.v1');
-  assert.equal(pin.base, PIN_BASE);
+  assert.match(pin.base, /^[a-f0-9]{40}$/);
+  execFileSync('git', ['merge-base', '--is-ancestor', pin.base, 'HEAD'], {cwd: root, stdio: 'pipe'});
+  assert.ok(pin.receivedCallerClosures.some(caller => caller.base === PIN_BASE), 'retain the original measurement caller');
   const names = Object.keys(pin.files);
   assert.ok(names.length > 0);
   for (const name of names) {
