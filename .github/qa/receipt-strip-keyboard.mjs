@@ -8,7 +8,7 @@ const origin = process.env.SDS_PREVIEW_ORIGIN || 'http://127.0.0.1:31861';
 const out = process.env.SDS_STRIP_OUT || '/tmp/sds-receipt-strip';
 await mkdir(out + '/screenshots', { recursive: true });
 const browser = await require('puppeteer-core').launch({
-  executablePath: '/usr/local/bin/google-chrome', headless: true,
+  executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome-stable', headless: true,
   args: ['--no-sandbox', '--disable-dev-shm-usage'],
 });
 const report = {
