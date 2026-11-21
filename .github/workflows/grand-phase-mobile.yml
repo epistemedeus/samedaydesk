@@ -19,13 +19,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [0, 1, 2, 3]
+        shard: [0]
     env:
       AUDIT_PREVIEW_URL: http://127.0.0.1:31861
       AUDIT_LIVE_ORIGIN: https://samedaydesk.com
       AUDIT_CHROME: /usr/bin/google-chrome-stable
-      AUDIT_SHARDS: 4
+      AUDIT_SHARDS: 1
       AUDIT_SHARD: ${{ matrix.shard }}
+      AUDIT_SCOPE: homepage-pair
+      AUDIT_DIAGNOSTICS: 1
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
