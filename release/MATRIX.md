@@ -9,6 +9,12 @@ as lines pass; refresh this file when the list itself changes.
 Commands: `npm run release:check`, `npm run release:sweep -- --cheap|--key`, `npm run release:stripe`,
 `node scripts/release/post-status.mjs <sha> <state> <log-url>`.
 
+In one checkout, start Stripe after release:check's install and build gates finish; it can run
+alongside the remaining gates. npm ci replaces dependencies and Vite replaces build assets, so
+starting the payment preview during those writes is a startup fault. Sweeps select their own free
+port and verify the private source header. `--port` is an explicit override; `--url` deliberately
+targets an already-running preview. Do not stop another checkout's server to obtain a port.
+
 ## A. Every page, automated (`release:sweep -- --cheap`, 51 sitemap pages)
 
 | Line | State at foundation | How to pass |

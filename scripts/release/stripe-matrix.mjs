@@ -19,7 +19,7 @@
 // The key comes from STRIPE_TEST_KEY or STRIPE_TEST_KEY_FILE and must be a test key (sk_test or
 // rk_test); anything else stops before any call. Never prints the key.
 import { createHmac, randomUUID } from "node:crypto";
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
@@ -27,6 +27,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..", "..");
+const source = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
 const args = process.argv.slice(2);
 const value = (f) => { const i = args.indexOf(f); return i >= 0 ? args[i + 1] : null; };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -78,7 +79,7 @@ for (let i = 0; i < 60 && !webhookSecret && listener.exitCode === null; i++) awa
 if (!webhookSecret) { console.error("stripe listen did not start (is the Stripe CLI installed? set STRIPE_CLI)"); process.exit(2); }
 console.log(`run ${run}: listener ready`);
 
-const ctx = { root, port, preview, run, key, webhookSecret, stripe, out };
+const ctx = { root, source, port, preview, run, key, webhookSecret, stripe, out };
 let app;
 const shutdown = async () => { try { await app?.stop(); } catch {} listener.kill("SIGTERM"); };
 process.on("SIGINT", async () => { await shutdown(); process.exit(130); });
@@ -327,7 +328,7 @@ async function formCheck(offer, n) {
 const pick = (s) => s && ({ id: s.id, status: s.status, payment_status: s.payment_status, amount_total: s.amount_total, currency: s.currency, mode: s.mode, livemode: s.livemode, release_run: s.metadata?.release_run, payment_intent: typeof s.payment_intent === "string" ? s.payment_intent : s.payment_intent?.id ?? null, subscription: s.subscription ?? null });
 const records = [];
 function record(offer, name, rec) {
-  const row = { run, offer: offer.id, case: name, at: new Date().toISOString(), ...rec };
+  const row = { run, source, offer: offer.id, case: name, at: new Date().toISOString(), ...rec };
   writeFileSync(join(out, `${offer.id}-${name}.json`), JSON.stringify(row, null, 2) + "\n");
   records.push(row);
   console.log(`${row.state.padEnd(7)} ${offer.id} ${name}${row.why ? `: ${row.why}` : ""}`);
@@ -367,8 +368,12 @@ try {
           const session = await stripe("GET", `checkout/sessions/${a.sessionId}`);
           const ok = session.amount_total === offer.cents && session.currency === offer.currency && session.metadata?.release_run === run && shown.cents === offer.cents && (!b || b.sessionId === a.sessionId);
           await stripe("POST", `checkout/sessions/${a.sessionId}/expire`).catch(() => {});
-          record(offer, name, { state: ok ? "passed" : "failed", why: ok ? undefined : `shown ${shown.cents}, session ${session.amount_total} ${session.currency}, run ${session.metadata?.release_run}${b ? `, retried session ${b.sessionId === a.sessionId ? "same" : "different"}` : ""}`,
-            buyer: shown, stripe: pick(session), webhook: null, stored: await adapter.storedRow(ctx, a) });
+          const webhook = name === "lost-response" ? await eventFor("checkout.session.expired", o => o.id === a.sessionId, since) : null;
+          const oneOrder = name !== "lost-response" || await adapter.orderCount(ctx, a) === 1;
+          const accepted = ok && oneOrder && (name !== "lost-response" || webhook?.deliveredThroughListener === 200);
+          record(offer, name, { state: accepted ? "passed" : "failed", why: accepted ? undefined : `shown ${shown.cents}, session ${session.amount_total} ${session.currency}, run ${session.metadata?.release_run}${b ? `, repeated session ${b.sessionId === a.sessionId ? "same" : "different"}, one order ${oneOrder}, expiry webhook ${webhook?.deliveredThroughListener}` : ""}`,
+            buyer: name === "lost-response" ? { shown, afterExpiry: await adapter.buyerScreen(ctx, a, page, `${offer.id}-${name}`) } : shown,
+            stripe: pick(session), webhook, stored: await adapter.storedRow(ctx, a) });
         } else if (["success", "decline", "block", "3ds-pass", "3ds-fail"].includes(name)) {
           const a = await adapter.open(ctx, offer);
           const shouldPay = name === "success" || name === "3ds-pass";
@@ -381,7 +386,9 @@ try {
           }
           if (!shouldPay) { await sleep(6000); hosted = await buyerSaw(page, `${offer.id}-${name}-hosted`); }
           const session = await stripe("GET", `checkout/sessions/${a.sessionId}`);
-          const webhook = shouldPay ? await eventFor("checkout.session.completed", (o) => o.id === a.sessionId, since) : null;
+          const webhook = shouldPay ? await eventFor("checkout.session.completed", (o) => o.id === a.sessionId, since)
+            : await eventFor("payment_intent.payment_failed", o => o.metadata?.release_run === run &&
+              (o.id === session.payment_intent || adapter.paymentFailureMatches?.(a, o)), since);
           let retries = [];
           if (shouldPay) {
             await sleep(2000);
@@ -392,7 +399,7 @@ try {
           const stored = await adapter.storedRow(ctx, a);
           const ok = shouldPay
             ? session.status === "complete" && session.payment_status === "paid" && webhook?.deliveredThroughListener === 200 && adapter.isPaid(stored) && buyer.ok !== false
-            : session.status === "open" && session.payment_status === "unpaid" && !adapter.isPaid(stored);
+            : session.status === "open" && session.payment_status === "unpaid" && !adapter.isPaid(stored) && webhook?.deliveredThroughListener === 200;
           if (!shouldPay) await stripe("POST", `checkout/sessions/${a.sessionId}/expire`).catch(() => {});
           if (shouldPay && ok) paid.set(offer.id, { a, session });
           record(offer, name, { state: ok ? "passed" : "failed", why: ok ? undefined : `session ${session.status}/${session.payment_status}, webhook ${webhook?.deliveredThroughListener ?? "none"}, stored ${adapter.describe(stored)}`, buyer, hostedPage: hosted, stripe: pick(session), webhook, retriedDeliveries: retries, stored });
@@ -453,7 +460,7 @@ try {
   await shutdown();
   writeFileSync(join(out, "listener.log"), listenLog.replace(/whsec_[A-Za-z0-9]+/g, "whsec_<redacted>"));
 }
-const summary = { run, lane, startedFor: offers.map((o) => o.id), cases, passed: records.filter((r) => r.state === "passed").length, failed: records.filter((r) => r.state === "failed").length, notRun: records.filter((r) => r.state === "not run").length, records: records.map(({ offer, case: c, state, why }) => ({ offer, case: c, state, why })) };
+const summary = { run, source, lane, startedFor: offers.map((o) => o.id), cases, passed: records.filter((r) => r.state === "passed").length, failed: records.filter((r) => r.state === "failed").length, notRun: records.filter((r) => r.state === "not run").length, records: records.map(({ offer, case: c, state, why }) => ({ offer, case: c, state, why })) };
 writeFileSync(join(out, "summary.json"), JSON.stringify(summary, null, 2) + "\n");
 console.log(`\n${summary.passed} passed, ${summary.failed} failed, ${summary.notRun} not run. Records in release/out/stripe/${run}/`);
 process.exit(summary.failed ? 1 : 0);

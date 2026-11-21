@@ -18,6 +18,7 @@ import { execFileSync, spawn, spawnSync } from "node:child_process";
 import { createWriteStream, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import os from "node:os";
+import net from "node:net";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -57,12 +58,21 @@ if (!preview) {
     const b = spawnSync("bash", ["-c", config.preview.build], { cwd: root, env, stdio: "inherit" });
     if (b.status !== 0) throw new Error("preview build failed");
   }
-  const port = config.preview.port;
+  // Shared-VM checkouts must not inherit the same fixed preview port.
+  const port = value("--port") ? Number(value("--port")) : await new Promise((resolve, reject) => {
+    const reservation = net.createServer();
+    reservation.once("error", reject);
+    reservation.listen(0, "127.0.0.1", () => {
+      const chosen = reservation.address().port;
+      reservation.close(error => error ? reject(error) : resolve(chosen));
+    });
+  });
+  if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error("Invalid preview port");
   // Never measure someone else's server: the port must be free before this preview starts.
   if (await fetch(`http://127.0.0.1:${port}/`, { signal: AbortSignal.timeout(2000) }).then(() => true, () => false)) {
-    throw new Error(`port ${port} already answers; stop that server (or pass --url to sweep it on purpose)`);
+    throw new Error(`port ${port} already answers; choose another --port or pass --url for the intended owned preview`);
   }
-  server = spawn("bash", ["-c", config.preview.start], { cwd: root, env: { ...env, PORT: String(port) }, stdio: ["ignore", "pipe", "pipe"], detached: true });
+  server = spawn("bash", ["-c", config.preview.start], { cwd: root, env: { ...env, PORT: String(port), GITHUB_SHA: sha }, stdio: ["ignore", "pipe", "pipe"], detached: true });
   let log = "";
   const serverLog = createWriteStream(join(out, "preview.log"));
   server.stdout.on("data", (c) => { log = (log + c).slice(-4000); serverLog.write(c); });
@@ -72,7 +82,9 @@ if (!preview) {
   let up = false;
   for (let i = 0; i < 90 && !up; i++) {
     await sleep(1000);
-    up = await fetch(preview + (config.preview.ready ?? "/"), { signal: AbortSignal.timeout(3000) }).then((r) => r.status < 500, () => false);
+    if (server.exitCode !== null) break;
+    up = await fetch(preview + (config.preview.ready ?? "/"), { signal: AbortSignal.timeout(3000) })
+      .then((r) => r.status < 500 && r.headers.get("x-sds-private-source") === sha, () => false);
   }
   if (!up) { console.error(log); stop(); throw new Error("preview did not start"); }
 }

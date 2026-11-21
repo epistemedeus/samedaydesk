@@ -36,6 +36,7 @@ export async function start(ctx) {
       SDS_PRIVATE_PREVIEW: "1", SDS_CARE_CHECKOUT: "1", SDS_CARE_DATABASE_URL: dsn,
       SDS_CARE_ORIGIN: `http://127.0.0.1:${port}`, SDS_CARE_ACCESS_SECRET: accessSecret,
       STRIPE_SECRET_KEY: key, STRIPE_WEBHOOK_SECRET: webhookSecret, RELEASE_RUN: run,
+      GITHUB_SHA: ctx.source,
       SDS_PREVIEW_MAIL_OUTBOX: join(scratch, "outbox.jsonl"), ADMIN_EMAIL: "desk@example.test",
       SDS_RECEIPTS_SNAPSHOT_PATH: join(scratch, "receipt-snapshot.json"),
     },
@@ -45,6 +46,7 @@ export async function start(ctx) {
   server.stderr.on("data", (c) => { log = (log + c).slice(-4000); });
   for (let i = 0; i < 60; i++) {
     await sleep(500);
+    if (server.exitCode !== null) break;
     if (await fetch(`http://127.0.0.1:${port}/api/health`).then((r) => r.ok, () => false)) {
       return { stop: () => stop() };
     }
@@ -89,6 +91,7 @@ export async function orderCount(_ctx, a) {
   return Number(psql(`select count(*) from care_orders where session_id = '${a.sessionId}'`));
 }
 export const isPaid = (row) => row?.state === "paid";
+export const paymentFailureMatches = (a, intent) => intent.metadata?.sds_care_order === a.order;
 export const isExpired = (row) => row?.state === "expired";
 export const isRefunded = (row) => row?.state === "refunded" && row.refunded_cents === row.amount_cents;
 export const describe = (row) => row ? `${row.state}, refunded ${row.refunded_cents}` : "no row";
