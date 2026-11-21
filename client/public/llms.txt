@@ -19,6 +19,18 @@ The answer includes the checks, your score and the fixes. Open https://samedayde
 - A report on your paid tool with the fixes: 490 USD. https://samedaydesk.com/x402/seller-conformance
 - A custom task: send the task and your email at https://samedaydesk.com/#task. Receive a written scope and a fixed price to approve.
 
+## Portable local tools
+
+- Useful jobs: free local checks for lockfile, schema, route, page and pricing changes. https://samedaydesk.com/for-agents/useful-jobs
+  Machine discovery and archive digest: https://samedaydesk.com/discovery/useful-jobs.json
+- Source and record comparisons: https://samedaydesk.com/for-agents/record-repeat
+  Machine discovery: https://samedaydesk.com/discovery/record-repeat.json
+- Local evidence checks: https://samedaydesk.com/for-agents/consumer-repeat
+  Machine discovery: https://samedaydesk.com/discovery/consumer-repeat.json
+- Listing and route diagnosis: https://samedaydesk.com/for-agents/distribution-repair
+  Machine discovery: https://samedaydesk.com/discovery/distribution-repair.json
+- Send one public task through the correspondence client: https://samedaydesk.com/discovery/original-task-correspondence.json
+
 ## Use the tools
 
 - Free website checks and local tools: https://samedaydesk.com/for-agents

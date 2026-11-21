@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { spawn, execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import http from "node:http";
@@ -182,7 +182,13 @@ test("discovery documents are acquired over HTTP and a free tool returns a usefu
   assert.equal(hosted.json.enabled, false);
   const readiness = await request(port, { path: "/api/public-readiness/healthz" });
   assert.deepEqual(readiness.json.publicDeployment, publicDeploymentBody());
-  assert.match(openapi.info.description, /not a hosted consumer|do not become a hosted consumer/i);
+  // Retain the immutable prior disclosure; the current document leads with the
+  // buyer action and keeps the same refusal in the machine-readable contract.
+  const historical = execFileSync("git", ["show", "b001d2a702550db6212c1e7af2ee54d854d68146:server/lib/apex-declarations.js"], { encoding: "utf8" });
+  assert.match(historical, /not a hosted consumer|do not become a hosted consumer/i);
+  const hostedSchema = openapi.paths["/api/hosted-useful/healthz"].get.responses["200"].content["application/json"].schema;
+  assert.equal(hostedSchema.properties.productionReady.const, false);
+  assert.equal(hostedSchema.properties.publicationVerified.const, false);
 
   const card = await request(port, { path: "/.well-known/agent-card.json" });
   assert.equal(card.status, 200);
