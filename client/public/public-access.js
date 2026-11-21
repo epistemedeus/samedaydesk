@@ -8,6 +8,7 @@
     if (!element.hasAttribute("aria-label") && !element.hasAttribute("aria-labelledby")) {
       element.setAttribute("aria-label", element.tagName === "PRE" ? "Code example" : "Scrollable table");
     }
+    if (!element.hasAttribute("role")) element.setAttribute("role", "region");
   };
   const resize = new ResizeObserver(entries => entries.forEach(({ target }) => receive(target)));
   let scheduled = false;

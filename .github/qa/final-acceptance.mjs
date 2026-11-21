@@ -46,7 +46,8 @@ for(const path of selected) {
     const scrollParent=e=>{let p=e.parentElement;while(p){const s=getComputedStyle(p);if(['auto','scroll'].includes(s.overflowX)&&p.scrollWidth>p.clientWidth)return true;p=p.parentElement;}return false;};
     const bad=[...document.querySelectorAll('h1,h2,h3,p,a,button,input,textarea,pre,table,code')].filter(e=>visible(e)&&!scrollParent(e)).filter(e=>{const r=e.getBoundingClientRect();return r.left < -2||r.right>innerWidth+2;}).map(e=>({tag:e.tagName,text:e.textContent.trim().slice(0,90),left:Math.round(e.getBoundingClientRect().left),right:Math.round(e.getBoundingClientRect().right)}));
     const motion=document.getAnimations().filter(a=>a.playState==='running'&&a.effect?.getTiming().iterations===Infinity).map(a=>({name:a.animationName,element:a.effect?.target?.tagName}));
-    return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,outside:bad,motion,theme:document.documentElement.dataset.theme,heading:document.querySelector('h1')?.textContent};
+    const position={left:scrollX,top:scrollY};window.scrollTo({left:1000000,top:scrollY,behavior:'instant'});const maxScrollX=scrollX;window.scrollTo({...position,behavior:'instant'});
+    return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,maxScrollX,outside:bad,motion,theme:document.documentElement.dataset.theme,heading:document.querySelector('h1')?.textContent};
    });
    const links=await page.$$eval('a[href]',els=>els.map(e=>({href:e.getAttribute('href'),text:e.textContent.trim().slice(0,100)})));links.forEach(l=>report.links.push({path,...l}));
    await page.addScriptTag({content:axe});
@@ -54,7 +55,7 @@ for(const path of selected) {
    row.axe=ar.violations;row.incomplete=ar.incomplete;
    await page.keyboard.press('Tab');
    row.focus=await page.evaluate(()=>{
-    const elements=[...document.querySelectorAll('a[href],button,input,textarea,select,summary,[tabindex="0"]')].filter(e=>e.getClientRects().length&&!e.disabled&&e.tabIndex>=0);
+    const elements=[...document.querySelectorAll('a[href],button,input,textarea,select,summary,[tabindex="0"]')].filter(e=>e.checkVisibility({checkVisibilityCSS:true,checkOpacity:true})&&!e.disabled&&e.tabIndex>=0);
     return elements.map(e=>{const initiallyFocused=document.activeElement===e;if(initiallyFocused)e.blur();const priorBorder=getComputedStyle(e).borderColor;e.focus({preventScroll:true});const s=getComputedStyle(e),r=e.getBoundingClientRect();const card=e.closest('article')||e.closest('[class*="card"]');const outer=card?getComputedStyle(card):null;
       return {tag:e.tagName,label:(e.getAttribute('aria-label')||e.labels?.[0]?.textContent||e.textContent||e.getAttribute('name')||'').trim().slice(0,80),id:e.id,tabIndex:e.tabIndex,initiallyFocused,focused:document.activeElement===e,outline:s.outlineStyle!=='none'&&parseFloat(s.outlineWidth)>0,shadow:s.boxShadow!=='none',outerFocus:Boolean(outer&&outer.outlineStyle!=='none'),borderFocus:s.borderColor!==priorBorder,visible:r.width>0&&r.height>0&&r.left>=-2&&r.right<=innerWidth+2,x:Math.round(r.x),y:Math.round(r.y)};});
    });
