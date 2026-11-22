@@ -39,7 +39,7 @@ try {
     else if (e.isFile()) hashes[p] = createHash('sha256').update(readFileSync(join(stage, p))).digest('hex');
     else throw Error('non-regular export member');
   } }
-  receive('client/dist'); receive('server'); receive('scripts');
+  receive('client/dist'); receive('client/src'); receive('server'); receive('scripts');
   const metadata = { schema: 'samedaydesk.performance-preview.v1', source, tree,
     pages: JSON.parse(readFileSync(join(root, 'release/key-pages.json'))).pages.filter(p => p.lighthouse !== false).map(p => p.path),
     buildCommand: 'npm run build:managed-foundry', buildExit: 0,
