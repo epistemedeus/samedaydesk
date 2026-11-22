@@ -56,7 +56,8 @@
   h2 { margin:2.4rem 0 .55rem; font-size:1.45rem; line-height:1.2; }
   h3 { margin:0 0 .35rem; font-size:1.05rem; }
   .lead { color:var(--dim); font-size:1.17rem; }
-  .status { display:inline-flex; align-items:center; gap:.55rem; margin:1rem 0; padding:.45rem .7rem; border:1px solid #a7c7a9; border-radius:999px; color:var(--good); background:#edf6ed; font:600 12px/1.2 ui-monospace,monospace; }
+  /* The light status pill retains its own foreground in either theme. */
+  .status { --good:#34723e; display:inline-flex; align-items:center; gap:.55rem; margin:1rem 0; padding:.45rem .7rem; border:1px solid #a7c7a9; border-radius:999px; color:var(--good); background:#edf6ed; font:600 12px/1.2 ui-monospace,monospace; }
   .dot { width:.55rem; height:.55rem; border-radius:50%; background:var(--good); }
   .facts { display:grid; grid-template-columns:repeat(auto-fit,minmax(10rem,1fr)); gap:.8rem; margin:1.7rem 0; }
   .fact { padding:1rem; border:1px solid var(--line); border-radius:10px; background:var(--card); }
