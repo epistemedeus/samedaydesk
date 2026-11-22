@@ -5,7 +5,7 @@ import styles from "./Care.module.css";
 import { journey } from "../lib/journey";
 
 type Receipt = {
-  title: string; state: string; receivedIntake: boolean; amountCents: number; refundedCents?: number;
+  title: string; state: string; receivedIntake: boolean; amountCents: number; refundedCents?: number; invoiceUrl?: string;
   subscription?: { cancelAtPeriodEnd: boolean; status: string };
 };
 const money = (cents: number) => `${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 2 })} USD`;
@@ -46,6 +46,31 @@ export function BuyCare() {
     PAYMENT_LINKS[item.slug]?.startsWith("/care/buy?"));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  // Bank transfer and stablecoin appear only when the server offers them (SDS_CARE_NONCARD, monthly offer).
+  const [methods, setMethods] = useState<string[]>(["card"]);
+  const [invoiceEmail, setInvoiceEmail] = useState("");
+  useEffect(() => {
+    if (!offer?.per) return;
+    send("methods", { offer: offer.slug }).then((data) => Array.isArray(data.methods) && setMethods(data.methods)).catch(() => {});
+  }, [offer?.slug, offer?.per]);
+  const payByInvoice = async (method: string) => {
+    if (!offer || busy) return;
+    setBusy(true); setError("");
+    journey("checkout_started", { offer: offer.slug });
+    const storeKey = `sds-care-order:${offer.slug}:${method}`;
+    try {
+      const order = sessionStorage.getItem(storeKey) || crypto.randomUUID();
+      sessionStorage.setItem(storeKey, order);
+      const result = await send("checkout", { offer: offer.slug, order, method, email: invoiceEmail });
+      const receipt = new URL(result.receipt);
+      if (receipt.origin !== window.location.origin) throw new Error("We could not open your receipt.");
+      window.location.assign(receipt.href);
+    } catch (e) {
+      journey("checkout_failed", { offer: offer.slug });
+      setError(e instanceof Error ? e.message : "The invoice could not open.");
+      setBusy(false);
+    }
+  };
   const buy = async () => {
     if (!offer || busy) return;
     setBusy(true); setError("");
@@ -74,6 +99,15 @@ export function BuyCare() {
       <button type="button" disabled={busy} onClick={() => void buy()}>
         {busy ? "Opening checkout" : `Continue to pay ${offer.price} USD`}
       </button>
+      {methods.length > 1 && <form className={`${styles.form} ${styles.alternate}`} onSubmit={(event) => event.preventDefault()}>
+        <p>Or pay each month by invoice, by bank transfer (international wires accepted) or in USDC.</p>
+        <label>Email for your invoice<input type="email" required maxLength={254} value={invoiceEmail}
+          onChange={(event) => setInvoiceEmail(event.target.value)} /></label>
+        {methods.includes("bank_transfer") && <button type="button" disabled={busy || !invoiceEmail}
+          onClick={() => void payByInvoice("bank_transfer")}>Pay by bank transfer</button>}
+        {methods.includes("stablecoin") && <button type="button" disabled={busy || !invoiceEmail}
+          onClick={() => void payByInvoice("stablecoin")}>Pay in USDC</button>}
+      </form>}
     </> : <Link to="/#services">See services</Link>}
   </CareFrame>;
 }
@@ -137,6 +171,7 @@ export function CareReceipt({ mode }: { mode: "intake" | "cancel" }) {
     {mode === "intake" && hasLink && !receipt && !error && <p role="status">Opening your receipt</p>}
     {mode === "intake" && hasLink && (error || receipt?.state === "created") && <>
       {receipt?.state === "created" && <p role="status">Waiting for payment confirmation.</p>}
+      {receipt?.state === "created" && receipt.invoiceUrl && <p><a href={receipt.invoiceUrl}>Pay your invoice on Stripe</a></p>}
       <button disabled={busy} onClick={() => void run("receipt")}>Check payment status</button>
     </>}
     {receipt?.state === "expired" && <p>This checkout expired. No payment was confirmed.</p>}
