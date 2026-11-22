@@ -16,6 +16,8 @@ export const LLMS_TOTAL_BUDGET_MS = 25_000;
 const isHtml = (ct) => !ct || /text\/html|application\/xhtml\+xml/i.test(ct);
 import { discoverSiteUrls, publicRequestHeaders, DISCOVERY_LIMITS, PROVENANCE } from "../lib/agent-readiness/sitemap-discovery.js";
 
+import { freeCheckHttp } from "../lib/free-check-v2/http.js";
+
 const router = Router();
 
 // Public, read-only tool APIs: allow cross-origin calls (our github.io study page,
@@ -229,6 +231,7 @@ export async function runCheck(rawUrl) {
   const grade = score >= 90 ? "A" : score >= 75 ? "B" : score >= 60 ? "C" : score >= 40 ? "D" : "F";
 
   return {
+    version: 1,
     url: page.finalUrl || u.toString(),
     score, grade,
     summary: { wordsOnHomepage: h.words, lang: h.lang, canonical: h.canonical, h1: h.h1 },
@@ -268,6 +271,7 @@ router.get("/ai-readiness", async (req, res) => {
   res.once("close", () => {
     if (!res.writableFinished) record("abandoned");
   });
+  if (req.query.version !== "1" || req.query.report) return freeCheckHttp(req, res, record);
   try {
     const result = await runCheck(req.query.url);
     record("completed");

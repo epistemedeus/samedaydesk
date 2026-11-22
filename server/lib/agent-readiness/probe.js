@@ -97,7 +97,7 @@ export async function rawExchange(url, options = {}) {
     const name = key.toLowerCase();
     if (!BLOCKED_REQUEST_HEADERS.has(name)) headers[name] = value;
   }
-  headers["user-agent"] = USER_AGENT;
+  headers["user-agent"] = typeof options.userAgent === "string" && /^[\x20-\x7E]{1,256}$/.test(options.userAgent) ? options.userAgent : USER_AGENT;
   headers.host = url.host; // logical authority, never the numeric socket target
   if (options.body && method !== "GET" && method !== "HEAD") headers["content-length"] = Buffer.byteLength(options.body);
 

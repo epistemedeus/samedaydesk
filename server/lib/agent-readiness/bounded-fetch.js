@@ -45,8 +45,10 @@ export async function fetchPublicBounded(url, opts = {}) {
   const {
     allowedOrigin = null, allowHostVariants = false, maxRedirects = 3,
     maxBytes = 2_500_000, timeoutMs = 10_000, headers = {}, budget = null, lookup,
-    includeOversizeAlternate = false,
+    includeOversizeAlternate = false, includeHeaders = false, method = "GET", userAgent,
   } = opts;
+  if (!["GET", "HEAD"].includes(method)) throw new TypeError("Bounded public fetch permits GET or HEAD only");
+  if (userAgent !== undefined && (typeof userAgent !== "string" || !/^[\x20-\x7E]{1,256}$/.test(userAgent))) throw new TypeError("Invalid public user agent");
   if (budget?.exhausted || opts.signal?.aborted) throw new BoundedFetchError(FETCH_FAILURE.BUDGET_EXHAUSTED, "Request budget exhausted");
   const parentSignal = budget && opts.signal ? AbortSignal.any([budget.signal, opts.signal]) : budget?.signal || opts.signal;
   const lifetime = createRequestBudget(timeoutMs, parentSignal);
@@ -59,7 +61,7 @@ export async function fetchPublicBounded(url, opts = {}) {
       const hopTimeout = Math.max(1, lifetime.remaining());
       const res = await transport(current, {
         address: addresses[0], maxBytes: maxBytes + 1, timeoutMs: hopTimeout, headers,
-        signal: lifetime.signal, discardRedirectBody: true,
+        signal: lifetime.signal, discardRedirectBody: true, method, userAgent,
       });
       if (budget?.exhausted) {
         throw new BoundedFetchError(FETCH_FAILURE.BUDGET_EXHAUSTED, "Request budget exhausted", { url: current.toString() });
@@ -97,6 +99,7 @@ export async function fetchPublicBounded(url, opts = {}) {
         body: oversize ? Buffer.from(body).subarray(0, maxBytes).toString("utf8") : body,
         redirects,
         oversize,
+        ...(includeHeaders ? { headers: Object.fromEntries(Object.entries(res.headers || {}).filter(([key]) => ["content-type", "x-robots-tag", "link", "payment-required", "www-authenticate", "content-language", "cf-mitigated"].includes(key.toLowerCase()))) } : {}),
         ...(declaredAlternate ? { declaredAlternate } : {}),
       };
     }

@@ -1,0 +1,22 @@
+.report { margin-block: var(--space-m); text-align: left; min-width: 0; color: var(--ink); }
+.head { display: grid; gap: 0.7rem; padding-block: 1rem; border-block: 1px dashed var(--line-2); }
+.head p { margin: 0; }
+.url { overflow-wrap: anywhere; font-family: var(--font-mono); }
+.score { font-size: var(--step-1); }
+.score strong { font-size: var(--step-4); line-height: 1.1; }
+.meta { font-size: var(--step--1); color: var(--ink-dim); }
+.groups { display: flex; flex-wrap: wrap; gap: 0.8rem 1.4rem; padding: 1rem 0; list-style: none; }
+.section { margin-top: var(--space-m); }
+.section h2 { font-size: var(--step-1); margin-bottom: 0.5rem; }
+.section h2 span { color: var(--ink-dim); }
+.section > p { color: var(--ink-dim); }
+.findings { display: grid; gap: 1rem; list-style: none; padding: 0; margin: 1rem 0; }
+.finding { padding: 1rem; border: 1px solid var(--line-2); border-radius: var(--radius-s); min-width: 0; background: var(--bg-1); }
+.finding h3 { font-size: var(--step-0); margin: 0 0 0.6rem; }
+.finding p { margin: 0.6rem 0; }
+.finding a, .report > a, .head > a { text-decoration: underline; text-underline-offset: 0.2em; color: var(--ink); overflow-wrap: anywhere; }
+.finding details { margin-top: 1rem; }
+.finding summary, .section > summary { cursor: pointer; min-height: 44px; padding-block: 0.6rem; }
+.finding pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; color: var(--ink-dim); margin-block: 0.6rem; }
+.finding ul { padding-left: 1rem; }
+.offer { display: inline-block; margin-top: 1rem; min-height: 44px; padding-block: 0.6rem; }

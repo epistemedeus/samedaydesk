@@ -17,7 +17,7 @@ import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const [command, ...rest] = process.argv.slice(2);
-const files = { check: "check.mjs", sweep: "sweep.mjs", stripe: "stripe-matrix.mjs", status: "post-status.mjs", demand: "demand.mjs" };
+const files = { check: "check.mjs", sweep: "sweep.mjs", stripe: "stripe-matrix.mjs", status: "post-status.mjs", demand: "demand.mjs", visual: "visual.mjs" };
 if (!files[command] && command !== "path") {
   console.error(`usage: kit.mjs ${[...Object.keys(files), "path"].join("|")} [args]`);
   process.exit(2);
