@@ -36,7 +36,9 @@ node --test scripts/performance/preview.test.mjs
 node scripts/performance/export-preview.mjs --out /ABS/NEW-EXPORT-DIR
 ```
 
-The export uses npm's frozen offline runtime install for existing Express and
+The export itself executes build:managed-foundry in a cleared production child
+and retains its source-bound log, so it cannot silently package a stale dist.
+It then uses npm's frozen offline runtime install for existing Express and
 compression dependencies. It includes exact client/dist, the production mount's
 small public source closure, a portable installed runtime and preview-source.json.
 No env, credentials, PostgreSQL data or API implementation is packaged. Verify the

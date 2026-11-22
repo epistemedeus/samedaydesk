@@ -1,7 +1,7 @@
 // A portable production-static mount, with only its existing Express/compression
 // runtime. npm's frozen offline install owns transitive dependency placement.
 import { execFileSync } from 'node:child_process';
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, statfsSync, writeFileSync } from 'node:fs';
+import { closeSync, cpSync, existsSync, mkdirSync, mkdtempSync, openSync, readFileSync, readdirSync, rmSync, statfsSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,10 +13,15 @@ if (git('status', '--porcelain', '--untracked-files=no')) throw Error('commit th
 const source = git('rev-parse', 'HEAD'), tree = git('rev-parse', 'HEAD^{tree}');
 const fs = statfsSync(root);
 if ((fs.files - fs.ffree) / fs.files >= .9) throw Error('inode admission refused: at least90% used');
-if (!existsSync(join(root, 'client/dist/route-shells/.public-first-render/home.html'))) throw Error('build:managed-foundry must complete first');
 mkdirSync(out, { mode: 0o700 });
 const stage = mkdtempSync(join(out, '.export-'));
 try {
+  const buildLog = join(out, 'managed-build.log'), fd = openSync(buildLog, 'wx', 0o600);
+  try {
+    execFileSync('npm', ['run', 'build:managed-foundry'], { cwd: root,
+      env: { PATH: process.env.PATH, HOME: process.env.HOME, CI: '1', NODE_ENV: 'production' },
+      stdio: ['ignore', fd, fd] });
+  } finally { closeSync(fd); }
   const files = ['server/lib/spa-client.js', 'server/lib/spa-fallback.js', 'server/lib/spa-route-shells.js',
     'server/lib/start-guide.js', 'server/lib/receipt-snapshot.js', 'client/src/data/receiptPages.mjs',
     'client/src/data/receipts.json', 'client/src/data/machineEntry.mjs', 'client/src/data/distributionRepairKit.json',
@@ -37,7 +42,10 @@ try {
   receive('client/dist'); receive('server'); receive('scripts');
   const metadata = { schema: 'samedaydesk.performance-preview.v1', source, tree,
     pages: JSON.parse(readFileSync(join(root, 'release/key-pages.json'))).pages.filter(p => p.lighthouse !== false).map(p => p.path),
-    buildCommand: 'npm run build:managed-foundry', mount: 'production Express mount, not legacy static route shells',
+    buildCommand: 'npm run build:managed-foundry', buildExit: 0,
+    buildLogSha256: createHash('sha256').update(readFileSync(buildLog)).digest('hex'),
+    runtimeLockSha256: createHash('sha256').update(readFileSync(join(stage, 'package-lock.json'))).digest('hex'),
+    mount: 'production Express mount, not legacy static route shells',
     originalN12Source: 'd4190b9affb6453a355518369de91dcd9717d703', files: hashes };
   writeFileSync(join(stage, 'preview-source.json'), JSON.stringify(metadata, null, 2) + '\n');
   const packed = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--json', '--pack-destination', out], { cwd: stage, encoding: 'utf8' }))[0];
