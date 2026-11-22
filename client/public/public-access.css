@@ -26,6 +26,10 @@ html[data-standalone][data-theme="dark"] :is(input, textarea, select) {
   color: var(--ink);
   background-color: var(--card);
 }
+html[data-standalone][data-theme="dark"] :is(input, textarea)::placeholder {
+  color: var(--dim);
+  opacity: 1;
+}
 html[data-standalone][data-theme="dark"] .A { color: var(--good); }
 html[data-standalone][data-theme="dark"] .B { color: #91d4e3; }
 html[data-standalone][data-theme="dark"] .C { color: var(--oxide); }
