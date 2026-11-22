@@ -20,6 +20,16 @@ html[data-standalone][data-theme="dark"] {
   --bad: #ff9b91;
   --warn: #e7cf76;
 }
+/* The dark colour scheme gives native fields light ink. Pair it with the
+   existing card surface instead of an inherited hard-coded white background. */
+html[data-standalone][data-theme="dark"] :is(input, textarea, select) {
+  color: var(--ink);
+  background-color: var(--card);
+}
+html[data-standalone][data-theme="dark"] :is(input, textarea)::placeholder {
+  color: var(--dim);
+  opacity: 1;
+}
 html[data-standalone][data-theme="dark"] .A { color: var(--good); }
 html[data-standalone][data-theme="dark"] .B { color: #91d4e3; }
 html[data-standalone][data-theme="dark"] .C { color: var(--oxide); }
