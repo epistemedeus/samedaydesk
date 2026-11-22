@@ -77,6 +77,7 @@ if ! command -v pg_config >/dev/null 2>&1; then
  run postgres-system 600 sudo -n sh -c 'apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq postgresql libpq-dev'
 fi
 run kit-install 600 npm ci --prefix "$RELEASE_KIT_DIR" --ignore-scripts --no-audit --no-fund
+run chrome-resolver 30 "$node_bin" "$input/chrome.mjs" "$RELEASE_KIT_DIR" "$work/browser" "$work/out/chrome-path.txt" --check
 chrome=''
 for file in /usr/bin/google-chrome /opt/google/chrome/chrome /usr/bin/chromium /usr/bin/chromium-browser; do if [ -x "$file" ]; then chrome=$file; break; fi; done
 if [ -z "$chrome" ]; then
