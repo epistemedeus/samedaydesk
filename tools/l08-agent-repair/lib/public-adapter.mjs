@@ -51,7 +51,23 @@ export function verifyPublicChecker() {
   if (provenance.deployment?.publicHostActivated !== false) {
     throw refuse("provenance_mismatch", "provenance claims a public deployment");
   }
-  const files = checker.files || {};
+  // Preserve the S14 catalog fixtures and admit only the received shared validator overlay.
+  // A caller cannot bless new bytes by editing the provenance receipt's hashes.
+  const overlay = provenance.networkAwareReceiving;
+  const expectedOverlay = {
+    "integrity.mjs": "d018d829e07052ae14db5c79c4309840bf9862ba56ae5dc0e8cd597d4371e244",
+    "package.json": "c82c41d46f3413e5f8631190c122b0ee4db35d52d499212912ac03da901c23c1",
+    "package-lock.json": "f557346839db6012bd0fdeff2f7747dc05ebec4ecf59055e4e7342b251de766a",
+  };
+  if (overlay && (overlay.repository !== "epistemedeus/agent-payment-integrity" ||
+      overlay.commit !== "4d110186a9ddbd3de5ce74f06540c145455c2f2a" ||
+      overlay.testedSource !== "dd9fb16f6ee64153b9f44fac19f45a1c9660399a" ||
+      overlay.version !== "0.1.0-candidate.17" ||
+      Object.keys(overlay.files || {}).length !== Object.keys(expectedOverlay).length ||
+      Object.entries(expectedOverlay).some(([name, expected]) => overlay.files?.[name] !== expected))) {
+    throw refuse("provenance_mismatch", "public checker network-aware overlay differs from the received source");
+  }
+  const files = { ...(checker.files || {}), ...(overlay ? expectedOverlay : {}) };
   const names = Object.keys(files);
   if (names.length === 0) throw refuse("provenance_mismatch", "public checker file list is empty");
   for (const rel of names) {

@@ -12,8 +12,8 @@ import { resetRateLimits } from "../lib/agent-readiness/rate-limit.js";
 import { createSdsApp } from "../app.js";
 import { MAX_BYTES } from "../../tools/l08-agent-repair/lib/supplied-row.mjs";
 
-const CHECKER_COMMIT = "00267aeb03c3ce01b9b318f5ee0172aee34d7e34";
-const CHECKER_VERSION = "0.1.0-candidate.12";
+const CHECKER_COMMIT = "4d110186a9ddbd3de5ce74f06540c145455c2f2a";
+const CHECKER_VERSION = "0.1.0-candidate.17";
 const coldClient = fileURLToPath(new URL("../../tools/l08-agent-repair/public-cold-client.mjs", import.meta.url));
 const repoRoot = fileURLToPath(new URL("../../", import.meta.url));
 const SENTINEL = "EXAMPLE_SENTINEL_NOT_A_SCHEMA";
@@ -208,6 +208,7 @@ test("createSdsApp serves a visitor supplied row and keeps unrelated routes", { 
     assert.equal(liveGet.json.observation.readinessClaimed, false);
     assert.equal(liveGet.json.observation.checkerOk, false);
     assert.ok(liveGet.json.observation.findings.includes("credential_free_probe_failed"));
+    assert.equal(liveGet.json.observation.findings.some((item) => item.startsWith("x402_")), false);
     assert.ok(liveGet.json.observation.uncertainty.includes("supplied_input_does_not_fetch"));
 
     const demonstrated = await post(origin, "/api/public-readiness/catalog-row", { fixture: "catalog-row-repair-add-required.json" });

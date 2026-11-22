@@ -190,7 +190,7 @@ async function loadChecker() {
       if (typeof loaded.auditIntegrity !== "function" || typeof loaded.normalizeOrigin !== "function") {
         throw fail("checker_unavailable", "public checker exports are incomplete");
       }
-      if (loaded.TOOL_VERSION !== provenance.checker.version) {
+      if (loaded.TOOL_VERSION !== (provenance.networkAwareReceiving?.version || provenance.checker.version)) {
         throw fail("checker_unavailable", "public checker version does not match provenance");
       }
       return { provenance, auditIntegrity: loaded.auditIntegrity, normalizeOrigin: loaded.normalizeOrigin };
@@ -234,7 +234,9 @@ export async function auditSuppliedRow(body) {
   let requestImplCalls = 0;
   const requestImpl = async () => {
     requestImplCalls += 1;
-    throw fail("remote_fetch_refused", "supplied-input endpoint does not fetch");
+    // Status 0 means no HTTP response. Keep the maintained checker's static
+    // declaration analysis available without sending this visitor's request.
+    return { status: 0, headers: {}, body: "", error: "supplied_input_does_not_fetch" };
   };
   let timer;
   let report;
@@ -271,7 +273,11 @@ export async function auditSuppliedRow(body) {
   if (!route?.responseContract || !route.repairPlan) {
     throw fail("checker_unavailable", "public checker did not return a decision");
   }
-  const findings = Array.isArray(route.findings) ? [...route.findings] : [];
+  // No HTTP response means no observed protocol defect. Retain static schema
+  // findings and the explicit unperformed probe, rather than calling it malformed.
+  const findings = Array.isArray(route.findings)
+    ? route.findings.filter((item) => requestImplCalls === 0 || item.startsWith("seller_response_")) : [];
+  if (requestImplCalls > 0) findings.push("credential_free_probe_failed");
   const repair = prepared.schemaDisagreement
     ? { schema: null, applied: [], withheld: (route.repairPlan.actions || []).map((action) => ({ ...action, reason: "schema_disagreement" })) }
     : minimalRepair(prepared.schema, route.repairPlan.actions || []);
@@ -288,8 +294,8 @@ export async function auditSuppliedRow(body) {
     fixtureDemonstration: false,
     versions: {
       source: "vendor/agent-payment-integrity",
-      checker: checker.provenance.checker.version,
-      commit: checker.provenance.checker.commit,
+      checker: checker.provenance.networkAwareReceiving?.version || checker.provenance.checker.version,
+      commit: checker.provenance.networkAwareReceiving?.commit || checker.provenance.checker.commit,
       license: checker.provenance.checker.license,
       auditSchema: report.schemaVersion,
       responseContractSchema: route.responseContract.schemaVersion ?? null,
