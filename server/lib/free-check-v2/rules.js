@@ -66,8 +66,12 @@ export function evaluateReport(observation) {
     add('robots', search.some((policy) => !policy.allowed) || noindex ? 'problem' : 'pass', noindex ? 'A noindex directive is present. Confirm that excluding this page from search is intended.' : search.some((policy) => !policy.allowed) ? 'At least one search crawler is disallowed on the checked URL. Confirm that this is intended.' : 'The inspected robots rules allow the checked path for these search crawlers.', policyEvidence);
   }
   const searchRequests = bots.filter((bot) => ['OAI-SearchBot', 'PerplexityBot', 'Googlebot', 'Bingbot', 'ChatGPT-User', 'Claude-User'].includes(bot.agent));
-  if (searchRequests.length && searchRequests.every((bot) => bot.status)) add('bot-fetches', searchRequests.some((bot) => bot.status >= 400 || bot.challenge) ? 'problem' : 'pass', 'These are actual requests carrying crawler user-agent strings from this checker, not provider IPs or indexing proof. Training-only refusals do not deduct search access points.', ev('user-agent-http', bots.map((bot) => `${bot.agent}: ${bot.status}${bot.challenge ? ' challenge' : ''}`).join(';')));
-  else unknown('bot-fetches', 'One or more crawler user-agent requests did not finish. No provider crawler or index state is inferred.');
+  // These requests carry a crawler's name from this checker's address. Sites that verify crawlers
+  // by address (bot management, Wikimedia) rightly refuse them, so a refusal says nothing about the
+  // real crawler: it stays Not verified. robots.txt above is the declared policy.
+  const botEvidence = ev('user-agent-http', bots.map((bot) => `${bot.agent}: ${bot.status}${bot.challenge ? ' challenge' : ''}`).join(';'));
+  if (searchRequests.length && searchRequests.every((bot) => bot.status >= 200 && bot.status < 400 && !bot.challenge)) add('bot-fetches', 'pass', 'Requests carrying search crawler user-agent strings received the page. They came from this checker, not provider addresses, and are not indexing proof.', botEvidence);
+  else unknown('bot-fetches', searchRequests.some((bot) => bot.status >= 400 || bot.challenge) ? 'A request carrying a crawler name from this checker\'s address was refused or challenged. Sites that verify crawlers by address do this correctly, so it does not show that the real crawler is refused. See the robots policy for what the site declares.' : 'One or more crawler user-agent requests did not finish. No provider crawler or index state is inferred.');
   if (!doc) {
     if (probes.payment?.status === 402) add('payment', probes.payment.valid ? 'pass' : 'problem', probes.payment.valid ? 'The actual unpaid x402 challenge passes the maintained network-aware parser. No payment was made.' : probes.payment.error, ev('payment-challenge', probes.payment.error || probes.payment.networks.join(';')));
     for (const rule of RULES) if (!result.some((item) => item.id === rule.id)) unknown(rule.id, 'The page body was not available for this check.');
@@ -122,6 +126,7 @@ export function evaluateReport(observation) {
   for (const id of ['mcp', 'a2a', 'openapi', 'feeds']) {
     const probe = probes[id];
     if (!probe?.status) unknown(id, 'Discovery did not complete. No capability is inferred.');
+    else if (id === 'mcp' && !probe.valid && probe.declared) add(id, 'unknown', `The site names an MCP endpoint at ${probe.declared} but publishes no server description at the discovery path. This read-only check does not call the endpoint.`, ev('declared-endpoint', probe.declared, probe.finalUrl));
     else optional(id, Boolean(probe.valid), 'A readable discovery document is present; authenticated execution and paid actions were not called.', 'Publish a maintained contract only if this service has a useful action for agents.', ev('discovery', `HTTP ${probe.status}; recognized structure ${Boolean(probe.valid)}`, probe.finalUrl), { offer: probe.valid ? null : id === 'feeds' ? 'agent_storefront' : 'agent_mcp_server' });
   }
   const payment = probes.payment;
@@ -130,8 +135,8 @@ export function evaluateReport(observation) {
   optional('webmcp', doc.webmcpDeclared, 'The HTML declares WebMCP integration. Tool availability was not invoked.', 'Consider browser tools if a repeated customer task would benefit.', ev('webmcp-declaration', doc.webmcpDeclared ? 'modelContext or toolname declaration in initial HTML.' : 'No WebMCP declaration in initial HTML.'));
   if (observation.crux?.metrics) add('crux', observation.crux.good ? 'pass' : 'problem', 'Origin field data from CrUX is reported with its collection period. It is not this page or a lab run.', ev('crux-field', JSON.stringify(observation.crux)));
   else unknown('crux', observation.crux?.reason || 'CrUX field data was unavailable. No field or Lighthouse result is inferred.');
-  add('viewport', /width\s*=\s*device-width/i.test(doc.viewport || '') ? 'pass' : 'problem', doc.viewport ? 'The initial document viewport was inspected. Layout fit requires browser review.' : 'No mobile viewport meta element was found.', ev('viewport', doc.viewport || 'No viewport meta element.'));
-  const verifiedAction = Boolean(action?.ok && !action.loginWall && doc.controls && !doc.missingLabels.length) || ['mcp', 'a2a', 'openapi', 'feeds'].some((id) => probes[id]?.valid) || payment?.valid;
+  add('viewport', /width\s*=\s*device-width|initial-scale\s*=\s*1(?:\.0*)?(?![\d.])/i.test(doc.viewport || '') ? 'pass' : 'problem', doc.viewport ? 'The initial document viewport was inspected. Layout fit requires browser review.' : 'No mobile viewport meta element was found.', ev('viewport', doc.viewport || 'No viewport meta element.'));
+  const verifiedAction = Boolean(action?.ok && !action.loginWall && doc.controls && !doc.missingLabels.length) || ['mcp', 'a2a', 'openapi', 'feeds'].some((id) => probes[id]?.valid) || Boolean(payment?.valid);
   return finish(result, observation, verifiedAction);
 }
 function finish(checks, observation, verifiedAction) {

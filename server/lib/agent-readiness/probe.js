@@ -150,6 +150,8 @@ export async function rawExchange(url, options = {}) {
         port: url.port || (url.protocol === "https:" ? 443 : 80),
         path: `${url.pathname}${url.search}`,
         method, headers, agent,
+        // Node's default 16 KB refuses real CDN responses (webflow.com/robots.txt). Still bounded.
+        maxHeaderSize: 64 * 1024,
         ...(url.protocol === "https:" ? { servername: net.isIP(hostname) ? "" : hostname } : {}),
       }, (res) => {
         response = res;

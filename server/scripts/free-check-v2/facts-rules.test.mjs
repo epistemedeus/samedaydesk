@@ -38,7 +38,7 @@ test('absent optional protocols are upgrades; a malformed declared JSON block is
 });
 test('training opt-outs do not become a search access failure, longest Allow wins', async () => {
   const robots = 'User-agent: GPTBot\nDisallow: /\nUser-agent: OAI-SearchBot\nDisallow: /\nAllow: /public/\nUser-agent: Google-Extended\nDisallow: /\n';
-  const report = await runFreeCheck('https://business.example/public/', { fetcher: async (target, options) => target.endsWith('/robots.txt') ? response(robots, { finalUrl: target, contentType: 'text/plain' }) : options.userAgent ? response() : target.endsWith('/public/') ? response() : response('', { status: 404, ok: false, finalUrl: target }), cruxKey: null });
+  const report = await runFreeCheck('https://business.example/public/', { fetcher: async (target, options) => target.endsWith('/robots.txt') ? response(robots, { finalUrl: target, contentType: 'text/plain' }) : options.userAgent || target.endsWith('/public/') ? response(html, { finalUrl: target }) : response('', { status: 404, ok: false, finalUrl: target }), cruxKey: null });
   assert.equal(report.policies.find((policy) => policy.agent === 'GPTBot').allowed, false);
   assert.equal(report.policies.find((policy) => policy.agent === 'OAI-SearchBot').allowed, true);
   assert.equal(report.checks.find((finding) => finding.id === 'robots').status, 'pass');
@@ -85,4 +85,33 @@ test('a readable contract must contain actionable structure, not a bare marketin
 test('intentional training-only user-agent refusals do not deduct search access points', () => {
   const seen = observation(); seen.bots = [{ agent: 'GPTBot', status: 403 }, { agent: 'OAI-SearchBot', status: 200 }];
   assert.equal(evaluateReport(seen).checks.find((item) => item.id === 'bot-fetches').status, 'pass');
+});
+
+test('an MCP endpoint named in the site guide is not reported as missing', () => {
+  const seen = observation();
+  seen.probes.mcp = response('not found', { status: 404, ok: false, valid: false, declared: 'https://business.example/mcp' });
+  const mcp = evaluateReport(seen).checks.find((finding) => finding.id === 'mcp');
+  assert.equal(mcp.status, 'unknown'); assert.match(mcp.detail, /business\.example\/mcp/); assert.equal(mcp.offer, null);
+});
+test('controls hidden from assistive technology need no label; title and placeholder name a control', () => {
+  const doc = analyzeDocument('<body><input aria-hidden="true" tabindex="-1"><div hidden><select></select></div><input type="checkbox" class="hidden" aria-hidden="true"><input type="email" placeholder="Email"><input title="Search"><input name="bare"></body>', url);
+  assert.equal(doc.controls, 3); assert.deepEqual(doc.missingLabels, [{ tag: 'input', name: 'bare' }]);
+});
+test('initial-scale=1 counts as a mobile viewport; a refused crawler-name request stays unverified', () => {
+  const seen = observation(html.replace('width=device-width, initial-scale=1', 'initial-scale=1,user-scalable=yes'));
+  seen.bots = [{ agent: 'Googlebot', status: 403, challenge: true }, { agent: 'OAI-SearchBot', status: 200 }];
+  const report = evaluateReport(seen);
+  assert.equal(report.checks.find((finding) => finding.id === 'viewport').status, 'pass');
+  assert.equal(report.checks.find((finding) => finding.id === 'bot-fetches').status, 'unknown');
+});
+test('robots.txt follows a redirect to another host and an oversized file is still read', async () => {
+  const moved = Object.assign(Error('Redirect left the site origin'), { code: 'off_origin_redirect', location: 'https://en.business.example/robots.txt' });
+  const big = `User-agent: OAI-SearchBot\nDisallow: /\n# ${'x'.repeat(600_000)}`;
+  const fetcher = (robots) => async (target, options) => target === 'https://business.example/robots.txt' ? (() => { throw moved; })()
+    : target.endsWith('/robots.txt') ? response(robots, { finalUrl: target, contentType: 'text/plain', oversize: robots.length > options.maxBytes, body: robots.slice(0, options.maxBytes) })
+    : response(html, { finalUrl: target });
+  const report = await runFreeCheck(url, { fetcher: fetcher(big), cruxKey: null });
+  assert.equal(report.policies.find((policy) => policy.agent === 'OAI-SearchBot').allowed, false);
+  assert.equal(report.checks.find((finding) => finding.id === 'robots').status, 'problem');
+  assert.ok(report.requests.some((request) => request.url === 'https://business.example/robots.txt'));
 });

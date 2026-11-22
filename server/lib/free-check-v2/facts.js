@@ -51,12 +51,15 @@ export function analyzeDocument(body, url) {
   const headings = nodes.filter((node) => /^h[1-6]$/.test(node.tagName)).map((node) => ({ level: Number(node.tagName[1]), value: excerpt(text(node)) }));
   const visible = normalize(text(tag('body')[0] || root));
   const labels = new Map(tag('label').map((node) => [attr(node, 'for'), normalize(text(node))]));
-  const controls = nodes.filter((node) => ['input', 'select', 'textarea'].includes(node.tagName) && !['hidden', 'submit', 'button', 'reset', 'image'].includes(attr(node, 'type')) && attr(node, 'disabled') === null);
+  // Hidden from assistive technology (aria-hidden, hidden, inert, here or above): framework mirror
+  // inputs and CSS menu toggles. Nobody is asked to fill them, so they need no label.
+  const concealed = (node) => { for (let n = node; n?.tagName; n = n.parentNode) if (attr(n, 'aria-hidden') === 'true' || attr(n, 'hidden') !== null || attr(n, 'inert') !== null) return true; return false; };
+  const controls = nodes.filter((node) => ['input', 'select', 'textarea'].includes(node.tagName) && !['hidden', 'submit', 'button', 'reset', 'image'].includes(attr(node, 'type')) && attr(node, 'disabled') === null && !concealed(node));
   const missingLabels = controls.filter((node) => {
     let parent = node.parentNode;
     while (parent) { if (parent.tagName === 'label' && normalize(text(parent))) return false; parent = parent.parentNode; }
     const labelled = (attr(node, 'aria-labelledby') || '').split(/\s+/).some((id) => nodes.some((candidate) => attr(candidate, 'id') === id && normalize(text(candidate))));
-    return !(labels.get(attr(node, 'id')) || attr(node, 'aria-label')?.trim() || labelled);
+    return !(labels.get(attr(node, 'id')) || attr(node, 'aria-label')?.trim() || attr(node, 'title')?.trim() || attr(node, 'placeholder')?.trim() || labelled);
   }).map((node) => ({ tag: node.tagName, name: attr(node, 'name') || attr(node, 'id') || '(unnamed)' }));
   const dates = schemas.flatMap((node) => [node.dateModified, node.datePublished]).concat(tag('time').map((node) => attr(node, 'datetime'))).filter((value) => typeof value === 'string' && Number.isFinite(Date.parse(value)));
   return {

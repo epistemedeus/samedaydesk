@@ -19,6 +19,8 @@ export const AGENTS = Object.freeze([
 export function normalizeInput(raw) {
   let value = String(raw || '').trim();
   if (!value || value.length > 2048 || /\s/.test(value)) throw Object.assign(Error('Enter one public website URL.'), { status: 400 });
+  // Another scheme is refused, not read as a host name (ftp://site.com would become host "ftp").
+  if (/^[a-z][a-z\d+.-]*:\/\//i.test(value) && !/^https?:\/\//i.test(value)) throw Object.assign(Error('Use a public HTTP or HTTPS website without credentials or a custom port.'), { status: 400 });
   if (!/^https?:\/\//i.test(value)) value = `https://${value}`;
   let url;
   try { url = new URL(value); } catch { throw Object.assign(Error('Enter a valid website URL.'), { status: 400 }); }
@@ -55,10 +57,20 @@ export async function collectObservation(raw, { signal, onProgress = () => {}, f
     const begin = Date.now();
     let result;
     try {
-      result = await fetcher(clean, { maxBytes: 700_000, timeoutMs: Math.min(4000, budget.remaining()), budget, lookup, allowHostVariants: true, includeHeaders: true, ...options });
+      const { crossOrigin, ...rest } = options;
+      // RFC 9309 2.3.1.2: robots.txt redirects are followed, also to another host (www.wikipedia.org
+      // sends en.wikipedia.org). Each hop is admitted again as a public address.
+      for (let hop = 0, next = clean, opts = rest; ; hop += 1) {
+        try { result = await fetcher(next, { maxBytes: 700_000, timeoutMs: Math.min(4000, budget.remaining()), budget, lookup, allowHostVariants: true, includeHeaders: true, ...opts }); break; }
+        catch (error) {
+          const to = crossOrigin && error.code === 'off_origin_redirect' && hop < 4 && publicLink(error.location, next);
+          if (!to) throw error;
+          next = to; opts = { ...rest, allowedOrigin: new URL(to).origin };
+        }
+      }
       result.challenge = looksLikeChallenge(result);
     } catch (error) {
-      result = { status: 0, ok: false, body: '', finalUrl: clean, failure: ['private_address', 'invalid_host'].includes(error.code) ? 'public-address-refused' : budget.exhausted ? 'deadline' : 'unreachable' };
+      result = { status: 0, ok: false, body: '', finalUrl: clean, failure: ['private_address', 'invalid_host'].includes(error.code) ? 'public-address-refused' : error.code === 'off_origin_redirect' ? 'redirected-off-site' : budget.exhausted ? 'deadline' : 'unreachable' };
     }
     observation.requests.push({ url: clean, method: options.method || 'GET', status: result.status, ms: Date.now() - begin, failure: result.failure || null, userAgent: options.userAgent || 'SameDayDeskAgentReadiness/1.0' });
     onProgress({ kind: 'fetch', url: clean, status: result.status, ms: Date.now() - begin });
@@ -84,16 +96,24 @@ export async function collectObservation(raw, { signal, onProgress = () => {}, f
     onProgress({ kind: 'finding', label: 'Text without JavaScript', detail: `${doc.words} words in initial HTML.`, url: page.finalUrl });
     const fixed = { robots: '/robots.txt', sitemap: '/sitemap.xml', llms: '/llms.txt', mcp: '/.well-known/mcp/server.json', a2a: '/.well-known/agent-card.json', openapi: '/openapi.json', feeds: '/.well-known/ucp' };
     await pool(Object.entries(fixed).map(([key, path]) => async () => {
-      observation.probes[key] = await read(new URL(path, origin).href, { allowedOrigin: origin, maxBytes: 250_000 });
+      observation.probes[key] = key === 'robots'
+        ? await read(new URL(path, origin).href, { allowedOrigin: origin, maxBytes: 512_000, crossOrigin: true })
+        : await read(new URL(path, origin).href, { allowedOrigin: origin, maxBytes: 250_000 });
     }));
     const robots = observation.probes.robots;
     observation.robotsUrl = new URL('/robots.txt', origin).href;
-    const robot = robots?.ok && !robots.oversize && !robots.challenge ? robotsParser(observation.robotsUrl, robots.body) : null;
+    // An oversized file is parsed up to the 500 KiB that RFC 9309 asks crawlers to read.
+    const robot = robots?.ok && !robots.challenge ? robotsParser(observation.robotsUrl, robots.body) : null;
     observation.policies = AGENTS.map((item) => ({ ...item,
       allowed: robot ? robot.isAllowed(page.finalUrl, item.agent) ?? true : robots?.status === 404 || robots?.status === 410 ? true : null,
       note: item.requestAgent ? `${item.agent} is a control token, not a distinct HTTP user agent. ${item.requestAgent} is requested separately.` : item.purpose === 'user-request' ? 'User-triggered fetch behavior may differ from robots policy.' : item.purpose === 'training' ? 'Training opt-outs are not treated as AI search failures.' : null,
     }));
     for (const key of ['mcp', 'a2a', 'openapi', 'feeds']) observation.probes[key].valid = protocolValidity(key, observation.probes[key]);
+    // An MCP endpoint the site names in its own guide or agent card (https://ein.llc/mcp) is not
+    // absent just because /.well-known/mcp/server.json is. It is not called from here.
+    const site = new URL(origin).hostname.replace(/^www\./, '');
+    observation.probes.mcp.declared = [observation.probes.llms, observation.probes.a2a].flatMap((probe) => probe?.ok ? [...String(probe.body).matchAll(/https:\/\/[^\s)"'<>\]]+/g)].map((match) => publicLink(match[0], origin)) : [])
+      .find((link) => link && /\/mcp\/?$/.test(new URL(link).pathname) && (new URL(link).hostname === site || new URL(link).hostname.endsWith(`.${site}`))) || null;
     const sameOrigin = (link) => new URL(link.url).origin === origin;
     const jobs = AGENTS.map((item) => async () => {
       const result = await read(page.finalUrl, { userAgent: `${item.requestAgent || item.agent}/1.0`, maxBytes: 100_000 });
