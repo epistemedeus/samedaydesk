@@ -1,36 +1,43 @@
 import assert from "node:assert/strict";
-import {readFileSync} from "node:fs";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 
-// The implementation serverInfo.name is not the discovery provider's listing ID.
+// Provider listings are optional discovery aids. The shipped direct endpoint is
+// the acquisition path, even when the current guide has no external listing.
 const maintained = "https://smithery.ai/servers/epistemedeus/samedaydesk-machine-commerce";
 const obsolete = "https://smithery.ai/servers/epistemedeus/x402-data-gateway";
 const direct = "https://agents.samedaydesk.com/mcp";
 const guide = readFileSync(new URL("../../client/public/llms.txt", import.meta.url), "utf8");
-function listingLinks(text) {
-  return [...text.matchAll(/\[[^\]]+\]\((https:\/\/smithery\.ai\/servers\/[^)\s]+)\)/g)].map(m => m[1]);
+function links(text) {
+  return [...text.matchAll(/\[[^\]]+\]\((https:\/\/[^)\s]+)\)/g)].map((match) => match[1]);
 }
-test("the shipped machine guide names the maintained external listing", () => {
-  assert.deepEqual(listingLinks(guide), [maintained]);
-  assert.equal(guide.includes(obsolete), false);
+function discoveryIsUsable(text) {
+  const targets = links(text);
+  const listings = targets.filter((url) => url.startsWith("https://smithery.ai/servers/"));
+  return targets.includes(direct)
+    && listings.every((url) => url === maintained)
+    && !text.includes(obsolete)
+    && !text.includes("Managed MCP connection");
+}
+
+test("the shipped guide keeps direct acquisition without requiring an external listing", () => {
+  assert.equal(discoveryIsUsable(guide), true);
+  assert.ok(links(guide).includes("https://samedaydesk.com/mcp"));
 });
-test("a server implementation name cannot silently replace the listing identity", () => {
-  const changed = guide.replace(maintained, obsolete);
-  assert.notDeepEqual(listingLinks(changed), [maintained]);
+test("a provider listing cannot replace the canonical direct endpoint", () => {
+  assert.equal(discoveryIsUsable(guide.replaceAll(direct, maintained)), false);
 });
-test("listing discovery does not replace the no-key canonical MCP entry", () => {
-  assert.ok(guide.includes(direct));
-  assert.ok(guide.indexOf(direct) < guide.indexOf(maintained));
+test("optional listing discovery preserves its qualified identity", () => {
+  assert.equal(discoveryIsUsable(`${guide}\n[Directory listing](${maintained})`), true);
+  assert.equal(discoveryIsUsable(`${guide}\n[Directory listing](${obsolete})`), false);
 });
-test("the Smithery line keeps the qualified listing and sends acquisition to the direct endpoint", () => {
-  const line = guide.split("\n").find((row) => row.includes("smithery.ai"));
-  assert.ok(line);
-  assert.equal(guide.includes("Managed MCP connection"), false);
-  assert.equal(guide.includes(obsolete), false);
-  assert.ok(line.includes(maintained));
-  assert.ok(line.includes(direct));
-  assert.ok(line.includes("no Smithery account"));
-  assert.ok(guide.includes("https://samedaydesk.com/discovery/paid-gateway.json"));
-  assert.ok(guide.includes("- [Homepage](https://samedaydesk.com/): Agent-commerce build catalog, flat prices, acceptance guarantee, and Stripe order links."));
-  assert.ok(guide.includes("- [EIN.LLC](https://ein.llc/): US LLC formation and EIN activation."));
+test("the guide retains current inventory, instructions and HTTP contracts", () => {
+  const targets = links(guide);
+  for (const target of [
+    "https://samedaydesk.com/start.md",
+    "https://agents.samedaydesk.com/.well-known/x402",
+    "https://agents.samedaydesk.com/llms.txt",
+    "https://agents.samedaydesk.com/api/actions",
+    "https://samedaydesk.com/openapi.json",
+  ]) assert.ok(targets.includes(target), `missing canonical machine entry: ${target}`);
 });

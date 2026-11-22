@@ -45,6 +45,7 @@
 </script>
 <style>
   :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --green:#167054; --blue:#3b61b6; --lime:#ccff00; }
+  html[data-theme="dark"] { --blue:#91d4e3; }
   * { box-sizing:border-box; }
   html,body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.65 Inter,system-ui,-apple-system,sans-serif; }
   .wrap { max-width:55rem; margin:0 auto; padding:3rem 1.25rem 5rem; }
@@ -65,6 +66,7 @@
   .flow b { display:block; color:var(--blue); font:700 11px/1.2 ui-monospace,monospace; letter-spacing:.08em; text-transform:uppercase; }
   .flow span { display:block; margin-top:.35rem; font-size:.92rem; }
   .proof { margin:.8rem 0; padding:1rem 1.1rem; border-left:4px solid var(--green); border-radius:0 10px 10px 0; background:var(--card); }
+  h2 + .proof { margin-top:1rem; }
   .proof p { margin:.25rem 0 0; color:var(--dim); }
   .links { margin:1.5rem 0; padding:1.25rem; border:1px solid var(--line); border-radius:12px; background:var(--card); }
   .links p { margin:.35rem 0; }

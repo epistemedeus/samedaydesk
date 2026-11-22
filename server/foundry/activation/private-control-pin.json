@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "1ae4b46c1a131ffe71e9e8d7bcc6bc3843570b47",
+  "base": "4d7e55f0d66e1a29b46ad272d83e442f1c03e5fa",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
@@ -9,7 +9,7 @@
     "client/src/data/receiptPages.mjs": "92705522d6c767523b6bedc356b60e1e364d6d20efa237f90a9d6e3950160d23",
     "client/src/data/receipts.json": "09c3e7065672b8d62a3a5fbc1641ad170aea74c1a88c0ba48b86e5143f737821",
     "package-lock.json": "98c27a329c069022cec7b52bfb44dbd62d317759b2dbda9c0bf7f9a2c32593f8",
-    "package.json": "e72c8863dfa8b236e335e667c4b25fe743cc83eb16c2d6ef518fe9fabce2f071",
+    "package.json": "7ff70c847a1f881d647d503774b1e73fae329ee4eac0ff325eb8a85656ac94e5",
     "server/app.js": "c6d302bbb2325f1369b84b5551db6355f5cec8d9f26a1ef0b861e1b92004b145",
     "server/contributor-desk-host.mjs": "a491467e92ea0de1f931dbdd53b0b83f3819e8a6cc8c9c10533820761e7956cb",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
@@ -47,11 +47,11 @@
     "server/lib/agent-readiness/x402-entries.js": "d49cdc2ee437ca06b6f712e41c6ae9f8a07e04c585c0ba5050ff766c35b703b0",
     "server/lib/apex-agent-card.js": "f7657e87aecfc8d62ac484098e9a2d47a18f96c912fbb486b9b1af5853366d0d",
     "server/lib/apex-declarations.js": "2f9b4f35c4341daa60e49a9cff7003a0cf1a741d7bee2ef5f3502c7dd03d2304",
-    "server/lib/care-contract.js": "4a20430f5735eef7775fc0ce5cf499dad9d892c2b1834d1db6a0d8c7dae2972a",
+    "server/lib/care-contract.js": "6e7430f7e61c70e4eaf0ff806561fbde91b18523611a634a0a401029b76dfa84",
     "server/lib/care-mail.js": "547248215996599e737f3b01991891ea994e7c3b098f1f2466e1e620e6397696",
     "server/lib/care-sentinel.js": "95694a6f738e209bd0a32608780e29f41669660a2bfa90471c55434c68e64baa",
-    "server/lib/care-service.js": "8604e7171179c4e1c14f0992ae36b64acbb2c2cd3a86802763726ce46cf9d65c",
-    "server/lib/care-store.js": "08a1f5f1531212b9a0df929546d57e9b71f7643e6f49dd23dda41f5150f408dd",
+    "server/lib/care-service.js": "7672cd1ac321faeb96da91dacc460c499e4a5f2bb13cf115939f146aca7bc323",
+    "server/lib/care-store.js": "a55d5a08b2034707de110e848025c0ed55941cd3fe9ac65389b3f97eeff4b39f",
     "server/lib/commerce-journey.js": "0b9482ec930baaf24c2db92fdc8b5b3527e3a24dbd251c3e7bca9490b46b7723",
     "server/lib/contributor-artifact.js": "72657728eab3b9bab0dfffccb2561dbea5fc3d9cbb886ce84ed83890ff1edc3c",
     "server/lib/contributor-desk-assets.js": "67b379f429ac7223b3e8b2fc923da367ed7b48ebd158552e117885c117c73da5",
@@ -260,7 +260,7 @@
     "server/lib/taskmarket-networks.js": "3ea4537e72b61d6acdfcd43fdc61db0f3466a92692a425c57520aa99d16379c7",
     "server/lib/taskmarket.js": "852086cc7a515f7a213903da69529b7d1c2bb181647d13ede9a35e2cf9584311",
     "server/routes/agent-readiness.js": "de888e34d7f68ddbf099cfd5021b850ee9e725f425a9375377af497c5216e312",
-    "server/routes/care.js": "4708cb8711bd430ca43a824b5ef91c3f8f723707918d182850d84eea9a858cef",
+    "server/routes/care.js": "a32d6977d0b4e63f8b24b306a161145b1e44e7b831b3821974bd7ad99ec28cd9",
     "server/routes/checkout.js": "db41b5c8e00275e6eb6618877653d38790014172d13a9fa06921c867b2be366f",
     "server/routes/mcp.js": "2ddd1587d918bdd7da1fa5ae7ae00d24b61b4a4f531c0107ecaca4caace12e28",
     "server/routes/pulse.js": "30900298a5a5a233c2daaf81a8d5e81ff3c73b2a5f3572a75101784f48eda260",
@@ -1800,6 +1800,11 @@
       "base": "18285f775621eef7ea1da360a0df8cccbf07ce2a",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:333b568c24d30f0220a15962ddb94b2e1b4e7a302d599f19e70884b8d070795c"
+    },
+    {
+      "base": "1ae4b46c1a131ffe71e9e8d7bcc6bc3843570b47",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:509780ab4a88272f017ad6668c7afcc348e348b4e12511bdbcb07111dd9c9636"
     }
   ]
 }

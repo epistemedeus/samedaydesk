@@ -46,7 +46,7 @@ export function BuyCare() {
     PAYMENT_LINKS[item.slug]?.startsWith("/care/buy?"));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  // Bank transfer and stablecoin appear only when the server offers them (SDS_CARE_NONCARD, monthly offer).
+  // Invoice methods appear only when the server offers them for this monthly offer.
   const [methods, setMethods] = useState<string[]>(["card"]);
   const [invoiceEmail, setInvoiceEmail] = useState("");
   useEffect(() => {
@@ -100,7 +100,7 @@ export function BuyCare() {
         {busy ? "Opening checkout" : `Continue to pay ${offer.price} USD`}
       </button>
       {methods.length > 1 && <form className={`${styles.form} ${styles.alternate}`} onSubmit={(event) => event.preventDefault()}>
-        <p>Or pay each month by invoice, by bank transfer (international wires accepted) or in USDC.</p>
+        <p>Or pay each month by invoice, by bank transfer (international wires accepted){methods.includes("stablecoin") ? " or in USDC" : ""}.</p>
         <label>Email for your invoice<input type="email" required maxLength={254} value={invoiceEmail}
           onChange={(event) => setInvoiceEmail(event.target.value)} /></label>
         {methods.includes("bank_transfer") && <button type="button" disabled={busy || !invoiceEmail}

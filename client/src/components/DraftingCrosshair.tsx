@@ -1,28 +1,24 @@
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useTheme } from "../lib/theme";
+import { useReducedMotion } from "../motion/useReducedMotion";
 import styles from "./DraftingCrosshair.module.css";
 
-// The drafting crosshair: two oxide hairlines cross the grid at the pointer and snap to the
-// nearest grid intersection, with a plotter readout (C·14 / R·06) and ticks on the margin
-// rulers. Over a card or a control the hairlines fade and the card's corner crosses close in;
-// inside the hero the reticle has the sight, so there are never two. The system cursor stays.
-// Drafting Table theme, fine pointers only; off under reduced motion and on the legal pages.
+// Short drafting ticks stay at the viewport edges. Reading areas and the system cursor
+// remain clear. Fine pointers only; off under reduced motion and on the legal pages.
 const QUIET = /^\/(terms|privacy)\b/;
 
 export default function DraftingCrosshair() {
   const { theme } = useTheme();
   const { pathname } = useLocation();
   const root = useRef<HTMLDivElement>(null);
-  const on = theme === "drafting" && !QUIET.test(pathname);
+  const reduce = useReducedMotion();
+  const on = theme === "drafting" && !reduce && !QUIET.test(pathname);
 
   useEffect(() => {
     const el = root.current;
     if (!on || !el) return;
     if (!matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const h = el.querySelector<HTMLElement>("[data-h]")!;
-    const v = el.querySelector<HTMLElement>("[data-v]")!;
-    const read = el.querySelector<HTMLElement>("[data-read]")!;
     const tickX = el.querySelector<HTMLElement>("[data-tick-x]")!;
     const tickY = el.querySelector<HTMLElement>("[data-tick-y]")!;
     let raf = 0;
@@ -42,12 +38,8 @@ export default function DraftingCrosshair() {
       const inHero = !!target?.closest?.("[data-hero]");
       const overThing = !!target?.closest?.("a, button, input, textarea, select, summary, article, [role='dialog']");
       el.dataset.state = inHero ? "off" : overThing ? "faint" : "on";
-      v.style.transform = `translateX(${x}px)`;
-      h.style.transform = `translateY(${y}px)`;
       tickX.style.transform = `translateX(${x}px)`;
       tickY.style.transform = `translateY(${y}px)`;
-      read.style.transform = `translate(${x + 10}px, ${y + 8}px)`;
-      read.textContent = `C·${String(col).padStart(2, "0")} / R·${String(row).padStart(2, "0")}`;
     };
     const move = (e: PointerEvent) => {
       if (e.pointerType !== "mouse") return;
@@ -69,12 +61,9 @@ export default function DraftingCrosshair() {
 
   if (!on) return null;
   return (
-    <div ref={root} className={styles.layer} data-state="off" aria-hidden="true">
-      <span className={styles.v} data-v />
-      <span className={styles.h} data-h />
+    <div ref={root} className={styles.layer} data-drafting-rulers data-state="off" aria-hidden="true">
       <span className={styles.tickX} data-tick-x />
       <span className={styles.tickY} data-tick-y />
-      <span className={styles.read} data-read />
     </div>
   );
 }

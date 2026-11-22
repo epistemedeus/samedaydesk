@@ -68,8 +68,14 @@ test("the monthly offer takes bank transfer and stablecoin by invoice only when 
   assert.deepEqual(off.methods("keep_it_working"), ["card"]);
   await assert.rejects(off.startInvoice("keep_it_working", randomUUID(), "bank_transfer", "buyer@example.test"), { status: 400 });
 
+  const bankOnly = createCareService({ store, stripe: fakeStripe(), secret, origin, live: false, noncard: true });
+  assert.deepEqual(bankOnly.methods("keep_it_working"), ["card", "bank_transfer"]);
+  await assert.rejects(bankOnly.startInvoice("keep_it_working", randomUUID(), "stablecoin", "buyer@example.test"), { status: 400 });
+  const stableOnly = createCareService({ store, stripe: fakeStripe(), secret, origin, live: false, stablecoin: true });
+  assert.deepEqual(stableOnly.methods("keep_it_working"), ["card"]);
+
   const stripe = fakeStripe();
-  const care = createCareService({ store, stripe, secret, origin, live: false, noncard: true, releaseRun: "SDS-NONCARD-TEST" });
+  const care = createCareService({ store, stripe, secret, origin, live: false, noncard: true, stablecoin: true, releaseRun: "SDS-NONCARD-TEST" });
   assert.deepEqual(care.methods("keep_it_working"), ["card", "bank_transfer", "stablecoin"]);
   assert.deepEqual(care.methods("agent_storefront"), ["card"]);
   await assert.rejects(care.startInvoice("agent_storefront", randomUUID(), "bank_transfer", "buyer@example.test"), { status: 400 });
