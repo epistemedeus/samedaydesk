@@ -134,3 +134,23 @@ test('the CrUX key is sent in a header, never in the URL', async () => {
     assert.equal(seen.length, 1); assert.equal(seen[0].target.includes('test-key-value'), false); assert.equal(seen[0].key, 'test-key-value');
   } finally { globalThis.fetch = original; }
 });
+
+
+test('missing structured data is named separately from malformed JSON-LD syntax', () => {
+  const missing = observation(html.replace(/<script type="application\/ld\+json">.*?<\/script>/, ''));
+  const absent = evaluateReport(missing).checks.find((item) => item.id === 'jsonld');
+  assert.equal(absent.status, 'problem'); assert.equal(absent.label, 'Structured data');
+  assert.match(absent.detail, /no structured data/); assert.match(absent.fix, /Add a JSON-LD block/);
+  const malformed = evaluateReport(observation(html.replace('"@type":"Organization"', 'BROKEN'))).checks.find((item) => item.id === 'jsonld');
+  assert.equal(malformed.status, 'problem'); assert.equal(malformed.label, 'JSON-LD syntax');
+  assert.match(malformed.detail, /not parse/); assert.match(malformed.fix, /Fix the JSON syntax/);
+  assert.equal(evaluateReport(observation()).checks.find((item) => item.id === 'jsonld').status, 'pass');
+});
+
+test('the suggested starting-price example stays neutral when the site declares no price', () => {
+  const report = evaluateReport(observation(html.replace('Buy this service for 99 USD. ', '')));
+  const purchase = report.checks.find((item) => item.id === 'purchase');
+  assert.equal(purchase.status, 'problem');
+  assert.match(purchase.fix, /from X USD a month/); assert.doesNotMatch(purchase.fix, /20 USD/);
+  assert.match(report.summary.topFixes.find((item) => item.id === 'purchase').fix, /from X USD a month/);
+});
