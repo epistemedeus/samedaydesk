@@ -45,7 +45,8 @@ export default function FreeCheckReport({ report, compact = false }: { report: F
     <section className={styles.section}>
       <h2>Upgrades <span>({upgrades.length})</span></h2>
       <p>New things agents could do with {name}.</p>
-      {upgrades.length > 0 && <ul className={styles.findings}>{(compact ? upgrades.slice(0, 2) : upgrades).map((finding) => <Finding key={finding.id} finding={finding} withOffer />)}</ul>}
+      {upgrades.length > 0 && <ul className={styles.findings}>{(compact ? upgrades.slice(0, 2) : upgrades).map((finding, index, list) => <Finding key={finding.id} finding={finding}
+        withOffer={finding.offer !== summary?.offer && list.findIndex((other) => other.offer === finding.offer) === index} />)}</ul>}
     </section>
     {unmeasured.length > 0 && <p className={styles.unmeasured}>Not measured in this run ({points(report.scoring.unknown)}): {unmeasured.map((item) => item.detail).join('; ')}.</p>}
     {compact && <Link to={report.permalink || '/tools/ai-readiness'} state={{ readiness: report }}>Every check and its evidence →</Link>}

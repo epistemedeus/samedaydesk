@@ -26,3 +26,5 @@
 .fixes { margin: 0; padding-left: 1.4rem; display: grid; gap: 0.6rem; }
 .cta { display: inline-block; margin-top: 1rem; min-height: 44px; padding-block: 0.6rem; font-weight: 600; text-decoration: underline; text-underline-offset: 0.2em; color: var(--ink); }
 .unmeasured { margin-top: var(--space-m); color: var(--ink-dim); font-size: var(--step--1); }
+.finding details li > a, .meta a { display: inline-block; min-height: 24px; padding-block: 0.15rem; }
+.report .summary h2, .report .section h2 { font-size: var(--step-1); line-height: 1.25; letter-spacing: normal; }
