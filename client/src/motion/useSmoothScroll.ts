@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 import type Lenis from "lenis";
+import { useReducedMotion } from "./useReducedMotion";
 
 // Lenis smooth scroll: desktop + fine-pointer only, off under reduced-motion and on touch.
 // Exposed on window for optional GSAP ScrollTrigger sync.
 export function useSmoothScroll() {
+  const reduce = useReducedMotion();
   useEffect(() => {
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const finePointer = window.matchMedia("(pointer: fine)").matches;
     if (reduce || !finePointer) return;
 
@@ -34,5 +35,5 @@ export function useSmoothScroll() {
       lenis?.destroy();
       if (owner.__lenis === lenis) owner.__lenis = undefined;
     };
-  }, []);
+  }, [reduce]);
 }

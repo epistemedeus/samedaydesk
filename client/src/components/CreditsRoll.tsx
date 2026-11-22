@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { receiptId, short, tapeDate, useReceiptFeed, utcTime, type Receipt } from "../lib/receipts";
 import styles from "./CreditsRoll.module.css";
+import { useReducedMotion } from "../motion/useReducedMotion";
 
 const SPEED = 22; // px per second, upward
 const EASE_MS = 400; // the roll eases to a stop, and back, over this long
@@ -19,10 +20,11 @@ export default function CreditsRoll() {
   const first = useRef<HTMLOListElement>(null);
   const offset = useRef(0);
   const [paused, setPaused] = useState(false);
+  const reduce = useReducedMotion();
 
   useEffect(() => {
     const box = screen.current, track = reel.current, list = first.current;
-    if (!box || !track || !list || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!box || !track || !list || reduce) return;
     if (paused) {
       box.scrollTop = offset.current;
       return () => { offset.current = box.scrollTop; box.scrollTop = 0; };
@@ -75,7 +77,7 @@ export default function CreditsRoll() {
       box.removeEventListener("scroll", unscroll);
       track.style.transform = "";
     };
-  }, [shown, paused]);
+  }, [shown, paused, reduce]);
 
   if (!shown) return null;
   return (

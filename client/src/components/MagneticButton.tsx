@@ -1,7 +1,8 @@
-import { useRef, type ReactNode, type MouseEvent } from "react";
+import { useEffect, useRef, type ReactNode, type MouseEvent } from "react";
 import { Link } from "react-router-dom";
 import clsx from "clsx";
 import styles from "./MagneticButton.module.css";
+import { useReducedMotion } from "../motion/useReducedMotion";
 
 type Props = {
   children: ReactNode;
@@ -20,12 +21,16 @@ export default function MagneticButton({
   children, to, href, onClick, variant = "primary", magnetic = false, className, ariaLabel,
 }: Props) {
   const inner = useRef<HTMLSpanElement>(null);
+  const reduce = useReducedMotion();
+  useEffect(() => {
+    if (reduce && inner.current) inner.current.style.transform = "";
+  }, [reduce]);
 
   const canMagnet = () =>
     magnetic &&
     typeof window !== "undefined" &&
     window.matchMedia("(pointer: fine)").matches &&
-    !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    !reduce;
 
   const onMove = (e: MouseEvent) => {
     if (!canMagnet() || !inner.current) return;

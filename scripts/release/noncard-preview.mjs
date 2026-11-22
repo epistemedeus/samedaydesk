@@ -61,7 +61,8 @@ const kit = process.env.RELEASE_KIT_DIR ?? execFileSync(process.execPath, [join(
 const req = createRequire(join(kit, "package.json"));
 const puppeteer = req("puppeteer-core");
 const browser = await puppeteer.launch({ executablePath: process.env.RELEASE_CHROME || "/usr/bin/google-chrome", headless: true, args: ["--no-first-run"] });
-const ctx = { root, source, port, preview, run, key, webhookSecret, stripe, out, offers: [], extraEnv: { SDS_CARE_NONCARD: "1" } };
+const ctx = { root, source, port, preview, run, key, webhookSecret, stripe, out, offers: [],
+  extraEnv: { SDS_CARE_NONCARD: "1", SDS_CARE_STABLECOIN: methods.includes("stablecoin") ? "1" : "0" } };
 const app = await adapter.start(ctx);
 const results = [];
 const subscriptions = [];

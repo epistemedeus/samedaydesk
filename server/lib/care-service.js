@@ -36,10 +36,11 @@ export function configuredCareService(env = process.env) {
   const stripe = new Stripe(key, { apiVersion: "2026-11-18.endive", timeout: 8000, maxNetworkRetries: 1 });
   return createCareService({ store, stripe, secret: env.SDS_CARE_ACCESS_SECRET, origin: careOrigin(env),
     live: /^(sk|rk)_live_/.test(key), portalConfiguration: env.SDS_CARE_PORTAL_CONFIGURATION, noncard: env.SDS_CARE_NONCARD === "1",
+    stablecoin: env.SDS_CARE_STABLECOIN === "1",
     releaseRun: env.SDS_PRIVATE_PREVIEW === "1" ? releaseRunOf(env) : null });
 }
 
-export function createCareService({ store, stripe, secret, origin, live, portalConfiguration, noncard = false, releaseRun = null, now = () => new Date() }) {
+export function createCareService({ store, stripe, secret, origin, live, portalConfiguration, noncard = false, stablecoin = false, releaseRun = null, now = () => new Date() }) {
   const quotes = createTaskQuoteService({ store: store.quotes, stripe, live, now });
   const notFound = () => new CareError(404, "This receipt link is not available.");
   const matchesMode = (order) => order && order.live_mode === live;
@@ -96,7 +97,8 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     return { url: allowedStripeUrl(session.url, "checkout.stripe.com") };
   }
 
-  const methods = (offerKey) => ["card", ...(noncard && offerKey === "keep_it_working" ? Object.keys(NONCARD_METHODS) : [])];
+  const methods = (offerKey) => ["card", ...(noncard && offerKey === "keep_it_working"
+    ? ["bank_transfer", ...(stablecoin ? ["stablecoin"] : [])] : [])];
 
   // One monthly price for the invoice route, found by its lookup key and checked before use.
   async function invoicePrice() {
