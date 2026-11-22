@@ -63,11 +63,11 @@ try {
     if (shell.split(rootSlot).length !== 2 || shell.includes('name="sdd-public-first-render"')) throw new Error(`Bad render slot: ${path}`);
     const head = `<meta name="sdd-public-first-render" content="${path}">\n${preloadFor(entry)}\n` +
       '<noscript><style>#root { display: none }</style></noscript>\n';
-    // These templates put all three local faces above the fold. Fetch that
-    // subset before the stylesheets so their first-line wrapping stays stable.
-    const agentHeader = /^\/(?:for-agents|x402)(?:\/|$)/.test(path);
-    if (agentHeader && !shell.includes("</title>")) throw new Error(`Missing title slot: ${path}`);
-    const fontsReady = agentHeader ? shell.replace("</title>", `</title>\n${typeLinks}`) : shell;
+    // Every anonymous template shares the display, body and mono faces above
+    // the fold. Discover the existing Latin subsets before stylesheet parsing,
+    // including home and receipts; private/query-selected shells stay untouched.
+    if (!shell.includes("</title>")) throw new Error(`Missing title slot: ${path}`);
+    const fontsReady = shell.replace("</title>", `</title>\n${typeLinks}`);
     const filled = fontsReady.replace(rootSlot, () => `<div id="root">${html}</div>`).replace("</head>", `${head}</head>`);
     await mkdir(dirname(target), { recursive: true });
     await writeFile(target, filled);
