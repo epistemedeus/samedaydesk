@@ -134,3 +134,23 @@ test('the CrUX key is sent in a header, never in the URL', async () => {
     assert.equal(seen.length, 1); assert.equal(seen[0].target.includes('test-key-value'), false); assert.equal(seen[0].key, 'test-key-value');
   } finally { globalThis.fetch = original; }
 });
+test('the render worker counts rendered words; a challenge, an error or a timeout stays Not verified', async () => {
+  const { createRemoteRenderer } = await import('../../lib/free-check-v2/render-client.js');
+  assert.equal(createRemoteRenderer({ url: '', token: '' }), null);
+  assert.throws(() => createRemoteRenderer({ url: 'http://worker.example', token: 't' }), /HTTPS/);
+  const seen = [];
+  const worker = (body, status = 200, delay = 0) => async (target, init) => {
+    seen.push({ target: String(target), auth: init.headers.authorization, sent: JSON.parse(init.body) });
+    await new Promise((resolve, reject) => { const timer = setTimeout(resolve, delay); init.signal.addEventListener('abort', () => { clearTimeout(timer); reject(init.signal.reason); }); });
+    return { ok: status < 400, status, json: async () => body };
+  };
+  const ok = createRemoteRenderer({ url: 'https://worker.example', token: 'tok', fetchImpl: worker({ words: 900, extraWords: 850, challenged: false }) });
+  const run = (renderer) => runFreeCheck(url, { fetcher: async (target) => response(html, { finalUrl: target }), cruxKey: null, renderer });
+  assert.equal((await run(ok)).checks.find((finding) => finding.id === 'rendered').status, 'pass');
+  assert.equal(seen[0].target, 'https://worker.example/render'); assert.equal(seen[0].auth, 'Bearer tok'); assert.equal(seen[0].sent.url, url);
+  for (const renderer of [
+    createRemoteRenderer({ url: 'https://worker.example', token: 'tok', fetchImpl: worker({ words: 20, extraWords: 0, challenged: true }) }),
+    createRemoteRenderer({ url: 'https://worker.example', token: 'tok', fetchImpl: worker({ error: 'x' }, 422) }),
+    createRemoteRenderer({ url: 'https://worker.example', token: 'tok', timeoutMs: 50, fetchImpl: worker({ words: 1, extraWords: 1 }, 200, 500) }),
+  ]) assert.equal((await run(renderer)).checks.find((finding) => finding.id === 'rendered').status, 'unknown');
+});
