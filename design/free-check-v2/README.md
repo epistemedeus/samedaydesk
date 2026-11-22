@@ -70,3 +70,9 @@ a9c17957-b3f6-4e6e-88f5-a4f197cbcdbb. The source/model author remains in the ori
 native chat on boot 7248a61c-22d5-42fa-9287-de751af029cd. No new remote model session
 is claimed. The finite source-closed runner records actual step exits and exports
 private evidence; no useful existing job is killed or recreated.
+
+The final input includes the independently qualified cursor/bank cut 322afd7b,
+its two heading-gap fixes, both case-study dark contrast repairs, and the
+blocking G1 gate immediately after links. Its 10/10, managed and screenshot
+receipts remain separate. The fresh program runs v2's own 10 gates and report
+states; it does not rerun the historical red cursor source.

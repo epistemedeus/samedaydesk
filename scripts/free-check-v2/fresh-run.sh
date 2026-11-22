@@ -88,22 +88,17 @@ export RELEASE_CHROME="$chrome"
 # Isolate application children from every controller/provider environment value.
 appenv=(env -i HOME="$work/home" PATH="$PATH" SDS_V2_NPM_CLI="$SDS_V2_NPM_CLI" NPM_CONFIG_CACHE="$NPM_CONFIG_CACHE" RELEASE_KIT_DIR="$RELEASE_KIT_DIR" RELEASE_KIT_COMMIT="$RELEASE_KIT_COMMIT" RELEASE_CHROME="$chrome" SDS_PRIVATE_PREVIEW=1 SDS_FREE_CHECK_REPORT_DIR="$work/reports" SDS_PREVIEW_MAIL_OUTBOX="$work/out/preview-outbox.jsonl" ADMIN_EMAIL=desk@example.test)
 cd "$repo"
-# The independent cursor/bank preview gets G1 on its own frozen source first.
-git checkout --quiet --detach c79f71487c49a26475ee13e70b03dc0c0647f2a9
-run cursor-install 600 "${appenv[@]}" npm ci --ignore-scripts --no-audit --no-fund
-run cursor-managed 1200 "${appenv[@]}" npm run build:managed-foundry
-if [ -f client/dist/index.html ] && [ -n "$chrome" ]; then
- run cursor-G1 1200 "${appenv[@]}" "$node_bin" "$RELEASE_KIT_DIR/visual.mjs" --no-build --port 41831
- [ ! -d release/out/visual ] || cp -a release/out/visual "$work/out/cursor-G1"
-fi
+# Cursor/bank cut 322afd7b was independently qualified on the original VM.
+# This fresh workload qualifies v2 only and never reruns an older red input.
 # Main v2 exact G owns its normal install/build/test gates, including the new tests.
 git checkout --quiet --detach "$source_pin"
 run v2-G 1800 "${appenv[@]}" "$node_bin" "$RELEASE_KIT_DIR/check.mjs"
 [ ! -d release/out ] || cp -a release/out "$work/out/release"
+run legacy-and-ssrf 300 "${appenv[@]}" "$node_bin" --test --test-concurrency=1 server/scripts/test-free-tool-outcomes.js server/scripts/agent-readiness/probe-ssrf.test.js
 run managed 1200 "${appenv[@]}" npm run build:managed-foundry
 # Qualify only a command that actually succeeded on this exact source.
 if "$node_bin" -e 'let r=require("fs").readFileSync(process.argv[1],"utf8").trim().split("\n").map(JSON.parse).find(x=>x.name==="managed");process.exit(r?.exit===0?0:1)' "$work/out/steps.jsonl"; then
- run host-qualification 30 "${appenv[@]}" "$node_bin" scripts/free-check-v2/qualify.mjs "$work/out" "$input/emitted-050ec293.json"
+ run host-qualification 30 "${appenv[@]}" "$node_bin" scripts/free-check-v2/qualify.mjs "$work/out" "$input/emitted-cursor-cut.json"
  run host-preflight 30 "$node_bin" "$RELEASE_KIT_DIR/host-build-profile.mjs" sds "$source_pin" "$work/out/host-qualification.json" "$work/out/saved-profile.json"
 fi
 # Numeric or fixture failures do not suppress independent real-site receiving.
@@ -121,8 +116,8 @@ if [ -f client/dist/index.html ] && [ -n "$chrome" ]; then
   sleep 1
  done
  if [ "$ready" = 1 ]; then
-  run v2-G1 1200 "${appenv[@]}" "$node_bin" "$RELEASE_KIT_DIR/visual.mjs" --no-build --url http://127.0.0.1:41832
-  [ ! -d release/out/visual ] || cp -a release/out/visual "$work/out/v2-G1"
+  run bank-on-G1 300 "${appenv[@]}" "$node_bin" "$RELEASE_KIT_DIR/visual.mjs" --no-build --url http://127.0.0.1:41832 --pages /care/buy?offer=keep_it_working
+  [ ! -d release/out/visual ] || cp -a release/out/visual "$work/out/bank-on-G1"
   run browser-reports 300 "${appenv[@]}" "$node_bin" scripts/free-check-v2/browser.mjs "$work/out/browser" http://127.0.0.1:41832
  else
   printf '%s\n' '{"name":"preview-start","exit":1,"reason":"private preview did not become ready"}' >> "$work/out/steps.jsonl"
