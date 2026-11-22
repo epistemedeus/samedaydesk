@@ -11,12 +11,12 @@ import { initAnalytics } from "./lib/posthog";
 import { journey, observeBrowserErrors } from "./lib/journey";
 import { useSmoothScroll } from "./motion/useSmoothScroll";
 import { publicPages, type InitialPublicPage } from "./public-pages";
+// The buy page is where money moves, so it ships with the main bundle rather than as a later chunk.
+import { BuyCare, CareReceipt } from "./pages/Care";
 
 const Auth = lazy(() => import("./pages/Auth"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Checkout = lazy(() => import("./pages/Checkout"));
-const BuyCare = lazy(() => import("./pages/Care").then((module) => ({ default: module.BuyCare })));
-const CareReceipt = lazy(() => import("./pages/Care").then((module) => ({ default: module.CareReceipt })));
 const Receipts = lazy(() => import("./pages/Receipts"));
 const ReceiptPage = lazy(() => import("./pages/ReceiptPage"));
 

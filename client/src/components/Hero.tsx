@@ -13,7 +13,7 @@ export default function Hero() {
       <EnergySurface />
       <div className={styles.scrim} aria-hidden="true" />
 
-      <div className={clsx("container", styles.content)}>
+      <div className={clsx("container", styles.content)} data-hero-copy>
         <p className={styles.eyebrow} data-hero-fade>
           <span className={styles.tick} aria-hidden="true" /> Agent commerce · built and shipped
         </p>
