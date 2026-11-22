@@ -14,9 +14,9 @@ export default function Landing() {
       <Nav />
       <main id="main">
         <Hero />
-        <CreditsRoll />
         <Proof />
         <Services />
+        <CreditsRoll />
         <HowItWorks />
         <Guarantee />
       </main>

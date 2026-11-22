@@ -347,3 +347,12 @@
   text-transform: uppercase;
   color: var(--ink-faint);
 }
+
+/* For agents: what can be bought, first; each job's steps fold away. */
+.hero h2.buyHead, .wrap h2.buyHead { margin-top: var(--space-l); font-size: var(--step-1); line-height: 1.25; letter-spacing: normal; }
+.buyList { list-style: none; padding: 0; margin: var(--space-s) 0 var(--space-m); border-top: 1px solid var(--line); }
+.buyList li { display: grid; gap: 0.2rem; padding-block: 0.8rem; border-bottom: 1px solid var(--line); }
+.buyList a { color: var(--ink); font-weight: 600; text-decoration: underline; text-underline-offset: 0.2em; }
+.buyList span { color: var(--ink-dim); font-size: var(--step--1); }
+.fold { margin-block: var(--space-s); }
+.fold > summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); }
