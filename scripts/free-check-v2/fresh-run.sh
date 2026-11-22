@@ -31,7 +31,7 @@ JS
 python3 - "$input" "$work/tools" <<'PY'
 import tarfile,pathlib,sys
 src=pathlib.Path(sys.argv[1]);dst=pathlib.Path(sys.argv[2])
-for name in ['npm-10.9.9.tar.gz','kit-9194b642.tar.gz','transport-317734ac.tar.gz']:
+for name in ['npm-10.9.9.tar.gz','kit-d0ae4ef6.tar.gz','transport-317734ac.tar.gz']:
  with tarfile.open(src/name)as t:
   for m in t.getmembers():
    p=pathlib.PurePosixPath(m.name)
@@ -52,7 +52,7 @@ chmod 700 "$work/bin/npm" "$work/bin/npx"
 export PATH="$work/bin:/usr/local/bin:/usr/bin:/bin"
 export NPM_CONFIG_CACHE="$work/npm-cache"
 export RELEASE_KIT_DIR="$work/tools/tools/release-kit"
-export RELEASE_KIT_COMMIT=9194b6425f7adbb4d541bf67d13dccf31f7a1ba8
+export RELEASE_KIT_COMMIT=d0ae4ef67c3d1f794985b5d746db1b8857c7c808
 source_pin=$("$node_bin" -p 'JSON.parse(require("fs").readFileSync(process.argv[1])).source' "$input/input.json")
 # This is a local, complete Git bundle. There is no network Git/auth substitution.
 git clone --no-hardlinks --quiet --branch codex/sds-free-check-v2-20261122 "$input/source.bundle" "$work/source" > "$work/out/source-clone.log" 2>&1
