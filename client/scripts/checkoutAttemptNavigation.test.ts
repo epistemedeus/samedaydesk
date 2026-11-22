@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import test from "node:test";
 import { ALL_OFFERS, PAYMENT_LINKS, accountCheckoutEntry } from "../src/lib/services.ts";
+import { authHandoff, checkoutLoginPath, safeAccountCheckoutNext } from "../src/lib/authHandoff.ts";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -40,4 +41,32 @@ test("sign-in can resume only a known qualified account offer", () => {
   for (const slug of [null, undefined, "", "keep_it_working", "agent_front_door", "agent_storefront", "machine_payment_route", "__proto__", "toString", "https://outside.example/", "/checkout?offer=agent_workflow", "agent_workflow&next=https://outside.example/"]) {
     assert.equal(accountCheckoutEntry(slug), null, String(slug));
   }
+});
+
+
+test("both selected offers survive login, signup and the existing OAuth callback", () => {
+  for (const offer of ["agent_workflow", "agent_mcp_server"]) {
+    const entry = `/checkout?offer=${offer}`;
+    const login = new URL(checkoutLoginPath("/checkout", `?offer=${offer}`), "https://samedaydesk.com");
+    assert.equal(login.pathname, "/login");
+    const handoff = authHandoff(login.search);
+    assert.equal(handoff.offer, offer); assert.equal(handoff.next, entry);
+    const callback = new URL(handoff.destination, login.origin);
+    assert.equal(callback.pathname, "/dashboard");
+    assert.equal(authHandoff(callback.search).next, entry);
+    assert.equal(authHandoff(new URL("/signup" + handoff.query, login.origin).search).next, entry);
+    assert.equal(authHandoff("?next=" + encodeURIComponent(entry)).offer, offer);
+  }
+});
+
+test("return destinations reject external URLs, mismatched offers and extra routing parameters", () => {
+  for (const next of ["https://outside.example/", "//outside.example/", "/\\outside.example/", "javascript:alert(1)", "/%2f%2foutside.example", "/checkout?offer=agent_workflow&next=https://outside.example/", "/checkout?offer=agent_workflow&offer=agent_mcp_server", "/checkout?offer=agent_workflow#fragment", "/checkout?offer=toString", "/care/buy?offer=keep_it_working"]) {
+    assert.equal(safeAccountCheckoutNext(next), null, next);
+    const handoff = authHandoff("?offer=agent_workflow&next=" + encodeURIComponent(next));
+    assert.equal(handoff.next, null, next); assert.equal(handoff.destination, "/dashboard?offer=agent_workflow");
+  }
+  assert.equal(authHandoff("?offer=agent_workflow&next=" + encodeURIComponent("/checkout?offer=agent_mcp_server")).next, null);
+  assert.equal(authHandoff("").destination, "/dashboard");
+  assert.equal(authHandoff("?offer=agent_workflow").next, null);
+  assert.equal(checkoutLoginPath("/dashboard", "?next=https://outside.example/"), "/login");
 });
