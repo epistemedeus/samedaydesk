@@ -94,6 +94,7 @@ cd "$repo"
 git checkout --quiet --detach "$source_pin"
 run v2-G 1800 "${appenv[@]}" "$node_bin" "$RELEASE_KIT_DIR/check.mjs"
 [ ! -d release/out ] || cp -a release/out "$work/out/release"
+run source-binding 300 "${appenv[@]}" AE14_PG_BIN="$(pg_config --bindir 2>/dev/null || true)" ROOT10940_CI_CATALOG=server/scripts/fixtures/root10940-approved-ci-packets "$node_bin" --test --test-concurrency=1 server/scripts/test-h147010-source-bound-ci-input.mjs server/scripts/test-h145010-measurement-runtime-pin.mjs
 run legacy-and-ssrf 300 "${appenv[@]}" "$node_bin" --test --test-concurrency=1 server/scripts/test-free-tool-outcomes.js server/scripts/agent-readiness/probe-ssrf.test.js
 run managed 1200 "${appenv[@]}" npm run build:managed-foundry
 # Qualify only a command that actually succeeded on this exact source.
