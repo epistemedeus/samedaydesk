@@ -3,9 +3,11 @@
 import assert from 'node:assert/strict';
 import { createRequire } from 'node:module';
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { resolve, join } from 'node:path';
 import { serve } from '../performance/preview-server.mjs';
+import { publicPages } from '../../client/src/public-pages.ts';
 
 const root = resolve(new URL('../..', import.meta.url).pathname);
 const out = process.env.SDS_READING_OUT;
@@ -16,12 +18,23 @@ const { default: puppeteer } = await import(createRequire(join(kit, 'package.jso
 mkdirSync(out, { recursive: true, mode: 0o700 });
 const source = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim();
 const pages = JSON.parse(readFileSync(join(root, 'release/key-pages.json'), 'utf8')).pages;
+for (const item of publicPages) if (!pages.some(p => p.path === item.path)) pages.push({ name:item.path.slice(1).replaceAll('/', '-'), path:item.path });
+pages.push({ name:'care-buy-bank-preview', path:'/care/buy?offer=keep_it_working', bank:true });
+const only = process.env.SDS_READING_ONLY?.split(',');
+if (only) assert.ok(new Set(only).size === only.length && only.every(name => pages.some(p => p.name === name)), 'unknown or duplicate capture selection');
+const closure = () => Object.fromEntries(readdirSync(join(root, 'client/dist'), { recursive:true, withFileTypes:true })
+  .filter(e => e.isFile()).map(e => {
+    const file=join(e.parentPath,e.name);
+    return [file.slice(join(root, 'client/dist').length+1), createHash('sha256').update(readFileSync(file)).digest('hex')];
+  }).sort(([a],[b]) => a.localeCompare(b)));
+const emitted = closure();
 const server = serve(join(root, 'client/dist'));
 await new Promise(r => server.listen(0, '127.0.0.1', r));
 const origin = `http://127.0.0.1:${server.address().port}`;
 const browser = await puppeteer.launch({ executablePath: process.env.RELEASE_CHROME || '/usr/bin/google-chrome', headless: true,
   args: ['--no-sandbox', '--disable-dev-shm-usage'] });
-const report = { source, scope: 'G2 rendered regression and screenshots; not G1, a provider payment or Lighthouse', views: [], actions: [], errors: [] };
+const report = { source, dirtyAtStart:execFileSync('git', ['status','--porcelain','--untracked-files=no'], { cwd:root, encoding:'utf8' }).trim() !== '',
+  scope: 'G2 rendered regression and screenshots; not G1, a provider payment or Lighthouse', emitted, views: [], actions: [], errors: [] };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function open(path, width, theme, reduce = 'reduce', bank = false) {
   const context = await browser.createBrowserContext();
@@ -67,7 +80,7 @@ try {
   report.actions.push({ stationaryHeroReticle: true, onlyEdgeTicks: ticks, dynamicReducedMotionStopsRulersAndSmoothScroll: true,
     motionCanResume: true, noCoordinateReadoutOrFullPageLines: true });
   await context.close();
-  for (const item of [...pages, { name: 'care-buy-bank-preview', path: '/care/buy?offer=keep_it_working', bank: true }]) {
+  for (const item of pages.filter(p => !only || only.includes(p.name))) {
     for (const width of [375, 768, 1280, 1512, 1920, 2560]) for (const theme of ['drafting', 'dark']) {
       const { context, page, errors } = await open(item.path, width, theme, 'reduce', item.bank);
       if (item.bank) {
@@ -84,6 +97,7 @@ try {
       await context.close();
     }
   }
+  assert.deepEqual(closure(), emitted, 'production bytes changed during capture');
 } catch (e) { report.errors.push(e.stack); throw e; }
 finally {
   await browser.close();
