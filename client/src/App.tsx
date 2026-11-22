@@ -54,9 +54,9 @@ export default function App({ initialPage }: { initialPage?: InitialPublicPage }
       <DraftingFrame />
       <DraftingCrosshair />
       <ScrollToHash />
-      {/* The build and browser preload this page. Hydrate it with its providers,
+      {/* Public first renders and the eager buy page hydrate with their providers,
           before effects like the theme preference can change shared state. */}
-      {initialPage?.path === pathname ? routes : (
+      {initialPage?.path === pathname || pathname === "/care/buy" ? routes : (
         <Suspense fallback={<div className="route-loading" aria-busy="true" />}>{routes}</Suspense>
       )}
     </AuthProvider>

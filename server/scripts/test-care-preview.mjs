@@ -133,7 +133,13 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
     assert.equal(response.status, 200);
     assert.equal(response.headers.get("cache-control"), "no-store");
     assert.equal(response.headers.get("referrer-policy"), "no-referrer");
-    assert.match(await response.text(), /<script[^>]+src="\/assets\//);
+    const html = await response.text();
+    assert.match(html, /<script[^>]+src="\/assets\//);
+    if (page.startsWith("/care/buy")) {
+      assert.match(html, /sdd-buy-first-render/);
+      assert.doesNotMatch(html, /<!--\$.*?-->/,
+        "the eager buy route must hydrate before provider theme effects, without a deferred Suspense boundary");
+    }
   }
   const start = (offer, order) => post("checkout", { offer, order });
   assert.equal((await start("agent_front_door", primary)).status, 200);
