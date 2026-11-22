@@ -219,11 +219,10 @@ export const CUSTOM = {
 export const ALL_OFFERS: Offer[] = CATEGORIES.flatMap((category) => category.offers);
 export const flagship = ALL_OFFERS.find((offer) => offer.flagship)!;
 
-// Live Stripe Payment Links are inserted only after the matching product,
-// price, and metadata have been verified in the live Stripe account.
+// Cards and report recommendations share the checkout entries qualified in release/offers.json.
 export const PAYMENT_LINKS: Record<string, string> = {
-  agent_workflow: "https://buy.stripe.com/7sY3cw8025np9dd282eZ20B",
-  agent_mcp_server: "https://buy.stripe.com/eVq7sMdkmaHJ1KL6oieZ20C",
+  agent_workflow: "/checkout?offer=agent_workflow",
+  agent_mcp_server: "/checkout?offer=agent_mcp_server",
   machine_payment_route: "/care/buy?offer=machine_payment_route",
   agent_storefront: "/care/buy?offer=agent_storefront",
   agent_front_door: "/care/buy?offer=agent_front_door",
