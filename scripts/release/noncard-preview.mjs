@@ -4,7 +4,10 @@
 // bank-transfer balance; a stablecoin invoice is opened and its hosted page captured (paying it needs a
 // testnet wallet, which this script does not hold).
 //
-//   STRIPE_TEST_KEY_FILE=<file> node scripts/release/noncard-preview.mjs [--methods bank_transfer,stablecoin]
+//   STRIPE_TEST_KEY_FILE=<file> node scripts/release/noncard-preview.mjs [--methods bank_transfer,stablecoin] [--wait-minutes N]
+//
+// --wait-minutes keeps the preview and listener up after the stablecoin invoice opens, prints its hosted
+// link, and records the payment when a person pays it with a testnet wallet (Stripe's testnet guide).
 import { execFileSync, spawn } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -17,6 +20,7 @@ const root = fileURLToPath(new URL("../..", import.meta.url));
 const config = JSON.parse(readFileSync(join(root, "release/offers.json"), "utf8"));
 const arg = (flag) => { const i = process.argv.indexOf(flag); return i >= 0 ? process.argv[i + 1] : undefined; };
 const methods = (arg("--methods") ?? "bank_transfer,stablecoin").split(",");
+const waitMinutes = Number(arg("--wait-minutes") ?? 0);
 const key = readFileSync(process.env.STRIPE_TEST_KEY_FILE ?? "", "utf8").trim();
 if (!/^(sk|rk)_test_[A-Za-z0-9_]+$/.test(key)) throw new Error("A Stripe test-mode key file is required in STRIPE_TEST_KEY_FILE");
 const run = `SDS-NONCARD-${new Date().toISOString().replace(/\D/g, "").slice(0, 12)}-${Math.floor(Math.random() * 1e6)}`;
@@ -90,13 +94,16 @@ try {
     const result = { method, order, email, subscription: sub.id, invoice: invoice.id, collection: sub.collection_method,
       paymentMethodTypes: invoice.payment_settings?.payment_method_types, invoiceStatusBefore: invoice.status, storedBefore: before,
       receiptOpen, hostedText };
-    if (method === "bank_transfer") {
-      const funded = await stripe("POST", `test_helpers/customers/${sub.customer}/fund_cash_balance`, { amount: "10000", currency: "usd", reference: run });
+    const funded = method === "bank_transfer"
+      ? await stripe("POST", `test_helpers/customers/${sub.customer}/fund_cash_balance`, { amount: "10000", currency: "usd", reference: run })
+      : null;
+    if (!funded && waitMinutes > 0) console.log(`Pay this test invoice with a testnet wallet within ${waitMinutes} minutes: ${invoice.hosted_invoice_url}`);
+    if (funded || waitMinutes > 0) {
       let row;
-      for (let i = 0; i < 60; i++) { row = await adapter.storedRow(ctx, { order }); if (row?.state === "paid") break; await sleep(1000); }
+      for (let i = 0; i < (funded ? 60 : waitMinutes * 60); i++) { row = await adapter.storedRow(ctx, { order }); if (row?.state === "paid") break; await sleep(1000); }
       const paidInvoice = await stripe("GET", `invoices/${invoice.id}`);
       const events = (await stripe("GET", "events", { type: "invoice.paid", limit: "20" })).data.filter((e) => e.data.object.id === invoice.id);
-      result.paid = { funding: funded.id, fundingType: funded.type, invoiceStatus: paidInvoice.status, amountPaid: paidInvoice.amount_paid,
+      result.paid = { funding: funded?.id ?? "testnet wallet", fundingType: funded?.type ?? null, invoiceStatus: paidInvoice.status, amountPaid: paidInvoice.amount_paid,
         stored: row, webhook: events.map((e) => ({ id: e.id, delivered: delivered.find((d) => d.id === e.id) ?? null })),
         receiptPaid: await shot(page, started.receipt.replace(/^https?:\/\/[^/]+/, preview), `${method}-receipt-paid`) };
     }
