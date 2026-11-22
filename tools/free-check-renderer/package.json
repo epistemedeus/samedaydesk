@@ -1,0 +1,9 @@
+{
+  "name": "free-check-renderer",
+  "private": true,
+  "type": "module",
+  "description": "Rendered text for the free check, run on a VM-side worker behind a private-address guard.",
+  "scripts": { "test": "node --test render.test.mjs", "start": "node worker.mjs" },
+  "dependencies": { "puppeteer-core": "25.16.0" },
+  "engines": { "node": ">=22" }
+}
