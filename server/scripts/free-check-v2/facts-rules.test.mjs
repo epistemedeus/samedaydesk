@@ -115,3 +115,22 @@ test('robots.txt follows a redirect to another host and an oversized file is sti
   assert.equal(report.checks.find((finding) => finding.id === 'robots').status, 'problem');
   assert.ok(report.requests.some((request) => request.url === 'https://business.example/robots.txt'));
 });
+test('a report leads with Problems in site wording, three fixes with points and one offer', () => {
+  const report = evaluateReport(observation(html.replace('Buy this service for 99 USD. ', '')));
+  const purchase = report.checks.find((finding) => finding.id === 'purchase');
+  assert.equal(purchase.status, 'problem'); assert.match(purchase.detail, /Useful/); assert.match(purchase.detail, /no price/);
+  assert.equal(report.checks.find((finding) => finding.id === 'mcp').status, 'unknown');
+  assert.equal(report.summary.topFixes.length, 3); assert.equal(report.summary.topFixes[0].id, 'purchase');
+  assert.equal(report.summary.offer, 'agent_front_door');
+  for (const finding of report.checks) assert.doesNotMatch(`${finding.detail} ${finding.fix || ''}`, /if suitable|only if|where appropriate|where useful|\b1 points\b|[–—]/);
+});
+test('the CrUX key is sent in a header, never in the URL', async () => {
+  const seen = [];
+  const original = globalThis.fetch;
+  globalThis.fetch = async (target, init) => { seen.push({ target: String(target), key: init.headers['x-goog-api-key'] }); return { ok: true, json: async () => ({ record: { collectionPeriod: {}, metrics: { largest_contentful_paint: { percentiles: { p75: 2100 } }, cumulative_layout_shift: { percentiles: { p75: '0.02' } }, interaction_to_next_paint: { percentiles: { p75: 150 } } } } }) }; };
+  try {
+    const report = await runFreeCheck(url, { fetcher: async (target) => response(html, { finalUrl: target }), cruxKey: 'test-key-value' });
+    assert.equal(report.checks.find((finding) => finding.id === 'crux').status, 'pass');
+    assert.equal(seen.length, 1); assert.equal(seen[0].target.includes('test-key-value'), false); assert.equal(seen[0].key, 'test-key-value');
+  } finally { globalThis.fetch = original; }
+});

@@ -20,3 +20,9 @@
 .finding pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; color: var(--ink-dim); margin-block: 0.6rem; }
 .finding ul { padding-left: 1rem; }
 .offer { display: inline-block; margin-top: 1rem; min-height: 44px; padding-block: 0.6rem; }
+.points { font-weight: 400; color: var(--ink-dim); white-space: nowrap; }
+.summary { margin-top: var(--space-m); padding: 1rem; border: 1px solid var(--line-2); border-radius: var(--radius-s); background: var(--bg-1); }
+.summary h2 { font-size: var(--step-1); margin: 0 0 0.6rem; }
+.fixes { margin: 0; padding-left: 1.4rem; display: grid; gap: 0.6rem; }
+.cta { display: inline-block; margin-top: 1rem; min-height: 44px; padding-block: 0.6rem; font-weight: 600; text-decoration: underline; text-underline-offset: 0.2em; color: var(--ink); }
+.unmeasured { margin-top: var(--space-m); color: var(--ink-dim); font-size: var(--step--1); }

@@ -19,6 +19,13 @@ function text(node, all = false) {
   if (node.nodeName === '#text') return node.value;
   return (node.childNodes || []).map((child) => text(child, all)).join(' ');
 }
+function opening(visible, headings, tag) {
+  const h1 = headings.find((heading) => heading.level === 1)?.value;
+  const at = h1 ? visible.indexOf(h1) : -1;
+  if (at >= 0) return visible.slice(at, at + 850);
+  const main = tag('main')[0];
+  return normalize(main ? text(main) : visible).slice(0, 850);
+}
 export function analyzeDocument(body, url) {
   const root = parse(String(body || ''));
   const nodes = [];
@@ -66,7 +73,8 @@ export function analyzeDocument(body, url) {
     url, title: normalize(text(tag('title')[0] || {})), description: meta('description'),
     canonical: publicLink(attr(linkRel('canonical')[0], 'href'), url),
     language: attr(tag('html')[0], 'lang'), viewport: meta('viewport'), robots: meta('robots'),
-    headings, visible, opening: visible.slice(0, 850), words: visible.split(/\s+/).filter(Boolean).length,
+    // The opening is the copy from the main heading on, not the menu above it.
+    headings, visible, opening: opening(visible, headings, tag), siteName: normalize(meta('og:site_name')) || null, words: visible.split(/\s+/).filter(Boolean).length,
     links, schemas, schemaTypes: [...new Set(schemas.flatMap(types))], invalidSchemas,
     entities, products, offers, faq: ofType(['FAQPage', 'Question']), dates,
     images: tag('img').map((node) => ({ src: publicLink(attr(node, 'src'), url), alt: attr(node, 'alt') })),

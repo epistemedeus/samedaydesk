@@ -145,7 +145,8 @@ export async function collectObservation(raw, { signal, onProgress = () => {}, f
     if (cruxKey) jobs.push(async () => {
       // Existing enrolled read-only key only. No project, key or paid service is created.
       try {
-        const response = await fetch(`https://chromeuxreport.googleapis.com/v1/records:queryRecord?key=${encodeURIComponent(cruxKey)}`, { method: 'POST', signal: budget.signal, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ origin, formFactor: 'PHONE' }) });
+        // The key travels in a header, never in a URL that could reach a log.
+        const response = await fetch('https://chromeuxreport.googleapis.com/v1/records:queryRecord', { method: 'POST', signal: budget.signal, headers: { 'content-type': 'application/json', 'x-goog-api-key': cruxKey }, body: JSON.stringify({ origin, formFactor: 'PHONE' }) });
         const data = await response.json();
         const metrics = data.record?.metrics;
         if (response.ok && metrics) {

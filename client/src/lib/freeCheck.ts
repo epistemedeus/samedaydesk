@@ -6,7 +6,8 @@ export type FreeCheckFinding = {
 };
 export type FreeCheckResult = {
   version: 2; ruleVersion: string; ruleSha256: string; url: string; score: number; grade: string;
-  checkedAt: string; checks: FreeCheckFinding[]; permalink?: string | null; storageNotice?: string;
+  name?: string; checkedAt: string; checks: FreeCheckFinding[];
+  summary?: { problems: number; upgrades: number; offer: string | null; topFixes: { id: string; label: string; points: number; fix: string | null }[] }; permalink?: string | null; storageNotice?: string;
   scoring: { unknown: number; maximum: number; cap: number; possibleWithUnknowns: number; meaning: string };
   groups: { group: string; maximum: number; earned: number }[];
   limitations: string[]; policies: { agent: string; purpose: string; allowed: boolean | null; note: string | null }[];
