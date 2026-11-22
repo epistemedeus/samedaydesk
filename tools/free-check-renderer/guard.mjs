@@ -19,7 +19,9 @@ for (const [address, prefix] of [
   ["::", 128], ["::1", 128], ["64:ff9b::", 96], ["100::", 64], ["2001:db8::", 32],
   ["fc00::", 7], ["fe80::", 10], ["ff00::", 8],
 ]) blocked.addSubnet(address, prefix, "ipv6");
-const BLOCKED_NAMES = /^(?:localhost|.*\.localhost|.*\.local|.*\.internal|metadata\.google\.internal|metadata)$/i;
+// Names that only resolve inside a host's network (Railway's private network is *.railway.internal,
+// on fd12::/16, inside the fc00::/7 block above).
+const BLOCKED_NAMES = /^(?:localhost|.*\.localhost|.*\.local|.*\.internal|.*\.railway\.internal|metadata\.google\.internal|metadata)$/i;
 
 /** Public unicast only. IPv4-mapped IPv6 is judged by its IPv4 address. */
 export function publicAddress(address) {
