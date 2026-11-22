@@ -365,7 +365,8 @@ export function createRouteShellMiddleware(clientDist, routes = [...SPA_ROUTE_SH
     const offer = req.path === BUY_PATH && Object.keys(req.query).length === 1 && typeof req.query.offer === "string" ? req.query.offer : null;
     const file = (offer && buyRender(offer)) || (!req.originalUrl.includes("?") && firstRender.get(req.path)) || map.get(req.path);
     if (!file) return next();
-    res.setHeader("Cache-Control", "no-cache");
+    // Preserve privacy headers already set by the owning route (including Care).
+    if (!res.hasHeader("Cache-Control")) res.setHeader("Cache-Control", "no-cache");
     res.sendFile(file, { dotfiles: "allow" }, (err) => (err ? next(err) : undefined));
   };
 }

@@ -251,7 +251,7 @@
     "server/lib/resend.js": "413efbb7ca7852865f645e00392a36be8e588601c9496995161887c9c111e8b8",
     "server/lib/spa-client.js": "aed4770ce732494cc3c099aca4f42d50ec644b41183c5fc66dbe03f371a3af44",
     "server/lib/spa-fallback.js": "ab553ee04195ef7b2bff2fdefad47215714d50a8d5ce2e53a0e2b9901336ac0a",
-    "server/lib/spa-route-shells.js": "80837668d7b8dbe2c3f397a3a986342a77afa6640f0ba055d0c2c85f5b728cde",
+    "server/lib/spa-route-shells.js": "41a9ba97631ce1125c05a478a04671e750f812eb3d9976928da735dc80aeaf5b",
     "server/lib/start-guide.js": "e8a1ca5ecd67ca95ddb93526a36c5d281d7ceef7baa029b0dbedf61f05201d62",
     "server/lib/start-guide.md": "bbdd8c0b945d7ec1364b27a975590d43b2f408dec55bf71be96b8ae123b3fbe2",
     "server/lib/stripe.js": "74207f33563ca044c1531d93a36c7e9bbb8218c38f3f240c174f399b2e2ec368",
@@ -1825,6 +1825,11 @@
       "base": "c817c1ee6fc7ec598580a9d776def68893a32b60",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:472f98119df0ded0df34ef4e695e238e72278f496b23d41f1decf5d1086e1011"
+    },
+    {
+      "base": "c817c1ee6fc7ec598580a9d776def68893a32b60",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:e0920f9d5bdd5f611f39af07eec18158a262e08de54cb564ee2a82eb886c31fe"
     }
   ]
 }

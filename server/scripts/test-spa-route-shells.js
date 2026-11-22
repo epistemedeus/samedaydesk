@@ -503,10 +503,22 @@ test("a buy page first render is served only for its exact offer query", async (
   writeFileSync(target, '<html><head><meta name="sdd-buy-first-render" content="agent_front_door"></head></html>');
   assert.throws(() => buyFirstRenderPath(dist, "../home"));
   const app = express();
+  app.use("/care", (_req, res, next) => {
+    res.set({ "Cache-Control": "no-store", "Referrer-Policy": "no-referrer", "X-Robots-Tag": "noindex, nofollow" });
+    next();
+  });
   mountProductionClient(app, dist);
   const { server, port } = await listen(app);
   t.after(() => new Promise((resolve) => server.close(resolve)));
-  assert.match((await request(port, "/care/buy?offer=agent_front_door")).body, /sdd-buy-first-render/);
+  for (const method of ["GET", "HEAD"]) {
+    const response = await request(port, "/care/buy?offer=agent_front_door", method);
+    assert.equal(response.status, 200);
+    assert.equal(response.headers["cache-control"], "no-store");
+    assert.equal(response.headers["referrer-policy"], "no-referrer");
+    assert.equal(response.headers["x-robots-tag"], "noindex, nofollow");
+    if (method === "GET") assert.match(response.body, /sdd-buy-first-render/);
+  }
+  assert.equal((await request(port, "/")).headers["cache-control"], "no-cache");
   for (const variant of ["/care/buy", "/care/buy?offer=agent_storefront", "/care/buy?offer=agent_front_door&left=1", "/care/buy?offer=..%2Fhome"]) {
     assert.doesNotMatch((await request(port, variant)).body, /sdd-buy-first-render/, variant);
   }
