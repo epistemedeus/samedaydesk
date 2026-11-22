@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import test from "node:test";
-import { ALL_OFFERS, PAYMENT_LINKS } from "../src/lib/services.ts";
+import { ALL_OFFERS, PAYMENT_LINKS, accountCheckoutEntry } from "../src/lib/services.ts";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -30,5 +30,14 @@ test("all six displayed offers use their qualified purchase entry and price", ()
     assert.equal(PAYMENT_LINKS[offer.slug], qualified.entry, offer.slug);
     assert.equal(offer.price * 100, qualified.cents, offer.slug);
     assert.equal(qualified.currency, "usd", offer.slug);
+  }
+});
+
+
+test("sign-in can resume only a known qualified account offer", () => {
+  assert.equal(accountCheckoutEntry("agent_workflow"), "/checkout?offer=agent_workflow");
+  assert.equal(accountCheckoutEntry("agent_mcp_server"), "/checkout?offer=agent_mcp_server");
+  for (const slug of [null, undefined, "", "keep_it_working", "agent_front_door", "agent_storefront", "machine_payment_route", "__proto__", "toString", "https://outside.example/", "/checkout?offer=agent_workflow", "agent_workflow&next=https://outside.example/"]) {
+    assert.equal(accountCheckoutEntry(slug), null, String(slug));
   }
 });

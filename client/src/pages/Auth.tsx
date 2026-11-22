@@ -2,7 +2,7 @@ import { useState, useEffect, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { getSupabase, isAuthConfigured, authedFetch } from "../lib/supabase";
 import { useAuth } from "../lib/auth";
-import { ALL_OFFERS } from "../lib/services";
+import { ALL_OFFERS, accountCheckoutEntry } from "../lib/services";
 import { track } from "../lib/posthog";
 import styles from "./Auth.module.css";
 import { journey } from "../lib/journey";
@@ -20,8 +20,10 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
-  const dest = () => (offerSlug ? `/dashboard?offer=${offerSlug}` : "/dashboard");
-  const altQuery = offerSlug ? `?offer=${offerSlug}` : "";
+  const resumeCheckout = params.get("checkout") === "1" && accountCheckoutEntry(offerSlug);
+  const altQuery = offerSlug ? `?offer=${encodeURIComponent(offerSlug)}${resumeCheckout ? "&checkout=1" : ""}` : "";
+  // Keep the existing dashboard OAuth callback, carrying only a known purchase choice.
+  const dest = () => "/dashboard" + altQuery;
 
   useEffect(() => {
     if (!loading && user) navigate(dest(), { replace: true });

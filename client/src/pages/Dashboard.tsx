@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../lib/auth";
 import { getSupabase, authedFetch } from "../lib/supabase";
-import { CATEGORIES, careCheckoutFromAccount } from "../lib/services";
+import { CATEGORIES, careCheckoutFromAccount, accountCheckoutEntry } from "../lib/services";
 import styles from "./Dashboard.module.css";
 
 type Me = { uid: string; email: string; emailVerified: boolean };
@@ -12,6 +12,11 @@ export default function Dashboard() {
   const { user, signOut } = useAuth();
   const [params] = useSearchParams();
   const justPaid = params.get("paid") === "1";
+  const navigate = useNavigate();
+  const resumeCheckout = params.get("checkout") === "1" ? accountCheckoutEntry(params.get("offer")) : null;
+  useEffect(() => {
+    if (resumeCheckout) navigate(resumeCheckout, { replace: true });
+  }, [resumeCheckout, navigate]);
   const [me, setMe] = useState<Me | null>(null);
   const [orders, setOrders] = useState<Order[] | null>(null);
   const [ordersError, setOrdersError] = useState(false);

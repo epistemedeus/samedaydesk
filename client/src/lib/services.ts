@@ -233,3 +233,11 @@ export const PAYMENT_LINKS: Record<string, string> = {
 // These scoped services use their receipt flow rather than account PaymentIntents.
 export const careCheckoutFromAccount = (slug: string) =>
   slug === "agent_front_door" || slug === "keep_it_working" ? PAYMENT_LINKS[slug] : null;
+
+
+// Only the two qualified account offers can continue through sign-in to checkout.
+export function accountCheckoutEntry(slug: string | null | undefined): string | null {
+  if (!slug || !ALL_OFFERS.some((offer) => offer.slug === slug)) return null;
+  const entry = PAYMENT_LINKS[slug];
+  return entry === `/checkout?offer=${slug}` ? entry : null;
+}
