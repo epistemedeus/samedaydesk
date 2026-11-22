@@ -90,6 +90,7 @@ export async function start(ctx) {
       SDS_CARE_PORTAL_CONFIGURATION: portal.id, RELEASE_CLOCK_CUSTOMER: ctx.clockCustomer,
       SDS_PREVIEW_MAIL_OUTBOX: join(scratch, "outbox.jsonl"), ADMIN_EMAIL: "desk@example.test",
       SDS_RECEIPTS_SNAPSHOT_PATH: join(scratch, "receipt-snapshot.json"),
+      ...ctx.extraEnv,
     },
   });
   let log = "";
@@ -170,7 +171,7 @@ export async function storedRow(_ctx, a) {
     q.stripe_session as session_id,q.payment_intent is not null as has_payment,q.needs_review,
     r.status as request_state,case when q.paid_at is not null and not q.needs_review and r.status='paid' then 'paid' else 'created' end as state
     from task_quotes q join task_requests r on r.id=q.request_id where q.id='${a.order}') o`));
-  const row = psql(`select row_to_json(o) from (select id, offer, amount_cents, live_mode, state, session_id, payment_intent_id is not null as has_payment, subscription_id is not null as has_subscription, subscription_status, cancel_at_period_end, refunded_cents,
+  const row = psql(`select row_to_json(o) from (select id, offer, amount_cents, live_mode, state, session_id, payment_intent_id is not null as has_payment, subscription_id is not null as has_subscription, subscription_id, subscription_status, cancel_at_period_end, refunded_cents,
     (select count(*) from care_periods p where p.order_id = care_orders.id and p.status = 'ready') as ready_periods from care_orders where id = '${a.order}') o`);
   return row ? JSON.parse(row) : null;
 }

@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import {
-  CARE_OFFERS, CareError, careLink, careOrigin, carePaidPeriod, checkoutArgs, checkedSession,
-  isOrderId, newIntegrationId, providerId, readCareIntake, subscriptionOfInvoice, subscriptionWillNotRenew, verifyCareToken,
+  CARE_OFFERS, CareError, NONCARD_DAYS_DUE, NONCARD_METHODS, NONCARD_PRICE_KEY, careLink, careOrigin, carePaidPeriod,
+  checkoutArgs, checkedSession, invoiceSubscriptionArgs, isOrderId, newIntegrationId, providerId, readCareIntake, subscriptionOfInvoice, subscriptionWillNotRenew, verifyCareToken,
 } from "./care-contract.js";
 import { openCareStore } from "./care-store.js";
 import { createTaskQuoteService } from "./task-quotes.js";
@@ -35,11 +35,12 @@ export function configuredCareService(env = process.env) {
   if (!store) throw new Error("Care checkout requires its PostgreSQL store");
   const stripe = new Stripe(key, { apiVersion: "2026-11-18.endive", timeout: 8000, maxNetworkRetries: 1 });
   return createCareService({ store, stripe, secret: env.SDS_CARE_ACCESS_SECRET, origin: careOrigin(env),
-    live: /^(sk|rk)_live_/.test(key), portalConfiguration: env.SDS_CARE_PORTAL_CONFIGURATION,
+    live: /^(sk|rk)_live_/.test(key), portalConfiguration: env.SDS_CARE_PORTAL_CONFIGURATION, noncard: env.SDS_CARE_NONCARD === "1",
+    stablecoin: env.SDS_CARE_STABLECOIN === "1",
     releaseRun: env.SDS_PRIVATE_PREVIEW === "1" ? releaseRunOf(env) : null });
 }
 
-export function createCareService({ store, stripe, secret, origin, live, portalConfiguration, releaseRun = null, now = () => new Date() }) {
+export function createCareService({ store, stripe, secret, origin, live, portalConfiguration, noncard = false, stablecoin = false, releaseRun = null, now = () => new Date() }) {
   const quotes = createTaskQuoteService({ store: store.quotes, stripe, live, now });
   const notFound = () => new CareError(404, "This receipt link is not available.");
   const matchesMode = (order) => order && order.live_mode === live;
@@ -96,6 +97,55 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     return { url: allowedStripeUrl(session.url, "checkout.stripe.com") };
   }
 
+  const methods = (offerKey) => ["card", ...(noncard && offerKey === "keep_it_working"
+    ? ["bank_transfer", ...(stablecoin ? ["stablecoin"] : [])] : [])];
+
+  // One monthly price for the invoice route, found by its lookup key and checked before use.
+  async function invoicePrice() {
+    const offer = CARE_OFFERS.keep_it_working;
+    const matches = (price) => price.active && price.livemode === live && price.currency === "usd" &&
+      price.unit_amount === offer.cents && price.recurring?.interval === "month" && price.recurring?.interval_count === 1;
+    const [found] = (await stripe.prices.list({ lookup_keys: [NONCARD_PRICE_KEY], limit: 1 })).data;
+    if (found) {
+      if (!matches(found)) throw new CareError(503, "This payment method is not available right now.");
+      return found.id;
+    }
+    const created = await stripe.prices.create({ currency: "usd", unit_amount: offer.cents, recurring: { interval: "month" },
+      product_data: { name: offer.title }, lookup_key: NONCARD_PRICE_KEY }, { idempotencyKey: `sameday-care-price/${NONCARD_PRICE_KEY}` });
+    if (!matches(created)) throw new CareError(503, "This payment method is not available right now.");
+    return created.id;
+  }
+
+  async function startInvoice(offerKey, id, method, buyerEmail, journeySession = null) {
+    if (!methods(offerKey).includes(method) || method === "card" || !isOrderId(id)) {
+      throw new CareError(400, "Choose a service and a payment method.");
+    }
+    const buyer = email(buyerEmail);
+    if (!buyer) throw new CareError(400, "Enter the email address for your invoice.");
+    const offer = CARE_OFFERS[offerKey];
+    const order = await store.reserve({ id, offer: offerKey, cents: offer.cents, live, origin,
+      expires: new Date(now().getTime() + (NONCARD_DAYS_DUE + 1) * 24 * HOUR), integrationId: newIntegrationId(),
+      journeySession: isOrderId(journeySession) ? journeySession : id });
+    if (order.state !== "created" || order.session_id) throw new CareError(409, "This order is no longer open.");
+    const metadata = { sds_care_order: id, ...(releaseRun ? { release_run: releaseRun } : {}) };
+    const customer = order.customer_id ? await stripe.customers.retrieve(order.customer_id)
+      : await stripe.customers.create({ email: buyer, metadata }, { idempotencyKey: `sameday-care-customer/${id}` });
+    if (customer.livemode !== live || customer.metadata?.sds_care_order !== id) throw new CareError(409, "This order is no longer open.");
+    const subscription = order.subscription_id ? await stripe.subscriptions.retrieve(order.subscription_id)
+      : await stripe.subscriptions.create(invoiceSubscriptionArgs(order, { customer: customer.id, price: await invoicePrice(), method, releaseRun }),
+        { idempotencyKey: `sameday-care-subscription/${id}` });
+    if (subscription.livemode !== live || subscription.metadata?.sds_care_order !== id || subscription.metadata?.sds_care_method !== method) {
+      throw new CareError(409, "This order was started with another payment method. Start a new order.");
+    }
+    await store.bindInvoice({ id, customerId: customer.id, subscriptionId: subscription.id });
+    let invoice = await stripe.invoices.retrieve(providerId(subscription.latest_invoice, "in"));
+    if (invoice.status === "draft") invoice = await stripe.invoices.finalizeInvoice(invoice.id, { auto_advance: true });
+    await recordCommerceJourney("checkout_started", { key: subscription.id, orderId: id, sessionId: order.journey_session || id, live });
+    allowedStripeUrl(invoice.hosted_invoice_url, "invoice.stripe.com");
+    // The hosted invoice does not return to us, so the buyer goes to their receipt, which links the open invoice.
+    return { receipt: careLink(order, secret) };
+  }
+
   async function read(id, key) {
     let order = await byCapability(id, key, "intake");
     if (order.state === "created" && order.session_id) {
@@ -105,8 +155,14 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
         order = await store.order(id);
       } else order = await paidSession(order, session);
     }
+    let invoiceUrl;
+    if (order.state === "created" && !order.session_id && order.subscription_id) {
+      const subscription = await stripe.subscriptions.retrieve(order.subscription_id);
+      const invoice = await stripe.invoices.retrieve(providerId(subscription.latest_invoice, "in"));
+      if (invoice.status === "open") invoiceUrl = allowedStripeUrl(invoice.hosted_invoice_url, "invoice.stripe.com");
+    }
     return {
-      offer: order.offer, title: CARE_OFFERS[order.offer].title, amountCents: order.amount_cents,
+      offer: order.offer, title: CARE_OFFERS[order.offer].title, amountCents: order.amount_cents, ...(invoiceUrl ? { invoiceUrl } : {}),
       state: order.state, receivedIntake: Boolean(order.intake), refundedCents: order.refunded_cents ?? 0,
       ...(order.offer === "keep_it_working" && order.state === "paid"
         ? { subscription: { cancelAtPeriodEnd: order.cancel_at_period_end, status: order.subscription_status || "active" } }
@@ -190,7 +246,14 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
         await store.subscriptionState(order.id, { status: "payment_due",
           cancel: order.cancel_at_period_end, at: new Date(event.created * 1000) });
       } else {
-        const period = carePaidPeriod(object, order);
+        let paid = order;
+        if (order.state === "created" && !order.session_id) {
+          // The invoice route: its first paid invoice is the payment, matched to the bound customer and subscription.
+          paid = await store.invoicePaid({ id: order.id, customerId: providerId(object.customer, "cus"), subscriptionId: id,
+            email: email(object.customer_email), at: new Date(event.created * 1000) });
+          await recordCommerceJourney("payment_verified", { key: paid.id, orderId: paid.id, sessionId: paid.journey_session || paid.id, live });
+        }
+        const period = carePaidPeriod(object, paid);
         if (!period) throw new CareError(409, "The invoice does not match the paid service period.");
         await store.paidPeriod(order.id, object.id, period);
       }
@@ -263,6 +326,6 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     return result;
   }
 
-  return { start, read, submit, portal, eventIsCare, recordHosted, taskRequests: store.taskRequests,
+  return { start, startInvoice, methods, read, submit, portal, eventIsCare, recordHosted, taskRequests: store.taskRequests,
     issueQuote: quotes.issue, close: () => store.close() };
 }

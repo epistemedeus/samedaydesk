@@ -33,6 +33,32 @@
       "endpoint": "POST /api/care/checkout"
     },
     {
+      "id": "agent_workflow",
+      "offer": "agent_workflow",
+      "kind": "account",
+      "name": "Hand one job to AI",
+      "cents": 14900,
+      "currency": "usd",
+      "mode": "payment",
+      "entry": "/checkout?offer=agent_workflow",
+      "endpoint": "POST /api/checkout/create-payment-intent",
+      "cases": [],
+      "note": "Paid in the signed-in account checkout (Payment Element), which the hosted Checkout matrix does not drive. Its C2 rows run in node scripts/release/account-matrix.mjs (companionHarnesses)."
+    },
+    {
+      "id": "agent_mcp_server",
+      "offer": "agent_mcp_server",
+      "kind": "account",
+      "name": "Put your app inside ChatGPT and Claude",
+      "cents": 34900,
+      "currency": "usd",
+      "mode": "payment",
+      "entry": "/checkout?offer=agent_mcp_server",
+      "endpoint": "POST /api/checkout/create-payment-intent",
+      "cases": [],
+      "note": "Paid in the signed-in account checkout (Payment Element), which the hosted Checkout matrix does not drive. Its C2 rows run in node scripts/release/account-matrix.mjs (companionHarnesses)."
+    },
+    {
       "id": "machine_payment_route",
       "offer": "machine_payment_route",
       "name": "Get paid by AI agents",
@@ -62,7 +88,7 @@
       "interval": "month",
       "entry": "/care/buy?offer=keep_it_working",
       "endpoint": "POST /api/care/checkout",
-      "note": "Recurring: the lane adds one renewal through a test clock and one cancellation (16 \u00a73 C2)."
+      "note": "Recurring: the lane adds one renewal through a test clock and one cancellation (16 §3 C2)."
     },
     {
       "id": "task_quote",

@@ -98,6 +98,29 @@ export function createCareStore(pool, schema = careSchema()) {
       return result;
     },
 
+    // The invoice route (non-card monthly payment) binds its customer and subscription instead of a session.
+    async bindInvoice({ id, customerId, subscriptionId }) {
+      const row = await first(pool.query(`update ${table("care_orders")} set customer_id = $2, subscription_id = $3
+        where id = $1 and session_id is null and (customer_id is null or customer_id = $2)
+        and (subscription_id is null or subscription_id = $3) returning *`, [id, customerId, subscriptionId]));
+      if (!row) throw conflict();
+      return row;
+    },
+    async invoicePaid({ id, customerId, subscriptionId, email, at }) {
+      let paidOffer;
+      const result = await txn(async (db) => {
+        const current = await order(id, db, "for update");
+        if (!current || current.session_id || current.customer_id !== customerId || current.subscription_id !== subscriptionId) throw conflict();
+        if (["paid", "refunded", "review"].includes(current.state)) return current;
+        const result = await first(db.query(`update ${table("care_orders")} set state = 'paid', stripe_email = $2, received_at = $3
+          where id = $1 returning *`, [id, email, at]));
+        await mail(db, id, `receipt/${id}`, "receipt");
+        paidOffer = current.offer;
+        return result;
+      });
+      if (paidOffer) recordJourney("payment_confirmed", { path: "/care/intake", offer: paidOffer, state: "paid" }, "server");
+      return result;
+    },
     async expire(id, sessionId) {
       await pool.query(`update ${table("care_orders")} set state = 'expired', session_id = $2
         where id = $1 and state = 'created' and (session_id is null or session_id = $2)`, [id, sessionId]);

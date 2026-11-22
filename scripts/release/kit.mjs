@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// node scripts/release/kit.mjs <check|sweep|stripe|status|path> [args]
+// node scripts/release/kit.mjs <check|sweep|visual|stripe|status|demand|path> [args]
 //
 // The site's launcher for the shared release kit (pilot repository, tools/release-kit). Each site keeps
 // a copy of this file as scripts/release/kit.mjs and pins the kit in release/kit.json:
@@ -17,7 +17,7 @@ import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const [command, ...rest] = process.argv.slice(2);
-const files = { check: "check.mjs", sweep: "sweep.mjs", stripe: "stripe-matrix.mjs", status: "post-status.mjs" };
+const files = { check: "check.mjs", sweep: "sweep.mjs", visual: "visual.mjs", stripe: "stripe-matrix.mjs", status: "post-status.mjs", demand: "demand.mjs" };
 if (!files[command] && command !== "path") {
   console.error(`usage: kit.mjs ${[...Object.keys(files), "path"].join("|")} [args]`);
   process.exit(2);

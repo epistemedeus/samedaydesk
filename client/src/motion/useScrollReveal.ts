@@ -1,12 +1,14 @@
 import { useEffect } from "react";
-import { setupGsap, gsap, ScrollTrigger, prefersReducedMotion } from "./gsap";
+import { setupGsap, gsap, ScrollTrigger } from "./gsap";
+import { useReducedMotion } from "./useReducedMotion";
 
 // One global reveal: any [data-reveal] element fades + rises as it scrolls in.
 // Elements with [data-reveal-stagger] reveal their direct children in sequence.
 // No-JS / reduced-motion → everything is simply visible (we never hide via CSS).
 export function useScrollReveal() {
+  const reduce = useReducedMotion();
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    if (reduce) return;
     setupGsap();
 
     const ctx = gsap.context(() => {
@@ -31,5 +33,5 @@ export function useScrollReveal() {
       window.clearTimeout(id);
       ctx.revert();
     };
-  }, []);
+  }, [reduce]);
 }

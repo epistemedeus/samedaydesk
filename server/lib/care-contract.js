@@ -74,6 +74,29 @@ export function checkoutArgs(order, secret, releaseRun = null) {
   };
 }
 
+// Non-card payment for the monthly offer (behind SDS_CARE_NONCARD). Checkout takes neither bank transfers
+// nor stablecoins in subscription mode, so Stripe's own route is a subscription that sends an invoice:
+// the buyer pays on Stripe's hosted invoice page, and invoice.paid confirms the order like a card renewal.
+// A US bank transfer also takes international wires, so EU buyers pay the same USD price.
+export const NONCARD_METHODS = immutable({
+  bank_transfer: immutable({ payment_method_types: ["customer_balance"],
+    payment_method_options: { customer_balance: { funding_type: "bank_transfer", bank_transfer: { type: "us_bank_transfer" } } } }),
+  stablecoin: immutable({ payment_method_types: ["crypto"] }),
+});
+export const NONCARD_PRICE_KEY = "sameday_care_keep_it_working_monthly_usd";
+export const NONCARD_DAYS_DUE = 7;
+
+export function invoiceSubscriptionArgs(order, { customer, price, method, releaseRun = null }) {
+  const offer = CARE_OFFERS[order.offer];
+  if (order.offer !== "keep_it_working" || offer.cents !== order.amount_cents || !Object.hasOwn(NONCARD_METHODS, method)) {
+    throw new Error("Only the monthly offer is sold by invoice");
+  }
+  const metadata = { sds_care_order: order.id, journey_session: order.journey_session || order.id, sds_care_method: method,
+    ...(releaseRun ? { release_run: releaseRun } : {}) };
+  return { customer, items: [{ price }], collection_method: "send_invoice", days_until_due: NONCARD_DAYS_DUE,
+    payment_settings: NONCARD_METHODS[method], metadata };
+}
+
 export function checkedSession(order, session) {
   const expected = CARE_OFFERS[order.offer];
   if (!expected || order.amount_cents !== expected.cents || session?.livemode !== order.live_mode ||

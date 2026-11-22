@@ -128,7 +128,8 @@
     "release:check": "node scripts/release/kit.mjs check",
     "release:sweep": "node scripts/release/kit.mjs sweep",
     "release:stripe": "node scripts/release/kit.mjs stripe",
-    "release:status": "node scripts/release/kit.mjs status"
+    "release:status": "node scripts/release/kit.mjs status",
+    "release:demand": "node scripts/release/kit.mjs demand"
   },
   "dependencies": {
     "@exodus/bytes": "1.16.0",

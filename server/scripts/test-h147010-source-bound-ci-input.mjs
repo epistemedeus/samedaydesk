@@ -1,4 +1,4 @@
-import {copyCatalogWithoutProfile} from './root10940-ci-test-fixtures.mjs';
+import {copyCatalogWithoutProfile,retainedProposal,writeMeasuredProposalFixture} from './root10940-ci-test-fixtures.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {execFile} from 'node:child_process';
@@ -44,6 +44,8 @@ const MEASURED_BASE = 'cb2ed2910a0ee3124d68b5e7a1009eb8029a9bc9';
 const h142Proposal = 'docs/receiving/h147010-source-bound-ci-input-20261104';
 const priorProposal = 'docs/receiving/h145010-useful-tool-measurement-20261104';
 const proposal = CURRENT_PROPOSAL_DIR;
+const retained = retainedProposal(root);
+const currentFixture = dir => writeMeasuredProposalFixture(root, dir, measuredCandidate);
 const COMPOSED_HOST = '7a8cc6b0c2e55dffda9dcbc4664c39e2e9042de4de0d2f658d2be0196d48de23';
 const PREDECESSOR_HOST = '208be740ff7f332219261711f99c2b5333eb977ad1db004d5b1f869ab1dd1c4c';
 const producer = 'server/scripts/produce-root10940-ci-packet.mjs';
@@ -289,7 +291,7 @@ function writeReceivedPair(dir, {sourceSha256, hostSha256, descriptorPath, candi
   return {anchorPath, descriptorFile, anchorBytes};
 }
 
-test('candidate measurement is the admitted source and host', async () => {
+test('candidate measurement is the admitted source and host', async t => {
   const measured = await measureCandidate(root);
   assert.equal(measured.repository, 'epistemedeus/samedaydesk');
   assert.equal(measured.sourceSha256, CURRENT_SOURCE);
@@ -303,14 +305,30 @@ test('candidate measurement is the admitted source and host', async () => {
   assert.equal(sha256(readFileSync(join(root, priorProposal, 'proposed-anchor.json'))), PRIOR_PROPOSAL_ANCHOR_SHA);
   const proposalAnchor = JSON.parse(readFileSync(join(root, proposal, 'proposed-anchor.json'), 'utf8'));
   assert.equal(Object.hasOwn(proposalAnchor, 'receiving'), false);
-  assert.equal(proposalAnchor.requiredProfile.sourceSha256, measured.sourceSha256);
-  assert.equal(proposalAnchor.requiredProfile.hostSha256, measured.hostSha256);
+  assert.deepEqual(proposalAnchor, retained);
+  assert.deepEqual(currentFixture(scratch(t)).anchor.requiredProfile, {money:'unfunded',participation:'voluntary-artifact-v1',sourceSha256:CURRENT_SOURCE,hostSha256:CURRENT_HOST});
 });
 
 test('historical cafd packet remains identifiable beside later approved rows', () => {
   assertHistoricalSlot(configuredCatalog);
   assert.equal(sha256(readFileSync(committedHistoricalPath)), HISTORICAL_PACKET_SHA);
   assertHistoricalSlot(committedCatalog);
+});
+
+test('the retained release proposal cannot stand in for a different measured candidate', async t => {
+  const dir = scratch(t);
+  const packet = join(dir, 'retained-proposal.json');
+  const packed = await run([producer, '--anchor', `${proposal}/proposed-anchor.json`,
+    '--client', CLIENT, '--descriptor', `${proposal}/proposed-descriptor.json`, '--out', packet]);
+  assertExit(packed, 0);
+  const verified = verifyPacket(parsePacket(readFileSync(packet, 'utf8')));
+  assert.deepEqual(verified.profile, retained.requiredProfile);
+  assert.notDeepEqual([verified.profile.sourceSha256, verified.profile.hostSha256], [CURRENT_SOURCE, CURRENT_HOST]);
+  const selected = await run([selector, '--bound', packet,
+    '--source-sha256', CURRENT_SOURCE, '--host-sha256', CURRENT_HOST]);
+  assertExit(selected, 5);
+  assert.match(selected.stderr, /changed-source/);
+  assert.deepEqual(retainedProposal(root), retained);
 });
 
 test('missing packet is refused', async t => {
@@ -788,8 +806,9 @@ test('proposal matches a fresh measurement and enrollment refuses without Root r
   assert.equal(sha256(readFileSync(join(root, priorProposal, 'proposed-descriptor.json'))), PRIOR_PROPOSAL_DESCRIPTOR_SHA);
   assert.equal(sha256(readFileSync(join(root, priorProposal, 'ENROLLMENT.json'))), PRIOR_PROPOSAL_ENROLLMENT_SHA);
   assert.notDeepEqual(readFileSync(join(dir, 'proposed-anchor.json')), readFileSync(join(root, priorProposal, 'proposed-anchor.json')));
-  assert.deepEqual(readFileSync(join(dir, 'proposed-anchor.json')), readFileSync(join(root, proposal, 'proposed-anchor.json')));
-  assert.deepEqual(readFileSync(join(dir, 'proposed-descriptor.json')), readFileSync(join(root, proposal, 'proposed-descriptor.json')));
+  const expected = currentFixture(join(dir, 'expected-current'));
+  assert.deepEqual(readFileSync(join(dir, 'proposed-anchor.json')), expected.anchorBytes);
+  assert.deepEqual(readFileSync(join(dir, 'proposed-descriptor.json')), expected.descriptorBytes);
   const unsafe = join(dir, 'unsafe-path');
   const unsafeArgs = proposeArgs(unsafe);
   unsafeArgs[unsafeArgs.indexOf('--descriptor-path') + 1] = 'docs/receiving/unsafe;command/proposed-descriptor.json';
@@ -797,7 +816,8 @@ test('proposal matches a fresh measurement and enrollment refuses without Root r
   assertExit(unsafeResult, 1);
   assert.match(unsafeResult.stderr, /shell-safe child/);
   assert.equal(existsSync(unsafe), false);
-  assert.deepEqual(readFileSync(join(dir, 'ENROLLMENT.json')), readFileSync(join(root, proposal, 'ENROLLMENT.json')));
+  assert.equal(enrollment.measured.sourceSha256, CURRENT_SOURCE);
+  assert.deepEqual(JSON.parse(readFileSync(join(root, proposal, 'proposed-anchor.json'))), retained);
   const refused = await run([
     producer,
     '--anchor', `${proposal}/proposed-anchor.json`,
@@ -827,13 +847,12 @@ test('proposal matches a fresh measurement and enrollment refuses without Root r
   assertExit(mismatch, 1);
   assert.match(mismatch.stderr, /propose_measurement_mismatch/);
   const workflow = readFileSync(join(root, '.github/workflows/runtime-startup.yml'), 'utf8');
-  assert.match(workflow, /select-root10940-ci-packet\.mjs/);
-  assert.match(workflow, /--legacy-env/);
-  assert.match(workflow, /decode-root10940-ci-packet\.mjs --packet/);
+  assert.match(workflow, /Check source-bound acquisition selection/);
+  assert.match(workflow, /test-h147010-source-bound-ci-input\.mjs/);
+  assert.match(workflow, /test-h145010-measurement-runtime-pin\.mjs/);
+  assert.match(workflow, /--test-concurrency=1/);
   assert.match(workflow, /ROOT10940_CI_CATALOG=/);
   assert.match(workflow, /AE14_PG_BIN=/);
-  assert.match(workflow, /vars\.ROOT10940_CI_PACKET/);
-  assert.match(workflow, /set -euo pipefail/);
   assert.doesNotMatch(workflow, /continue-on-error/);
 });
 
@@ -860,11 +879,12 @@ test('kept historical packet still fails closed on the profile comparison', {tim
 test('positive current packet decodes into the configured participation test', {timeout: 360000}, async t => {
   const dir = scratch(t);
   const packet = join(dir, 'packet.json');
+  const fresh = currentFixture(join(dir, 'current-proposal'));
   const packed = await run([
     producer,
-    '--anchor', `${proposal}/proposed-anchor.json`,
+    '--anchor', fresh.anchorPath,
     '--client', CLIENT,
-    '--descriptor', `${proposal}/proposed-descriptor.json`,
+    '--descriptor', fresh.descriptorPath,
     '--out', packet,
   ]);
   assertExit(packed, 0);
@@ -909,7 +929,8 @@ test('ordinary producer enrollment selects and decodes the current source beside
   const dir = scratch(t);
   const catalog = writeHistoricalOnlyCatalog(join(dir, 'catalog'));
   const historicalBefore = readFileSync(join(catalog, historicalName));
-  const proposedAnchor = JSON.parse(readFileSync(join(root, proposal, 'proposed-anchor.json'), 'utf8'));
+  const fresh = currentFixture(join(dir, 'current-proposal'));
+  const proposedAnchor = fresh.anchor;
   assert.equal(Object.hasOwn(proposedAnchor, 'receiving'), false);
   proposedAnchor.receiving = fixtureReceiving(FIXTURE_COMMIT_CURRENT);
   assert.equal(proposedAnchor.receiving.independentReplay, FIXTURE_REPLAY);
@@ -922,7 +943,7 @@ test('ordinary producer enrollment selects and decodes the current source beside
     producer,
     '--anchor', anchorPath,
     '--client', CLIENT,
-    '--descriptor', `${proposal}/proposed-descriptor.json`,
+    '--descriptor', fresh.descriptorPath,
     '--catalog', catalog,
     '--index', join(catalog, 'index.json'),
   ]);
@@ -1033,8 +1054,7 @@ test('committed catalog retains history and the separate proposal stays unreceiv
   assert.equal(sha256(h142Enrollment), ENROLLMENT_SHA);
   assert.equal(Object.hasOwn(JSON.parse(h142Anchor.toString('utf8')), 'receiving'), false);
   assert.equal(Object.hasOwn(anchor, 'receiving'), false);
-  assert.equal(anchor.requiredProfile.sourceSha256, CURRENT_SOURCE);
-  assert.equal(anchor.requiredProfile.hostSha256, CURRENT_HOST);
+  assert.deepEqual(anchor, retained);
   assert.notEqual(anchor.requiredProfile.hostSha256, H142_HOST);
   assert.notEqual(anchor.requiredProfile.hostSha256, PRIOR_HOST);
   const priorAnchor = JSON.parse(readFileSync(join(root, priorProposal, 'proposed-anchor.json'), 'utf8'));
@@ -1065,7 +1085,7 @@ test('committed catalog retains history and the separate proposal stays unreceiv
   assert.equal(priorRow.receiving.qualified, false);
   const currentRows = index.packets.filter(row => row.hostSha256 === CURRENT_HOST && row.sourceSha256 === CURRENT_SOURCE);
   const receivedAnchorPath = join(root, proposal, 'ROOT-RECEIVED-ANCHOR.json');
-  if (existsSync(receivedAnchorPath)) {
+  if (existsSync(receivedAnchorPath) && anchor.requiredProfile.sourceSha256 === CURRENT_SOURCE && anchor.requiredProfile.hostSha256 === CURRENT_HOST) {
     const receivedAnchorBytes = readFileSync(receivedAnchorPath);
     const receivedAnchor = JSON.parse(receivedAnchorBytes.toString('utf8'));
     assert.equal(rootReceivingAccepted(receivedAnchor.receiving, 'epistemedeus/samedaydesk'), true);

@@ -1,4 +1,4 @@
-import {copyCatalogWithoutProfile} from './root10940-ci-test-fixtures.mjs';
+import {copyCatalogWithoutProfile,retainedProposal,writeMeasuredProposalFixture} from './root10940-ci-test-fixtures.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {execFile, execFileSync} from 'node:child_process';
@@ -36,6 +36,7 @@ const PIN = 'server/foundry/activation/private-control-pin.json';
 const PIN_BASE = 'd9725a4f61b0bdf4d5355d3dbb86fa2379c71644';
 const priorProposal = 'docs/receiving/h145010-useful-tool-measurement-20261104';
 const proposal = CURRENT_PROPOSAL_DIR;
+const retained = retainedProposal(root);
 const h142Proposal = 'docs/receiving/h147010-source-bound-ci-input-20261104';
 const producer = 'server/scripts/produce-root10940-ci-packet.mjs';
 const selector = 'server/scripts/select-root10940-ci-packet.mjs';
@@ -225,8 +226,7 @@ test('historical-only, received H142, and the pending measurement candidate stay
 
   const anchor = JSON.parse(before.anchor.toString('utf8'));
   assert.equal(Object.hasOwn(anchor, 'receiving'), false);
-  assert.equal(anchor.requiredProfile.sourceSha256, measured.sourceSha256);
-  assert.equal(anchor.requiredProfile.hostSha256, measured.hostSha256);
+  assert.deepEqual(anchor, retained);
   const prior = JSON.parse(before.priorAnchor.toString('utf8'));
   assert.equal(Object.hasOwn(prior, 'receiving'), false);
   assert.equal(prior.requiredProfile.sourceSha256, H142_SOURCE);
@@ -388,7 +388,8 @@ test('a disposable fixture receipt enrolls only the measured candidate', {timeou
   const dir = scratch(t);
   const catalog = historicalOnly(join(dir, 'catalog'));
   const historicalBefore = readFileSync(join(catalog, historicalName));
-  const proposed = JSON.parse(before.anchor.toString('utf8'));
+  const fresh = writeMeasuredProposalFixture(root, join(dir, 'current-proposal'), measured);
+  const proposed = fresh.anchor;
   assert.equal(Object.hasOwn(proposed, 'receiving'), false);
   proposed.receiving = fixtureReceiving(FIXTURE_COMMIT);
   const anchorPath = join(dir, 'fixture-anchor.json');
@@ -397,7 +398,7 @@ test('a disposable fixture receipt enrolls only the measured candidate', {timeou
     producer,
     '--anchor', anchorPath,
     '--client', CLIENT,
-    '--descriptor', `${proposal}/proposed-descriptor.json`,
+    '--descriptor', fresh.descriptorPath,
     '--catalog', catalog,
     '--index', join(catalog, 'index.json'),
   ]);
