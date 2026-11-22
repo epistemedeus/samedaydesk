@@ -196,6 +196,14 @@ export function publicFirstRenderPath(clientDist, routePath) {
   return path.join(clientDist, ROUTE_SHELL_DIR, PUBLIC_FIRST_RENDER_DIR, routePath === "/" ? "home.html" : shellFileName(routePath));
 }
 
+// The buy page is one route whose content is chosen by ?offer=. Each offer the page sells gets its
+// own first render, served only for that exact query.
+export const BUY_PATH = "/care/buy";
+export function buyFirstRenderPath(clientDist, offer) {
+  if (!/^[a-z][a-z0-9_]{1,40}$/.test(String(offer))) throw new Error(`route-shells: invalid offer ${offer}`);
+  return path.join(clientDist, ROUTE_SHELL_DIR, PUBLIC_FIRST_RENDER_DIR, `care__buy--${offer}.html`);
+}
+
 export function assertRouteCatalog(routes = SPA_ROUTE_SHELLS) {
   const seen = new Set();
   for (const route of routes) {
@@ -337,6 +345,15 @@ export function createRouteShellMiddleware(clientDist, routes = [...SPA_ROUTE_SH
     const file = shellFilePath(clientDist, route.path);
     if (existsSync(file)) map.set(route.path, file);
   }
+  const buyRenders = new Map();
+  const buyRender = (offer) => {
+    if (!buyRenders.has(offer)) {
+      let file = null;
+      try { file = buyFirstRenderPath(clientDist, offer); } catch { /* not an offer name */ }
+      buyRenders.set(offer, file && existsSync(file) ? file : null);
+    }
+    return buyRenders.get(offer);
+  };
   const missing = routes.filter((route) => !map.has(route.path)).map((route) => route.path);
   if (missing.length) {
     console.warn(`[route-shells] missing ${missing.join(", ")} under ${clientDist}`);
@@ -345,7 +362,8 @@ export function createRouteShellMiddleware(clientDist, routes = [...SPA_ROUTE_SH
     if (req.method !== "GET" && req.method !== "HEAD") return next();
     // A query can select different content. Keep that request on the normal
     // shell so a canonical anonymous snapshot never masks the requested view.
-    const file = (!req.originalUrl.includes("?") && firstRender.get(req.path)) || map.get(req.path);
+    const offer = req.path === BUY_PATH && Object.keys(req.query).length === 1 && typeof req.query.offer === "string" ? req.query.offer : null;
+    const file = (offer && buyRender(offer)) || (!req.originalUrl.includes("?") && firstRender.get(req.path)) || map.get(req.path);
     if (!file) return next();
     res.setHeader("Cache-Control", "no-cache");
     res.sendFile(file, { dotfiles: "allow" }, (err) => (err ? next(err) : undefined));

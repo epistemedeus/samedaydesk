@@ -296,8 +296,8 @@ export default function Mcp() {
   );
 }
 
-// The exchange, drawn once on arrival: request, 402 with the price, the paid retry, the answer.
-// Each step names the real header it carries. Under reduced motion it is simply drawn.
+// The exchange: request, 402 with the price, the paid retry, the answer. Every step is readable at
+// rest; only the arrows draw in on arrival, and under reduced motion nothing moves.
 function Sequence() {
   const steps = [
     { dir: "out", label: "Request", line: "GET /extract?url=…", note: "Any HTTP client, no key" },

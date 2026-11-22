@@ -2,7 +2,7 @@ import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promis
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { build } from "vite";
-import { publicFirstRenderPath, shellFilePath, SPA_ROUTE_SHELLS } from "../../server/lib/spa-route-shells.js";
+import { buyFirstRenderPath, publicFirstRenderPath, shellFilePath, SPA_ROUTE_SHELLS } from "../../server/lib/spa-route-shells.js";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const dist = join(root, "dist");
@@ -48,7 +48,7 @@ const scratch = await mkdtemp(join(root, ".public-render-"));
 try {
   await build({ root, build: { ssr: join(root, "src/prerender.tsx"), outDir: scratch,
     emptyOutDir: false, manifest: false, copyPublicDir: false } });
-  const { renderPublicPages } = await import(pathToFileURL(join(scratch, "prerender.js")).href);
+  const { renderPublicPages, renderBuyPages } = await import(pathToFileURL(join(scratch, "prerender.js")).href);
   const rendered = await renderPublicPages();
   const typeLinks = await criticalTypeLinks();
   const seen = new Set();
@@ -73,6 +73,19 @@ try {
     await writeFile(target, filled);
   }
   if (!seen.has("/")) throw new Error("The public home render is required");
+  // Buy pages: the home shell with the offer's title, rendered with the main entry. The client
+  // renders afresh on load (a query is present), so this is the first paint, not a hydration.
+  const homeShell = await readFile(home, "utf8");
+  const escape = (text) => text.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  for (const { offer, title, html } of renderBuyPages()) {
+    const head = `<meta name="sdd-buy-first-render" content="${offer}">\n${preloadFor("index.html")}\n<meta name="robots" content="noindex">\n`;
+    const filled = homeShell.replace(/<title>[^<]*<\/title>/, `<title>${escape(title)}</title>\n${typeLinks}`)
+      .replace(rootSlot, () => `<div id="root">${html}</div>`).replace("</head>", `${head}</head>`);
+    if (!filled.includes(`<title>${escape(title)}</title>`) || !filled.includes(html)) throw new Error(`Bad buy render: ${offer}`);
+    const target = buyFirstRenderPath(dist, offer);
+    await mkdir(dirname(target), { recursive: true });
+    await writeFile(target, filled);
+  }
   console.log(`[public-render] ${seen.size} verified anonymous route documents`);
 } finally {
   await rm(scratch, { recursive: true, force: true });

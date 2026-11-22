@@ -18,6 +18,7 @@ import {
   NOT_FOUND_SHELL,
   SPA_ROUTE_SHELLS,
   applyRouteShell,
+  buyFirstRenderPath,
   generateRouteShellsFromIndex,
   inspectHtmlShell,
   publicFirstRenderPath,
@@ -490,6 +491,25 @@ test("canonical public HTML is selected without replacing query variants, privat
   const missing = await request(port, "/no-such-public-route");
   assert.equal(missing.status, 404);
   assert.doesNotMatch(missing.body, /sdd-public-first-render/);
+});
+
+test("a buy page first render is served only for its exact offer query", async (t) => {
+  const dist = mkdtempSync(join(tmpdir(), "route-buy-render-"));
+  t.after(() => rmSync(dist, { recursive: true, force: true }));
+  writeFileSync(join(dist, "index.html"), asBuiltIndex());
+  writeRouteShells(dist);
+  const target = buyFirstRenderPath(dist, "agent_front_door");
+  mkdirSync(dirname(target), { recursive: true });
+  writeFileSync(target, '<html><head><meta name="sdd-buy-first-render" content="agent_front_door"></head></html>');
+  assert.throws(() => buyFirstRenderPath(dist, "../home"));
+  const app = express();
+  mountProductionClient(app, dist);
+  const { server, port } = await listen(app);
+  t.after(() => new Promise((resolve) => server.close(resolve)));
+  assert.match((await request(port, "/care/buy?offer=agent_front_door")).body, /sdd-buy-first-render/);
+  for (const variant of ["/care/buy", "/care/buy?offer=agent_storefront", "/care/buy?offer=agent_front_door&left=1", "/care/buy?offer=..%2Fhome"]) {
+    assert.doesNotMatch((await request(port, variant)).body, /sdd-buy-first-render/, variant);
+  }
 });
 
 test("production entrypoint serves the apex A2A card from the tool inventory", async (t) => {
