@@ -5,6 +5,7 @@ import net from "node:net";
 import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 import ipaddr from "ipaddr.js";
+import { isAddress as isSolanaAddress } from "@solana/addresses";
 import {
   validateDiscoveryExtension,
   validateDiscoveryExtensionSpec,
@@ -18,9 +19,10 @@ import {
   selectPurchaseEvidenceLink,
   verifyPurchaseEvidenceManifest,
 } from "agent-payment-policy";
+import packageMetadata from "./package.json" with { type: "json" };
 
 export const SCHEMA_VERSION = "agent-payment-integrity.audit.v5";
-export const TOOL_VERSION = "0.1.0-candidate.12";
+export const TOOL_VERSION = packageMetadata.version;
 
 const CREDENTIAL_KEY = /(?:^|[-_])(?:api[-_]?key|key|token|secret|password|credential|authorization|auth)(?:$|[-_])/i;
 const ROUTE_PATTERN = /^\/[A-Za-z0-9._~!$&'()*+,;=:@%\/-]*$/;
@@ -32,8 +34,54 @@ const MAX_PROTOCOL_IDENTIFIER_BYTES = 256;
 const DEFAULT_TIMEOUT_MS = 10_000;
 const DEFAULT_MAX_BYTES = 2_000_000;
 const DEFAULT_MAX_ROUTES = 64;
+const MAX_RESPONSE_HEADER_BYTES = 65_536;
 const SUPPORTED_METHODS = new Set(["GET", "POST"]);
 const REQUIRED_PATH = /^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+){0,7}$/;
+const X402_QUOTE_FIELDS = new Set(["payment-required", "x-payment-required"]);
+
+export function parseQuoteTransportOption(value) {
+  if (value == null) return null;
+  if (value === "measure") return value;
+  const bytes = typeof value === "string" && /^[1-9][0-9]*$/.test(value) ? Number(value) : value;
+  if (!Number.isSafeInteger(bytes) || bytes < 1 || bytes > MAX_RESPONSE_HEADER_BYTES) {
+    throw new Error("quote-transport must be measure or an integer from 1 to 65536");
+  }
+  return bytes;
+}
+
+function collectQuoteFields(rawHeaders) {
+  const fields = [];
+  for (let i = 0; i < rawHeaders.length; i += 2) {
+    if (X402_QUOTE_FIELDS.has(rawHeaders[i].toLowerCase())) {
+      fields.push(rawHeaders[i], rawHeaders[i + 1]);
+    }
+  }
+  return fields;
+}
+
+function unverifiedQuote(reason) {
+  return { status: "unverified", reason };
+}
+
+function observeQuoteLine(response, selectedHeader, challenge, budget) {
+  if (response.status !== 402) return unverifiedQuote("not_402");
+  const fields = response.quoteFields;
+  if (!Array.isArray(fields)) return unverifiedQuote("raw_headers_unavailable");
+  if (!fields.length) return unverifiedQuote("field_missing");
+  if (fields.length !== 2) return unverifiedQuote("multiple_fields");
+  const [name, value] = fields;
+  const headerName = typeof name === "string" && name.toLowerCase();
+  if (!X402_QUOTE_FIELDS.has(headerName) || typeof value !== "string" || value !== selectedHeader) {
+    return unverifiedQuote("field_invalid");
+  }
+  const lineBytes = headerName.length + 2 + Buffer.byteLength(value, "latin1");
+  if (challenge.error || !/^(?:[A-Za-z0-9+/]+|[A-Za-z0-9_-]+)={0,2}$/.test(value)
+      || value.length % 4 === 1 || (value.endsWith("=") && value.length % 4 !== 0)) {
+    return { ...unverifiedQuote("field_invalid"), headerName, lineBytes };
+  }
+  const status = budget === "measure" ? "measured" : lineBytes <= budget ? "within_budget" : "over_budget";
+  return { status, headerName, lineBytes };
+}
 
 function isPlainObject(value) {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
@@ -186,6 +234,7 @@ export async function requestPinned(urlInput, {
   accept = "application/json",
   userAgent = "agent-payment-integrity/0.1",
   publicDns = false,
+  observeQuoteTransport = false,
 } = {}) {
   const url = new URL(urlInput);
   if (url.protocol !== "https:" || url.port || url.username || url.password || url.hash) {
@@ -202,7 +251,7 @@ export async function requestPinned(urlInput, {
       port: 443,
       method: "GET",
       path: `${url.pathname}${url.search}`,
-      maxHeaderSize: 65_536,
+      maxHeaderSize: MAX_RESPONSE_HEADER_BYTES,
       headers: { accept, "user-agent": userAgent },
       lookup: (_hostname, options, callback) => {
         if (options?.all) callback(null, [{ address, family }]);
@@ -231,6 +280,7 @@ export async function requestPinned(urlInput, {
             key.toLowerCase(),
             Array.isArray(value) ? value.join(", ") : String(value ?? ""),
           ])),
+          ...(observeQuoteTransport && { quoteFields: collectQuoteFields(response.rawHeaders) }),
           body: Buffer.concat(chunks),
           pinnedAddressFamily: family,
         });
@@ -242,9 +292,41 @@ export async function requestPinned(urlInput, {
   });
 }
 
+function documentFailureCode({ status, headers, body }) {
+  // Keep observed hosting failures separate from application statuses. A
+  // generic 404 or provider header alone is not enough to classify one.
+  if ((status === 404 || status === 502)
+      && headers?.["x-railway-fallback"] === "true"
+      && Buffer.isBuffer(body) && body.length <= 4096) {
+    try {
+      const fallback = JSON.parse(body.toString("utf8"));
+      if (fallback?.status === "error" && fallback.code === status) {
+        if (status === 404 && fallback.message === "Application not found") {
+          return "document_ingress_route_unavailable";
+        }
+        if (status === 502 && fallback.message === "Application failed to respond") {
+          return "document_ingress_upstream_unavailable";
+        }
+      }
+    } catch {
+      // A malformed fallback is ordinary HTTP failure evidence only.
+    }
+  }
+  return "document_http_status";
+}
+
+class DocumentHttpError extends Error {
+  constructor(response) {
+    super(`document returned HTTP ${response.status}`);
+    this.name = "DocumentHttpError";
+    this.status = response.status;
+    this.code = documentFailureCode(response);
+  }
+}
+
 async function fetchJsonResponse(url, { requestImpl = requestPinned, requestOptions = {} } = {}) {
   const response = await requestImpl(url, requestOptions);
-  if (response.status !== 200) throw new Error(`document returned HTTP ${response.status}`);
+  if (response.status !== 200) throw new DocumentHttpError(response);
   try {
     return { document: JSON.parse(response.body.toString("utf8")), response };
   } catch {
@@ -274,12 +356,55 @@ function parameterExample(parameter) {
   return null;
 }
 
-export function buildAuditTarget(origin, route, operation) {
-  if (!ROUTE_PATTERN.test(route) || route.includes("{")) throw new Error("unresolved or unsafe route template");
+function auditParameter(entry, document) {
+  const seen = new Set();
+  while (isPlainObject(entry) && Object.hasOwn(entry, "$ref")) {
+    const key = typeof entry.$ref === "string"
+      && /^#\/components\/parameters\/([A-Za-z0-9_.-]+)$/.exec(entry.$ref)?.[1];
+    if (!key) throw new Error("unsupported parameter reference");
+    if (seen.has(key) || seen.size === 16) throw new Error("cyclic or excessive parameter references");
+    seen.add(key);
+    const components = document?.components?.parameters;
+    if (!isPlainObject(components) || !Object.hasOwn(components, key)) {
+      throw new Error("unresolved parameter reference");
+    }
+    entry = components[key];
+  }
+  if (!isPlainObject(entry) || typeof entry.name !== "string" || !entry.name
+      || !["query", "header", "path", "cookie"].includes(entry.in)
+      || (Object.hasOwn(entry, "required") && typeof entry.required !== "boolean")) {
+    throw new Error("invalid parameter declaration");
+  }
+  return entry;
+}
+
+function auditParameters(document, route, operation) {
+  const effective = new Map();
+  // Operation-level definitions replace path-level definitions of the same
+  // name and location. The two lists may not contain duplicates internally.
+  for (const list of [document?.paths?.[route]?.parameters, operation?.parameters]) {
+    if (list === undefined) continue;
+    if (!Array.isArray(list) || list.length > 128) throw new Error("invalid parameter list");
+    const scope = new Set();
+    for (const entry of list) {
+      const parameter = auditParameter(entry, document);
+      const key = `${parameter.in}:${parameter.name}`;
+      if (scope.has(key)) throw new Error("duplicate parameter declaration");
+      scope.add(key);
+      effective.set(key, parameter);
+    }
+  }
+  return effective.values();
+}
+
+export function buildAuditTarget(origin, route, operation, document = null) {
+  if (!ROUTE_PATTERN.test(route) || route.startsWith("//")) throw new Error("unresolved or unsafe route template");
   const target = new URL(route, origin);
+  if (target.pathname !== route) throw new Error("unresolved or unsafe route template");
   const queryKeys = [];
-  for (const parameter of operation?.parameters || []) {
-    if (parameter?.in !== "query" || parameter?.required !== true) continue;
+  for (const parameter of auditParameters(document, route, operation)) {
+    if (parameter.required !== true) continue;
+    if (parameter.in !== "query") throw new Error("unsupported required parameter location");
     const name = String(parameter.name || "");
     if (!/^[A-Za-z][A-Za-z0-9_-]{0,63}$/.test(name) || CREDENTIAL_KEY.test(name)) {
       throw new Error(`unsafe required query parameter ${name || "unknown"}`);
@@ -306,7 +431,9 @@ function normalizeEconomics(
 ) {
   const atomic = String(amount ?? "");
   const normalizedNetwork = normalizeNetwork(network, { requireReference: requireNetworkReference });
-  const normalizeIdentifier = normalizedNetwork?.namespace === "eip155" ? lowerAddress : protocolIdentifier;
+  const normalizeIdentifier = normalizedNetwork?.namespace === "eip155" ? lowerAddress
+    : normalizedNetwork?.namespace === "solana" ? (value) => typeof value === "string" && isSolanaAddress(value) ? value : null
+      : protocolIdentifier;
   return {
     amountAtomic: DECIMAL_INTEGER.test(atomic) ? atomic : null,
     asset: normalizeIdentifier(currency ?? asset),
@@ -329,13 +456,26 @@ function validEconomics(economics) {
   );
 }
 
+function offerForProtocolValidation(offer) {
+  const network = normalizeNetwork(offer?.network, { requireReference: true })?.value;
+  // Core 2.29 requires canonical CAIP-2. Recognize the observed legacy Algorand
+  // mainnet hash as an exact alias, keeping the original wire value in reports.
+  if (network === "algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=") {
+    return { ...offer, network: "algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73k" };
+  }
+  return network && network !== offer.network ? { ...offer, network } : offer;
+}
+
 export function parseX402Challenge(header) {
   try {
     const payload = decodeJsonBase64(header);
     if (payload?.x402Version !== 2 || !Array.isArray(payload.accepts) || payload.accepts.length === 0) {
       throw new Error("unsupported x402 challenge");
     }
-    const paymentRequired = parsePaymentRequired(payload);
+    const paymentRequired = parsePaymentRequired({
+      ...payload,
+      accepts: payload.accepts.map(offerForProtocolValidation),
+    });
     if (!paymentRequired.success) {
       return {
         error: "x402 PaymentRequired failed the official protocol schema",
@@ -369,26 +509,34 @@ function parseQuotedParameters(value) {
   const pattern = /([A-Za-z][A-Za-z0-9_-]*)="((?:[^"\\]|\\.)*)"/g;
   let match;
   while ((match = pattern.exec(source))) {
-    parameters[match[1].toLowerCase()] = match[2].replace(/\\(["\\])/g, "$1");
+    const key = match[1].toLowerCase();
+    if (Object.hasOwn(parameters, key)) throw new Error("duplicate MPP challenge parameter");
+    parameters[key] = match[2].replace(/\\(["\\])/g, "$1");
   }
   return parameters;
 }
 
-export function parseMppChallenges(header) {
+function parseMppOfferHeader(header, { zeroAmountOnly = false } = {}) {
   try {
     if (typeof header !== "string" || header.length < 8 || header.length > 1_000_000) {
       throw new Error("missing or oversized MPP challenge");
     }
     const segments = header.split(/,\s*(?=Payment\s)/i).filter(Boolean);
     const offers = segments.map((segment) => {
+      if (!/^\s*Payment\s/i.test(segment)) throw new Error("unsupported MPP challenge scheme");
       const params = parseQuotedParameters(segment);
-      if (!params.request || !params.method || !params.intent || !params.realm || !params.expires) {
+      if (!params.id || !params.request || !params.method || !params.intent || !params.realm || !params.expires) {
         throw new Error("MPP challenge parameters missing");
       }
       const expiresAt = Date.parse(params.expires);
       if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) throw new Error("MPP challenge expired");
       const request = decodeJsonBase64(params.request);
-      const network = request.network || (request?.methodDetails?.chainId ? `eip155:${request.methodDetails.chainId}` : null);
+      const chainId = request?.methodDetails?.chainId;
+      const explicitNetwork = Number.isSafeInteger(chainId) && chainId > 0 ? `eip155:${chainId}` : null;
+      if (params.method.toLowerCase() === "tempo" && (!explicitNetwork || (request.network && request.network !== explicitNetwork))) {
+        throw new Error("Tempo challenge needs an explicit consistent chain ID");
+      }
+      const network = request.network || (chainId ? `eip155:${chainId}` : null);
       const economics = normalizeEconomics({
         ...request,
         network,
@@ -396,7 +544,11 @@ export function parseMppChallenges(header) {
         intent: params.intent,
         decimals: request?.methodDetails?.decimals,
       });
-      if (!validEconomics(economics)) throw new Error("invalid MPP economics");
+      const valid = zeroAmountOnly
+        ? request.amount === "0" && economics.method === "tempo" && economics.intent === "charge"
+          && economics.network && economics.asset && economics.recipient
+        : validEconomics(economics);
+      if (!valid) throw new Error("invalid MPP economics");
       return { ...economics, realm: params.realm.toLowerCase() };
     });
     if (offers.length === 0) throw new Error("no MPP Payment challenge");
@@ -404,6 +556,10 @@ export function parseMppChallenges(header) {
   } catch (error) {
     return { error: error instanceof Error ? error.message : "malformed MPP challenge" };
   }
+}
+
+export function parseMppChallenges(header) {
+  return parseMppOfferHeader(header);
 }
 
 function ajvErrors(errors) {
@@ -498,6 +654,22 @@ function declaredMppOffers(operation) {
   })).filter(validEconomics);
 }
 
+function explicitMppOfferMatches(declaration, observed) {
+  const method = declaration.method.toLowerCase();
+  const chainId = declaration.methodDetails?.chainId;
+  const network = chainId === undefined
+    ? declaration.network
+    : Number.isSafeInteger(chainId) && chainId > 0 ? `eip155:${chainId}` : null;
+  if (chainId !== undefined && (!network || (declaration.network !== undefined && declaration.network !== network))) return false;
+  if (network !== undefined && !normalizeNetwork(network, { requireReference: true })) return false;
+  // No declaration-side default: a missing network does not bind a chain.
+  const expected = normalizeEconomics({
+    ...declaration, network: network ?? observed.network, decimals: declaration.methodDetails?.decimals,
+  }, { requireNetworkReference: true });
+  return validEconomics(expected) && method === observed.method && expected.intent === observed.intent &&
+    equivalentEconomics(expected, observed);
+}
+
 function paidOperations(document, method) {
   const operations = new Map();
   for (const [route, item] of Object.entries(document?.paths || {})) {
@@ -507,14 +679,34 @@ function paidOperations(document, method) {
   return operations;
 }
 
-function responseDeclaration(operation) {
+function resolveLocalResponseComponent(document, group, entry) {
+  const seen = new Set();
+  while (isPlainObject(entry) && Object.hasOwn(entry, "$ref")) {
+    const ref = typeof entry.$ref === "string" && /^#\/components\/(responses|schemas)\/([A-Za-z0-9_.-]+)$/.exec(entry.$ref);
+    const components = document?.components?.[group];
+    // Response Object refs can override annotations. Never discard sibling
+    // schema constraints or interpret remote or cross-group references.
+    const annotations = group === "responses" ? ["$ref", "summary", "description"] : ["$ref"];
+    if (!ref || ref[1] !== group || Object.keys(entry).some((key) => !annotations.includes(key)) ||
+        seen.has(ref[2]) || seen.size === 16 || !isPlainObject(components) ||
+        !Object.hasOwn(components, ref[2]) || !isPlainObject(components[ref[2]])) {
+      return { value: null, unresolved: true };
+    }
+    seen.add(ref[2]);
+    entry = components[ref[2]];
+  }
+  return { value: isPlainObject(entry) ? entry : null, unresolved: false };
+}
+
+function responseDeclaration(operation, document) {
   const responses = isPlainObject(operation?.responses) ? operation.responses : {};
   const status = Object.keys(responses).filter((key) => /^2\d\d$/.test(key)).sort()[0];
-  const content = isPlainObject(responses?.[status]?.content) ? responses[status].content : {};
+  const declared = resolveLocalResponseComponent(document, "responses", responses[status]);
+  const content = isPlainObject(declared.value?.content) ? declared.value.content : {};
   const key = Object.keys(content).find((item) => item.toLowerCase().split(";", 1)[0].trim() === "application/json");
   const media = isPlainObject(content?.[key]) ? content[key] : null;
-  if (!status || !media) return { status: 200, mediaType: "application/json", schema: null };
-  const schema = isPlainObject(media.schema) ? media.schema : null;
+  if (!status || !media) return { status: 200, mediaType: "application/json", schema: null, unresolved: declared.unresolved };
+  const { value: schema, unresolved } = resolveLocalResponseComponent(document, "schemas", media.schema);
   let example = media.example;
   if (example === undefined) {
     const first = Object.values(isPlainObject(media.examples) ? media.examples : {})
@@ -526,22 +718,21 @@ function responseDeclaration(operation) {
     status: Number(status),
     mediaType: "application/json",
     schema,
+    unresolved,
     ...(example === undefined ? {} : { example }),
   };
 }
 
-function responseContractReport(origin, route, method, operation) {
+function responseContractReport(origin, route, method, { unresolved: _unresolved, ...response }) {
   return evaluateResponseContract({
     schemaVersion: POLICY_SCHEMAS.responseContractObservation,
     source: "seller_openapi",
     request: { method, url: new URL(route, origin).toString() },
-    response: responseDeclaration(operation),
+    response,
   });
 }
 
-function responseContractRepairPlan(operation, requestedPaths, guaranteedPaths) {
-  const declaration = responseDeclaration(operation);
-  const schema = declaration.schema;
+function responseContractRepairPlan(schema, requestedPaths, guaranteedPaths) {
   const guaranteed = new Set(guaranteedPaths);
   const actions = [];
 
@@ -619,7 +810,6 @@ async function purchaseEvidenceObservation({
   base,
   target,
   method,
-  requiredPaths,
   responseContract,
   linkHeader,
   manifestLoader,
@@ -645,10 +835,10 @@ async function purchaseEvidenceObservation({
     const operation = manifest.operations.find((entry) => entry.method === method && entry.path === target.pathname);
     const declaredPaths = [...operation.output.requiredPaths].sort();
     const currentPaths = [...responseContract.requiredPaths].sort();
+    // Caller requirements are checked independently by auditIntegrity.
     if (
       binding.responseSchemaDigest !== responseContract.schemaDigest
       || JSON.stringify(declaredPaths) !== JSON.stringify(currentPaths)
-      || !requiredPaths.every((path) => declaredPaths.includes(path))
     ) {
       throw new Error("purchase evidence response schema digest or required paths changed");
     }
@@ -710,7 +900,9 @@ export async function auditIntegrity({
   requiredPaths = [],
   maxRoutes = DEFAULT_MAX_ROUTES,
   requestImpl = requestPinned,
+  quoteTransport = null,
 } = {}) {
+  const quoteMode = parseQuoteTransportOption(quoteTransport);
   const base = normalizeOrigin(origin);
   if (!isPlainObject(x402Document)) throw new Error("x402 OpenAPI document is required");
   const method = String(requestedMethod).toUpperCase();
@@ -745,12 +937,28 @@ export async function auditIntegrity({
   if (requestedRoute !== null && routeNames.length === 0) throw new Error(`exact paid ${method} route was not declared`);
   if (routeNames.length > maxRoutes) throw new Error(`paid ${method} route count exceeds ${maxRoutes}`);
   const routes = [];
+  const addRoute = (entry, observation) => routes.push(
+    quoteMode === null ? entry : { ...entry, quoteTransport: observation },
+  );
 
   for (const route of routeNames) {
     const operation = xOperations.get(route) || mppOperations.get(route);
+    const document = xOperations.has(route) ? x402Document : mppDocument;
+    const paymentDeclarations = [xOperations.get(route), mppOperations.get(route)]
+      .map((entry) => entry?.["x-payment-info"]).filter((entry) => entry !== undefined);
+    const explicitlyNonPaid = paymentDeclarations.length > 0 && paymentDeclarations.every((entry) =>
+      isPlainObject(entry) && entry.authMode === "none" && Object.keys(entry).length === 1);
+    const declaredProtocols = new Set([
+      ...advertisedProtocols(xOperations.get(route)),
+      ...advertisedProtocols(mppOperations.get(route)),
+    ]);
+    // Preserve the legacy x402 expectation for unidentified declarations.
+    const mppOnly = declaredProtocols.has("mpp") && !declaredProtocols.has("x402") && !requireBazaar;
     const findings = [];
-    const responseContract = responseContractReport(base, route, method, operation);
-    const repairPlan = responseContractRepairPlan(operation, normalizedRequiredPaths, responseContract.requiredPaths);
+    const declaration = responseDeclaration(operation, document);
+    const responseContract = responseContractReport(base, route, method, declaration);
+    const repairPlan = responseContractRepairPlan(declaration.schema, normalizedRequiredPaths, responseContract.requiredPaths);
+    if (declaration.unresolved) findings.push("seller_response_reference_unresolved");
     if (responseContract.decision !== "admissible") {
       findings.push(`seller_response_contract_${responseContract.decision}`);
     }
@@ -764,7 +972,6 @@ export async function auditIntegrity({
         base,
         target,
         method,
-        requiredPaths: normalizedRequiredPaths,
         responseContract,
         linkHeader: purchaseEvidenceLink,
         manifestLoader: purchaseEvidenceLoader,
@@ -772,7 +979,7 @@ export async function auditIntegrity({
       });
       if (purchaseEvidence.status === "invalid") findings.push(`purchase_evidence_${purchaseEvidence.reason}`);
       if (requirePurchaseEvidence && purchaseEvidence.status !== "verified") findings.push("purchase_evidence_required");
-      routes.push({
+      addRoute({
         method,
         route,
         status: null,
@@ -790,16 +997,15 @@ export async function auditIntegrity({
         responseContract,
         repairPlan,
         purchaseEvidence,
-      });
+      }, unverifiedQuote("post_not_probed"));
       continue;
     }
     let target;
     let queryKeys = [];
     try {
-      ({ url: target, queryKeys } = buildAuditTarget(base, route, operation));
+      ({ url: target, queryKeys } = buildAuditTarget(base, route, operation, document));
     } catch (error) {
-      findings.push(`target_invalid:${error.message}`);
-      routes.push({
+      addRoute({
         method,
         route,
         status: null,
@@ -807,32 +1013,20 @@ export async function auditIntegrity({
         valid: false,
         runtimeChallengeVerified: false,
         probe: { attempted: false, reason: "target_not_constructible" },
-        findings,
+        findings: [`target_invalid:${error.message}`],
         protocols: [],
-        responseContract,
-        repairPlan,
-      });
+      }, unverifiedQuote("target_not_constructible"));
       continue;
     }
 
     let response;
     try {
-      response = await requestImpl(target, { accept: "application/json" });
-    } catch {
-      findings.push("credential_free_probe_failed");
-      routes.push({
-        method,
-        route,
-        status: null,
-        queryKeys,
-        valid: false,
-        runtimeChallengeVerified: false,
-        probe: { attempted: true, reason: "request_failed" },
-        findings,
-        protocols: [],
-        responseContract,
-        repairPlan,
+      response = await requestImpl(target, {
+        accept: "application/json",
+        ...(quoteMode !== null && { observeQuoteTransport: true }),
       });
+    } catch {
+      addRoute({ method, route, status: null, queryKeys, valid: false, runtimeChallengeVerified: false, probe: { attempted: true, reason: "request_failed" }, findings: ["credential_free_probe_failed"], protocols: [] }, unverifiedQuote("request_failed"));
       continue;
     }
     if (response.status !== 402) findings.push(`expected_402_received_${response.status}`);
@@ -842,7 +1036,6 @@ export async function auditIntegrity({
       base,
       target,
       method,
-      requiredPaths: normalizedRequiredPaths,
       responseContract,
       linkHeader: livePurchaseLink,
       manifestLoader: purchaseEvidenceLoader,
@@ -851,16 +1044,27 @@ export async function auditIntegrity({
     if (purchaseEvidence.status === "invalid") findings.push(`purchase_evidence_${purchaseEvidence.reason}`);
     if (requirePurchaseEvidence && purchaseEvidence.status !== "verified") findings.push("purchase_evidence_required");
 
-    const x402 = parseX402Challenge(response.headers?.["payment-required"] || response.headers?.["x-payment-required"]);
-    const mpp = parseMppChallenges(response.headers?.["www-authenticate"]);
+    const x402Header = response.headers?.["payment-required"] ?? response.headers?.["x-payment-required"];
+    const mppHeader = response.headers?.["www-authenticate"];
+    const x402 = parseX402Challenge(x402Header);
+    const mpp = parseMppChallenges(mppHeader);
     const protocols = [];
     let bazaarObservation = { present: false, valid: null };
+    const zeroAmount = explicitlyNonPaid && response.status === 402 && x402Header === undefined
+      ? parseMppOfferHeader(mppHeader, { zeroAmountOnly: true }) : null;
+    const isNonPaidChallenge = zeroAmount?.offers?.every(({ realm }) => realm === base.hostname.toLowerCase()) === true;
+    const x402Bound = !x402.error && resourceBindsTarget(x402.payload?.resource?.url, target, base);
+    const mppBound = !mpp.error && mpp.offers.every(({ realm }) => realm === base.hostname.toLowerCase());
+    if (explicitlyNonPaid && response.status === 402 && (!x402.error || !mpp.error)) {
+      findings.push("non_paid_declaration_live_paid_challenge");
+    }
 
-    if (x402.error) findings.push(x402.errorCode || "x402_challenge_invalid");
-    else {
+    if (x402.error) {
+      if (isNonPaidChallenge) findings.push("zero_amount_mpp_challenge_not_paid");
+      else if (!mppOnly || x402Header !== undefined) findings.push(x402.errorCode || "x402_challenge_invalid");
+    } else {
       protocols.push("x402");
-      const resourceUrl = x402.payload?.resource?.url;
-      if (!resourceBindsTarget(resourceUrl, target, base)) findings.push("x402_full_request_binding_mismatch");
+      if (!x402Bound) findings.push("x402_full_request_binding_mismatch");
       const bazaarExtension = x402.payload?.extensions?.bazaar;
       const bazaar = bazaarExtension === undefined
         ? { present: false, valid: null, findings: requireBazaar ? ["bazaar_extension_missing"] : [] }
@@ -870,17 +1074,26 @@ export async function auditIntegrity({
     }
 
     const mppDeclared = declaredMppOffers(mppOperations.get(route));
-    const expectsMpp = mppOperations.has(route) || mppDeclared.length > 0;
+    const expectsMpp = declaredProtocols.has("mpp") || mppOperations.has(route) || mppDeclared.length > 0;
     if (mpp.error) {
       if (expectsMpp) findings.push("mpp_challenge_invalid");
     } else {
       protocols.push("mpp");
-      if (mpp.offers.some((offer) => offer.realm !== base.hostname.toLowerCase())) {
+      if (!mppBound) {
         findings.push("mpp_realm_mismatch");
       }
     }
 
-    if (!x402.error && !mpp.error) {
+    if (mppOnly && !mpp.error) {
+      const explicit = [xOperations.get(route), mppOperations.get(route)]
+        .flatMap((op) => Array.isArray(op?.["x-payment-info"]?.offers) ? op["x-payment-info"].offers : [])
+        .filter((offer) => typeof offer?.method === "string" && ["tempo", "evm"].includes(offer.method.toLowerCase()));
+      if (explicit.some((declaration) => !mpp.offers.some((offer) => explicitMppOfferMatches(declaration, offer)))) {
+        findings.push("mpp_declaration_runtime_mismatch");
+      }
+    }
+
+    if (!mppOnly && !x402.error && !mpp.error) {
       const xOffer = x402.accepts[0];
       const evmOffer = mpp.offers.find((offer) => offer.method === "evm") || mpp.offers[0];
       if (!equivalentEconomics(xOffer, evmOffer)) findings.push("x402_mpp_economics_mismatch");
@@ -890,19 +1103,22 @@ export async function auditIntegrity({
       if (declaredX402 && !equivalentEconomics(declaredX402, xOffer)) findings.push("x402_declaration_runtime_mismatch");
     }
 
-    routes.push({
+    addRoute({
       method,
       route,
       status: response.status,
       queryKeys,
       valid: findings.length === 0,
-      runtimeChallengeVerified: response.status === 402,
+      runtimeChallengeVerified: response.status === 402 && !isNonPaidChallenge
+        && (mppOnly && x402Header === undefined || x402Bound)
+        && (!(expectsMpp || !mpp.error) || mppBound),
       probe: { attempted: true, reason: null },
       findings,
       protocols: [...new Set(protocols)].sort(),
       economics: {
         x402: x402.error ? null : publicEconomics(x402.accepts[0]),
         mpp: mpp.error ? null : publicEconomics(mpp.offers.find((offer) => offer.method === "evm") || mpp.offers[0]),
+        ...(mppOnly && { mppOffers: mpp.error ? [] : mpp.offers.map(publicEconomics) }),
       },
       discovery: {
         bazaar: bazaarObservation,
@@ -910,7 +1126,7 @@ export async function auditIntegrity({
       responseContract,
       repairPlan,
       purchaseEvidence,
-    });
+    }, quoteMode === null ? null : observeQuoteLine(response, x402Header, x402, quoteMode));
   }
 
   const invalidRoutes = routes.filter((entry) => !entry.valid).length;
@@ -947,6 +1163,11 @@ export async function auditIntegrity({
       queryValuesRetained: false,
     },
     policy: { requireBazaar, requirePurchaseEvidence },
+    ...(quoteMode !== null && { quoteTransport: {
+      maxLineBytes: quoteMode === "measure" ? null : quoteMode,
+      ok: routes.length > 0 && routes.every(({ quoteTransport: { status } }) =>
+        status === "measured" || status === "within_budget"),
+    } }),
     boundary: "Unpaid point-in-time contract integrity only. No claim about settlement, paid delivery, catalog indexing, identity, or future availability.",
   };
 }
@@ -963,7 +1184,9 @@ export async function auditOrigin({
   method = "GET",
   requiredPaths = [],
   maxRoutes = DEFAULT_MAX_ROUTES,
+  quoteTransport = null,
 } = {}) {
+  const quoteMode = parseQuoteTransportOption(quoteTransport);
   const base = normalizeOrigin(origin);
   const requestOptions = { userAgent: "agent-payment-integrity/0.1", publicDns };
   const x402Result = await fetchJsonResponse(new URL(x402Path, base), { requestImpl, requestOptions });
@@ -1008,6 +1231,7 @@ export async function auditOrigin({
     method,
     requiredPaths,
     maxRoutes,
+    quoteTransport: quoteMode,
     requestImpl: boundRequest,
   });
   report.safety.dnsMode = publicDns ? "explicit-public-doh" : "system-resolver";
@@ -1081,12 +1305,32 @@ export function toSarif(report) {
     message: { text: `${route.method || "GET"} ${route.route}: ${finding}` },
     locations: [{ physicalLocation: { artifactLocation: { uri: report.origin + route.route } } }],
   })));
+  const quoteTransport = report.quoteTransport;
+  if (quoteTransport) {
+    for (const route of report.routes) {
+      const { status, reason, lineBytes } = route.quoteTransport;
+      if (status !== "over_budget" && status !== "unverified") continue;
+      const detail = status === "over_budget"
+        ? `${lineBytes} bytes exceeds ${quoteTransport.maxLineBytes}`
+        : reason;
+      results.push({
+        ruleId: `x402_quote_transport_${status}`,
+        level: "error",
+        message: { text: `${route.method} ${route.route}: x402 quote transport ${status} (${detail})` },
+        locations: [{ physicalLocation: { artifactLocation: { uri: report.origin + route.route } } }],
+      });
+    }
+  }
   return {
     version: "2.1.0",
     $schema: "https://json.schemastore.org/sarif-2.1.0.json",
     runs: [{
       tool: { driver: { name: "agent-payment-integrity", version: TOOL_VERSION, rules: [] } },
       results,
+      ...(quoteTransport && { properties: { quoteTransport: {
+        ...quoteTransport,
+        routes: report.routes.map(({ method, route, quoteTransport }) => ({ method, route, ...quoteTransport })),
+      } } }),
     }],
   };
 }

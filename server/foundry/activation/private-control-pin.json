@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "4d7e55f0d66e1a29b46ad272d83e442f1c03e5fa",
+  "base": "c817c1ee6fc7ec598580a9d776def68893a32b60",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
@@ -8,8 +8,8 @@
     "client/src/data/machineEntry.mjs": "db82d57bb0272ad04c8148696553d85a7c30c064e1adbb5c0603699b7ffb922c",
     "client/src/data/receiptPages.mjs": "92705522d6c767523b6bedc356b60e1e364d6d20efa237f90a9d6e3950160d23",
     "client/src/data/receipts.json": "09c3e7065672b8d62a3a5fbc1641ad170aea74c1a88c0ba48b86e5143f737821",
-    "package-lock.json": "98c27a329c069022cec7b52bfb44dbd62d317759b2dbda9c0bf7f9a2c32593f8",
-    "package.json": "7ff70c847a1f881d647d503774b1e73fae329ee4eac0ff325eb8a85656ac94e5",
+    "package-lock.json": "e925a74416eb507923c5dd5130919c0f1bd67a52141b80d84c2cf1cc0fadac59",
+    "package.json": "7c354440e53a611cead60d4e900c8f839357f581c7308a90b489222711f91429",
     "server/app.js": "c6d302bbb2325f1369b84b5551db6355f5cec8d9f26a1ef0b861e1b92004b145",
     "server/contributor-desk-host.mjs": "a491467e92ea0de1f931dbdd53b0b83f3819e8a6cc8c9c10533820761e7956cb",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
@@ -31,12 +31,12 @@
     "server/foundry/startup-diagnostic.js": "18afac4301b0a4d9d256e7880010f00b72bf9de12ce0e177d3aa9a67e0181662",
     "server/index.js": "6e8a6241a172127324cc9defe916522ee5222cf29f4d53ebf5c27b661abf55b9",
     "server/lib/agent-readiness/TRANSPORT.md": "09f4210ff1fa56d01fb3548d3cc38fc576c52e8649737082b0ed4b39c64e0a18",
-    "server/lib/agent-readiness/bounded-fetch.js": "5f1e93ae13fe81a17e658797a449bc629cea48ed79f9332b6126e62575a57e29",
+    "server/lib/agent-readiness/bounded-fetch.js": "8451864628400b6ea17b657b76231e9baa080a63a397a0f699b8da13eb1815bd",
     "server/lib/agent-readiness/checks.js": "1002daa016e1f81f90a83eaa7b8a912f7040d834e1e9a4ff27479b38d4a3f7f4",
     "server/lib/agent-readiness/documentation-alternate.js": "6f80b26680d04b0e38bfc327cd6498cf1c2d0bfb24d6149d483b771b33eac068",
     "server/lib/agent-readiness/documentation.js": "8243003ca19632f76a754c4795c8801999b9d3f7d550f4822ca1fee1cb999f03",
     "server/lib/agent-readiness/linkage.js": "33f99a1ce42cb92b0c9abb34250a8901d0da814cb65795f9cb42358a90aec747",
-    "server/lib/agent-readiness/probe.js": "c9132a4af2817a8aab5b95722a54cfe114a410ff123fa1cb1ad6bfec3ebbaca5",
+    "server/lib/agent-readiness/probe.js": "ae38de16b24ee7949709af45c2e9597169d8eb963ef1191c1587e4f08992a1b3",
     "server/lib/agent-readiness/request-budget.js": "ea40e0442da09cde3bf44ce68ab98851bb0e91c0e8c67a7f533c0458aeff4c95",
     "server/lib/agent-readiness/schema.js": "be4720649d9fb2a9fc03cf27b585b499cbca3e452e135256993c18baf9e0b7cc",
     "server/lib/agent-readiness/score.js": "8c5ffe67eb25e45df3aff3cdfcb67d71be1734de0bb4c20fdd7e44ccb1fbc350",
@@ -46,7 +46,7 @@
     "server/lib/agent-readiness/static-summary.js": "64fe4aa90ab55efe479eb22e9e0be88c25bff1a87997755ef4093a4afe96df32",
     "server/lib/agent-readiness/x402-entries.js": "d49cdc2ee437ca06b6f712e41c6ae9f8a07e04c585c0ba5050ff766c35b703b0",
     "server/lib/apex-agent-card.js": "f7657e87aecfc8d62ac484098e9a2d47a18f96c912fbb486b9b1af5853366d0d",
-    "server/lib/apex-declarations.js": "2f9b4f35c4341daa60e49a9cff7003a0cf1a741d7bee2ef5f3502c7dd03d2304",
+    "server/lib/apex-declarations.js": "9d12e20db9fd8a303ba8e2ca4659f1edf8e84788436cf47b0297ac0d85f5b595",
     "server/lib/care-contract.js": "6e7430f7e61c70e4eaf0ff806561fbde91b18523611a634a0a401029b76dfa84",
     "server/lib/care-mail.js": "547248215996599e737f3b01991891ea994e7c3b098f1f2466e1e620e6397696",
     "server/lib/care-sentinel.js": "95694a6f738e209bd0a32608780e29f41669660a2bfa90471c55434c68e64baa",
@@ -267,7 +267,7 @@
     "server/routes/requests.js": "9f42868435cfd9e40041a324fb3e272535ee6ca914d8224487434c4a110aec8b",
     "server/routes/resend-webhook.js": "b4b78b2ec212e2ae98c73703fb425d24538fdb2ee51492877a5c07a0d3f79352",
     "server/routes/stripe-webhook.js": "36b0837d0e16a96f4da098044c2f9861703b6fcd86a71a1cacd62d21efe3872a",
-    "server/routes/tools.js": "27450e4e6faf1598ba662e50e73de421c85467951fb0ead6b753b4f6cce69559",
+    "server/routes/tools.js": "b13adb624e4ef5ad975aa29c9d6af89b3071059890dbfc2516237906291a3a1f",
     "server/routes/x402-quote.js": "11caf4fa157443aa171e567a5308dea21e64b161c178300d3c0eb4259be97903",
     "server/scripts/fixtures/hosted-synthetic-upload-100511.json": "b2956cd3f1c2f4bd2b551d216f7aa2b9a627280f8077b00d13756a26e448664a",
     "server/scripts/qualify-contributor-https-edge.mjs": "9068044c60b26037ab346468da68663ca4013bd49b76f47a5ca7ece194e3d16b",
@@ -576,7 +576,7 @@
     "vendor/neomorphic-contributor-desk/styles/main.css": "868a2b68d0058aba45ce8ee266ebe6eaa9183cd01936ceff26ed7a7e281bd808",
     "vendor/neomorphic-contributor-desk/styles/office.css": "48124f502e7bc21108528ed250c0637f6b688dced95f74d1c0810bf98203c137",
     "vendor/neomorphic-contributor-journey/README.md": "6c11b9a32057550984ef2beb306ef4a9d04a7147391e74c7ee6ef252d6e88437",
-    "vendor/neomorphic-contributor-journey/SOURCE.json": "ed61906c1654f8d0d47f47221c13349496c19c18cd78e859c72ee445b73e3280",
+    "vendor/neomorphic-contributor-journey/SOURCE.json": "7e4ef3e4f92c690b62511cfda1056312a2bfa19e86b473243f99eafd25d00b63",
     "vendor/neomorphic-contributor-journey/package.json": "ec84837afc6f91dde434e4bba98c2efd559080b5682e06d37a4fff234bb0052b",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.d.ts": "af11961b8729a5a86611f529120d80d2639d7eabd26be1c6468ed1e6a4f57e40",
     "vendor/neomorphic-contributor-journey/services/contributor-journey/dist/index.js": "af11961b8729a5a86611f529120d80d2639d7eabd26be1c6468ed1e6a4f57e40",
@@ -1523,7 +1523,12 @@
     "server/lib/query-key-discovery.mjs": "0635b0e6ad89de2b6506fc080d45f403802402f5a1e30efae143de56dc299957",
     "supabase/migrations/0016_hosted_orders.sql": "e38d95bd4270397382834c1a5fa06dc34a05fda7b59e711fe9aa3f0f9343c1bf",
     "server/lib/care-database.js": "c36fb812abbeffa9a1876093c2ed8fe5ea93799135b3dbf1b7a65ac814d5adb3",
-    "server/lib/seller-repair-checkout.js": "ff785e9c2b07e7eb8c29a4d0040d46aab5d9d6ce7f4197d8ce5e2633ca4936c0"
+    "server/lib/seller-repair-checkout.js": "ff785e9c2b07e7eb8c29a4d0040d46aab5d9d6ce7f4197d8ce5e2633ca4936c0",
+    "server/lib/free-check-v2/facts.js": "a2ef4265a16e10a0f85351e68986bd93913aee6cc73e9788085157f6a8d149da",
+    "server/lib/free-check-v2/rules.js": "2bedcfbd1917535e0f097c8c3a2a66f8d22c161fae5aec19ad880dcf6b65d502",
+    "server/lib/free-check-v2/probe.js": "79920a0a4c0b9ef2392599cf62d100df9d2bb60d6b48a628e1d803ea55356864",
+    "server/lib/free-check-v2/store.js": "1a60a850dd00ca817e1c52746273357749970d5469415510fadd877d8c5ff62b",
+    "server/lib/free-check-v2/http.js": "e4f5fd49660f0e18abf758259d05ce48dc7d0b93d3dd240a8e0472046c371080"
   },
   "receivedCallerClosures": [
     {
@@ -1805,6 +1810,16 @@
       "base": "1ae4b46c1a131ffe71e9e8d7bcc6bc3843570b47",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:509780ab4a88272f017ad6668c7afcc348e348b4e12511bdbcb07111dd9c9636"
+    },
+    {
+      "base": "4d7e55f0d66e1a29b46ad272d83e442f1c03e5fa",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:7e48e2842e415de00a6433b75d72a452d98758f3c437c87f60852bbb84a8d9a0"
+    },
+    {
+      "base": "c79f71487c49a26475ee13e70b03dc0c0647f2a9",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:78d26d24e57627093c71789afa30cf9c0cf2321093fed15da05d9653ccd7979c"
     }
   ]
 }

@@ -69,3 +69,11 @@ Optional or nullable `data`, a missing or untyped quote schema, a string quote w
 ## Boundaries
 
 The input must be a regular file within the supplied-row byte limit. FIFO, URL, and non-file sources refuse. The pin must be the public S14 pin above. The deadline must be a real UTC instant in the future; impossible calendar days refuse. `cost` stays unknown. `quoteGenerated`, `paymentSent`, `repairPosted`, and `routeFetched` stay false.
+
+
+The provenance verifier composes the retained S14 catalog fixtures with the exact
+`networkAwareReceiving` validator overlay. Its reviewed commit, version and member
+hashes are pinned in the adapter; the remaining members retain their original
+hashes. Supplied-row results name the checker version and commit that actually ran.
+Its transport returns status 0 when no request is sent, preserving static schema
+analysis while keeping runtime verification unknown.

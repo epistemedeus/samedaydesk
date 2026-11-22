@@ -18,7 +18,7 @@
       "action/fixtures/catalog-row-contract-absent.json": "72dc4a5f4bb1df8324cc04bbd02c97f579d6f2c883f653fb1043bac4ab087d45",
       "action/fixtures/catalog-row-repair-complete.json": "d960ebb77c193d1526042711add6fc0093d55190751d11bd6985a591ed6c6dfa"
     },
-    "omitted": "Upstream files other than this list are not required for the catalog-row entry. integrity.mjs and integrity.catalog-repair.test.mjs are unmodified copies."
+    "omitted": "Catalog fixtures and other listed base members retain their original bytes. integrity.mjs and package files are the exact qualified networkAwareReceiving overlay; its source and byte pins are declared separately."
   },
   "dependencies": {
     "@x402/core": {
@@ -78,5 +78,20 @@
   "deployment": {
     "publicHostActivated": false,
     "readback": null
+  },
+  "networkAwareReceiving": {
+    "repository": "epistemedeus/agent-payment-integrity",
+    "commit": "4d110186a9ddbd3de5ce74f06540c145455c2f2a",
+    "ownerPR": 51,
+    "ownerTestsPassed": 68,
+    "scope": "Maintained network-aware x402 payee validation, including @solana/addresses, consumed unchanged. Actual nginx402 pass covered five address profiles; the separate OpenAPI body limit remains.",
+    "files": {
+      "integrity.mjs": "d018d829e07052ae14db5c79c4309840bf9862ba56ae5dc0e8cd597d4371e244",
+      "package.json": "c82c41d46f3413e5f8631190c122b0ee4db35d52d499212912ac03da901c23c1",
+      "package-lock.json": "f557346839db6012bd0fdeff2f7747dc05ebec4ecf59055e4e7342b251de766a"
+    },
+    "testedSource": "dd9fb16f6ee64153b9f44fac19f45a1c9660399a",
+    "minimumNode": "22.12.0",
+    "version": "0.1.0-candidate.17"
   }
 }

@@ -253,7 +253,7 @@ function requestOnce(port, path, { method = "GET", headers = undefined, body = n
 }
 
 function checkPath(rawUrl) {
-  return `/api/tools/ai-readiness?url=${encodeURIComponent(rawUrl)}`;
+  return `/api/tools/ai-readiness?version=1&url=${encodeURIComponent(rawUrl)}`;
 }
 
 async function waitUntil(fn, ms = 2000) {
@@ -363,7 +363,7 @@ describe("free-tool terminal outcomes", { concurrency: false }, () => {
     const before = acquisition();
     const lookup = enotfoundLookup();
     try {
-      const missing = await requestOnce(api.address().port, "/api/tools/ai-readiness");
+      const missing = await requestOnce(api.address().port, "/api/tools/ai-readiness?version=1");
       assert.equal(missing.status, 400);
       assert.equal(missing.json.error, "Enter a website URL");
       const unresolved = await requestOnce(api.address().port, checkPath("http://h145010-missing.invalid/h145010-secret-path"));

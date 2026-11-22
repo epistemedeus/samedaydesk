@@ -147,3 +147,7 @@
   .form { flex-direction: column; }
   .cta { flex-direction: column; align-items: flex-start; }
 }
+
+/* Keep the existing field usable at narrow widths. */
+.input { min-width: 0; }
+@media (max-width: 520px) { .form { flex-direction: column; } .btn { min-height: 48px; } }

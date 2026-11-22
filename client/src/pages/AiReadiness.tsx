@@ -5,21 +5,12 @@ import Footer from "../components/Footer";
 import { track } from "../lib/posthog";
 import styles from "./AiReadiness.module.css";
 
-type Check = { id: string; label: string; status: "pass" | "warn" | "fail"; detail: string; fix: string | null };
-type Result = {
-  url: string;
-  score: number;
-  grade: string;
-  summary: { wordsOnHomepage: number; lang: string | null; canonical: string | null; h1: string | null };
-  checks: Check[];
-  checkedAt: string;
-};
-
-const STATUS_ICON: Record<Check["status"], string> = { pass: "✓", warn: "!", fail: "✕" };
+import FreeCheckReport from "../components/FreeCheckReport";
+import { requestFreeCheck, type FreeCheckResult as Result } from "../lib/freeCheck";
 
 export default function AiReadiness() {
   const carried = (useLocation().state as { readiness?: Result } | null)?.readiness;
-  const initial = carried && typeof carried.url === "string" && typeof carried.score === "number" &&
+  const initial = carried?.version === 2 && typeof carried.url === "string" && typeof carried.score === "number" &&
     typeof carried.grade === "string" && Array.isArray(carried.checks) ? carried : null;
   const [url, setUrl] = useState("");
   const [result, setResult] = useState<Result | null>(null);
@@ -32,6 +23,19 @@ export default function AiReadiness() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const controller = useRef<AbortController | null>(null);
+  const [progress, setProgress] = useState('');
+  useEffect(() => () => controller.current?.abort(), []);
+  const location = useLocation();
+  useEffect(() => {
+    const id = new URLSearchParams(location.search).get('report');
+    if (!id) return;
+    const ctrl = new AbortController();
+    fetch(`/api/tools/ai-readiness?version=2&report=${encodeURIComponent(id)}`, { signal: ctrl.signal })
+      .then(async (response) => { const value = await response.json(); if (!response.ok) throw Error(value.error); if (value.version !== 2) throw Error('Unsupported report version.'); setResult(value); setUrl(value.url); })
+      .catch((error) => { if (!ctrl.signal.aborted) setErr(error.message); });
+    return () => ctrl.abort();
+  }, [location.search]);
 
   // Land the cursor in the URL box on arrival so a visitor can check their site right away.
   // Re-assert across mount + next paint + a short delay so it also wins after the View
@@ -72,9 +76,9 @@ export default function AiReadiness() {
     setResult(null);
     track("tool_check_run", { tool: "ai_readiness" });
     try {
-      const r = await fetch(`/api/tools/ai-readiness?url=${encodeURIComponent(url.trim())}`);
-      const d = await r.json();
-      if (!r.ok) throw new Error(d.error || "Could not check that site");
+      controller.current?.abort();
+      controller.current = new AbortController();
+      const d = await requestFreeCheck(url.trim(), controller.current.signal, (event) => setProgress(event.detail || (event.status ? `Public fetch: HTTP ${event.status}.` : 'Checking public pages…')));
       setResult(d as Result);
       track("tool_check_done", { tool: "ai_readiness", score: d.score, grade: d.grade });
     } catch (e) {
@@ -116,97 +120,28 @@ export default function AiReadiness() {
               {loading ? "Checking…" : "Check my site"}
             </button>
           </form>
+          {loading && <p role="status">{progress || "Starting the free check…"}</p>}
           {err && <p className={styles.err} role="alert">{err}</p>}
         </header>
 
-        {result && (
-          <section className={styles.results} aria-live="polite">
-            <div className={styles.scoreCard} data-grade={result.grade}>
-              <div className={styles.scoreNum}>
-                <span className="mono">{result.score}</span>
-                <span className={styles.scoreOf}>/100</span>
-              </div>
-              <div className={styles.scoreMeta}>
-                <span className={styles.grade}>Grade {result.grade}</span>
-                <span className={styles.scoreUrl}>{result.url}</span>
-              </div>
-            </div>
-
-            <ul className={styles.checks}>
-              {result.checks.map((c) => (
-                <li key={c.id} className={styles.check} data-status={c.status}>
-                  <span className={styles.icon} aria-hidden="true">{STATUS_ICON[c.status]}</span>
-                  <div className={styles.checkBody}>
-                    <p className={styles.checkLabel}>{c.label}</p>
-                    <p className={styles.checkDetail}>{c.detail}</p>
-                    {c.fix && <p className={styles.checkFix}><span className={styles.fixTag}>Fix</span> {c.fix}</p>}
-                  </div>
-                </li>
-              ))}
-            </ul>
-
-            <div className={styles.cta}>
-              <div>
-                <h2 className={styles.ctaTitle}>Want the fixes done for you?</h2>
-                <p className={styles.ctaText}>
-                  Skip the manual work. The <strong>Fix Pack</strong> hands you copy-paste JSON-LD, a
-                  corrected robots.txt, an XML sitemap, and clean title / meta / Open Graph tags built
-                  for your exact site, plus a prioritized checklist. Delivered today. Need the deep
-                  version? The full <strong>AI-Search Visibility Audit</strong> also tests whether
-                  ChatGPT, Perplexity and Google actually <em>cite you</em> for real buyer queries and
-                  benchmarks you against named competitors.
-                </p>
-              </div>
-              <div className={styles.ctaActions}>
-                <a
-                  href="https://buy.stripe.com/7sYbJ2946179611dQKeZ20i"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.ctaBtn}
-                  onClick={() => track("tool_cta_clicked", { tool: "ai_readiness", offer: "ai_kit" })}
-                >
-                  DIY Kit · $9 instant download →
-                </a>
-                <a
-                  href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.ctaBtnSecondary}
-                  onClick={() => track("tool_cta_clicked", { tool: "ai_readiness", offer: "ai_fixpack" })}
-                >
-                  Done-for-you Fix Pack · 39 USD →
-                </a>
-                <a
-                  href="https://buy.stripe.com/3cIbJ2gwy2bdgFFfYSeZ20u"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.ctaBtnSecondary}
-                  onClick={() => track("tool_cta_clicked", { tool: "ai_readiness", offer: "ai_audit" })}
-                >
-                  Full audit · $199 →
-                </a>
-              </div>
-            </div>
-          </section>
-        )}
+        {result && <FreeCheckReport report={result} />}
 
         <section className={styles.faq}>
           <h2 className={styles.faqHead}>How this works</h2>
           <div className={styles.faqItem}>
             <h3>What does the checker actually test?</h3>
             <p>
-              It fetches your homepage and robots.txt and checks the things AI search engines rely on:
-              whether their crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended) are allowed,
-              whether you have JSON-LD structured data, a clear title and meta description, Open Graph
-              tags, an XML sitemap, and an llms.txt file.
+              It checks public access, initial HTML, business facts, buyer answers, documented agent
+              actions and mobile metadata. Every finding includes evidence. Optional capabilities are
+              upgrades. Missing field or browser measurements are shown as not verified.
             </p>
           </div>
           <div className={styles.faqItem}>
             <h3>Why does AI-search visibility matter?</h3>
             <p>
               AI search referrals are growing fast and answers increasingly come from a small set of
-              well-structured, crawlable pages. If AI crawlers are blocked or your pages have no
-              structure, you are invisible in those answers no matter how good your site looks to people.
+              well-structured, crawlable pages. Public access and clear structure help tools read a page. This check does not prove
+              that a search engine has indexed it or will cite it.
             </p>
           </div>
           <div className={styles.faqItem}>

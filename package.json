@@ -129,7 +129,9 @@
     "release:sweep": "node scripts/release/kit.mjs sweep",
     "release:stripe": "node scripts/release/kit.mjs stripe",
     "release:status": "node scripts/release/kit.mjs status",
-    "release:demand": "node scripts/release/kit.mjs demand"
+    "release:demand": "node scripts/release/kit.mjs demand",
+    "test:free-check-v2": "node --test server/scripts/free-check-v2/*.test.mjs",
+    "release:visual": "node scripts/release/kit.mjs visual"
   },
   "dependencies": {
     "@exodus/bytes": "1.16.0",
@@ -148,7 +150,9 @@
     "stripe": "^22.2.2",
     "viem": "2.55.11",
     "zod": "^3.25.76",
-    "compression": "1.8.2"
+    "compression": "1.8.2",
+    "parse5": "8.0.0",
+    "robots-parser": "3.0.1"
   },
   "devDependencies": {
     "concurrently": "^10.0.3"

@@ -97,7 +97,7 @@ export async function rawExchange(url, options = {}) {
     const name = key.toLowerCase();
     if (!BLOCKED_REQUEST_HEADERS.has(name)) headers[name] = value;
   }
-  headers["user-agent"] = USER_AGENT;
+  headers["user-agent"] = typeof options.userAgent === "string" && /^[\x20-\x7E]{1,256}$/.test(options.userAgent) ? options.userAgent : USER_AGENT;
   headers.host = url.host; // logical authority, never the numeric socket target
   if (options.body && method !== "GET" && method !== "HEAD") headers["content-length"] = Buffer.byteLength(options.body);
 
@@ -150,6 +150,8 @@ export async function rawExchange(url, options = {}) {
         port: url.port || (url.protocol === "https:" ? 443 : 80),
         path: `${url.pathname}${url.search}`,
         method, headers, agent,
+        // Node's default 16 KB refuses real CDN responses (webflow.com/robots.txt). Still bounded.
+        maxHeaderSize: 64 * 1024,
         ...(url.protocol === "https:" ? { servername: net.isIP(hostname) ? "" : hostname } : {}),
       }, (res) => {
         response = res;
