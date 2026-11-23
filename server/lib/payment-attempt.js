@@ -76,6 +76,7 @@ export async function markPaymentAttemptCanceled({
   attemptId,
 } = {}) {
   if (!attemptId) return null;
+  if (store.cancelIfCard) return store.cancelIfCard(attemptId);
   return markAttempt(store, attemptId, { status: PAYMENT_ATTEMPT_STATUS.CANCELED });
 }
 
@@ -86,7 +87,7 @@ async function loadOwnedOpenAttempt(store, { uid, offerSlug, paymentAttemptId })
       byId
       && byId.user_id === uid
       && byId.offer === offerSlug
-      && byId.status === PAYMENT_ATTEMPT_STATUS.OPEN
+      && (byId.status === PAYMENT_ATTEMPT_STATUS.OPEN || byId.checkout_rail === "usdc")
     ) {
       return byId;
     }
@@ -147,6 +148,9 @@ export async function createOfferPaymentIntent({
     paymentAttemptId,
   });
 
+  const selectedRail = row => row?.checkout_rail === "switching" || row?.checkout_rail === "usdc";
+  if (selectedRail(attempt)) return { ok: true, rail: attempt.checkout_rail, railId: attempt.rail_id, attemptId: attempt.id,
+    intakeSnapshot: attempt.intake_snapshot, offer };
   if (attempt) {
     const resolved = await resolveReusableIntent(stripeClient, attempt);
     if (resolved.reusable && resolved.intent) {
@@ -171,7 +175,12 @@ export async function createOfferPaymentIntent({
       });
       attempt = null;
     } else if (resolved.terminal === "canceled") {
-      await markPaymentAttemptCanceled({ store, attemptId: attempt.id });
+      const current = await store.getById(attempt.id);
+      if (selectedRail(current)) return { ok: true, rail: current.checkout_rail, railId: current.rail_id,
+        attemptId: current.id, intakeSnapshot: current.intake_snapshot, offer };
+      const closed = await markPaymentAttemptCanceled({ store, attemptId: attempt.id });
+      if (selectedRail(closed)) return { ok: true, rail: closed.checkout_rail, railId: closed.rail_id, attemptId: closed.id,
+        intakeSnapshot: closed.intake_snapshot, offer };
       attempt = null;
     } else if (resolved.retrieveFailed && attempt.stripe_payment_intent) {
       return { ok: false, status: 503, error: "Payment status is temporarily unavailable. Retry this purchase later; no new payment was created." };
@@ -211,6 +220,8 @@ export async function createOfferPaymentIntent({
     });
   }
 
+  if (selectedRail(attempt)) return { ok: true, rail: attempt.checkout_rail, railId: attempt.rail_id, attemptId: attempt.id,
+    intakeSnapshot: attempt.intake_snapshot, offer };
   if (attempt.facts_hash !== factsHash) {
     return { ok: false, status: 409, error: "An unresolved payment has different purchase facts. Resolve it before starting a changed purchase." };
   }

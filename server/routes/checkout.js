@@ -1,3 +1,5 @@
+import { accountUsdc } from "../lib/account-usdc.js";
+import { CareError } from "../lib/care-contract.js";
 import { Router } from "express";
 import { requireAuth, requireVerifiedEmail } from "../middleware/auth.js";
 import { stripe, isStripeConfigured } from "../lib/stripe.js";
@@ -6,6 +8,12 @@ import { createSellerRepairCheckoutSession, isValidSellerRepairFindingId } from 
 import { createOfferPaymentIntent, preparePaymentIntake } from "../lib/payment-attempt.js";
 
 const router = Router();
+export const accountOrderRail = () => accountUsdc({ stripe, enabled: process.env.SDS_ORDER_USDC === "1" &&
+  (process.env.ORDER_PAYMENTS_SDS_TOKEN?.length ?? 0) >= 32, live: process.env.SDS_PRIVATE_PREVIEW !== "1" });
+router.post("/usdc", requireAuth, requireVerifiedEmail, async (req,res) => {
+  try { return res.json(await accountOrderRail().start({ uid: req.uid, paymentAttemptId: req.body?.payment_attempt_id, intake: req.body?.intake })); }
+  catch (error) { return res.status(error instanceof CareError ? error.status : 503).json({ error: "Check this order before continuing payment." }); }
+});
 
 // The same report link is already published on Neomorphic. Preview never sends
 // a user to that live link. The target is entered in Stripe's public-target field.
@@ -43,11 +51,14 @@ router.post("/create-payment-intent", requireAuth, requireVerifiedEmail, async (
       paymentAttemptId: paymentAttemptId || null,
     });
     if (!result.ok) return res.status(result.status).json({ error: result.error });
+    if (result.rail) return res.json({ rail: result.rail, paymentAttemptId: result.attemptId, intakeSnapshot: result.intakeSnapshot,
+      usdcAvailable: true, ...(result.rail === "usdc" && { paymentUrl: "https://agents.samedaydesk.com/order-payments/sds/" + result.railId }) });
     const { intent, offer, attemptId } = result;
     res.json({
       clientSecret: intent.client_secret,
       paymentIntentId: intent.id,
       paymentAttemptId: attemptId,
+      usdcAvailable: process.env.SDS_ORDER_USDC === "1" && (process.env.ORDER_PAYMENTS_SDS_TOKEN?.length ?? 0) >= 32,
       amount: offer.amount,
       label: offer.label,
       intakeSnapshot: result.intakeSnapshot || null,

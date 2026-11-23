@@ -87,6 +87,17 @@ test("monthly USDC shares the service-period key, schedules an unsigned invoice 
   assert.equal(child.rail_attempt, null);
   assert.equal((await store.usdc.change(child.rail_id, "load", {})).state, "closed");
   assert.equal((await pool.query(`select count(*)::int n from ${careTable("care_mail")} where order_id=$1 and kind='monthly_invoice'`, [id])).rows[0].n, 1);
+  // Advance the isolated clock to the due date for a real second paid period.
+  t.mock.method(Date, "now", () => child.rail_period_start.getTime() + 1000);
+  const nextQuote = await store.usdc.change(child.rail_id,"load",{});
+  const nextAttempt = { ...attempt, version: nextQuote.version, nonce: "0x" + "d".repeat(64) };
+  await store.usdc.change(child.rail_id,"anchor",{ block:"80" });
+  assert.ok((await store.usdc.change(child.rail_id,"arm",{ attempt:nextAttempt })).armed);
+  const nextResult = { state:"paid",evidence:{ ...result.evidence, transaction:"0x"+"e".repeat(64),nonce:nextAttempt.nonce,
+    timestamp:String(Math.ceil(nextQuote.created/1000)) } };
+  assert.equal((await store.usdc.change(child.rail_id,"observe",{ attempt:nextAttempt,result:nextResult })).state,"paid");
+  assert.equal((await pool.query(`select count(*)::int n from ${careTable("care_periods")} where order_id=$1`,[id])).rows[0].n,2);
+  assert.equal((await pool.query(`select order_id from ${careTable("care_mail")} where mail_key=$1`,["receipt/"+child.id])).rows[0].order_id,id);
   await store.subscriptionState(id, { status: "active", cancel: true, at: new Date() });
   assert.equal((await store.usdc.change(child.rail_id, "arm", { attempt })).armed, false);
 });

@@ -42,6 +42,11 @@ export function createMemoryPaymentAttemptStore() {
       rows.set(saved.id, saved);
       return { ...saved };
     },
+    async cancelIfCard(id) {
+      const row = rows.get(id);
+      if (!row || ["usdc","switching"].includes(row.checkout_rail)) return row;
+      return this.update(id, { status: CANCELED });
+    },
     async update(id, patch) {
       const existing = rows.get(id);
       if (!existing) return null;
@@ -109,6 +114,13 @@ export function createSupabasePaymentAttemptStore(getAdmin = supabaseAdmin) {
       }
       if (error) throw error;
       return data;
+    },
+    async cancelIfCard(id) {
+      const { data, error } = await getAdmin().from("payment_attempts")
+        .update({ status: CANCELED, updated_at: new Date().toISOString() }).eq("id",id)
+        .eq("checkout_rail","stripe").eq("status",OPEN).select("*").maybeSingle();
+      if (error) throw error;
+      return data ?? this.getById(id);
     },
     async update(id, patch) {
       const { data, error } = await getAdmin()

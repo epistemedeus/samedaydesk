@@ -66,6 +66,8 @@ export default function Checkout() {
   const appearance = useMemo(() => appearanceFor(theme), [theme]);
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [usdcAvailable, setUsdcAvailable] = useState(false);
+  const [usdcUrl, setUsdcUrl] = useState<string | null>(null);
   const [paymentAttemptId, setPaymentAttemptId] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [intake, setIntake] = useState<IntakeInput>({ details: "", uploadPath: "" });
@@ -78,7 +80,7 @@ export default function Checkout() {
     if (!offer) return;
     let active = true;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reset the attempt when the product changes, before resuming a stored one
-    setClientSecret(null);
+    setClientSecret(null); setUsdcUrl(null); setUsdcAvailable(false);
     setPaymentAttemptId(null);
     setErr(null);
     setIntake({ details: "", uploadPath: "" });
@@ -106,7 +108,9 @@ export default function Checkout() {
       })
       .then((d) => {
         if (!active) return;
-        setClientSecret(d.clientSecret);
+        setClientSecret(d.clientSecret || null);
+        setUsdcAvailable(Boolean(d.usdcAvailable));
+        setUsdcUrl(d.paymentUrl || null);
         if (d.intakeSnapshot) {
           setIntake(d.intakeSnapshot);
           setIntakeFrozen(true);
@@ -128,6 +132,19 @@ export default function Checkout() {
       active = false;
     };
   }, [slug, offer, carePath, navigate, user?.id]);
+
+  async function openUsdc() {
+    if (!paymentAttemptId || paymentBusy || intakeBusy) return;
+    setPaymentBusy(true); setErr(null);
+    try {
+      const r = await authedFetch("/api/checkout/usdc", { method: "POST",
+        body: JSON.stringify({ payment_attempt_id: paymentAttemptId, intake }) });
+      const data = await r.json();
+      if (!r.ok) throw Error(data.error);
+      setUsdcUrl(data.paymentUrl); setClientSecret(null); setIntakeFrozen(true);
+    } catch (error) { setErr(error instanceof Error ? error.message : "Check the status of your order."); }
+    finally { setPaymentBusy(false); }
+  }
 
   if (carePath) return null;
   if (!offer) return <main className={styles.wrap}>
@@ -168,9 +185,11 @@ export default function Checkout() {
               <PayForm offerSlug={slug} paymentAttemptId={paymentAttemptId} intake={intake}
                 intakeBusy={intakeBusy} busy={paymentBusy} setBusy={setPaymentBusy} onPrepared={() => setIntakeFrozen(true)} />
             </Elements>
-          ) : !err ? (
+          ) : !err && !usdcAvailable ? (
             <p className={styles.loading}>Preparing secure checkout…</p>
           ) : null}
+          {usdcUrl ? <p><a href={usdcUrl + "/wallet"} target="_blank" rel="noopener noreferrer">Open wallet payment on Base</a></p> :
+            usdcAvailable && <button type="button" onClick={() => void openUsdc()} disabled={paymentBusy || intakeBusy}>Pay with USDC</button>}
           <p className={styles.secure}>🔒 Payments are processed securely by Stripe. We never see your card details.</p>
         </section>
       </div>

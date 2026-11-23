@@ -12,7 +12,7 @@ import teaserRouter from "./routes/teaser.js";
 import toolsRouter from "./routes/tools.js";
 import scanRouter from "./routes/scan.js";
 import requestsRouter, { createRequestsRouter } from "./routes/requests.js";
-import checkoutRouter from "./routes/checkout.js";
+import checkoutRouter, { accountOrderRail } from "./routes/checkout.js";
 import uploadsRouter from "./routes/uploads.js";
 import { createStripeWebhookRouter } from "./routes/stripe-webhook.js";
 import { orderPaymentsRouter } from "./routes/order-payments.js";
@@ -175,8 +175,15 @@ app.use("/api/auth", authRouter);
 app.use("/api/teaser", teaserRouter);
 app.use("/api/tools", toolsRouter);
 app.use("/api/checkout", checkoutRouter);
-app.use("/api/order-payments/refunds", orderPaymentsRouter(care?.usdc, process.env.ORDER_PAYMENTS_SDS_REFUND_ADMIN, true));
-app.use("/api/order-payments/internal", orderPaymentsRouter(care?.usdc, process.env.ORDER_PAYMENTS_SDS_TOKEN));
+const orderCallbacks = { async change(id, action, body) {
+  if (care?.usdc) {
+    try { return await care.usdc.change(id, action, body); }
+    catch (error) { if (error.status !== 404) throw error; }
+  }
+  return accountOrderRail().change(id, action, body);
+} };
+app.use("/api/order-payments/refunds", orderPaymentsRouter(orderCallbacks, process.env.ORDER_PAYMENTS_SDS_REFUND_ADMIN, true));
+app.use("/api/order-payments/internal", orderPaymentsRouter(orderCallbacks, process.env.ORDER_PAYMENTS_SDS_TOKEN));
 app.use("/api/care", createCareRouter(care));
 app.use("/api/requests", care?.taskRequests ? createRequestsRouter({ store: care.taskRequests }) : requestsRouter);
 app.use("/api/uploads", uploadsRouter);

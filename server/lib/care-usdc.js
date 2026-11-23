@@ -1,3 +1,4 @@
+import { checkRefund } from "./order-rail-state.js";
 import { recordUsdcMonth } from "./care-usdc-month.js";
 import { createHash } from "node:crypto";
 import { CareError, CARE_OFFERS } from "./care-contract.js";
@@ -39,7 +40,7 @@ export function createCareUsdcStore({ txn, table, mail }) {
           if (action === "arm") return { armed: false };
           return { ...quote, state: "closed" };
         }
-        if (action === "observe" && result?.state === "paid" && parent?.state !== "paid") {
+        if (action === "observe" && result?.state === "paid" && (parent?.state !== "paid" || parent.cancel_at_period_end)) {
           body = { ...body, result: { ...result, state: "held", reason: "subscription_under_review" } };
         }
       }
@@ -64,15 +65,7 @@ export function createCareUsdcStore({ txn, table, mail }) {
       if (action === "refund-reserve") {
         if (row.rail_refund) return { won: false };
         const { refund } = body;
-        const e = row.rail_observation?.evidence, message = refund?.typedData?.message;
-        if (!["paid","held"].includes(quote.state) || !hex32.test(e?.transaction) ||
-            !Number.isSafeInteger(e.transferLogIndex) || typeof e.amount !== "string" || !/^[1-9][0-9]{0,15}$/.test(e.amount) ||
-            e.recipient?.toLowerCase() !== merchant || e.asset?.toLowerCase() !== asset ||
-            refund.original !== `8453:${e.transaction.toLowerCase()}:${e.transferLogIndex}` ||
-            refund.state !== "refund_pending" || !uint.test(refund.nextBlock) ||
-            !Number.isSafeInteger(refund.created) || refund.created > Date.now() + 10000 || refund.expires !== refund.created + 300000 ||
-            refund.expires <= Date.now() || message?.from?.toLowerCase() !== merchant || message.to !== e.payer ||
-            message.value !== e.amount || message.nonce !== "0x" + createHash("sha256").update("order-refund/v1/" + refund.original).digest("hex")) throw conflict();
+        checkRefund(quote, refund);
         await db.query(`update ${name} set rail_refund=$2,state='review' where rail_id=$1`, [id, refund]);
         return { won: true };
       }
@@ -141,13 +134,19 @@ export function createCareUsdcStore({ txn, table, mail }) {
           observed = { state: "held", reason: "order_changed", evidence: e };
         }
       } else if (result.state !== "held") throw conflict();
+      if (observed.state === "paid" && row.offer === "keep_it_working") {
+        const periodStart = row.rail_period_start ?? new Date(Number(BigInt(e.timestamp) * 1000n));
+        const existing = await db.query(`select invoice_id from ${table("care_periods")} where order_id=$1 and period_start=$2`,
+          [row.rail_parent ?? row.id, periodStart]);
+        if (existing.rowCount) observed = { state: "held", reason: "service_period_already_paid", evidence: e };
+      }
       const paid = observed.state === "paid";
       const updated = (await db.query(`update ${name} set rail_observation=$2, state=$3,
         received_at=case when $4 then to_timestamp($5::bigint) else received_at end where rail_id=$1 returning *`,
         [id, observed, paid ? "paid" : "review", paid, paid ? e.timestamp : null])).rows[0];
       if (paid) {
         if (row.offer === "keep_it_working") await recordUsdcMonth(db, table, updated, updated.received_at);
-        await mail(db, row.id, `receipt/${row.id}`, "receipt");
+        await mail(db, row.rail_parent ?? row.id, `receipt/${row.id}`, "receipt", row.rail_parent ? { period: row.rail_period_start } : {});
         await recordRailEvent(db, table, updated, "payment_verified");
       }
       return railQuote(updated);

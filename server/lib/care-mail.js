@@ -13,6 +13,7 @@ export function careMailMessage({ order, item, secret, from, replyTo }) {
     const cents = BigInt(order.rail_qa_cents ?? order.amount_cents);
     const amount = cents % 100n ? `${cents / 100n}.${String(cents % 100n).padStart(2,"0")}` : String(cents / 100n);
     text = `${offer.title}\nPaid: ${amount} USD.\n\nTell us what to work on: ${scopeLink}`;
+    if (item.details?.period) text += `\nService period starting ${day(item.details.period)}.`;
     if (cancelLink) text += `\n\nManage or cancel renewal: ${cancelLink}`;
   } else if (item.kind === "monthly_invoice") {
     subject = "Your monthly SameDayDesk invoice";
