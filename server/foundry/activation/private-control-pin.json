@@ -261,7 +261,7 @@
     "server/lib/taskmarket.js": "852086cc7a515f7a213903da69529b7d1c2bb181647d13ede9a35e2cf9584311",
     "server/routes/agent-readiness.js": "de888e34d7f68ddbf099cfd5021b850ee9e725f425a9375377af497c5216e312",
     "server/routes/care.js": "791621db3bd35884b6bf80f4972c13219cf79638f7ef18c3806427c0feac6acb",
-    "server/routes/checkout.js": "45218c215bb6f1d1e1f03e2b84dde76edf2960ccd5f5fb3927207f99e6b73554",
+    "server/routes/checkout.js": "9aaeabb36782449de17d3677b2881bfa4da7f981cda9a1279025b9eb8abc47c2",
     "server/routes/mcp.js": "2ddd1587d918bdd7da1fa5ae7ae00d24b61b4a4f531c0107ecaca4caace12e28",
     "server/routes/pulse.js": "30900298a5a5a233c2daaf81a8d5e81ff3c73b2a5f3572a75101784f48eda260",
     "server/routes/requests.js": "9f42868435cfd9e40041a324fb3e272535ee6ca914d8224487434c4a110aec8b",
@@ -1538,7 +1538,8 @@
     "server/lib/account-usdc.js": "093d25d7dba638d7f8fcf0588426d538e58b8a60d19e5223d4e4b9c059414458",
     "server/lib/task-quote-rail.js": "cae1c35ba843a6c0b1d3f80386e9898947a449dc79fd3da6c135aaaf85bfc366",
     "server/vendor/order-payments/site-state.mjs": "d9b4d5038330d7c40d44082508d376ae2e489c418e0667e815a5e7f597fe1b4f",
-    "server/lib/hosted-rail.js": "65e3f283a5d861b49e7929df39005706916956900f7c4e21d9ff73e2653d6a00"
+    "server/lib/hosted-rail.js": "65e3f283a5d861b49e7929df39005706916956900f7c4e21d9ff73e2653d6a00",
+    "server/lib/report-order.js": "b588715f5222fc8de99eacbd9fddf0a6cb67d5d0cbdf149394ea86aea5b08e84"
   },
   "receivedCallerClosures": [
     {

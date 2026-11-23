@@ -1,3 +1,4 @@
+import { reportCheckoutEnabled, reportCheckoutPage, startReportCheckout } from "../lib/report-order.js";
 import { accountUsdc } from "../lib/account-usdc.js";
 import { CareError } from "../lib/care-contract.js";
 import { Router } from "express";
@@ -19,6 +20,11 @@ router.post("/usdc", requireAuth, requireVerifiedEmail, async (req,res) => {
 // a user to that live link. The target is entered in Stripe's public-target field.
 router.get("/seller-conformance", (req, res) => {
   res.set({ "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" });
+  if (reportCheckoutEnabled(process.env) && req.query.card !== "1") {
+    if (req.accepts(["html","json"]) === "json") return res.json({ priceCents:49000, currency:"usd", methods:["card","base_usdc"],
+      create:"/api/checkout/seller-conformance/order", usdc:{network:"eip155:8453",fields:["order","email","publicOrigin","getRoute","authorized"]} });
+    return res.type("html").send(reportCheckoutPage);
+  }
   const preview = process.env.SDS_PRIVATE_PREVIEW === "1";
   const configured = preview ? process.env.SDS_TEST_SELLER_CONFORMANCE_LINK : "https://buy.stripe.com/7sY00keoqbLN899282eZ20F";
   try {
@@ -28,6 +34,15 @@ router.get("/seller-conformance", (req, res) => {
     if (isValidSellerRepairFindingId(req.query.finding)) link.searchParams.set("client_reference_id", req.query.finding);
     return res.redirect(303, link.href);
   } catch { return res.status(503).json({ error: "The report checkout is not available." }); }
+});
+
+router.post("/seller-conformance/order", async (req,res) => {
+  res.set({"Cache-Control":"no-store","Referrer-Policy":"no-referrer"});
+  if (!reportCheckoutEnabled(process.env)) return res.sendStatus(404);
+  try {
+    const result = await startReportCheckout(req.body);
+    return res.status(result.status).json(result.body);
+  } catch { return res.status(503).json({error:"Check this report order before continuing payment."}); }
 });
 
 // Server-authoritative PaymentIntent. The client sends an offer SLUG only — the amount is
