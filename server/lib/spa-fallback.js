@@ -68,10 +68,10 @@ export function createSpaFallback(clientDist) {
       res.status(404);
       res.setHeader("Cache-Control", "no-cache");
       if (existsSync(notFoundHtml)) {
-        res.sendFile(notFoundHtml, (err) => (err ? next(err) : undefined));
+        res.sendFile(path.relative(clientDist, notFoundHtml), { root: clientDist }, (err) => (err ? next(err) : undefined));
         return;
       }
     }
-    res.sendFile(indexHtml, (err) => (err ? next(err) : undefined));
+    res.sendFile(path.basename(indexHtml), { root: clientDist }, (err) => (err ? next(err) : undefined));
   };
 }

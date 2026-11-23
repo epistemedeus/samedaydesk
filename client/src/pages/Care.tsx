@@ -7,7 +7,7 @@ import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 
 type Receipt = {
-  title: string; state: string; receivedIntake: boolean; amountCents: number; refundedCents?: number; invoiceUrl?: string;
+  title: string; state: string; receivedIntake: boolean; amountCents: number; refundedCents?: number; invoiceUrl?: string; paymentUrl?: string; paymentState?: string;
   subscription?: { cancelAtPeriodEnd: boolean; status: string };
 };
 const money = (cents: number) => `${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 2 })} USD`;
@@ -25,6 +25,21 @@ const redirect = (value: string, host: string) => {
   if (url.origin !== `https://${host}`) throw new Error("We could not open that payment page.");
   window.location.assign(url.href);
 };
+
+// Reuse the pending purchase across tabs and retain older session-only checkout attempts.
+async function pendingOrder(key: string) {
+  const reserve = () => {
+    const id = localStorage.getItem(key) || sessionStorage.getItem(key) || crypto.randomUUID();
+    localStorage.setItem(key, id);
+    sessionStorage.setItem(key, id);
+    return id;
+  };
+  return navigator.locks ? navigator.locks.request(key, reserve) : reserve();
+}
+function clearOrder(key: string) {
+  if (localStorage.getItem(key) === sessionStorage.getItem(key)) localStorage.removeItem(key);
+  sessionStorage.removeItem(key);
+}
 
 // The buy page sits inside the site (header and footer); receipts keep the bare ticket.
 function CareFrame({ title, children, site = false }: { title: string; children: React.ReactNode; site?: boolean }) {
@@ -59,17 +74,16 @@ export function BuyCare() {
   const [methods, setMethods] = useState<string[]>(["card"]);
   const [invoiceEmail, setInvoiceEmail] = useState("");
   useEffect(() => {
-    if (!offer?.per) return;
+    if (!offer) return;
     send("methods", { offer: offer.slug }).then((data) => Array.isArray(data.methods) && setMethods(data.methods)).catch(() => {});
-  }, [offer?.slug, offer?.per]);
+  }, [offer]);
   const payByInvoice = async (method: string) => {
     if (!offer || busy) return;
     setBusy(true); setError("");
     journey("checkout_started", { offer: offer.slug });
-    const storeKey = `sds-care-order:${offer.slug}:${method}`;
+    const storeKey = method === "base_usdc" ? `sds-care-order:${offer.slug}` : `sds-care-order:${offer.slug}:${method}`;
     try {
-      const order = sessionStorage.getItem(storeKey) || crypto.randomUUID();
-      sessionStorage.setItem(storeKey, order);
+      const order = await pendingOrder(storeKey);
       const result = await send("checkout", { offer: offer.slug, order, method, email: invoiceEmail });
       const receipt = new URL(result.receipt);
       if (receipt.origin !== window.location.origin) throw new Error("We could not open your receipt.");
@@ -86,13 +100,12 @@ export function BuyCare() {
     journey("checkout_started", { offer: offer.slug });
     const storeKey = `sds-care-order:${offer.slug}`;
     try {
-      const order = sessionStorage.getItem(storeKey) || crypto.randomUUID();
-      sessionStorage.setItem(storeKey, order);
+      const order = await pendingOrder(storeKey);
       const result = await send("checkout", { offer: offer.slug, order });
       redirect(result.url, "checkout.stripe.com");
     } catch (e) {
       journey("checkout_failed", { offer: offer.slug });
-      if (e instanceof Error && "code" in e && e.code === "checkout_expired") sessionStorage.removeItem(storeKey);
+      if (e instanceof Error && "code" in e && e.code === "checkout_expired") clearOrder(storeKey);
       setError(e instanceof Error ? e.message : "Checkout could not open.");
       setBusy(false);
     }
@@ -112,7 +125,11 @@ export function BuyCare() {
       <button type="button" disabled={busy} onClick={() => void buy()}>
         {busy ? "Opening checkout" : `Continue to pay ${offer.price} USD`}
       </button>
-      {methods.length > 1 && <form className={`${styles.form} ${styles.alternate}`} onSubmit={(event) => event.preventDefault()}>
+      {methods.includes("base_usdc") && <div className={styles.form}>
+        <label>Receipt email<input type="email" maxLength={254} value={invoiceEmail} onChange={event => setInvoiceEmail(event.target.value)} /></label>
+        <button type="button" disabled={busy || !invoiceEmail} onClick={() => void payByInvoice("base_usdc")}>Pay with USDC</button>
+      </div>}
+      {methods.includes("bank_transfer") && <form className={`${styles.form} ${styles.alternate}`} onSubmit={(event) => event.preventDefault()}>
         <p>Or pay each month by invoice, by bank transfer (international wires accepted){methods.includes("stablecoin") ? " or in USDC" : ""}.</p>
         <label>Email for your invoice<input type="email" required maxLength={254} value={invoiceEmail}
           onChange={(event) => setInvoiceEmail(event.target.value)} /></label>
@@ -149,7 +166,7 @@ export function CareReceipt({ mode }: { mode: "intake" | "cancel" }) {
       if (action === "receipt") {
         journey("receipt_opened", { offer: data.offer, state: data.state });
         setReceipt(data);
-        if (data.state === "paid") sessionStorage.removeItem(`sds-care-order:${data.offer}`);
+        if (data.state === "paid") clearOrder(`sds-care-order:${data.offer}`);
       } else if (action === "intake") {
         journey("form_sent", { state: "intake" });
         setMessage("We received your workflow. Keep this receipt for your records.");
@@ -184,6 +201,7 @@ export function CareReceipt({ mode }: { mode: "intake" | "cancel" }) {
     {mode === "intake" && hasLink && !receipt && !error && <p role="status">Opening your receipt</p>}
     {mode === "intake" && hasLink && (error || receipt?.state === "created") && <>
       {receipt?.state === "created" && <p role="status">Waiting for payment confirmation.</p>}
+      {receipt?.state === "created" && receipt.paymentUrl && <p><a href={receipt.paymentUrl + "/wallet"} target="_blank" rel="noopener noreferrer">Open wallet payment on Base</a></p>}
       {receipt?.state === "created" && receipt.invoiceUrl && <p><a href={receipt.invoiceUrl}>Pay your invoice on Stripe</a></p>}
       <button disabled={busy} onClick={() => void run("receipt")}>Check payment status</button>
     </>}

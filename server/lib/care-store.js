@@ -1,6 +1,10 @@
 import { randomUUID } from "node:crypto";
 import pg from "pg";
 import { CareError } from "./care-contract.js";
+import { createCareUsdcStore, recordRailEvent } from "./care-usdc.js";
+import { skillWatchStore } from "./skill-watch.js";
+import { legacyOrders } from "./legacy-order.js";
+import { hostedOrderRail } from "./hosted-rail.js";
 import { createTaskQuoteStore } from "./task-quotes.js";
 import { recordJourney } from "./journey-events.js";
 
@@ -36,6 +40,9 @@ export function createCareStore(pool, schema = careSchema()) {
 
   return {
     order,
+    watch:skillWatchStore(txn,table),
+    hostedRail: hostedOrderRail(txn,table), legacyOrders: legacyOrders(txn,table),
+    usdc: createCareUsdcStore({ txn, table, mail }),
     bySubscription: (id) => first(pool.query(`select * from ${table("care_orders")} where subscription_id = $1`, [id])),
     byPayment: (id) => first(pool.query(`select * from ${table("care_orders")} where payment_intent_id = $1`, [id])),
     paidBefore: (row) => first(pool.query(`select id from ${table("care_orders")}
@@ -56,18 +63,35 @@ export function createCareStore(pool, schema = careSchema()) {
     async hostedRefund(payment, amount, total) {
       const result = await pool.query(`update ${table("hosted_orders")} set state=$2,refunded_cents=greatest(refunded_cents,$3)
         where payment_intent_id=$1 returning id`, [payment, total ? "refunded" : "review", amount]);
-      return result.rowCount > 0;
+      if (result.rowCount) return true;
+      const duplicate=await pool.query(`update ${table("hosted_orders")} set checkout_details=jsonb_set(checkout_details,
+        array['duplicateCards',$1::text],(checkout_details->'duplicateCards'->$1::text) || jsonb_build_object(
+        'state',case when $2 then 'refunded' else 'review' end,
+        'refundedCents',greatest(coalesce((checkout_details->'duplicateCards'->$1::text->>'refundedCents')::integer,0),$3::integer)))
+        where (checkout_details->'duplicateCards') ? $1::text returning id`,[payment,total,amount]);
+      return duplicate.rowCount > 0;
     },
     taskRequests: { insert: (request) => first(pool.query(`insert into ${table("task_requests")}(email,website,task)
       values ($1,$2,$3) returning *`, [request.email, request.website, request.task])) },
 
-    async reserve({ id, offer, cents, live, expires, origin, integrationId, journeySession }) {
+    async reserve({ id, offer, cents, live, expires, origin, integrationId, journeySession, rail = "stripe", railEmail }) {
+      if (rail === "usdc") return txn(async db => {
+        await db.query(`insert into ${table("care_orders")}
+          (id,offer,amount_cents,live_mode,checkout_expires_at,checkout_origin,integration_id,journey_session,checkout_rail,rail_id,rail_email)
+          values ($1,$2,$3,$4,$5,$6,$7,$8,'usdc',$9,$10) on conflict(id) do nothing`,
+          [id,offer,cents,live,expires,origin,integrationId,journeySession || id,randomUUID(),railEmail]);
+        const row = await order(id, db, "for update");
+        if (!row || row.checkout_rail !== rail || row.rail_email !== railEmail || row.offer !== offer ||
+            row.amount_cents !== cents || row.live_mode !== live || row.checkout_origin !== origin) throw conflict();
+        await recordRailEvent(db, table, row, "checkout_started");
+        return row;
+      });
       await pool.query(`insert into ${table("care_orders")}
         (id, offer, amount_cents, live_mode, checkout_expires_at, checkout_origin, integration_id, journey_session)
         values ($1,$2,$3,$4,$5,$6,$7,$8) on conflict (id) do nothing`,
       [id, offer, cents, live, expires, origin, integrationId, journeySession || id]);
       const row = await order(id);
-      if (!row || row.offer !== offer || row.amount_cents !== cents || row.live_mode !== live || row.checkout_origin !== origin) throw conflict();
+      if (!row || row.checkout_rail === "usdc" || row.offer !== offer || row.amount_cents !== cents || row.live_mode !== live || row.checkout_origin !== origin) throw conflict();
       return row;
     },
 
@@ -82,7 +106,7 @@ export function createCareStore(pool, schema = careSchema()) {
       let paidOffer;
       const result = await txn(async (db) => {
         const current = await order(id, db, "for update");
-        if (!current || (current.session_id && current.session_id !== sessionId) ||
+        if (!current || current.checkout_rail === "usdc" || (current.session_id && current.session_id !== sessionId) ||
             (current.customer_id && current.customer_id !== customerId) ||
             (current.payment_intent_id && current.payment_intent_id !== paymentId) ||
             (current.subscription_id && current.subscription_id !== subscriptionId)) throw conflict();
@@ -221,7 +245,11 @@ export function createCareStore(pool, schema = careSchema()) {
 
     async nextMail(at = new Date()) {
       return first(pool.query(`with chosen as (
-        select mail_key from ${table("care_mail")} where accepted_at is null and next_attempt_at <= $1
+        select mail_key from ${table("care_mail")} m where accepted_at is null and next_attempt_at <= $1
+          and (m.kind <> 'monthly_invoice' or exists (select 1 from ${table("care_orders")} o
+            where o.id=m.order_id and o.state='paid' and not o.cancel_at_period_end))
+          and (m.kind <> 'skill_watch_alert' or exists (select 1 from ${table("care_periods")} p join ${table("care_orders")} o
+            on o.id=p.order_id where o.id=m.order_id and p.invoice_id=m.details->>'invoiceId' and p.status='ready' and o.state='paid'))
           and (first_attempt_at is null or first_attempt_at > $1::timestamptz - interval '23 hours')
           order by created_at limit 1 for update skip locked
         ) update ${table("care_mail")} m set claim_id = $2,

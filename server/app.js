@@ -12,9 +12,10 @@ import teaserRouter from "./routes/teaser.js";
 import toolsRouter from "./routes/tools.js";
 import scanRouter from "./routes/scan.js";
 import requestsRouter, { createRequestsRouter } from "./routes/requests.js";
-import checkoutRouter from "./routes/checkout.js";
+import checkoutRouter, { accountOrderRail } from "./routes/checkout.js";
 import uploadsRouter from "./routes/uploads.js";
 import { createStripeWebhookRouter } from "./routes/stripe-webhook.js";
+import { orderPaymentsRouter } from "./routes/order-payments.js";
 import { createCareRouter } from "./routes/care.js";
 import { configuredCareService } from "./lib/care-service.js";
 import resendWebhookRouter from "./routes/resend-webhook.js";
@@ -174,6 +175,15 @@ app.use("/api/auth", authRouter);
 app.use("/api/teaser", teaserRouter);
 app.use("/api/tools", toolsRouter);
 app.use("/api/checkout", checkoutRouter);
+const orderCallbacks = { async change(id, action, body) {
+  for (const store of [care?.usdc, care?.quoteRail, care?.hostedRail].filter(Boolean)) {
+    try { return await store.change(id, action, body); }
+    catch (error) { if (error.status !== 404) throw error; }
+  }
+  return accountOrderRail().change(id, action, body);
+} };
+app.use("/api/order-payments/refunds", orderPaymentsRouter(orderCallbacks, process.env.ORDER_PAYMENTS_SDS_REFUND_ADMIN, true));
+app.use("/api/order-payments/internal", orderPaymentsRouter(orderCallbacks, process.env.ORDER_PAYMENTS_SDS_TOKEN));
 app.use("/api/care", createCareRouter(care));
 app.use("/api/requests", care?.taskRequests ? createRequestsRouter({ store: care.taskRequests }) : requestsRouter);
 app.use("/api/uploads", uploadsRouter);
@@ -235,11 +245,10 @@ app.get(ORIGINAL_TASK_CLIENT_ARCHIVE_PATH, (_req, res) => {
 // The agent start file: the short path for an agent told one sentence. Same
 // bytes for every client, open CORS, linked from the page head and llms.txt.
 app.get("/start.md", (_req, res, next) => {
-  const file = path.join(CLIENT_DIST, "start.md");
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Cache-Control", "public, max-age=300");
   res.type("text/markdown; charset=utf-8");
-  res.sendFile(file, (err) => { if (err) next(); });
+  res.sendFile("start.md", { root: CLIENT_DIST }, (err) => { if (err) next(); });
 });
 
 app.use((req, res, next) => {

@@ -6,7 +6,7 @@ import { appendFileSync, chmodSync, readFileSync, writeFileSync } from "node:fs"
 import { join } from "node:path";
 import pg from "pg";
 import { startDisposablePg } from "./fixtures/disposable-pg.mjs";
-import { careEnrollment } from "./care-enrollment.mjs";
+import { careEnrollment, careRailUpgrade } from "./care-enrollment.mjs";
 import { careDatabaseOptions, careTable, careTables, closeSharedCarePool } from "../lib/care-database.js";
 import { openCareStore } from "../lib/care-store.js";
 
@@ -46,6 +46,8 @@ test("production Care schema enrollment and every database consumer respect role
   assert.equal(inaccessible.length, 2);
   await admin.query("create role anon; create role authenticated; create role service_role bypassrls");
   await admin.query(careEnrollment(schema, role));
+  await admin.query(careRailUpgrade(schema));
+  await admin.query(careRailUpgrade(schema));
   const password = randomBytes(24).toString("hex");
   await admin.query(`alter role ${role} password '${password}'`);
   execFileSync(join(cluster.bin, "pg_ctl"), ["-D", data, "reload"], { stdio: "ignore", timeout: 10000 });

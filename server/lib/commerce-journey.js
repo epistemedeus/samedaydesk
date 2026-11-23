@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { isSupabaseConfigured, supabaseAdmin } from "./supabase-admin.js";
 import { sharedCarePool, careTable } from "./care-database.js";
 
-const events = new Set(["visit", "checkout_started", "payment_verified", "receipt_sent", "return"]);
+const events = new Set(["visit", "checkout_started", "payment_verified", "payment_refunded", "receipt_sent", "return"]);
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 async function insert(row) {

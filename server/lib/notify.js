@@ -7,12 +7,12 @@ import { resend, isEmailConfigured, FROM, ownSender } from "./resend.js";
 const REPLY_TO = process.env.RESEND_REPLY_TO || "contact@samedaydesk.com";
 if (!ownSender(REPLY_TO)) throw new Error("SameDayDesk transactional mail needs its own reply address");
 
-const dollars = (cents) => `${(Number(cents) / 100).toFixed(2)} USD`;
+const dollars = (cents) => `${BigInt(cents) / 100n}.${String(BigInt(cents) % 100n).padStart(2,"0")} USD`;
 
 export async function sendReceipt({ to, label, amount, orderId }) {
   if (!isEmailConfigured() || !to) return;
   try {
-    const { error } = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: FROM,
       replyTo: REPLY_TO,
       to,
@@ -20,6 +20,7 @@ export async function sendReceipt({ to, label, amount, orderId }) {
       html: receiptHtml({ label, amount, orderId }),
     }, { idempotencyKey: `order-receipt/${orderId}` });
     if (error) console.error("[notify] receipt refused");
+    return error ? null : data?.id ?? null;
   } catch (e) {
     console.error("[notify] receipt failed", e?.message);
   }
