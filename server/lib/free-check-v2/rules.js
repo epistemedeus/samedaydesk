@@ -193,6 +193,7 @@ function finish(checks, observation, verifiedAction, name) {
       topFixes: top.map((item) => ({ id: item.id, label: item.label, points: item.weight, status: item.status, fix: item.fix })), offer,
       notMeasured: checks.filter((item) => item.status === 'unknown').map((item) => ({ id: item.id, label: item.detail, points: item.weight })) },
     checks, policies: observation.policies || [], requests: observation.requests || [],
+    ...(observation.rendering ? { measurements: { rendered: observation.rendering } } : {}),
     limitations: ['Requests named as crawlers come from this checker, not the providers\' addresses, and do not show indexing.', 'This check never submits a form, signs in, calls a tool or makes a payment.'],
   };
 }

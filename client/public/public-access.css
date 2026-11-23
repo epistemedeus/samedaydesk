@@ -94,3 +94,13 @@ html.dark #sourcey #search-open kbd { color: #bfc3cb; }
     scroll-behavior: auto !important;
   }
 }
+
+/* Both case studies had a fixed dark callout and lime controls in light mode.
+   Follow the same saved theme as the reading surface without changing their layout. */
+html[data-standalone] .cta[data-theme-surface] {
+  color: var(--ink); background: var(--card); border: 1px solid var(--line);
+}
+html[data-standalone] .cta[data-theme-surface] h2 { color: var(--ink); }
+html[data-standalone] .cta[data-theme-surface] p { color: var(--dim); }
+html[data-standalone] .cta[data-theme-surface] .btn { color: var(--bg); background: var(--oxide); }
+html[data-standalone] .cta[data-theme-surface] .btn.alt { color: var(--oxide); background: transparent; border-color: var(--line); }

@@ -47,8 +47,8 @@ async function pool(jobs, count = 6) {
     while (index < jobs.length) { const job = jobs[index++]; await job(); }
   }));
 }
-// The render worker is used when FREE_CHECK_RENDER_URL and FREE_CHECK_RENDER_TOKEN are set; pass
-// renderer: null to skip it.
+// A complete CF config prefers its Quick Action; otherwise the qualified worker remains
+// optional. Public-address/redirect admission stays above either renderer.
 export async function collectObservation(raw, { signal, onProgress = () => {}, fetcher = fetchPublicBounded, lookup, renderer = createRemoteRenderer(), cruxKey = process.env.SDS_FREE_CHECK_CRUX_API_KEY } = {}) {
   const url = normalizeInput(raw);
   const budget = createRequestBudget(TOTAL_MS, signal);
@@ -142,7 +142,9 @@ export async function collectObservation(raw, { signal, onProgress = () => {}, f
     llms.linkChecks = [];
     for (const target of [...new Set(guideLinks)].slice(0, 2)) jobs.push(async () => { const response = await read(target, { method: 'HEAD', maxBytes: 0 }); llms.linkChecks.push({ url: target, status: response.status }); });
     if (renderer) jobs.push(async () => {
-      try { observation.rendered = await renderer({ url: page.finalUrl, signal: budget.signal, initialWords: doc.words }); }
+      try { const result = await renderer({ url: page.finalUrl, signal: budget.signal, initialWords: doc.words, emptyAppShell: doc.emptyAppShell, budget });
+        if (Number.isFinite(result?.words) && Number.isFinite(result?.extraWords)) observation.rendered = { words: result.words, extraWords: result.extraWords };
+        if (result?.measurement) observation.rendering = result.measurement; }
       catch { /* A failed browser measurement stays unknown. */ }
     });
     if (cruxKey) jobs.push(async () => {
