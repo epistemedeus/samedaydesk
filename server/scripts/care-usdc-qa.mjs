@@ -29,12 +29,45 @@ export async function createOwnedOrder(pool, schema, { id, cents, email, live, o
   finally { db.release(); }
 }
 
+// Fetch one original site effect, its durable receipt and demand classification.
+// A completed site record is distinct from protected signer and chain receiving.
+export async function receiveOwnedOrder(pool,schema,id) {
+  if(!isOrderId(id))throw Error("expected the original stable site QA UUID");
+  const table=name=>careTable(name,schema),db=await pool.connect();
+  try {
+    await db.query("begin isolation level repeatable read read only");
+    const row=(await db.query(`select * from ${table("care_orders")} where id=$1`,[id])).rows[0];
+    if(!row || row.rail_qa_cents==null || row.offer!=="machine_payment_route" || row.checkout_rail!=="usdc")throw Error("marked site order not found");
+    const q=railQuote(row),receipt=q.receipt,refund=receipt?.refund;
+    const mail=(await db.query(`select accepted_at from ${table("care_mail")} where order_id=$1 and kind='receipt'`,[id])).rows;
+    const events=(await db.query(`select event,test from ${table("journey_events")} where order_id=$1 order by event`,[id])).rows;
+    const expectedAmount=String(BigInt(row.rail_qa_cents)*10000n);
+    const one=name=>events.filter(e=>e.event===name && e.test).length===1;
+    const roundTrip=q.state==="refunded" && row.state==="refunded" && row.refunded_cents===row.rail_qa_cents &&
+      receipt?.amount===expectedAmount && refund?.amount===expectedAmount && receipt.transaction!==refund.transaction &&
+      receipt.payer?.toLowerCase()===refund.recipient?.toLowerCase() && receipt.recipient?.toLowerCase()===refund.payer?.toLowerCase() &&
+      receipt.asset?.toLowerCase()===refund.asset?.toLowerCase() && ["checkout_started","payment_verified","payment_refunded"].every(one) &&
+      events.every(e=>e.test) && mail.length===1;
+    await db.query("commit");
+    return {classification:"owner_qa",liveMode:row.live_mode,order:id,paymentReference:row.rail_id,state:q.state,
+      amountAtomic:expectedAmount,payer:receipt?.payer,original:receipt?.transaction,refund:refund?.transaction,
+      demand:events.map(e=>({event:e.event,ownerQa:e.test})),receiptRows:mail.length,receiptAccepted:!!mail[0]?.accepted_at,
+      siteRoundTripRecorded:Boolean(roundTrip),customerRevenue:false};
+  } catch(error) {await db.query("rollback");throw error;} finally {db.release();}
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const [id, cents] = process.argv.slice(2);
-  const options = careDatabaseOptions();
-  if (!options || !/^(?:[1-9][0-9]?|100)$/.test(cents ?? "")) throw Error("expected enrolled store, stable QA UUID and exact approved cents");
-  const pool = new Pool(options);
-  try { console.log(JSON.stringify(await createOwnedOrder(pool, careSchema(), { id, cents: Number(cents),
-    email: process.env.SDS_OWNER_QA_RECEIPT_EMAIL, live: process.env.SDS_PRIVATE_PREVIEW !== "1", origin: careOrigin(process.env) }))); }
-  finally { await pool.end(); }
+  const [first,second,...extra] = process.argv.slice(2);
+  const read=first==="--receive";
+  const options=careDatabaseOptions();
+  if(!options || extra.length || (read?!isOrderId(second):!isOrderId(first) || !/^(?:[1-9][0-9]?|100)$/.test(second ?? ""))) {
+    throw Error("expected --receive UUID or UUID APPROVED_CENTS with the enrolled store");
+  }
+  const pool=new Pool(options);
+  try {
+    const result=read ? await receiveOwnedOrder(pool,careSchema(),second)
+      : await createOwnedOrder(pool,careSchema(),{id:first,cents:Number(second),email:process.env.SDS_OWNER_QA_RECEIPT_EMAIL,
+          live:process.env.SDS_PRIVATE_PREVIEW!=="1",origin:careOrigin(process.env)});
+    console.log(JSON.stringify(result));
+  } finally {await pool.end();}
 }
