@@ -48,6 +48,9 @@ test("production Care schema enrollment and every database consumer respect role
   await admin.query(careEnrollment(schema, role));
   await admin.query(careRailUpgrade(schema));
   await admin.query(careRailUpgrade(schema));
+  const journeyColumns = await admin.query(
+    "select column_name from information_schema.columns where table_schema=$1 and table_name='journey_events' and column_name='traffic'", [schema]);
+  assert.equal(journeyColumns.rowCount, 1);
   const password = randomBytes(24).toString("hex");
   await admin.query(`alter role ${role} password '${password}'`);
   execFileSync(join(cluster.bin, "pg_ctl"), ["-D", data, "reload"], { stdio: "ignore", timeout: 10000 });

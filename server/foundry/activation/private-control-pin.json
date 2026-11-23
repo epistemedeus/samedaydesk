@@ -423,6 +423,8 @@
     "supabase/migrations/0014_commerce_journey.sql": "aee0edfd6dd738150e84622c14cba85e396d9bb959ff04a5db78d1d135719aee",
     "supabase/migrations/0015_mail_events.sql": "2888d7edfdcc977061e4e88fd4c500a598ff060ee4775b467dd0f2f8acf23af3",
     "supabase/migrations/0016_hosted_orders.sql": "e38d95bd4270397382834c1a5fa06dc34a05fda7b59e711fe9aa3f0f9343c1bf",
+    "supabase/migrations/0017_journey_traffic.sql": "7eba30f76ca4e232b86231b718551ab0c297d605df1259143175cd043433edda",
+    "supabase/migrations/0018_journey_traffic_rpc.sql": "21ed2d19d4d06630acd7f4e7265cfda0a4fdbcbfb5d65a9b6f8e85fe1bbaa783",
     "supabase/migrations/0019_care_order_rail.sql": "d15f514bb2e32bbc06270c056407e8da135cf4ec1ed628b294e4e4c759683ee0",
     "supabase/migrations/0023_skill_watch_periods.sql": "3ab66f6a61b0a840de450cd34e5a1ea9738277bff09b6465158daa1bcb979997",
     "vendor/hosted-wallet-market/ENTRY.md": "e3dfe2429c3295c0fef247baa3f765a22f1ffbcfb39e2a1a0a41f0fd81666ca6",
