@@ -18,7 +18,7 @@ test("stored USDC attempt produces one account order from frozen intake and pres
     await pool.query(initial.match(new RegExp("create table if not exists public\\." + name + " \\([\\s\\S]*?\\n\\);"))[0]);
   }
   await pool.query(await migration("0004_repeat_purchase_attempts.sql"));
-  await pool.query(await migration("0018_account_order_rail.sql"));
+  await pool.query(await migration("0020_account_order_rail.sql"));
   const uid = randomUUID(), id = "attempt_" + randomUUID(), rail = randomUUID();
   await pool.query("insert into auth.users values($1)", [uid]);
   await pool.query("insert into public.profiles(id) values($1)", [uid]);

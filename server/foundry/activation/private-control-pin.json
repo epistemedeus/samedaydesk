@@ -416,7 +416,7 @@
     "supabase/migrations/0014_commerce_journey.sql": "aee0edfd6dd738150e84622c14cba85e396d9bb959ff04a5db78d1d135719aee",
     "supabase/migrations/0015_mail_events.sql": "2888d7edfdcc977061e4e88fd4c500a598ff060ee4775b467dd0f2f8acf23af3",
     "supabase/migrations/0016_hosted_orders.sql": "e38d95bd4270397382834c1a5fa06dc34a05fda7b59e711fe9aa3f0f9343c1bf",
-    "supabase/migrations/0017_care_order_rail.sql": "d15f514bb2e32bbc06270c056407e8da135cf4ec1ed628b294e4e4c759683ee0",
+    "supabase/migrations/0019_care_order_rail.sql": "d15f514bb2e32bbc06270c056407e8da135cf4ec1ed628b294e4e4c759683ee0",
     "vendor/hosted-wallet-market/ENTRY.md": "e3dfe2429c3295c0fef247baa3f765a22f1ffbcfb39e2a1a0a41f0fd81666ca6",
     "vendor/hosted-wallet-market/INSTALL-ROLLBACK.md": "3fb9340f0a5a994ef6a6e84cdaa2ccd61edbcf4eecbdab91929b9ace9429b038",
     "vendor/hosted-wallet-market/README.md": "7e7be3f8c5eb6d20707de9e1c860251214612e08db596a0c5d52183f185e6351",
