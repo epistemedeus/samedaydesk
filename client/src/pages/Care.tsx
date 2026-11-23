@@ -7,10 +7,10 @@ import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 
 type Receipt = {
-  title: string; state: string; receivedIntake: boolean; amountCents: number; refundedCents?: number; invoiceUrl?: string; paymentUrl?: string; paymentState?: string;
+  title: string; state: string; receivedIntake: boolean; amountCents: number; currency?: "USD" | "USDC"; refundedCents?: number; invoiceUrl?: string; paymentUrl?: string; paymentState?: string;
   subscription?: { cancelAtPeriodEnd: boolean; status: string };
 };
-const money = (cents: number) => `${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 2 })} USD`;
+const money = (cents: number, currency: "USD" | "USDC" = "USD") => `${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 2 })} ${currency}`;
 const send = async (action: string, data: object) => {
   const response = await fetch(`/api/care/${action}`, {
     method: "POST", headers: { "Content-Type": "application/json" },
@@ -209,9 +209,9 @@ export function CareReceipt({ mode }: { mode: "intake" | "cancel" }) {
     {receipt?.state === "refunded" && <p>Payment refunded.</p>}
     {receipt?.state === "review" && <p>We are reviewing this order. Reply to your receipt if you need help.</p>}
     {receipt?.state === "paid" && <>
-      <p>Paid: {money(receipt.amountCents)}{receipt.subscription ? " for the first month" : ""}.</p>
+      <p>Paid: {money(receipt.amountCents, receipt.currency)}{receipt.subscription ? " for the first month" : ""}.</p>
       {/* A refunded month keeps the subscription; the refund still shows here. */}
-      {Boolean(receipt.refundedCents) && <p>Refunded: {money(receipt.refundedCents!)}.</p>}
+      {Boolean(receipt.refundedCents) && <p>Refunded: {money(receipt.refundedCents!, receipt.currency)}.</p>}
       {receipt.subscription?.cancelAtPeriodEnd && <p>Your subscription will not renew.</p>}
       {receipt.receivedIntake && <p role="status">We received your workflow.</p>}
       {!receipt.receivedIntake && !message && <form className={styles.form} onSubmit={submit}>

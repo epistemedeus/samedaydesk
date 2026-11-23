@@ -1,6 +1,6 @@
 import { legacyLicense } from "./legacy-order.js";
 import { readFile } from "node:fs/promises";
-import { careServiceOffer, careLink } from "./care-contract.js";
+import { careServiceOffer, careLink, careReceiptAmount } from "./care-contract.js";
 import { recordCommerceJourney } from "./commerce-journey.js";
 
 const day = (value) => new Date(value).toISOString().slice(0, 10);
@@ -13,10 +13,11 @@ export function careMailMessage({ order, item, secret, from, replyTo }) {
   const watch=order.offer==="legacy_skill_watch";
   if (item.kind === "receipt") {
     subject = "Your SameDayDesk receipt";
-    const cents = BigInt(order.rail_qa_cents ?? order.amount_cents);
+    const { amountCents, currency } = careReceiptAmount(order);
+    const cents = BigInt(amountCents);
     const amount = cents % 100n ? `${cents / 100n}.${String(cents % 100n).padStart(2,"0")}` : String(cents / 100n);
-    text = `${offer.title}\nPaid: ${amount} USD.\n\nTell us what to work on: ${scopeLink}`;
-    if(watch)text=`SkillGuard Watch\nPaid ${amount} USD.\n`+(order.intake.repositories?.length
+    text = `${offer.title}\nPaid: ${amount} ${currency}.\n\nTell us what to work on: ${scopeLink}`;
+    if(watch)text=`SkillGuard Watch\nPaid ${amount} ${currency}.\n`+(order.intake.repositories?.length
       ? "Watched repositories:\n"+order.intake.repositories.join("\n") : "Reply to this receipt with the repositories to watch.");
     if (item.details?.period) text += `\nService period starting ${day(item.details.period)}.`;
     if (cancelLink) text += `\n\nManage or cancel renewal: ${cancelLink}`;
