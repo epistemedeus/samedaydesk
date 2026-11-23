@@ -20,7 +20,7 @@ export function railQuote(row) {
     cents, row.rail_qa_cents, created, expires, resource, ...(row.offer==="legacy_skill_watch" ? [row.intake?.repositories,row.intake?.priceId] : [])])).digest("hex");
   const state = row.rail_refund?.state ?? row.rail_observation?.state ?? (row.rail_attempt ? "seen" : "waiting");
   return { id: row.rail_id, resource, version, cents, created, expires, state, ownerQa: row.rail_qa_cents != null, startBlock: row.rail_start_block,
-    attempt: row.rail_attempt, transaction: row.rail_provider?.transaction, providerReason: row.rail_provider?.reason,
+    reviews: row.rail_provider?.reviews, attempt: row.rail_attempt, transaction: row.rail_provider?.transaction, providerReason: row.rail_provider?.reason,
     reason: row.rail_observation?.reason ?? row.rail_provider?.reason,
     receipt: row.rail_observation?.evidence && { ...row.rail_observation.evidence, refund: row.rail_refund?.evidence },
     refund: row.rail_refund, receiptHeaders: row.rail_provider?.headers };
@@ -35,6 +35,14 @@ export function createCareUsdcStore({ txn, table, mail }) {
       if (!quote) throw new CareError(404, "Order not found.");
       const { attempt } = body;
       let { result } = body;
+      if (body.review !== undefined) {
+        const plan = projectRailChange(quote, action, body);
+        if (plan.patch) {
+          const provider = {...row.rail_provider, reviews: plan.patch.reviews};
+          await db.query(`update ${name} set rail_provider=$2 where rail_id=$1`, [id, provider]);
+        }
+        return plan.value;
+      }
       if (row.rail_parent && ["load","arm","observe"].includes(action)) {
         const parent = (await db.query(`select state,cancel_at_period_end from ${name} where id=$1 for update`, [row.rail_parent])).rows[0];
         if (quote.state === "waiting" && (parent?.state !== "paid" || parent.cancel_at_period_end ||
@@ -61,6 +69,7 @@ export function createCareUsdcStore({ txn, table, mail }) {
         await db.query(`update ${name} set rail_attempt=$2 where rail_id=$1`, [id, {
           version: quote.version, nonce: attempt.nonce, payer: attempt.payer, protocol: attempt.protocol, nextBlock: attempt.nextBlock,
           ...(attempt.validBefore && { validBefore: attempt.validBefore }),
+          ...(/^[0-9a-f]{64}$/.test(attempt.requestKey) && { requestKey: attempt.requestKey }),
         }]);
         return { armed: true };
       }
