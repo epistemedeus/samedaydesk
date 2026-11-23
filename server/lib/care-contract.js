@@ -65,6 +65,15 @@ export function careLink(order, secret, purpose = "intake") {
   return `${order.checkout_origin}${path}#${new URLSearchParams({ order: order.id, key: careToken(secret, order.id, purpose) })}`;
 }
 
+// The customer returns to the existing receipt capability. Keep the agent resource
+// and protected QA wallet canonical; this extra path belongs only to customer UI.
+export function careWalletLink(order, secret) {
+  const receipt = new URL(careLink(order, secret));
+  const wallet = new URL(`https://agents.samedaydesk.com/order-payments/sds/${order.rail_id}/wallet`);
+  wallet.searchParams.set("return", receipt.pathname + receipt.search + receipt.hash);
+  return wallet.href;
+}
+
 // releaseRun tags a private preview's test session for the release harness (metadata.release_run).
 export function checkoutArgs(order, secret, releaseRun = null) {
   const offer = CARE_OFFERS[order.offer];

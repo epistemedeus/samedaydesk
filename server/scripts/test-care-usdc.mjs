@@ -8,6 +8,7 @@ import { careTable } from "../lib/care-database.js";
 import { createOwnedOrder } from "./care-usdc-qa.mjs";
 import { careMailMessage } from "../lib/care-mail.js";
 import { railQuote } from "../lib/care-usdc.js";
+import { careLink, verifyCareToken } from "../lib/care-contract.js";
 
 const payer = "0x1111111111111111111111111111111111111111", merchant = "0x8904dF3DE6DFEe6a7C8cc38619d2f17806213Cee";
 const asset = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
@@ -25,6 +26,15 @@ test("Care PostgreSQL elects a method and fulfils a finalized USDC payment exact
   assert.equal(new Set(results.map(r => r.paymentUrl)).size, 1);
   const row = await store.order(id);
   assert.notEqual(row.id, row.rail_id);
+  const wallet = new URL(results[0].wallet), receipt = new URL(careLink(row, secret));
+  assert.equal(wallet.origin, "https://agents.samedaydesk.com");
+  assert.equal(wallet.pathname, `/order-payments/sds/${row.rail_id}/wallet`);
+  assert.equal(wallet.searchParams.get("return"), receipt.pathname + receipt.hash);
+  assert.equal(new URLSearchParams(receipt.hash.slice(1)).get("order"), id);
+  assert.ok(verifyCareToken(secret, id, "intake", new URLSearchParams(receipt.hash.slice(1)).get("key")));
+  assert.equal(results[0].receipt, receipt.href);
+  assert.equal(results[0].paymentUrl, `https://agents.samedaydesk.com/order-payments/sds/${row.rail_id}`);
+  assert.equal((await service.read(id, new URLSearchParams(receipt.hash.slice(1)).get("key"))).wallet, wallet.href);
   await assert.rejects(service.start("machine_payment_route", id), /different checkout/);
   const action = (key, body = {}) => store.usdc.change(row.rail_id, key, body);
   const q = await action("load");
@@ -58,6 +68,8 @@ test("only private QA creation produces a small quote; marks survive readback", 
   t.after(() => pool.end());
   const id = randomUUID(), params = { id, cents: 1, email, live: false, origin };
   const qa = await createOwnedOrder(pool, process.env.SDS_CARE_SCHEMA, params);
+  assert.equal(qa.wallet, qa.agent + "/wallet");
+  assert.equal(new URL(qa.wallet).search, "");
   assert.deepEqual(qa, await createOwnedOrder(pool, process.env.SDS_CARE_SCHEMA, params));
   await assert.rejects(createOwnedOrder(pool, process.env.SDS_CARE_SCHEMA, { ...params, cents: 2 }));
   const row = (await pool.query(`select * from ${careTable("care_orders")} where id=$1`, [id])).rows[0];

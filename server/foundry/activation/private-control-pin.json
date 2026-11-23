@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "44328893bf3598a54deadf2d49952f55ab9ff7cf",
+  "base": "cee7c9f9e6cc03da2ca3fa0c3dbfb45d2ba374e6",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
@@ -51,11 +51,11 @@
     "server/lib/agent-readiness/x402-entries.js": "d49cdc2ee437ca06b6f712e41c6ae9f8a07e04c585c0ba5050ff766c35b703b0",
     "server/lib/apex-agent-card.js": "f7657e87aecfc8d62ac484098e9a2d47a18f96c912fbb486b9b1af5853366d0d",
     "server/lib/apex-declarations.js": "9d12e20db9fd8a303ba8e2ca4659f1edf8e84788436cf47b0297ac0d85f5b595",
-    "server/lib/care-contract.js": "8c00ae1e4dd01f4075922d05f6e23c269ec5071a532a825051184c8e5d3a6972",
+    "server/lib/care-contract.js": "589bfbb60743bfa11a09c28f5b52a9bfd3007d0ac60452627fcd86c5d5a70917",
     "server/lib/care-database.js": "c36fb812abbeffa9a1876093c2ed8fe5ea93799135b3dbf1b7a65ac814d5adb3",
     "server/lib/care-mail.js": "813c0a4c334d3b94ff185b0c1b740f56144dd5090dccd47c18d0e714435b8ab6",
     "server/lib/care-sentinel.js": "95694a6f738e209bd0a32608780e29f41669660a2bfa90471c55434c68e64baa",
-    "server/lib/care-service.js": "4a78b6c9105b98be8f15e0ef428c129a29cf3d818a52bde97f049eaa67ff669f",
+    "server/lib/care-service.js": "7b2e45b61c6444d8dc9f55b709cfdf1ee5e2f0f55f5340e3c1078745b649e13a",
     "server/lib/care-store.js": "355a0cabb43454b584f11efe47068a314f822b0e81f5a313245e1b65a514d402",
     "server/lib/care-usdc-month.js": "fb5fad01248408357581e26f76bdc4574788f736ff8165fab1023b83171e8f77",
     "server/lib/care-usdc.js": "ef18bc54522790a4c103bc8811b3d0434367638fd2502f63a884aa98544b2499",
@@ -1871,6 +1871,11 @@
       "base": "99a1605f1407e2485724e511d774473188ee8079",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:b38ca8bd23a1363da5c69efb0c7510de6a5bd54f0fa595e44be8cd2b39cb6621"
+    },
+    {
+      "base": "44328893bf3598a54deadf2d49952f55ab9ff7cf",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:1534830b5c8d0347ff235d1f163fcd85afc626424f356077aa21bd13951c8727"
     }
   ]
 }
