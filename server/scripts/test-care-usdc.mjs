@@ -101,3 +101,29 @@ test("monthly USDC shares the service-period key, schedules an unsigned invoice 
   await store.subscriptionState(id, { status: "active", cancel: true, at: new Date() });
   assert.equal((await store.usdc.change(child.rail_id, "arm", { attempt })).armed, false);
 });
+
+test("written scope issues one payment choice and one paid task under card/USDC contention", async t => {
+  const pool = new pg.Pool({connectionString:process.env.SDS_CARE_DATABASE_URL});
+  const store = openCareStore();
+  t.after(async()=>{ await pool.end(); await store.close(); });
+  const service = createCareService({store,stripe:{},live:false,origin,secret,orderPayments:true});
+  const request = await store.taskRequests.insert({email,task:"Inspect the agreed checkout and verify the result."});
+  const terms={amountCents:17700,scope:"Repair the accepted checkout scope.",acceptance:"The agreed client can check out."};
+  const issued=await service.issueQuote(request.id,terms);
+  assert.deepEqual(await service.issueQuote(request.id,terms),issued);
+  const key=issued.url.split("/").at(-1);
+  assert.equal((await service.selectQuote(key)).cents,17700);
+  const selected=await service.selectQuote(key,"usdc");
+  await assert.rejects(service.selectQuote(key,"stripe"),{status:409});
+  const id=selected.paymentUrl.split("/").at(-1);
+  const call=(action,body={})=>service.quoteRail.change(id,action,body);
+  const q=await call("load"); const attempt={version:q.version,nonce:"0x"+"3".repeat(64),payer,protocol:"mpp",nextBlock:"81"};
+  await call("anchor",{block:"81"});
+  assert.equal((await Promise.all([call("arm",{attempt}),call("arm",{attempt})])).filter(x=>x.armed).length,1);
+  const result={state:"paid",evidence:{asset,recipient:merchant,payer,nonce:attempt.nonce,logIndex:0,transferLogIndex:1,
+    amount:"177000000",transaction:"0x"+"4".repeat(64),blockHash:"0x"+"5".repeat(64),block:"81",timestamp:String(Math.ceil(q.created/1000))}};
+  await call("observe",{attempt,result}); await call("observe",{attempt,result});
+  const paid = await store.quotes.order(issued.quoteId);
+  assert.ok(paid.paid_at); assert.equal(paid.stripe_link,null); assert.equal(paid.payment_intent,null);
+  assert.equal((await pool.query(`select status from ${careTable("task_requests")} where id=$1`,[request.id])).rows[0].status,"paid");
+});

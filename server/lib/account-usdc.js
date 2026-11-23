@@ -42,7 +42,7 @@ export function accountUsdc({ getAdmin = supabaseAdmin, stripe, enabled, live = 
       const received = key === "receipt" ? await receipt({ to: row.stripe_create_params.receipt_email,
         amount: row.amount, label: getOffer(row.offer).label, orderId: "order_" + row.id }) :
         await journey(key, { key: "usdc/" + row.rail_id, orderId: row.id, sessionId: row.rail_id, live,
-          agent: row.rail_state?.attempt?.protocol === "x402", utm: { payment_method: "base_usdc" } });
+          utm: { payment_method: "base_usdc" } });
       if (received) await mark(key,true);
     }
   }

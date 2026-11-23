@@ -42,7 +42,7 @@ export function configuredCareService(env = process.env) {
 }
 
 export function createCareService({ store, stripe, secret, origin, live, portalConfiguration, noncard = false, stablecoin = false, orderPayments = false, releaseRun = null, now = () => new Date() }) {
-  const quotes = createTaskQuoteService({ store: store.quotes, stripe, live, now });
+  const quotes = createTaskQuoteService({ store: store.quotes, stripe, live, now, origin, orderPayments });
   const notFound = () => new CareError(404, "This receipt link is not available.");
   const matchesMode = (order) => order && order.live_mode === live;
 
@@ -345,5 +345,5 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
   }
 
   return { start, startInvoice, startUsdc, usdc: store.usdc, methods, read, submit, portal, eventIsCare, recordHosted, taskRequests: store.taskRequests,
-    issueQuote: quotes.issue, close: () => store.close() };
+    quoteRail: store.quotes?.rail, selectQuote: quotes.select, issueQuote: quotes.issue, close: () => store.close() };
 }

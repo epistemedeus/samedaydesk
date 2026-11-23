@@ -1,3 +1,4 @@
+import { OrderRailConflict } from "../vendor/order-payments/site-state.mjs";
 import { timingSafeEqual } from "node:crypto";
 import { Router } from "express";
 import { CareError, isOrderId } from "../lib/care-contract.js";
@@ -12,7 +13,7 @@ export function orderPaymentsRouter(store, token, admin = false) {
         !timingSafeEqual(expected, actual) || !isOrderId(req.params.id) ||
         !(admin ? ["read","reserve"] : ["load","arm","anchor","submitted","observe","refund-observe"]).includes(req.params.action)) return res.sendStatus(404);
     try { return res.json(await store.change(req.params.id, admin ? "refund-" + req.params.action : req.params.action, req.body || {})); }
-    catch (e) { return res.status(e instanceof CareError ? e.status : 503).json({ error: "order_update_unavailable" }); }
+    catch (e) { return res.status((e instanceof CareError || e instanceof OrderRailConflict) ? e.status : 503).json({ error: "order_update_unavailable" }); }
   });
   return router;
 }

@@ -129,7 +129,7 @@ export function createCareUsdcStore({ txn, table, mail }) {
         if (row.state !== "created" || row.session_id || row.subscription_id || attempt.version !== quote.version ||
             e.amount !== String(BigInt(quote.cents) * 10000n) || !CARE_OFFERS[row.offer] ||
             CARE_OFFERS[row.offer].cents !== row.amount_cents ||
-            BigInt(e.timestamp) * 1000n >= BigInt(quote.expires) || BigInt(e.timestamp) * 1000n < BigInt(quote.created) ||
+            BigInt(e.timestamp) * 1000n >= BigInt(quote.expires) || BigInt(e.timestamp) < BigInt(Math.floor(quote.created / 1000)) ||
             (row.rail_provider?.transaction && e.transaction !== row.rail_provider.transaction)) {
           observed = { state: "held", reason: "order_changed", evidence: e };
         }
@@ -159,5 +159,5 @@ export async function recordRailEvent(db, table, row, event) {
   await db.query(`insert into ${table("journey_events")}(event_key, brand,event,session_id,test,order_id,is_agent,utm)
     values ($1,'samedaydesk',$2,$3,$4,$5,$6,$7) on conflict(event_key) do nothing`,
     [`samedaydesk/${event}/usdc/${row.rail_id}`, event, row.journey_session || row.id,
-      !row.live_mode || row.rail_qa_cents != null, row.id, row.rail_attempt?.protocol === "x402", { payment_method: "base_usdc" }]);
+      !row.live_mode || row.rail_qa_cents != null, row.id, false, { payment_method: "base_usdc" }]);
 }

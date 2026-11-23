@@ -190,7 +190,7 @@ export default function Checkout() {
           ) : null}
           {usdcUrl ? <p><a href={usdcUrl + "/wallet"} target="_blank" rel="noopener noreferrer">Open wallet payment on Base</a></p> :
             usdcAvailable && <button type="button" onClick={() => void openUsdc()} disabled={paymentBusy || intakeBusy}>Pay with USDC</button>}
-          <p className={styles.secure}>🔒 Payments are processed securely by Stripe. We never see your card details.</p>
+          <p className={styles.secure}>Card payments are processed by Stripe.</p>
         </section>
       </div>
     </main>

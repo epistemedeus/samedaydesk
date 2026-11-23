@@ -1,3 +1,4 @@
+import { taskQuoteRail } from "./task-quote-rail.js";
 import { randomUUID } from "node:crypto";
 import { CareError, isOrderId, providerId } from "./care-contract.js";
 
@@ -17,19 +18,23 @@ export function quoteTerms({ amountCents, scope, acceptance }) {
 export function createTaskQuoteStore(pool, txn, schema = careSchema()) {
   const table = (name) => careTable(name, schema);
   return {
-    async reserve(requestId, terms, live) {
+    rail: taskQuoteRail(txn, table),
+    async reserve(requestId, terms, live, choice = false) {
       return txn(async (client) => {
         const request = await rowOf(client.query(`select * from ${table("task_requests")} where id = $1 for update`, [requestId]));
         if (!request) throw new CareError(404, "Task request not found.");
         const fields = [requestId, terms.amountCents, terms.scope, terms.acceptance, live];
         if (request.status === "received") await client.query(`insert into ${table("task_quotes")}
-          (id,request_id,amount_cents,scope,acceptance,live_mode) values ($1,$2,$3,$4,$5,$6)
-          on conflict (request_id) do nothing`, [randomUUID(), ...fields]);
+          (id,request_id,amount_cents,scope,acceptance,live_mode,checkout_rail,checkout_key,rail_id) values ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+          on conflict (request_id) do nothing`, [randomUUID(), ...fields, choice ? "choice" : "stripe", choice ? randomUUID() : null, choice ? randomUUID() : null]);
         const row = await rowOf(client.query(`select * from ${table("task_quotes")} where request_id = $1`, [requestId]));
         if (!row || row.paid_at || request.status === "closed" ||
             row.amount_cents !== terms.amountCents || row.scope !== terms.scope ||
             row.acceptance !== terms.acceptance || row.live_mode !== live) {
           throw new CareError(409, "This task already has a different quote or is no longer open.");
+        }
+        if (row.checkout_key && request.status === "received") {
+          await client.query(`update ${table("task_requests")} set status='quoted' where id=$1`,[requestId]);
         }
         return { ...row, recipient: request.email };
       });
@@ -75,47 +80,60 @@ function quoteUrl(value, live) {
   throw new CareError(502, "Stripe returned an unexpected quote link.");
 }
 
-export function createTaskQuoteService({ store, stripe, live, now = () => new Date() }) {
+export function createTaskQuoteService({ store, stripe, live, orderPayments, origin, now = () => new Date() }) {
+  async function stripeLink(row) {
+    if (row.stripe_url) {
+      const current = await stripe.paymentLinks.retrieve(row.stripe_link);
+      if (!current.active || current.livemode !== live || current.url !== row.stripe_url ||
+          current.metadata?.sds_task_quote !== row.id) throw new CareError(409, "The quote link is no longer open.");
+    } else {
+      if (now().getTime() - new Date(row.rail_opened_at ?? row.created_at).getTime() > LIMIT) {
+        throw new CareError(409, "Reconcile the previous Stripe attempt before issuing a link.");
+      }
+      const metadata = { sds_task_quote: row.id };
+      if (!row.stripe_price) {
+        const price = await stripe.prices.create({ currency: "usd", unit_amount: row.amount_cents,
+          product_data: { name: "SameDayDesk quoted work" }, metadata }, { idempotencyKey: `sds-task-price/${row.id}` });
+        if (!providerId(price, "price") || price.livemode !== live || price.currency !== "usd" || price.unit_amount !== row.amount_cents) {
+          throw new CareError(502, "Stripe did not confirm the quote amount.");
+        }
+        row = await store.price(row.id, price.id);
+        if (!row) throw new CareError(409, "A different quote price was already recorded.");
+      }
+      const link = await stripe.paymentLinks.create({
+        line_items: [{ price: row.stripe_price, quantity: 1 }],
+        restrictions: { completed_sessions: { limit: 1 } },
+        allow_promotion_codes: false,
+        metadata, payment_intent_data: { metadata },
+        after_completion: { type: "hosted_confirmation", hosted_confirmation: {
+          custom_message: "Payment received. Keep your original SameDayDesk quote for the agreed scope and acceptance check.",
+        } },
+      }, { idempotencyKey: `sds-task-link/${row.id}` });
+      if (!providerId(link, "plink") || !link.active || link.livemode !== live || link.metadata?.sds_task_quote !== row.id) {
+        throw new CareError(502, "Stripe did not confirm the quote link.");
+      }
+      row = await store.offer(row.id, link.id, quoteUrl(link.url, live));
+    }
+    return quoteUrl(row.stripe_url, live);
+  }
   return {
     async issue(requestId, input) {
       if (!isOrderId(requestId)) throw new CareError(400, "Enter the exact task request ID.");
-      const terms = quoteTerms(input);
-      let row = await store.reserve(requestId, terms, live);
-      const to = row.recipient;
-      if (row.stripe_url) {
-        const current = await stripe.paymentLinks.retrieve(row.stripe_link);
-        if (!current.active || current.livemode !== live || current.url !== row.stripe_url ||
-            current.metadata?.sds_task_quote !== row.id) throw new CareError(409, "The quote link is no longer open.");
-      } else {
-        if (now().getTime() - new Date(row.created_at).getTime() > LIMIT) {
-          throw new CareError(409, "Reconcile the previous Stripe attempt before issuing a link.");
-        }
-        const metadata = { sds_task_quote: row.id };
-        if (!row.stripe_price) {
-          const price = await stripe.prices.create({ currency: "usd", unit_amount: row.amount_cents,
-            product_data: { name: "SameDayDesk quoted work" }, metadata }, { idempotencyKey: `sds-task-price/${row.id}` });
-          if (!providerId(price, "price") || price.livemode !== live || price.currency !== "usd" || price.unit_amount !== row.amount_cents) {
-            throw new CareError(502, "Stripe did not confirm the quote amount.");
-          }
-          row = await store.price(row.id, price.id);
-          if (!row) throw new CareError(409, "A different quote price was already recorded.");
-        }
-        const link = await stripe.paymentLinks.create({
-          line_items: [{ price: row.stripe_price, quantity: 1 }],
-          restrictions: { completed_sessions: { limit: 1 } },
-          allow_promotion_codes: false,
-          metadata, payment_intent_data: { metadata },
-          after_completion: { type: "hosted_confirmation", hosted_confirmation: {
-            custom_message: "Payment received. Keep your original SameDayDesk quote for the agreed scope and acceptance check.",
-          } },
-        }, { idempotencyKey: `sds-task-link/${row.id}` });
-        if (!providerId(link, "plink") || !link.active || link.livemode !== live || link.metadata?.sds_task_quote !== row.id) {
-          throw new CareError(502, "Stripe did not confirm the quote link.");
-        }
-        row = await store.offer(row.id, link.id, quoteUrl(link.url, live));
-      }
-      return { requestId, quoteId: row.id, to, amountCents: row.amount_cents, currency: "usd",
-        scope: row.scope, acceptance: row.acceptance, url: quoteUrl(row.stripe_url, live) };
+      const row = await store.reserve(requestId,quoteTerms(input),live,orderPayments);
+      // Already issued provider URLs retain their original election. New quotes get
+      // one first-party selection capability before any provider checkout is created.
+      const url = row.checkout_key ? origin + "/api/care/quote/" + row.checkout_key : await stripeLink(row);
+      return { requestId, quoteId:row.id, to:row.recipient, amountCents:row.amount_cents, currency:"usd",
+        scope:row.scope, acceptance:row.acceptance, url };
+    },
+    async select(key,method) {
+      if (!isOrderId(key)) throw new CareError(404,"Quote not found.");
+      const row = await store.rail.select(key,method);
+      if (!method) return { cents:row.amount_cents, scope:row.scope, acceptance:row.acceptance,
+        reference:row.id, state:row.checkout_rail === "usdc" ? (row.rail_state.state ?? "usdc") : row.paid_at ? "paid" : row.checkout_rail,
+        ...(row.checkout_rail === "usdc" && { paymentUrl:"https://agents.samedaydesk.com/order-payments/sds/" + row.rail_id }) };
+      if (method === "stripe") return { url:await stripeLink(row) };
+      return { paymentUrl:"https://agents.samedaydesk.com/order-payments/sds/" + row.rail_id };
     },
     async event(event) {
       if (event.livemode !== live) return false;
