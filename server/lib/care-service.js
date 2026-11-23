@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import {
-  CARE_OFFERS, CareError, NONCARD_DAYS_DUE, NONCARD_METHODS, NONCARD_PRICE_KEY, careLink, careOrigin, carePaidPeriod,
+  CARE_OFFERS, careServiceOffer, CareError, NONCARD_DAYS_DUE, NONCARD_METHODS, NONCARD_PRICE_KEY, careLink, careOrigin, carePaidPeriod,
   checkoutArgs, checkedSession, invoiceSubscriptionArgs, isOrderId, newIntegrationId, providerId, readCareIntake, subscriptionOfInvoice, subscriptionWillNotRenew, verifyCareToken,
 } from "./care-contract.js";
 import { openCareStore } from "./care-store.js";
@@ -174,11 +174,11 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
       if (invoice.status === "open") invoiceUrl = allowedStripeUrl(invoice.hosted_invoice_url, "invoice.stripe.com");
     }
     return {
-      offer: order.offer, title: CARE_OFFERS[order.offer].title, amountCents: order.amount_cents, ...(invoiceUrl ? { invoiceUrl } : {}),
+      offer: order.offer, title: careServiceOffer(order.offer).title, amountCents: order.amount_cents, ...(invoiceUrl ? { invoiceUrl } : {}),
       ...(order.rail_id ? { paymentUrl: "https://agents.samedaydesk.com/order-payments/sds/" + order.rail_id,
         paymentState: order.rail_refund?.state || order.rail_observation?.state || (order.rail_attempt ? "seen" : "waiting") } : {}),
       state: order.state, receivedIntake: Boolean(order.intake), refundedCents: order.refunded_cents ?? 0,
-      ...(order.offer === "keep_it_working" && order.state === "paid"
+      ...(careServiceOffer(order.offer)?.mode === "subscription" && order.state === "paid"
         ? { subscription: { cancelAtPeriodEnd: order.cancel_at_period_end, status: order.subscription_status || "active" } }
         : {}),
     };
@@ -193,7 +193,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
 
   async function portal(id, key) {
     const order = await byCapability(id, key, "cancel");
-    if (order.checkout_rail === "usdc" && order.offer === "keep_it_working" && !order.rail_parent && order.state === "paid") {
+    if (order.checkout_rail === "usdc" && careServiceOffer(order.offer)?.mode === "subscription" && !order.rail_parent && order.state === "paid") {
       await store.subscriptionState(id, { status: "active", cancel: true, at: now() });
       return { canceled: true };
     }
@@ -234,6 +234,11 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     if (event.livemode !== live) return false;
     const object = event.data?.object;
     if (!object) return false;
+    if (["checkout.session.completed","checkout.session.async_payment_succeeded"].includes(event.type) &&
+        String(object.client_reference_id||"").startsWith("sds_watch_")) {
+      if(object.payment_status==="paid")await store.watch.card(object,stripe,live,store);
+      return true;
+    }
     if (await quotes.event(event)) return true;
     if (["checkout.session.completed", "checkout.session.async_payment_succeeded", "checkout.session.async_payment_failed",
       "checkout.session.expired"].includes(event.type)) {
@@ -346,6 +351,10 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
   }
 
   return { start, startInvoice, startUsdc, usdc: store.usdc, methods, read, submit, portal, eventIsCare, recordHosted, taskRequests: store.taskRequests,
+    watchStart(input) {
+      if(!orderPayments)throw new CareError(404,"Payment method unavailable.");
+      return store.watch.start(input,{stripe,live,env:process.env,origin});
+    },
     legacyStart(input) {
       if (!orderPayments) throw new CareError(404,"Payment method unavailable.");
       return store.legacyOrders.start(input,{stripe,env:process.env,live});

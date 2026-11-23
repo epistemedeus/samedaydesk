@@ -1,25 +1,32 @@
 import { legacyLicense } from "./legacy-order.js";
 import { readFile } from "node:fs/promises";
-import { CARE_OFFERS, careLink } from "./care-contract.js";
+import { careServiceOffer, careLink } from "./care-contract.js";
 import { recordCommerceJourney } from "./commerce-journey.js";
 
 const day = (value) => new Date(value).toISOString().slice(0, 10);
 
 export function careMailMessage({ order, item, secret, from, replyTo }) {
-  const offer = CARE_OFFERS[order.offer];
+  const offer = careServiceOffer(order.offer);
   const scopeLink = careLink(order, secret);
   const cancelLink = offer.mode === "subscription" ? careLink(order, secret, "cancel") : null;
   let subject, text;
+  const watch=order.offer==="legacy_skill_watch";
   if (item.kind === "receipt") {
     subject = "Your SameDayDesk receipt";
     const cents = BigInt(order.rail_qa_cents ?? order.amount_cents);
     const amount = cents % 100n ? `${cents / 100n}.${String(cents % 100n).padStart(2,"0")}` : String(cents / 100n);
     text = `${offer.title}\nPaid: ${amount} USD.\n\nTell us what to work on: ${scopeLink}`;
+    if(watch)text=`SkillGuard Watch\nPaid ${amount} USD.\n`+(order.intake.repositories?.length
+      ? "Watched repositories:\n"+order.intake.repositories.join("\n") : "Reply to this receipt with the repositories to watch.");
     if (item.details?.period) text += `\nService period starting ${day(item.details.period)}.`;
     if (cancelLink) text += `\n\nManage or cancel renewal: ${cancelLink}`;
   } else if (item.kind === "monthly_invoice") {
     subject = "Your monthly SameDayDesk invoice";
-    text = `Keep it working, ${day(item.details.start)}. Pay 100 USDC on Base: ${item.details.paymentUrl}/wallet\n\nManage your monthly invoices: ${cancelLink}`;
+    text = `${offer.title}, ${day(item.details.start)}. Pay ${BigInt(order.amount_cents)/100n} USDC on Base: ${item.details.paymentUrl}/wallet\n\nManage your monthly invoices: ${cancelLink}`;
+  } else if (item.kind === "skill_watch_alert") {
+    subject="SkillGuard Watch release alert";
+    const {repository,commit,verdict,rules}=item.details;
+    text=`${repository}\nRelease commit ${commit}\nScan result: ${verdict}.\n${rules.join("\n")}`;
   } else if (item.kind === "intake") {
     subject = "We received your workflow";
     text = "Your workflow is attached to your order. Reply to this email if you need to add anything.";

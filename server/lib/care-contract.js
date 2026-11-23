@@ -8,6 +8,10 @@ export const CARE_OFFERS = immutable({
   agent_storefront: immutable({ title: "A shop AI agents can buy from", cents: 99900, mode: "payment" }),
   keep_it_working: immutable({ title: "Keep it working", cents: 10000, mode: "subscription" }),
 });
+// Watch is sold through its existing catalog link and requires repository intake.
+export const watchOffer=immutable({id:"legacy_skill_watch",title:"SkillGuard Watch",cents:1200,interval:"month",mode:"subscription"});
+export const careServiceOffer = key => key === watchOffer.id
+  ? watchOffer : Object.hasOwn(CARE_OFFERS,key) ? CARE_OFFERS[key] : null;
 export const isOrderId = (value) => typeof value === "string" && /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(value);
 export const providerId = (value, prefix) => typeof (value?.id ?? value) === "string" &&
   new RegExp(`^${prefix}_[A-Za-z0-9_]{2,150}$`).test(value?.id ?? value) ? value?.id ?? value : null;
