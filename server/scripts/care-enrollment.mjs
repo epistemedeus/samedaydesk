@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { careSchema, careTable, careTables } from "../lib/care-database.js";
 
 export const careMigrations = ["0011_task_requests.sql", "0012_care_orders.sql", "0013_task_quotes.sql",
-  "0014_commerce_journey.sql", "0015_mail_events.sql", "0016_hosted_orders.sql", "0017_care_order_rail.sql", "0019_task_quote_rail.sql"];
+  "0014_commerce_journey.sql", "0015_mail_events.sql", "0016_hosted_orders.sql", "0017_care_order_rail.sql", "0019_task_quote_rail.sql", "0020_hosted_order_rail.sql"];
 
 function scopedMigration(file,schema) {
   const source = readFileSync(new URL(`../../supabase/migrations/${file}`,import.meta.url),"utf8");
@@ -14,7 +14,7 @@ function scopedMigration(file,schema) {
 // Print only upgrade statements for an already-enrolled schema. No DB connection.
 export function careRailUpgrade(schema) {
   careSchema({ SDS_CARE_SCHEMA:schema });
-  return ["BEGIN;",...careMigrations.filter(file=>file === "0017_care_order_rail.sql" || file === "0019_task_quote_rail.sql")
+  return ["BEGIN;",...careMigrations.filter(file=>file === "0017_care_order_rail.sql" || file === "0019_task_quote_rail.sql" || file === "0020_hosted_order_rail.sql")
     .map(file=>scopedMigration(file,schema)),"COMMIT;",""].join("\n");
 }
 

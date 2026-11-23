@@ -106,13 +106,20 @@ router.post("/verify", requireAuth, requireVerifiedEmail, async (req, res) => {
 // Unauthenticated hosted Checkout for the fixed seller-contract-repair offer.
 // Accepts only a bounded public brief finding ID; amount and label are server-owned.
 router.post("/seller-repair-session", async (req, res) => {
-  if (!isStripeConfigured()) return res.status(503).json({ error: "Payments not configured" });
   const findingId = req.body?.finding_id;
   try {
+    if (req.body?.order || req.body?.method === "base_usdc") {
+      const care = req.app.get("sdsCare");
+      if (!care) return res.sendStatus(503);
+      return res.json(await care.startRepair({ order:req.body.order,findingId,email:req.body.email,
+        method:req.body.method === "base_usdc" ? "usdc" : (!req.body.method || req.body.method === "card") ? "stripe" : null }));
+    }
+    if (!isStripeConfigured()) return res.status(503).json({ error: "Payments not configured" });
     const result = await createSellerRepairCheckoutSession(findingId);
     if (!result.ok) return res.status(result.status).json({ error: result.error });
     return res.json({ url: result.url });
   } catch (e) {
+    if (e instanceof CareError) return res.status(e.status).json({ error:e.message });
     console.error("[checkout] seller-repair-session", e?.message);
     return res.status(502).json({ error: "Could not start checkout" });
   }

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import pg from "pg";
 import { CareError } from "./care-contract.js";
 import { createCareUsdcStore, recordRailEvent } from "./care-usdc.js";
+import { hostedOrderRail } from "./hosted-rail.js";
 import { createTaskQuoteStore } from "./task-quotes.js";
 import { recordJourney } from "./journey-events.js";
 
@@ -37,6 +38,7 @@ export function createCareStore(pool, schema = careSchema()) {
 
   return {
     order,
+    hostedRail: hostedOrderRail(txn,table),
     usdc: createCareUsdcStore({ txn, table, mail }),
     bySubscription: (id) => first(pool.query(`select * from ${table("care_orders")} where subscription_id = $1`, [id])),
     byPayment: (id) => first(pool.query(`select * from ${table("care_orders")} where payment_intent_id = $1`, [id])),

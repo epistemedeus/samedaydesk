@@ -1,3 +1,4 @@
+import { queueOrderReceipt } from "./care-mail.js";
 import { createHash } from "node:crypto";
 import { CareError } from "./care-contract.js";
 import { projectRailChange } from "./order-rail-state.js";
@@ -56,6 +57,8 @@ export function taskQuoteRail(txn, table) {
       if (plan.patch.state === "paid") {
         await db.query(`update ${requests} set status='paid' where id=$1`,[row.request_id]);
         await event(db,row,"payment_verified");
+        await queueOrderReceipt(db,table,{quoteId:row.id,email:row.recipient,label:"Your agreed SameDayDesk task",
+          cents:row.amount_cents,paymentUrl:q.resource,live:row.live_mode,session:row.request_id});
       }
       if (plan.patch.state === "refunded") {
         await db.query(`update ${requests} set status='closed' where id=$1 and status='paid'`,[row.request_id]);

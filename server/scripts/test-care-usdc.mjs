@@ -127,3 +127,24 @@ test("written scope issues one payment choice and one paid task under card/USDC 
   assert.ok(paid.paid_at); assert.equal(paid.stripe_link,null); assert.equal(paid.payment_intent,null);
   assert.equal((await pool.query(`select status from ${careTable("task_requests")} where id=$1`,[request.id])).rows[0].status,"paid");
 });
+
+test("anonymous repair uses the existing hosted order, receipt and offer under rail contention",async t=>{
+  const pool=new pg.Pool({connectionString:process.env.SDS_CARE_DATABASE_URL}), store=openCareStore();
+  t.after(async()=>{await pool.end();await store.close();});
+  const input={order:randomUUID(),findingId:"hypernatt-liq-radar-20260830",email,method:"usdc",stripe:{},origin,live:false};
+  const res=await store.hostedRail.start(input);
+  assert.deepEqual(await store.hostedRail.start(input),res);
+  await assert.rejects(store.hostedRail.start({...input,method:"stripe"}),{status:409});
+  const id=res.paymentUrl.split("/").at(-1),call=(action,body={})=>store.hostedRail.change(id,action,body);
+  const q=await call("load");
+  const attempt={payer,nonce:"0x"+"6".repeat(64),version:q.version,protocol:"x402",nextBlock:"89"};
+  await call("anchor",{block:"89"});assert.ok((await call("arm",{attempt})).armed);
+  const result={state:"paid",evidence:{asset,recipient:merchant,payer,nonce:attempt.nonce,logIndex:0,transferLogIndex:1,
+    amount:"490000000",transaction:"0x"+"7".repeat(64),blockHash:"0x"+"8".repeat(64),block:"89",timestamp:String(Math.floor(q.created/1000))}};
+  await Promise.all([call("observe",{attempt,result}),call("observe",{attempt,result})]);
+  const hosted=(await pool.query(`select * from ${careTable("hosted_orders")} where order_key=$1`,[input.order])).rows;
+  assert.equal(hosted.length,1);assert.equal(hosted[0].state,"received");assert.equal(hosted[0].payment_intent_id,null);
+  assert.equal(hosted[0].checkout_details.findingId,input.findingId);
+  const mail=await pool.query(`select * from ${careTable("care_mail")} where hosted_order_id=$1`,[res.order]);
+  assert.equal(mail.rowCount,1);assert.equal(mail.rows[0].details.email,email);
+});

@@ -23,4 +23,4 @@ create unique index if not exists care_usdc_one_invoice_per_period on public.car
   where rail_parent is not null;
 alter table public.care_mail drop constraint if exists care_mail_kind_check;
 alter table public.care_mail add constraint care_mail_kind_check
-  check(kind in ('receipt','intake','report','cancellation','monthly_invoice'));
+  check(kind in ('receipt','intake','report','cancellation','monthly_invoice','order_receipt'));

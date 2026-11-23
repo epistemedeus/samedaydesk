@@ -36,20 +36,38 @@ export function careMailMessage({ order, item, secret, from, replyTo }) {
   return { from, replyTo, to: order.rail_email || order.stripe_email, subject, text };
 }
 
+export async function queueOrderReceipt(db,table,{hostedId,quoteId,email,label,cents,paymentUrl,live,session}) {
+  const id=hostedId ?? quoteId;
+  await db.query(`insert into ${table("care_mail")}(mail_key,hosted_order_id,quote_id,kind,details)
+    values($1,$2,$3,'order_receipt',$4) on conflict(mail_key) do nothing`,
+    ["order_receipt/"+id,hostedId ?? null,quoteId ?? null,{ email,label,cents,paymentUrl,live,session }]);
+}
+
 export async function drainCareMail({ store, send, secret, from, replyTo, limit = 20 }) {
   let accepted = 0, deferred = 0;
   for (let i = 0; i < limit; i++) {
     const item = await store.nextMail();
     if (!item) break;
     try {
-      const order = await store.order(item.order_id);
-      if (!order?.rail_email && !order?.stripe_email) throw new Error("No receipt email");
-      const message = careMailMessage({ order, item, secret, from, replyTo });
+      let message, order;
+      if (item.kind === "order_receipt") {
+        const {email,label,cents,paymentUrl}=item.details;
+        const units=BigInt(cents);
+        message={from,replyTo,to:email,subject:"Your SameDayDesk receipt",
+          text:`${label}\nPaid ${units / 100n}.${String(units % 100n).padStart(2,"0")} USDC on Base.\n\nView your payment and receipt: ${paymentUrl}/wallet`};
+      } else {
+        order = await store.order(item.order_id);
+        if (!order?.rail_email && !order?.stripe_email) throw new Error("No receipt email");
+        message = careMailMessage({ order, item, secret, from, replyTo });
+      }
       const result = await send(message, { idempotencyKey: `sameday-care/${item.mail_key}` });
       if (result.error || !result.data?.id) throw new Error("Mail not confirmed");
       await store.acceptMail(item.mail_key, item.claim_id, result.data.id);
       if (item.kind === "receipt") await recordCommerceJourney("receipt_sent", {
         key: item.mail_key, orderId: order.id, sessionId: order.journey_session || order.id, live: order.live_mode && order.rail_qa_cents == null,
+      });
+      if (item.kind === "order_receipt") await recordCommerceJourney("receipt_sent",{
+        key:item.mail_key,orderId:item.hosted_order_id ?? item.quote_id,sessionId:item.details.session,live:item.details.live
       });
       accepted++;
     } catch { deferred++; }

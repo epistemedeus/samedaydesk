@@ -176,7 +176,7 @@ app.use("/api/teaser", teaserRouter);
 app.use("/api/tools", toolsRouter);
 app.use("/api/checkout", checkoutRouter);
 const orderCallbacks = { async change(id, action, body) {
-  for (const store of [care?.usdc, care?.quoteRail].filter(Boolean)) {
+  for (const store of [care?.usdc, care?.quoteRail, care?.hostedRail].filter(Boolean)) {
     try { return await store.change(id, action, body); }
     catch (error) { if (error.status !== 404) throw error; }
   }
