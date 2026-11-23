@@ -55,7 +55,7 @@
     "server/lib/care-database.js": "c36fb812abbeffa9a1876093c2ed8fe5ea93799135b3dbf1b7a65ac814d5adb3",
     "server/lib/care-mail.js": "576955eadbade3acb7b71fbfef4e21dc3b3dce81d345a074ff205fe66f02eeaa",
     "server/lib/care-sentinel.js": "95694a6f738e209bd0a32608780e29f41669660a2bfa90471c55434c68e64baa",
-    "server/lib/care-service.js": "9e300987aaa148ac6dd7f3ab34e0fbee90b4f12295c23d85df0f34d1b8d0187b",
+    "server/lib/care-service.js": "b1860586dd6540fde65ecf921a9ac76d70e6b5a46f02c30d5c7f90327429d8b5",
     "server/lib/care-store.js": "355a0cabb43454b584f11efe47068a314f822b0e81f5a313245e1b65a514d402",
     "server/lib/care-usdc-month.js": "fb5fad01248408357581e26f76bdc4574788f736ff8165fab1023b83171e8f77",
     "server/lib/care-usdc.js": "ef18bc54522790a4c103bc8811b3d0434367638fd2502f63a884aa98544b2499",

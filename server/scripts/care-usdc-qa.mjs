@@ -39,7 +39,10 @@ export async function receiveOwnedOrder(pool,schema,id) {
     const row=(await db.query(`select * from ${table("care_orders")} where id=$1`,[id])).rows[0];
     if(!row || row.rail_qa_cents==null || row.offer!=="machine_payment_route" || row.checkout_rail!=="usdc")throw Error("marked site order not found");
     const q=railQuote(row),receipt=q.receipt,refund=receipt?.refund;
-    const mail=(await db.query(`select accepted_at from ${table("care_mail")} where order_id=$1 and kind='receipt'`,[id])).rows;
+    const mail=(await db.query(`select m.accepted_at,
+      exists(select 1 from ${table("mail_events")} e where e.email_id=m.provider_id and e.event_type='email.delivered') as delivered,
+      exists(select 1 from ${table("mail_events")} e where e.email_id=m.provider_id and e.event_type in ('email.bounced','email.failed','email.complained','email.suppressed')) as delivery_issue
+      from ${table("care_mail")} m where m.order_id=$1 and m.kind='receipt' `,[id])).rows;
     const events=(await db.query(`select event,test from ${table("journey_events")} where order_id=$1 order by event`,[id])).rows;
     const expectedAmount=String(BigInt(row.rail_qa_cents)*10000n);
     const one=name=>events.filter(e=>e.event===name && e.test).length===1;
@@ -52,6 +55,7 @@ export async function receiveOwnedOrder(pool,schema,id) {
     return {classification:"owner_qa",liveMode:row.live_mode,order:id,paymentReference:row.rail_id,state:q.state,
       amountAtomic:expectedAmount,payer:receipt?.payer,original:receipt?.transaction,refund:refund?.transaction,
       demand:events.map(e=>({event:e.event,ownerQa:e.test})),receiptRows:mail.length,receiptAccepted:!!mail[0]?.accepted_at,
+      receiptDeliveryObserved:mail[0]?.delivered===true,receiptDeliveryIssue:mail[0]?.delivery_issue===true,
       siteRoundTripRecorded:Boolean(roundTrip),customerRevenue:false};
   } catch(error) {await db.query("rollback");throw error;} finally {db.release();}
 }

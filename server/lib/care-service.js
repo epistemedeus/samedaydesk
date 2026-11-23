@@ -174,7 +174,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
       if (invoice.status === "open") invoiceUrl = allowedStripeUrl(invoice.hosted_invoice_url, "invoice.stripe.com");
     }
     return {
-      offer: order.offer, title: careServiceOffer(order.offer).title, amountCents: order.amount_cents, ...(invoiceUrl ? { invoiceUrl } : {}),
+      offer: order.offer, title: careServiceOffer(order.offer).title, amountCents: order.rail_qa_cents ?? order.amount_cents, ...(invoiceUrl ? { invoiceUrl } : {}),
       ...(order.rail_id ? { paymentUrl: "https://agents.samedaydesk.com/order-payments/sds/" + order.rail_id,
         paymentState: order.rail_refund?.state || order.rail_observation?.state || (order.rail_attempt ? "seen" : "waiting") } : {}),
       state: order.state, receivedIntake: Boolean(order.intake), refundedCents: order.refunded_cents ?? 0,
