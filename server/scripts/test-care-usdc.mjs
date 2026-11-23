@@ -64,3 +64,29 @@ test("only private QA creation produces a small quote; marks survive readback", 
   assert.equal(railQuote(row).cents, 1); assert.equal(row.amount_cents, 49900);
   assert.equal((await pool.query(`select test from ${careTable("journey_events")} where order_id=$1`, [id])).rows[0].test, true);
 });
+test("monthly USDC shares the service-period key, schedules an unsigned invoice and cancels future links", async t => {
+  assert.equal(process.env.SDS_PRIVATE_PREVIEW, "1");
+  const pool = new pg.Pool({ connectionString: process.env.SDS_CARE_DATABASE_URL });
+  const store = openCareStore();
+  t.after(async () => { await pool.end(); await store.close(); });
+  const id = randomUUID();
+  const service = createCareService({ store, stripe: {}, live: false, origin, secret, orderPayments: true });
+  await service.startUsdc("keep_it_working", id, email);
+  const row = await store.order(id), q = railQuote(row);
+  const call = (action, body) => store.usdc.change(row.rail_id, action, body || {});
+  const attempt = { payer, nonce: "0x" + "a".repeat(64), nextBlock: "80", protocol: "mpp", version: q.version };
+  await call("anchor", { block: "80" });
+  assert.ok((await call("arm", { attempt })).armed);
+  const result = { state: "paid", evidence: { asset, recipient: merchant, payer, transaction: "0x" + "9".repeat(64), logIndex: 0, transferLogIndex: 1,
+    nonce: attempt.nonce, block: "80", blockHash: "0x" + "8".repeat(64), timestamp: String(Math.ceil(q.created/1000)), amount: "100000000" } };
+  await call("observe", { attempt, result }); await call("observe", { attempt, result });
+  const period = (await pool.query(`select * from ${careTable("care_periods")} where order_id=$1`, [id])).rows;
+  assert.equal(period.length, 1); assert.equal(period[0].status, "ready");
+  const child = (await pool.query(`select * from ${careTable("care_orders")} where rail_parent=$1`, [id])).rows[0];
+  assert.equal(child.rail_period_start.toISOString(), period[0].period_end.toISOString());
+  assert.equal(child.rail_attempt, null);
+  assert.equal((await store.usdc.change(child.rail_id, "load", {})).state, "closed");
+  assert.equal((await pool.query(`select count(*)::int n from ${careTable("care_mail")} where order_id=$1 and kind='monthly_invoice'`, [id])).rows[0].n, 1);
+  await store.subscriptionState(id, { status: "active", cancel: true, at: new Date() });
+  assert.equal((await store.usdc.change(child.rail_id, "arm", { attempt })).armed, false);
+});

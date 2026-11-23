@@ -238,11 +238,10 @@ app.get(ORIGINAL_TASK_CLIENT_ARCHIVE_PATH, (_req, res) => {
 // The agent start file: the short path for an agent told one sentence. Same
 // bytes for every client, open CORS, linked from the page head and llms.txt.
 app.get("/start.md", (_req, res, next) => {
-  const file = path.join(CLIENT_DIST, "start.md");
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Cache-Control", "public, max-age=300");
   res.type("text/markdown; charset=utf-8");
-  res.sendFile(file, (err) => { if (err) next(); });
+  res.sendFile("start.md", { root: CLIENT_DIST }, (err) => { if (err) next(); });
 });
 
 app.use((req, res, next) => {

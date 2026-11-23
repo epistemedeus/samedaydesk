@@ -101,7 +101,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
   async function startUsdc(offerKey, id, buyerEmail, journeySession) {
     const offer = Object.hasOwn(CARE_OFFERS, offerKey) && CARE_OFFERS[offerKey];
     const buyer = email(buyerEmail)?.toLowerCase();
-    if (!orderPayments || offer?.mode !== "payment" || !buyer || !isOrderId(id)) {
+    if (!orderPayments || !offer || !buyer || !isOrderId(id)) {
       throw new CareError(400, "Choose a service and enter your receipt email.");
     }
     const order = await store.reserve({ id, offer: offerKey, cents: offer.cents, live, origin, rail: "usdc", railEmail: buyer,
@@ -109,8 +109,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     return { paymentUrl: "https://agents.samedaydesk.com/order-payments/sds/" + order.rail_id, receipt: careLink(order, secret) };
   }
 
-  const methods = (offerKey) => ["card", ...(orderPayments && Object.hasOwn(CARE_OFFERS, offerKey) &&
-    CARE_OFFERS[offerKey].mode === "payment" ? ["base_usdc"] : []), ...(noncard && offerKey === "keep_it_working"
+  const methods = (offerKey) => ["card", ...(orderPayments && Object.hasOwn(CARE_OFFERS, offerKey) ? ["base_usdc"] : []), ...(noncard && offerKey === "keep_it_working"
     ? ["bank_transfer", ...(stablecoin ? ["stablecoin"] : [])] : [])];
 
   // One monthly price for the invoice route, found by its lookup key and checked before use.
@@ -194,6 +193,10 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
 
   async function portal(id, key) {
     const order = await byCapability(id, key, "cancel");
+    if (order.checkout_rail === "usdc" && order.offer === "keep_it_working" && !order.rail_parent && order.state === "paid") {
+      await store.subscriptionState(id, { status: "active", cancel: true, at: now() });
+      return { canceled: true };
+    }
     if (!order.subscription_id || !order.customer_id || order.state !== "paid") throw notFound();
     if (!portalConfiguration) throw new CareError(503, "We could not open subscription management. Reply to your receipt for help.");
     const subscription = await stripe.subscriptions.retrieve(order.subscription_id);

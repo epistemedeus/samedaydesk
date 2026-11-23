@@ -36,7 +36,7 @@ export function mountProductionClient(app, clientDist) {
       },
     }),
   );
-  app.get("/skillguard", (_req, res) => res.sendFile(path.join(clientDist, "skillguard.html")));
+  app.get("/skillguard", (_req, res) => res.sendFile("skillguard.html", { root: clientDist }));
   app.use(createSpaFallback(clientDist));
   return app;
 }

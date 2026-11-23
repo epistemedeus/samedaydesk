@@ -17,3 +17,10 @@ create unique index if not exists care_usdc_effect on public.care_orders
 alter table public.journey_events drop constraint if exists journey_events_event_check;
 alter table public.journey_events add constraint journey_events_event_check
   check(event in ('visit','checkout_started','payment_verified','receipt_sent','return','payment_refunded'));
+alter table public.care_orders add column if not exists rail_parent uuid references public.care_orders(id),
+  add column if not exists rail_period_start timestamptz;
+create unique index if not exists care_usdc_one_invoice_per_period on public.care_orders(rail_parent,rail_period_start)
+  where rail_parent is not null;
+alter table public.care_mail drop constraint if exists care_mail_kind_check;
+alter table public.care_mail add constraint care_mail_kind_check
+  check(kind in ('receipt','intake','report','cancellation','monthly_invoice'));

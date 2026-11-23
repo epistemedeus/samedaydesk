@@ -14,6 +14,9 @@ export function careMailMessage({ order, item, secret, from, replyTo }) {
     const amount = cents % 100n ? `${cents / 100n}.${String(cents % 100n).padStart(2,"0")}` : String(cents / 100n);
     text = `${offer.title}\nPaid: ${amount} USD.\n\nTell us what to work on: ${scopeLink}`;
     if (cancelLink) text += `\n\nManage or cancel renewal: ${cancelLink}`;
+  } else if (item.kind === "monthly_invoice") {
+    subject = "Your monthly SameDayDesk invoice";
+    text = `Keep it working, ${day(item.details.start)}. Pay 100 USDC on Base: ${item.details.paymentUrl}/wallet\n\nManage your monthly invoices: ${cancelLink}`;
   } else if (item.kind === "intake") {
     subject = "We received your workflow";
     text = "Your workflow is attached to your order. Reply to this email if you need to add anything.";
