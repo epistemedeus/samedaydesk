@@ -92,7 +92,7 @@
     "server/lib/hosted-rail.js": "6b698273aac972cd21b758c7d6f8e83238b3d8a4e6293e9e4b5e1fc7f714cfdc",
     "server/lib/hosted-wallet-market-mount.js": "e2f4b590b9d25ff9080ea5e2eee09dc72a4d92edcc8b2f64957b59ea1ec74803",
     "server/lib/journey-events.js": "cea2221fa8a0a80f363817f23d0765abbe254fa2f87c2af02b4498bb8c740018",
-    "server/lib/legacy-order.js": "09ec534b3461f0690ef2e6e70a6d30269b287e2e3c35d625b4ec08b3b15245f7",
+    "server/lib/legacy-order.js": "cec756bc2ab6846746ddd0d969e2e0fc8531599990487e557cf20c4812ae1618",
     "server/lib/machine-services/PINS.json": "210c3997ca91f664613ebd6c4fd265a827eaae41f4664f491a136876948eb840",
     "server/lib/machine-services/RESULT.md": "d1e389dca9f70cfbc00d373428658fee557e96833468a2c3d48c352267155765",
     "server/lib/machine-services/deploy/DEPLOYMENT.json": "0a63d1316a4853c46f86bd2af025090a824ff663580b9a13b4f62b5a799044de",

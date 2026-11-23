@@ -4,7 +4,7 @@ import { CareError, isOrderId, careToken, verifyCareToken } from "./care-contrac
 import { hostedLinks, readHostedTerms } from "./hosted-offer-catalog.js";
 import { recordRailEvent } from "./care-usdc.js";
 
-const offers = JSON.parse(readFileSync(new URL("../../release/offers.json",import.meta.url))).notInHarnessYet;
+let offers;
 const definition = Object.freeze({
   legacy_skill_audit: { title: "SkillGuard Deep Audit", target: "Repository to review" },
   legacy_visibility_audit: { title: "AI Visibility Audit" },
@@ -16,8 +16,10 @@ const definition = Object.freeze({
 });
 const reject = () => new CareError(409,"Check the payment already attached to this order.");
 export function legacyOffer(id) {
+  if (!Object.hasOwn(definition,id)) return null;
+  offers ??= JSON.parse(readFileSync(new URL("../../release/offers.json",import.meta.url))).notInHarnessYet;
   const offer = offers.find(row=>row.id===id);
-  if (!offer || !Object.hasOwn(definition,id) || offer.interval) return null;
+  if (!offer || offer.interval) return null;
   return { id:offer.id, cents:offer.cents, ...definition[id] };
 }
 export const hostedOfferRoutes=Object.freeze({
