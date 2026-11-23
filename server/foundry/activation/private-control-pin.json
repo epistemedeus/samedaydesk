@@ -251,7 +251,7 @@
     "server/lib/resend.js": "413efbb7ca7852865f645e00392a36be8e588601c9496995161887c9c111e8b8",
     "server/lib/spa-client.js": "aed4770ce732494cc3c099aca4f42d50ec644b41183c5fc66dbe03f371a3af44",
     "server/lib/spa-fallback.js": "ab553ee04195ef7b2bff2fdefad47215714d50a8d5ce2e53a0e2b9901336ac0a",
-    "server/lib/spa-route-shells.js": "41a9ba97631ce1125c05a478a04671e750f812eb3d9976928da735dc80aeaf5b",
+    "server/lib/spa-route-shells.js": "f4146514eb99c7d8eca7e5458f56a90f2502ab71647cf00c9c897dc78e80b8c8",
     "server/lib/start-guide.js": "e8a1ca5ecd67ca95ddb93526a36c5d281d7ceef7baa029b0dbedf61f05201d62",
     "server/lib/start-guide.md": "bbdd8c0b945d7ec1364b27a975590d43b2f408dec55bf71be96b8ae123b3fbe2",
     "server/lib/stripe.js": "74207f33563ca044c1531d93a36c7e9bbb8218c38f3f240c174f399b2e2ec368",
@@ -1526,9 +1526,10 @@
     "server/lib/seller-repair-checkout.js": "ff785e9c2b07e7eb8c29a4d0040d46aab5d9d6ce7f4197d8ce5e2633ca4936c0",
     "server/lib/free-check-v2/facts.js": "a2ef4265a16e10a0f85351e68986bd93913aee6cc73e9788085157f6a8d149da",
     "server/lib/free-check-v2/rules.js": "2bedcfbd1917535e0f097c8c3a2a66f8d22c161fae5aec19ad880dcf6b65d502",
-    "server/lib/free-check-v2/probe.js": "79920a0a4c0b9ef2392599cf62d100df9d2bb60d6b48a628e1d803ea55356864",
+    "server/lib/free-check-v2/probe.js": "48cbd4de8b363a27f256146765f453b06d2e19e83b8bca7765d8a934f12f3fb0",
     "server/lib/free-check-v2/store.js": "1a60a850dd00ca817e1c52746273357749970d5469415510fadd877d8c5ff62b",
-    "server/lib/free-check-v2/http.js": "e4f5fd49660f0e18abf758259d05ce48dc7d0b93d3dd240a8e0472046c371080"
+    "server/lib/free-check-v2/http.js": "e4f5fd49660f0e18abf758259d05ce48dc7d0b93d3dd240a8e0472046c371080",
+    "server/lib/free-check-v2/render-client.js": "9cdea0015dc3247b668aecb40b461faef296454d941a93fc2c85e437941ebe1c"
   },
   "receivedCallerClosures": [
     {
@@ -1830,6 +1831,11 @@
       "base": "c817c1ee6fc7ec598580a9d776def68893a32b60",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:e0920f9d5bdd5f611f39af07eec18158a262e08de54cb564ee2a82eb886c31fe"
+    },
+    {
+      "base": "c817c1ee6fc7ec598580a9d776def68893a32b60",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:df767788f06c8fbd2a1aba5ea10ee4b137cb6b1e8b4e753defcc3088707746bf"
     }
   ]
 }

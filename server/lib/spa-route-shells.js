@@ -138,7 +138,7 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
   }),
   Object.freeze({
     path: "/tools/ai-readiness",
-    title: "Free AI Readiness Checker — is your site visible to ChatGPT & Perplexity? | SameDayDesk",
+    title: "Free AI Readiness Checker: is your site visible to ChatGPT & Perplexity? | SameDayDesk",
     description:
       "Free, no-signup AI readiness checker: see whether AI search engines (ChatGPT, Perplexity, Claude, Google AI) can crawl and understand your website. Scores AI crawler access, JSON-LD, metadata, sitemap and llms.txt, with concrete fixes.",
     canonical: `${SITE_ORIGIN}/tools/ai-readiness`,

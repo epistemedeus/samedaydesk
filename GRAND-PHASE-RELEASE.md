@@ -104,3 +104,25 @@ host setting changes; no DNS migration is part of this check. The keyless PageSp
 API is currently over its daily quota and is deferred to a later run. The enrolled
 `SDS_FREE_CHECK_CRUX_API_KEY` is restricted to Chrome UX Report API and remains a
 separate field-data input; it is not enrolled or reused for PageSpeed.
+
+## Plan 22 cut and receiving
+
+The approved first-visitor price line, receipts placement and For Agents folds are included with
+Free Check's optional renderer client. Keep both FREE_CHECK_RENDER_URL and FREE_CHECK_RENDER_TOKEN
+unset. No renderer is deployed for this cut. The rendered-text result stays Not verified when the
+client is unconfigured; no fallback measurement is invented. Preserve all existing 102 host env
+values, including SDS_CARE_NONCARD=1 and SDS_FREE_CHECK_CRUX_API_KEY. No new migration is needed.
+The existing Root Stripe.com CrUX measurement and void/canceled bank QA remain historical receipts,
+not new tests on this source. Root owns the cut, status, merge, managed host build and live receiving.
+
+Use the saved Node 22 Express profile with build:managed-foundry and server/index.js. After deploy,
+receive /, /for-agents, /tools/ai-readiness and /docs-lab/openscan/ with the existing first-response
+procedure above; PageSpeed stays deferred. Verify the hero price line, offers before the receipt band,
+the For Agents priced list/folds and both 149/349 offer returns through login/signup. Do not create
+another invoice or payment. Keep CDN enabled with its operator-selected Essentially off security.
+
+Copy now runs through the pinned shared kit. The existing copy gate reads raw index.html, no-script
+and visually hidden text, browser-rendered pages and final prerenders. Its strict-prose pass covers
+all seven served/rendered representations of the three repaired pages, refusing long dashes and
+dollar-prefix prices. The canonical structured check receipt is release/out/check.json; Root's
+receiver reads the exact source-bound copy published at previews/samedaydesk/release/check-<sha>.log.
