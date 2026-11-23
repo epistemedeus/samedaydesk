@@ -20,7 +20,8 @@ export function railQuote(row) {
     cents, row.rail_qa_cents, created, expires, resource])).digest("hex");
   const state = row.rail_refund?.state ?? row.rail_observation?.state ?? (row.rail_attempt ? "seen" : "waiting");
   return { id: row.rail_id, resource, version, cents, created, expires, state, startBlock: row.rail_start_block,
-    attempt: row.rail_attempt, reason: row.rail_observation?.reason ?? row.rail_provider?.reason,
+    attempt: row.rail_attempt, transaction: row.rail_provider?.transaction, providerReason: row.rail_provider?.reason,
+    reason: row.rail_observation?.reason ?? row.rail_provider?.reason,
     receipt: row.rail_observation?.evidence && { ...row.rail_observation.evidence, refund: row.rail_refund?.evidence },
     refund: row.rail_refund, receiptHeaders: row.rail_provider?.headers };
 }
@@ -54,10 +55,11 @@ export function createCareUsdcStore({ txn, table, mail }) {
       if (action === "arm") {
         if (row.state !== "created" || row.session_id || row.subscription_id || quote.state !== "waiting" ||
             quote.expires <= Date.now() || attempt?.version !== quote.version || !hex32.test(attempt.nonce) ||
-            !address.test(attempt.payer) || !uint.test(attempt.nextBlock) || attempt.nextBlock !== quote.startBlock ||
+            (attempt.validBefore !== undefined && !uint.test(attempt.validBefore)) || !address.test(attempt.payer) || !uint.test(attempt.nextBlock) || attempt.nextBlock !== quote.startBlock ||
             !["x402", "mpp"].includes(attempt.protocol)) return { armed: false };
         await db.query(`update ${name} set rail_attempt=$2 where rail_id=$1`, [id, {
           version: quote.version, nonce: attempt.nonce, payer: attempt.payer, protocol: attempt.protocol, nextBlock: attempt.nextBlock,
+          ...(attempt.validBefore && { validBefore: attempt.validBefore }),
         }]);
         return { armed: true };
       }
