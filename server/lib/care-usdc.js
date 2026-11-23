@@ -19,7 +19,7 @@ export function railQuote(row) {
   const version = createHash("sha256").update(JSON.stringify(["sds-care-v1", row.id, row.offer, row.live_mode,
     cents, row.rail_qa_cents, created, expires, resource])).digest("hex");
   const state = row.rail_refund?.state ?? row.rail_observation?.state ?? (row.rail_attempt ? "seen" : "waiting");
-  return { id: row.rail_id, resource, version, cents, created, expires, state, startBlock: row.rail_start_block,
+  return { id: row.rail_id, resource, version, cents, created, expires, state, ownerQa: row.rail_qa_cents != null, startBlock: row.rail_start_block,
     attempt: row.rail_attempt, transaction: row.rail_provider?.transaction, providerReason: row.rail_provider?.reason,
     reason: row.rail_observation?.reason ?? row.rail_provider?.reason,
     receipt: row.rail_observation?.evidence && { ...row.rail_observation.evidence, refund: row.rail_refund?.evidence },

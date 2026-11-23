@@ -23,8 +23,8 @@ export async function createOwnedOrder(pool, schema, { id, cents, email, live, o
         row.offer !== "machine_payment_route" || row.checkout_rail !== "usdc") throw Error("QA order identity differs");
     await recordRailEvent(db, table, row, "checkout_started");
     await db.query("commit");
-    const { resource, id: paymentReference } = railQuote(row);
-    return { classification: "owner_qa", cents, paymentReference, agent: resource, wallet: resource + "/wallet" };
+    const { resource, version, id: paymentReference } = railQuote(row);
+    return { classification: "owner_qa", cents, version, paymentReference, agent: resource, wallet: resource + "/wallet" };
   } catch (error) { await db.query("rollback"); throw error; }
   finally { db.release(); }
 }

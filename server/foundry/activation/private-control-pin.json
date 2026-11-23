@@ -56,7 +56,7 @@
     "server/lib/care-service.js": "b84fc2044d0a95805751dfce50d3812bbc99f26a7c73ad0dfa99bfc477550d8d",
     "server/lib/care-store.js": "f854c4634cda4dd258600a2ef62fdb06888e9cb0b2a7217c7aa3a9a62e2d5e47",
     "server/lib/care-usdc-month.js": "22500bdd148d3ffc3101ea392d765407eefd56ef452881ac43f206189854e59f",
-    "server/lib/care-usdc.js": "513d1d57aabaece4c7c14d4e5e0070bcc2795bb7ed42a48a2afdb3eb466843f1",
+    "server/lib/care-usdc.js": "ed19d37d94bfc6d223472b27e69efe217f6efcb6713b296d1ea6e15e33a17bb0",
     "server/lib/commerce-journey.js": "8e5aca569623f9575c704af7a401ce026d5e17b7d2f2febbf7468bf5e2a11015",
     "server/lib/contributor-artifact.js": "72657728eab3b9bab0dfffccb2561dbea5fc3d9cbb886ce84ed83890ff1edc3c",
     "server/lib/contributor-desk-assets.js": "67b379f429ac7223b3e8b2fc923da367ed7b48ebd158552e117885c117c73da5",
