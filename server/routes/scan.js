@@ -80,7 +80,7 @@ router.get("/", async (req, res) => {
       : `${fails.length} thing${fails.length === 1 ? "" : "s"} ${fails.length === 1 ? "is" : "are"} holding ${host} back`;
     const ctaText = r.grade === "A"
       ? "The technical basics look good. The AI-Search Visibility Audit goes further: it tests whether ChatGPT, Perplexity and Google AI actually cite you for your buyer queries and benchmarks you vs competitors."
-      : "We can fix all of it today. The $39 Fix Pack gives you copy-paste JSON-LD, a corrected robots.txt, a sitemap, and clean title/meta/Open Graph tags built for this exact site, delivered same day.";
+      : "The 39 USD Fix Pack gives you copy-paste JSON-LD, a corrected robots.txt, a sitemap, and clean title/meta/Open Graph tags built for your site.";
 
     const body = `
       <p class="eyebrow">SameDayDesk · AI-search readiness</p>
@@ -93,8 +93,8 @@ router.get("/", async (req, res) => {
         <h2>${esc(ctaTitle)}</h2>
         <p>${esc(ctaText)}</p>
         ${r.grade === "A"
-          ? `<a class="btn" href="${AUDIT}">Get the full audit · $199</a>`
-          : `<a class="btn" href="${FIX_PACK}">Fix it today · $39</a><a class="btn2" href="${AUDIT}">Full audit · $199</a>`}
+          ? `<a class="btn" href="${AUDIT}">Get the full audit · 199 USD</a>`
+          : `<a class="btn" href="${FIX_PACK}">Get the Fix Pack · 39 USD</a><a class="btn2" href="${AUDIT}">Full audit · 199 USD</a>`}
       </div>
       <p class="muted">Check another site:</p>${form()}
       <p class="muted">Snapshot of the homepage + robots.txt, ${esc(new Date(r.checkedAt).toISOString().slice(0, 10))}.</p>`;

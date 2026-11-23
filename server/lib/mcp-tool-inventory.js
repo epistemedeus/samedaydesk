@@ -85,8 +85,8 @@ export const TOOLS = [
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
     description:
       "PAID. Returns the complete, ready-to-paste AI-readiness Fix Pack for a site: tailored Organization + FAQPage " +
-      "JSON-LD, an AI-crawler robots.txt, a sitemap, and title/meta/Open Graph fixes. Requires a `license` — the " +
-      `checkout-session id you receive after buying the $39 Fix Pack at ${FIXPACK_LINK} (after paying you're shown ` +
+      "JSON-LD, an AI-crawler robots.txt, a sitemap, and title/meta/Open Graph fixes. Requires a `license`: the " +
+      `checkout-session id you receive after buying the 39 USD Fix Pack at ${FIXPACK_LINK} (after paying you're shown ` +
       "your license code). Without a valid license it returns purchase instructions plus a free starter pack.",
     inputSchema: {
       type: "object",

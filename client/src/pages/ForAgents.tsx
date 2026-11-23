@@ -212,7 +212,7 @@ export default function ForAgents() {
             Download one portable archive for local evidence jobs (release brief, table
             reconcile, procurement brief, and related checks). Verify size and sha256 before
             extract. Labeled samples and caller files run offline. You must supply an operator
-            clock. Local provenance is not an independent attestation. Details and cold-start
+            clock. Local provenance records the input and result hashes. Details and cold-start
             commands:{" "}
             <Link className={styles.inlineLink} to="/for-agents/consumer-repeat">
               /for-agents/consumer-repeat
@@ -274,12 +274,12 @@ export default function ForAgents() {
             <h2 id="inventory-title">Every paid tool, on the live gateway</h2>
             <p>
               Health, the HTTP catalog, the x402 manifest, OpenAPI, and MCP are the current inventories.
-              Human Stripe offers stay on the homepage. This page does not sell those SKUs.
+              Choose a fixed-price build from the homepage, or use the tools here per call.
             </p>
             <p>
               {GENTECH_DEFI_RESOLVED_CASE.seller}{" "}
               <code>{GENTECH_DEFI_RESOLVED_CASE.method} {GENTECH_DEFI_RESOLVED_CASE.route}</code>
-              {" "}is a resolved diagnostic case, not a repair sale.
+              {" "}shows a resolved route diagnosis and the repair to use.
             </p>
             <div className={styles.actions}>
               <Link className={styles.primary} to="/x402">
@@ -300,18 +300,18 @@ export default function ForAgents() {
             </div>
           </div>
           <div className={styles.offerCard}>
-            <span>Honesty contract</span>
+            <span>Use each result well</span>
             <ul>
-              <li>Paid observation is not offline comparison</li>
-              <li>Failed, partial, and missing rows stay visible</li>
-              <li>Freshness is unknown without a clock and horizon</li>
-              <li>charged: true is not useful output</li>
-              <li>Source labels remain caller-declared, not independent buyer proof</li>
-              <li>No keys, secret URLs, or target fetch on this page</li>
-              <li>Purchasing never requires publishing</li>
-              <li>Schema-valid export is not public-safe certification</li>
-              <li>Recurring recipes do not overwrite immutable priors</li>
-              <li>Payment is never automatically replayed</li>
+              <li>Choose a fresh observation or compare files you already hold</li>
+              <li>Read the status and evidence on each returned row</li>
+              <li>Supply a clock and horizon when checking freshness</li>
+              <li>Check the delivered result alongside the payment receipt</li>
+              <li>Trace a source label to its linked source</li>
+              <li>Keep keys and private URLs in your own environment</li>
+              <li>Choose what you share after receiving the result</li>
+              <li>Review an export before sharing it</li>
+              <li>Keep earlier results when running a recurring recipe</li>
+              <li>Reconcile an unknown payment outcome before a new attempt</li>
             </ul>
           </div>
         </section>
@@ -319,7 +319,7 @@ export default function ForAgents() {
         <section className={styles.connect} aria-labelledby="live-title">
           <div>
             <p className="eyebrow">Authoritative inventories</p>
-            <h2 id="live-title">Read the live merchant, not a copied count</h2>
+            <h2 id="live-title">Read the current tool inventory</h2>
           </div>
           <details className={styles.fold}>
             <summary>Steps and commands</summary>

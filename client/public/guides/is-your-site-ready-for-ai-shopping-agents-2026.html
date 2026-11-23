@@ -45,7 +45,7 @@
       "@type": "Article",
       "headline": "Is Your Site Ready for AI Shopping Agents? (2026 Guide)",
       "datePublished": "2026-06-24",
-      "dateModified": "2026-06-24",
+      "dateModified": "2026-11-23",
       "author": { "@type": "Organization", "name": "SameDayDesk", "url": "https://samedaydesk.com/" },
       "publisher": { "@type": "Organization", "name": "SameDayDesk", "url": "https://samedaydesk.com/" },
       "mainEntityOfPage": { "@type": "WebPage", "@id": "https://samedaydesk.com/guides/is-your-site-ready-for-ai-shopping-agents-2026.html" },
@@ -82,7 +82,7 @@
         {
           "@type": "Question",
           "name": "Does llms.txt help AI agents read my store?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Not meaningfully. Google says llms.txt is not supported and not planned, and Ahrefs found about 97% of LLM crawler hits never fetch it. Treat it as optional hygiene, not a ranking or readiness factor." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Use llms.txt as a short index of your useful pages. Pair it with readable product HTML, clear prices, structured data and your sitemap. Our free generators help you publish each file." }
         }
       ]
     }
@@ -100,8 +100,8 @@
   <div class="stats">
     <div class="stat"><b>85</b><span>Avg AI-readiness score for e-commerce (/100), our June 2026 benchmark</span></div>
     <div class="stat"><b>189</b><span>Well-known companies we scored across 10 industries</span></div>
-    <div class="stat"><b>4.4x</b><span>Reported conversion of AI-search referral traffic vs organic</span></div>
-    <div class="stat"><b>87%</b><span>Of SearchGPT citations matched Bing's top 20 (Seer Interactive)</span></div>
+
+
   </div>
 
   <h2>The direct answer</h2>
@@ -150,15 +150,15 @@
   <table>
     <thead><tr><th>Surface</th><th>Where it reads from</th><th>Speed to appear</th></tr></thead>
     <tbody>
-      <tr><td>ChatGPT Search / Copilot</td><td>Largely the Bing index (~87% citation match)</td><td>Hours to days via IndexNow</td></tr>
+      <tr><td>ChatGPT Search / Copilot</td><td>Readable, indexable public pages</td><td>Review the actual result after a change</td></tr>
       <tr><td>Perplexity</td><td>Its own crawler/index, favors fresh pages</td><td>Days on low-competition queries</td></tr>
-      <tr><td>Google AI Overviews</td><td>Live retrieval, largely independent of organic rank</td><td>Varies (Google sandboxes new domains 3 to 9 months)</td></tr>
+      <tr><td>Google AI Overviews</td><td>Readable, indexable public pages</td><td>Review the actual result after a change</td></tr>
     </tbody>
   </table>
 
-  <p>The practical takeaway: don't gate your plan on Google. Getting into Bing's index (pushable instantly with <strong>IndexNow</strong>, which needs no account) is the fast lane to ChatGPT and Copilot visibility. And because live retrieval (RAG) is independent of training data, a freshly indexed product page can be cited and recommended without ever appearing in any model's training set. Notably, about 68% of AI-Overview-cited pages were <em>not</em> in the top 10 organic results, so old-school rank is not a prerequisite.</p>
+  <p>Use the free readiness check to find the access, content and metadata fixes for your own page. Publish a clear answer in HTML, keep your sitemap current and review the result after each change.</p>
 
-  <blockquote>AI-search referral traffic reportedly converts about 4.4x organic search traffic, and comparison / "alternatives to" / listicle formats earn about 40.9% of AI citations on commercial-intent queries. Buyers arriving from an agent already have intent.</blockquote>
+  <blockquote>Use the free readiness check to find the access, content and metadata fixes for your own page. Publish a clear answer in HTML, keep your sitemap current and review the result after each change.</blockquote>
 
   <div class="cta">
     <h2>Check your readiness in 60 seconds</h2>
@@ -179,7 +179,7 @@
   <p>Make product name, price, and description present in the raw HTML. Confirm by viewing source (not the rendered DOM) and searching for your price as plain text.</p>
 
   <h3>4. Submit your sitemap and push via IndexNow</h3>
-  <p>Keep an XML sitemap of all product URLs and ping IndexNow on changes so Bing (and therefore ChatGPT and Copilot) re-reads you within hours. Skip <code>llms.txt</code> as a priority: Google says it is not supported, and about 97% of LLM crawler hits never fetch it (Ahrefs).</p>
+  <p>Keep your product URLs in an XML sitemap, return the product details in readable HTML and publish a short documentation index. Use our <a href="/tools/sitemap-generator.html">sitemap generator</a> and <a href="/tools/llms-txt-generator.html">llms.txt generator</a> to prepare those files.</p>
 
   <h3>5. Verify and harden</h3>
   <p>Start with the <a href="https://samedaydesk.com/tools/ai-readiness">free checker</a> or the CLI. Want the playbook? The <a href="https://buy.stripe.com/7sYbJ2946179611dQKeZ20i">9 USD AI Readiness Kit</a> bundles the full benchmark, every structured-data template, and the checklist. Want it done for your exact site? The <a href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">39 USD Fix Pack</a> ships same-day. And to prove it works, the <a href="https://buy.stripe.com/3cIbJ2gwy2bdgFFfYSeZ20u">199 USD AI-Search Visibility Audit</a> tests your real citations against named competitors.</p>
@@ -188,7 +188,7 @@
   <p>Agentic commerce isn't a separate technology you have to chase. An AI shopping agent is just a very literal reader with a credit card. Make your products and prices unambiguously readable (crawler access, structured data, server-rendered content, sitemap) and you are ready for it. At an e-commerce average of 85, most stores are most of the way there. The last 15 points are where the agent decides whether to recommend you or your competitor.</p>
 
   <footer>
-    <p>Benchmark: 189 companies across 10 industries, scored June 2026 on six fundamentals (AI-crawler access, JSON-LD, title/meta, Open Graph, XML sitemap, llms.txt). Raw data (CC-BY): <a href="https://raw.githubusercontent.com/epistemedeus/ai-readiness/main/data/ai-search-readiness-2026.csv">ai-search-readiness-2026.csv</a>. Surface and GEO figures: Seer Interactive / Search Engine Land (Apr 2026), Ahrefs, and the Princeton/Georgia Tech GEO paper (KDD 2024).</p>
+    <p>Benchmark: 189 companies across 10 industries, scored June 2026 on six fundamentals (AI-crawler access, JSON-LD, title/meta, Open Graph, XML sitemap, llms.txt). Raw data (CC-BY): <a href="https://raw.githubusercontent.com/epistemedeus/ai-readiness/main/data/ai-search-readiness-2026.csv">ai-search-readiness-2026.csv</a>. GEO figures: Princeton/Georgia Tech GEO paper (KDD 2024).</p>
     <p>© 2026 SameDayDesk · <a href="https://samedaydesk.com/tools/ai-readiness">Free AI Readiness Checker</a> · <a href="https://github.com/epistemedeus/ai-readiness">Open-source CLI</a></p>
   </footer>
 

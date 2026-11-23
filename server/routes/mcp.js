@@ -76,14 +76,14 @@ function funnelErrorText(code) {
 function formatReport(r) {
   const lines = [`AI Readiness for ${r.url}`, `Score: ${r.score}/100   Grade: ${r.grade}`, ""];
   for (const c of r.checks || []) {
-    lines.push(`[${String(c.status).toUpperCase()}] ${c.label} — ${c.detail}`);
+    lines.push(`[${String(c.status).toUpperCase()}] ${c.label}: ${c.detail}`);
     if (c.fix) lines.push(`       fix: ${c.fix}`);
   }
   lines.push("");
   const gaps = (r.checks || []).filter((c) => c.status !== "pass").length;
   lines.push(
     gaps > 0
-      ? `${gaps} gap(s) found. Get the complete, ready-to-paste Fix Pack instantly: buy the $39 Fix Pack at ${FIXPACK_LINK} ` +
+      ? `${gaps} gap(s) found. Get the complete, ready-to-paste Fix Pack instantly: buy the 39 USD Fix Pack at ${FIXPACK_LINK} ` +
           `(you'll be shown a license code), then call generate_complete_fix_pack with url + that license. Full report: https://samedaydesk.com/scan?url=${encodeURIComponent(r.url)}`
       : `Clean bill of health. For deep citation testing vs competitors, see the AI-Search Visibility Audit at https://samedaydesk.com/`,
   );
@@ -184,10 +184,10 @@ async function handle(msg, ctx = {}) {
               + (await generateStarterFixPack(url));
           } catch { /* ignore */ }
           const why = license
-            ? "That license code couldn't be verified as a paid Fix Pack (if you just paid, wait ~30s and retry, or contact contact@neomorphic.io)."
+            ? "That license code couldn't be verified as a paid Fix Pack (if you just paid, wait ~30s and retry, or contact contact@samedaydesk.com)."
             : "No license provided.";
           return refused("license_unverified", okMsg(id, {
-            content: [{ type: "text", text: `${why}\n\nTo get the complete Fix Pack: buy at ${FIXPACK_LINK} ($39). After paying you'll see your license code; call this tool again with url + that license.${starter}` }],
+            content: [{ type: "text", text: `${why}\n\nTo get the complete Fix Pack: buy at ${FIXPACK_LINK} (39 USD). After paying you'll see your license code; call this tool again with url + that license.${starter}` }],
             isError: true,
           }));
         }
@@ -196,7 +196,7 @@ async function handle(msg, ctx = {}) {
           return okMsg(id, { content: [{ type: "text", text: `✅ Verified. Your complete AI-Readiness Fix Pack:\n\n${pack}` }] });
         } catch (e) {
           // Payment is valid but generation failed — never lose a paid order.
-          return refused("tool_error", okMsg(id, { content: [{ type: "text", text: `Your payment is verified, but auto-generation hit an error (${e.message}). Email contact@neomorphic.io with your url (${url}) and license and we'll deliver your Fix Pack right away.` }], isError: true }));
+          return refused("tool_error", okMsg(id, { content: [{ type: "text", text: `Your payment is verified, but auto-generation hit an error (${e.message}). Email contact@samedaydesk.com with your url (${url}) and license and we'll deliver your Fix Pack right away.` }], isError: true }));
         }
       }
 
