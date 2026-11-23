@@ -30,6 +30,7 @@ export function createCareRouter(care, clock = Date.now) {
     }
     if (++limit.count > 12) throw new CareError(429, "Please try again in a minute.");
     const method = req.body?.method ?? "card";
+    if (method === "base_usdc") return care.startUsdc(req.body?.offer, req.body?.order, req.body?.email, req.journeySession);
     return method === "card" ? care.start(req.body?.offer, req.body?.order, req.journeySession)
       : care.startInvoice(req.body?.offer, req.body?.order, method, req.body?.email, req.journeySession);
   }));

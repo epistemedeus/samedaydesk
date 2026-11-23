@@ -36,11 +36,12 @@ export function configuredCareService(env = process.env) {
   const stripe = new Stripe(key, { apiVersion: "2026-11-18.endive", timeout: 8000, maxNetworkRetries: 1 });
   return createCareService({ store, stripe, secret: env.SDS_CARE_ACCESS_SECRET, origin: careOrigin(env),
     live: /^(sk|rk)_live_/.test(key), portalConfiguration: env.SDS_CARE_PORTAL_CONFIGURATION, noncard: env.SDS_CARE_NONCARD === "1",
+    orderPayments: env.SDS_ORDER_USDC === "1" && (env.ORDER_PAYMENTS_SDS_TOKEN?.length ?? 0) >= 32,
     stablecoin: env.SDS_CARE_STABLECOIN === "1",
     releaseRun: env.SDS_PRIVATE_PREVIEW === "1" ? releaseRunOf(env) : null });
 }
 
-export function createCareService({ store, stripe, secret, origin, live, portalConfiguration, noncard = false, stablecoin = false, releaseRun = null, now = () => new Date() }) {
+export function createCareService({ store, stripe, secret, origin, live, portalConfiguration, noncard = false, stablecoin = false, orderPayments = false, releaseRun = null, now = () => new Date() }) {
   const quotes = createTaskQuoteService({ store: store.quotes, stripe, live, now });
   const notFound = () => new CareError(404, "This receipt link is not available.");
   const matchesMode = (order) => order && order.live_mode === live;
@@ -97,7 +98,19 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     return { url: allowedStripeUrl(session.url, "checkout.stripe.com") };
   }
 
-  const methods = (offerKey) => ["card", ...(noncard && offerKey === "keep_it_working"
+  async function startUsdc(offerKey, id, buyerEmail, journeySession) {
+    const offer = Object.hasOwn(CARE_OFFERS, offerKey) && CARE_OFFERS[offerKey];
+    const buyer = email(buyerEmail)?.toLowerCase();
+    if (!orderPayments || offer?.mode !== "payment" || !buyer || !isOrderId(id)) {
+      throw new CareError(400, "Choose a service and enter your receipt email.");
+    }
+    const order = await store.reserve({ id, offer: offerKey, cents: offer.cents, live, origin, rail: "usdc", railEmail: buyer,
+      expires: new Date(now().getTime() + 2 * HOUR), integrationId: newIntegrationId(), journeySession: isOrderId(journeySession) ? journeySession : id });
+    return { paymentUrl: "https://agents.samedaydesk.com/order-payments/sds/" + order.rail_id, receipt: careLink(order, secret) };
+  }
+
+  const methods = (offerKey) => ["card", ...(orderPayments && Object.hasOwn(CARE_OFFERS, offerKey) &&
+    CARE_OFFERS[offerKey].mode === "payment" ? ["base_usdc"] : []), ...(noncard && offerKey === "keep_it_working"
     ? ["bank_transfer", ...(stablecoin ? ["stablecoin"] : [])] : [])];
 
   // One monthly price for the invoice route, found by its lookup key and checked before use.
@@ -163,6 +176,8 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     }
     return {
       offer: order.offer, title: CARE_OFFERS[order.offer].title, amountCents: order.amount_cents, ...(invoiceUrl ? { invoiceUrl } : {}),
+      ...(order.rail_id ? { paymentUrl: "https://agents.samedaydesk.com/order-payments/sds/" + order.rail_id,
+        paymentState: order.rail_refund?.state || order.rail_observation?.state || (order.rail_attempt ? "seen" : "waiting") } : {}),
       state: order.state, receivedIntake: Boolean(order.intake), refundedCents: order.refunded_cents ?? 0,
       ...(order.offer === "keep_it_working" && order.state === "paid"
         ? { subscription: { cancelAtPeriodEnd: order.cancel_at_period_end, status: order.subscription_status || "active" } }
@@ -326,6 +341,6 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     return result;
   }
 
-  return { start, startInvoice, methods, read, submit, portal, eventIsCare, recordHosted, taskRequests: store.taskRequests,
+  return { start, startInvoice, startUsdc, usdc: store.usdc, methods, read, submit, portal, eventIsCare, recordHosted, taskRequests: store.taskRequests,
     issueQuote: quotes.issue, close: () => store.close() };
 }

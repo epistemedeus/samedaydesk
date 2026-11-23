@@ -10,7 +10,9 @@ export function careMailMessage({ order, item, secret, from, replyTo }) {
   let subject, text;
   if (item.kind === "receipt") {
     subject = "Your SameDayDesk receipt";
-    text = `${offer.title}\nPaid: ${(order.amount_cents / 100).toFixed(0)} USD.\n\nTell us what to work on: ${scopeLink}`;
+    const cents = BigInt(order.rail_qa_cents ?? order.amount_cents);
+    const amount = cents % 100n ? `${cents / 100n}.${String(cents % 100n).padStart(2,"0")}` : String(cents / 100n);
+    text = `${offer.title}\nPaid: ${amount} USD.\n\nTell us what to work on: ${scopeLink}`;
     if (cancelLink) text += `\n\nManage or cancel renewal: ${cancelLink}`;
   } else if (item.kind === "intake") {
     subject = "We received your workflow";
@@ -27,7 +29,7 @@ export function careMailMessage({ order, item, secret, from, replyTo }) {
       "", "Reply if you would like help with an issue in this report.",
     ].join("\n");
   } else throw new Error("Unexpected mail kind");
-  return { from, replyTo, to: order.stripe_email, subject, text };
+  return { from, replyTo, to: order.rail_email || order.stripe_email, subject, text };
 }
 
 export async function drainCareMail({ store, send, secret, from, replyTo, limit = 20 }) {
@@ -37,13 +39,13 @@ export async function drainCareMail({ store, send, secret, from, replyTo, limit 
     if (!item) break;
     try {
       const order = await store.order(item.order_id);
-      if (!order?.stripe_email) throw new Error("No receipt email");
+      if (!order?.rail_email && !order?.stripe_email) throw new Error("No receipt email");
       const message = careMailMessage({ order, item, secret, from, replyTo });
       const result = await send(message, { idempotencyKey: `sameday-care/${item.mail_key}` });
       if (result.error || !result.data?.id) throw new Error("Mail not confirmed");
       await store.acceptMail(item.mail_key, item.claim_id, result.data.id);
       if (item.kind === "receipt") await recordCommerceJourney("receipt_sent", {
-        key: item.mail_key, orderId: order.id, sessionId: order.journey_session || order.id, live: order.live_mode,
+        key: item.mail_key, orderId: order.id, sessionId: order.journey_session || order.id, live: order.live_mode && order.rail_qa_cents == null,
       });
       accepted++;
     } catch { deferred++; }
