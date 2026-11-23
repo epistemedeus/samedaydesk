@@ -20,6 +20,20 @@ export function legacyOffer(id) {
   if (!offer || !Object.hasOwn(definition,id) || offer.interval) return null;
   return { id:offer.id, cents:offer.cents, ...definition[id] };
 }
+export const hostedOfferRoutes=Object.freeze({
+  "skillguard-deep-audit":"legacy_skill_audit","ai-visibility-audit":"legacy_visibility_audit",
+  "ai-visibility-audit-and-fix":"legacy_visibility_fix","ai-visibility-sprint":"legacy_visibility_sprint",
+  "schemaforge-clinic-bundle":"legacy_med_spa_bundle","ai-search-readiness-kit":"legacy_readiness_kit",
+  "ai-readiness-fix-pack":"legacy_fix_pack",
+});
+export function withHostedAttribution(destination,query) {
+  const url=new URL(destination);
+  for(const key of ["utm_source","utm_medium","utm_campaign","utm_term","utm_content"]) {
+    const value=query[key];
+    if(typeof value==="string" && /^[a-zA-Z0-9_.+ -]{1,100}$/.test(value))url.searchParams.set(key,value);
+  }
+  return url.href;
+}
 export function legacyEnabled(id,env) {
   return !!legacyOffer(id) && env.SDS_ORDER_USDC === "1" && (env.SDS_LEGACY_USDC_OFFERS || "").split(",").includes(id);
 }

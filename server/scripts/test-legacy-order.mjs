@@ -5,7 +5,7 @@ import { readFile } from "node:fs/promises";
 import pg from "pg";
 import { openCareStore } from "../lib/care-store.js";
 import { careTable, careSchema } from "../lib/care-database.js";
-import { legacyOffer, legacyLicense, parseLegacyLicense } from "../lib/legacy-order.js";
+import { legacyOffer, legacyLicense, parseLegacyLicense, withHostedAttribution, hostedOfferRoutes } from "../lib/legacy-order.js";
 import { drainCareMail } from "../lib/care-mail.js";
 import { hostedLinks } from "../lib/hosted-offer-catalog.js";
 
@@ -14,6 +14,8 @@ test("seven one-time catalog offers retain exact delivered work, receipt and pri
   const pool=new pg.Pool({connectionString:process.env.SDS_CARE_DATABASE_URL}),store=openCareStore();
   t.after(async()=>{await store.close();await pool.end();});
   const table=name=>careTable(name,careSchema()), ids=Object.keys(hostedLinks).filter(id=>legacyOffer(id));
+  assert.deepEqual(Object.values(hostedOfferRoutes).sort(),ids.slice().sort());
+  assert.equal(withHostedAttribution("https://buy.stripe.com/test_link",{utm_campaign:"clinic",client_reference_id:"other"}),"https://buy.stripe.com/test_link?utm_campaign=clinic");
   assert.equal(ids.length,7);assert.equal(legacyOffer("legacy_skill_watch"),null);
   const links=Object.fromEntries(ids.map(id=>[id,"test_"+id]));
   const env={SDS_PRIVATE_PREVIEW:"1",SDS_ORDER_USDC:"1",SDS_LEGACY_USDC_OFFERS:ids.join(","),SDS_TEST_LEGACY_LINKS:JSON.stringify(links)};

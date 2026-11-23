@@ -7,7 +7,7 @@ async function open(method) {
   try {
     const data=method==="card"?{}:Object.fromEntries(new FormData(form));
     const order=await pendingOrder(location.pathname);
-    const res=await fetch(location.pathname,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({...data,method,order}),redirect:"error"});
+    const res=await fetch(location.pathname+location.search,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({...data,method,order}),redirect:"error"});
     const result=await res.json();if(!res.ok)throw Error(result.error);
     const url=new URL(method==="card"?result.url:result.paymentUrl+"/wallet");
     if (url.origin!==(method==="card"?"https://buy.stripe.com":"https://agents.samedaydesk.com") || url.username || url.password)throw Error("Check the payment link in your receipt.");

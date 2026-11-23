@@ -1,16 +1,17 @@
 import { Router, urlencoded } from "express";
 import { CareError } from "../lib/care-contract.js";
-import { legacyEnabled, legacyOffer, legacySlug, parseLegacyLicense } from "../lib/legacy-order.js";
+import { hostedOfferRoutes, legacyEnabled, legacyOffer, legacySlug, parseLegacyLicense, withHostedAttribution } from "../lib/legacy-order.js";
 import { generateCompleteFixPack } from "../lib/fixpack-artifact.js";
 
 const router=Router();
+router.param("offer",(req,_res,next,value)=>{req.params.offer=Object.hasOwn(hostedOfferRoutes,value)?hostedOfferRoutes[value]:value;next();});
 const head=title=>`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title} | SameDayDesk</title><link rel="stylesheet" href="/checkout/payment.css"></head><body><main><a href="/">SameDayDesk</a><h1>${title}</h1>`;
 router.use(["/hosted","/fix-pack"],(_req,res,next)=>{res.set({"Cache-Control":"no-store","Referrer-Policy":"no-referrer","X-Robots-Tag":"noindex"});next();});
 router.get("/hosted/:offer",(req,res)=>{
   const offer=legacyOffer(req.params.offer);
   if(!offer) return res.sendStatus(404);
   try {
-    if(!legacyEnabled(offer.id,process.env)) return res.redirect(303,"https://buy.stripe.com/"+legacySlug(offer.id,process.env));
+    if(!legacyEnabled(offer.id,process.env)) return res.redirect(303,withHostedAttribution("https://buy.stripe.com/"+legacySlug(offer.id,process.env),req.query));
     const fields=["order","method","email",...(offer.target?["target"]:[]),...(offer.city?["city"]:[])];
     if(req.accepts(["html","json"])==="json")return res.json({offer:offer.id,cents:offer.cents,currency:"usd",methods:["card","base_usdc"],fields});
     const price=String(BigInt(offer.cents)/100n);
@@ -25,7 +26,10 @@ router.get("/hosted/:offer",(req,res)=>{
 router.post("/hosted/:offer",async(req,res)=>{
   const care=req.app.get("sdsCare");
   if(!care || !legacyEnabled(req.params.offer,process.env)) return res.sendStatus(404);
-  try { return res.status(201).json(await care.legacyStart({...req.body,offer:req.params.offer})); }
+  try {
+    const result=await care.legacyStart({...req.body,offer:req.params.offer});
+    return res.status(201).json(result.url?{...result,url:withHostedAttribution(result.url,req.query)}:result);
+  }
   catch(e) {return res.status(e instanceof CareError?e.status:503).json({error:e instanceof CareError?e.message:"Check the original order before continuing."});}
 });
 router.get("/fix-pack",(_req,res)=>res.type("html").send(head("Download your Fix Pack")+`<form method="post"><label>License from your receipt
