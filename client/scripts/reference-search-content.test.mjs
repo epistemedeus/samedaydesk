@@ -71,3 +71,20 @@ test('documentation-index guide keeps a useful internal next step and drops comp
   assert.ok(referral.includes('content="0;url=/checkout?offer=agent_workflow"'));
   assert.doesNotMatch(referral,/https:\/\/www\.agenthansa\.com/);
 });
+
+test('the dated benchmark publishes a labelled selection with the original retained observations',async()=>{
+  const {createHash}=await import('node:crypto');
+  const html=await readFile(new URL('../public/reports/ai-search-readiness-leaderboard-2026.html',import.meta.url),'utf8');
+  const match=html.match(/const DATA\s*=\s*(\[[^\n]+\]);/);assert.ok(match);
+  const rows=JSON.parse(match[1]);assert.equal(rows.length,187);assert.equal(new Set(rows.map(r=>r.domain)).size,187);
+  assert.equal(createHash('sha256').update(JSON.stringify(rows)).digest('hex'),'e7b6ba53716de2f755f55570983cf066abc17202fa7e3f657d7c4c5d9ff3e449');
+  assert.match(html,/187<\/strong> selected results from the 189 companies/);
+  assert.match(html,/selection average \/100/);assert.match(html,/r\.grade==="C"\|\|r\.grade==="D"\|\|r\.grade==="F"/);
+  assert.match(html,/https:\/\/creativecommons\.org\/licenses\/by\/4.0\//);
+  assert.doesNotMatch(html,/wise\.com|gumroad\.com/i);
+  for(const[name,count,total]of[['ai-search-readiness-saas-2026.html',23,24],['ai-search-readiness-fintech-2026.html',15,16]]){
+    const page=await readFile(new URL('../public/reports/'+name,import.meta.url),'utf8');
+    const body=page.match(/<tbody>([\s\S]*?)<\/tbody>/)?.[1];assert.ok(body);assert.equal((body.match(/<tr>/g)||[]).length,count);
+    assert.ok(page.includes(`table shows ${count} selected examples`));assert.ok(page.includes(`all ${total} sites in the original June 2026 sample`));
+  }
+});
