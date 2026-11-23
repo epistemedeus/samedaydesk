@@ -154,3 +154,38 @@ test('the suggested starting-price example stays neutral when the site declares 
   assert.match(purchase.fix, /from X USD a month/); assert.doesNotMatch(purchase.fix, /20 USD/);
   assert.match(report.summary.topFixes.find((item) => item.id === 'purchase').fix, /from X USD a month/);
 });
+
+test('the render worker counts rendered words; a challenge, an error or a timeout stays Not verified', async () => {
+  const { createRemoteRenderer } = await import('../../lib/free-check-v2/render-client.js');
+  assert.equal(createRemoteRenderer({ url: '', token: '' }), null);
+  assert.throws(() => createRemoteRenderer({ url: 'http://worker.example', token: 't' }), /HTTPS/);
+  const seen = [];
+  const worker = (body, status = 200, delay = 0) => async (target, init) => {
+    seen.push({ target: String(target), auth: init.headers.authorization, sent: JSON.parse(init.body) });
+    await new Promise((resolve, reject) => { const timer = setTimeout(resolve, delay); init.signal.addEventListener('abort', () => { clearTimeout(timer); reject(init.signal.reason); }); });
+    return { ok: status < 400, status, json: async () => body };
+  };
+  const ok = createRemoteRenderer({ url: 'https://worker.example', token: 'tok', fetchImpl: worker({ words: 900, extraWords: 850, challenged: false }) });
+  const run = (renderer) => runFreeCheck(url, { fetcher: async (target) => response(html, { finalUrl: target }), cruxKey: null, renderer });
+  assert.equal((await run(ok)).checks.find((finding) => finding.id === 'rendered').status, 'pass');
+  assert.equal(seen[0].target, 'https://worker.example/render'); assert.equal(seen[0].auth, 'Bearer tok'); assert.equal(seen[0].sent.url, url);
+  for (const renderer of [
+    createRemoteRenderer({ url: 'https://worker.example', token: 'tok', fetchImpl: worker({ words: 20, extraWords: 0, challenged: true }) }),
+    createRemoteRenderer({ url: 'https://worker.example', token: 'tok', fetchImpl: worker({ error: 'x' }, 422) }),
+    createRemoteRenderer({ url: 'https://worker.example', token: 'tok', timeoutMs: 50, fetchImpl: worker({ words: 1, extraWords: 1 }, 200, 500) }),
+  ]) assert.equal((await run(renderer)).checks.find((finding) => finding.id === 'rendered').status, 'unknown');
+});
+
+test('an unset or incomplete renderer config makes no renderer call and leaves rendered text unverified', async () => {
+  const {createRemoteRenderer} = await import('../../lib/free-check-v2/render-client.js');
+  for (const config of [{url: '', token: ''}, {url: 'https://worker.example', token: ''}, {url: '', token: 'fixture-only'}]) assert.equal(createRemoteRenderer(config), null);
+  assert.equal(Boolean(process.env.FREE_CHECK_RENDER_URL), false);
+  assert.equal(Boolean(process.env.FREE_CHECK_RENDER_TOKEN), false);
+  const original = globalThis.fetch, calls = [];
+  globalThis.fetch = async (target) => { calls.push(String(target)); throw Error('No external renderer is enrolled'); };
+  try {
+    const report = await runFreeCheck(url, {fetcher: async (target) => response(html, {finalUrl: target}), cruxKey: null});
+    assert.equal(report.checks.find((finding) => finding.id === 'rendered').status, 'unknown');
+    assert.deepEqual(calls, []);
+  } finally { globalThis.fetch = original; }
+});

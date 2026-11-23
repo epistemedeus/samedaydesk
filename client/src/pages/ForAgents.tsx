@@ -49,12 +49,15 @@ export default function ForAgents() {
           <div className={styles.actions}>
             <a className={styles.primary} href="#observe-title">Fetch your first pages →</a>
           </div>
-          <h2 className={styles.engHead}>For engineers</h2>
+          <h2 className={styles.buyHead}>What your agent can buy here</h2>
+          <ul className={styles.buyList}>
+            <li><a href="#observe-title">Fields from up to five web pages, as clean JSON</a><span>0.01 USDC a batch, paid per call with x402. No key, account or subscription.</span></li>
+            <li><a href="#compare-title">Compare, map and reuse what it already fetched</a><span>Free. Runs on your own machine.</span></li>
+            <li><a href="#record-repeat-title">Offline packages for records, tools and evidence jobs</a><span>Free to download and run.</span></li>
+            <li><a href="#inventory-title">Every other paid tool on the live gateway</a><span>Each call states its price before payment.</span></li>
+          </ul>
           <p className={styles.lead}>
-            Your agent sends up to five public web pages and the fields it wants to <code>POST /extract/batch</code>, and gets them back as clean JSON. 0.01 USDC a batch, paid per call with x402: no key, account or subscription. Comparing, mapping and reusing what you already fetched is free and runs on your own machine.
-          </p>
-          <p className={styles.lead}>
-            Every page you asked for comes back with a row, including the ones that failed, so your agent always knows what it has. The full list of paid HTTP and MCP tools is on the live gateway, linked below.
+            Every page you asked for comes back with a row, including the ones that failed, so your agent always knows what it has.
           </p>
         </header>
 
@@ -74,20 +77,23 @@ export default function ForAgents() {
             . Needs Node.js 22 and a Git checkout. The default commands show the price and terms first and sign nothing. Inspect and edit <code>fixtures/authorization-batch.json</code> yourself before any{" "}
             <code>--approve</code> purchase. If a payment's outcome is unknown, reconcile it rather than paying again.
           </p>
-          <ol className={styles.flow}>
-            <li>Clone the public merchant and check out the pinned commit.</li>
-            <li>Verify <code>node --version</code> reports v22.x, then run <code>npm ci</code>.</li>
-            <li>Run <code>npm start</code> for unpaid batch preflight.</li>
-            <li>Review the authorization file and set your limit.</li>
-            <li>Purchase only with an explicit <code>--approve</code> and a wallet you inject.</li>
-            <li>Read every row, including failed and partial ones.</li>
-          </ol>
-          <div className={styles.commands}>
-            <div>
-              <span>No-key unpaid preflight</span>
-              <pre className={styles.jobPre}><code>{OBSERVE_QUICKSTART}</code></pre>
+          <details className={styles.fold}>
+            <summary>Steps and commands</summary>
+            <ol className={styles.flow}>
+              <li>Clone the public merchant and check out the pinned commit.</li>
+              <li>Verify <code>node --version</code> reports v22.x, then run <code>npm ci</code>.</li>
+              <li>Run <code>npm start</code> for unpaid batch preflight.</li>
+              <li>Review the authorization file and set your limit.</li>
+              <li>Purchase only with an explicit <code>--approve</code> and a wallet you inject.</li>
+              <li>Read every row, including failed and partial ones.</li>
+            </ol>
+            <div className={styles.commands}>
+              <div>
+                <span>No-key unpaid preflight</span>
+                <pre className={styles.jobPre}><code>{OBSERVE_QUICKSTART}</code></pre>
+              </div>
             </div>
-          </div>
+          </details>
           <p className={styles.jobCopy}>
             Backward-compatible single URL: <code>GET {GATEWAY_ORIGIN}/extract</code>. The practical
             multi-URL job is <code>POST {GATEWAY_ORIGIN}/extract/batch</code>.
@@ -102,12 +108,15 @@ export default function ForAgents() {
           <p className={styles.jobCopy}>
             From the same <code>{CUSTOMER_EXAMPLE_DIR}</code> directory after <code>npm ci</code>. Free and local: name the fields you care about and see exactly what changed between two runs. Rows that only moved are reported as moved, not changed.
           </p>
-          <div className={styles.commands}>
-            <div>
-              <span>Copy and run: compare two sample runs</span>
-              <pre className={styles.jobPre}><code>{COMPARE_QUICKSTART}</code></pre>
+          <details className={styles.fold}>
+            <summary>Steps and commands</summary>
+            <div className={styles.commands}>
+              <div>
+                <span>Copy and run: compare two sample runs</span>
+                <pre className={styles.jobPre}><code>{COMPARE_QUICKSTART}</code></pre>
+              </div>
             </div>
-          </div>
+          </details>
         </section>
 
         <section className={styles.section} aria-labelledby="record-title">
@@ -128,12 +137,15 @@ export default function ForAgents() {
             </a>
             .
           </p>
-          <div className={styles.commands}>
-            <div>
-              <span>Copyable required-field example</span>
-              <pre className={styles.jobPre}><code>{RECORD_QUICKSTART}</code></pre>
+          <details className={styles.fold}>
+            <summary>Steps and commands</summary>
+            <div className={styles.commands}>
+              <div>
+                <span>Copyable required-field example</span>
+                <pre className={styles.jobPre}><code>{RECORD_QUICKSTART}</code></pre>
+              </div>
             </div>
-          </div>
+          </details>
         </section>
 
         <section className={styles.section} aria-labelledby="reuse-title">
@@ -148,12 +160,15 @@ export default function ForAgents() {
             The caller supplies stable task, subject, revision sequence, and current UTC clock values;
             the helper never invents them.
           </p>
-          <div className={styles.commands}>
-            <div>
-              <span>Preview, then opt-in write</span>
-              <pre className={styles.jobPre}><code>{REUSE_QUICKSTART}</code></pre>
+          <details className={styles.fold}>
+            <summary>Steps and commands</summary>
+            <div className={styles.commands}>
+              <div>
+                <span>Preview, then opt-in write</span>
+                <pre className={styles.jobPre}><code>{REUSE_QUICKSTART}</code></pre>
+              </div>
             </div>
-          </div>
+          </details>
         </section>
 
         <section className={styles.section} aria-labelledby="record-repeat-title">
@@ -238,16 +253,19 @@ export default function ForAgents() {
             partial, stale baseline, timed out, or error. Priors stay immutable; write a new
             sequenced artifact after review. Partial and failed rows stay visible. <code>buyer-setup-trace</code> shows the payment terms and stops before paying. Offline runs cost nothing; run them on your own schedule.
           </p>
-          <div className={styles.commands}>
-            <div>
-              <span>One-run commands (schedule-neutral; see specs/*.recipe.json)</span>
-              <pre className={styles.jobPre}><code>{RECURRING_QUICKSTART}</code></pre>
+          <details className={styles.fold}>
+            <summary>Steps and commands</summary>
+            <div className={styles.commands}>
+              <div>
+                <span>One-run commands (schedule-neutral; see specs/*.recipe.json)</span>
+                <pre className={styles.jobPre}><code>{RECURRING_QUICKSTART}</code></pre>
+              </div>
+              <div>
+                <span>Buyer-setup free inspection</span>
+                <pre className={styles.jobPre}><code>{BUYER_SETUP_QUICKSTART}</code></pre>
+              </div>
             </div>
-            <div>
-              <span>Buyer-setup free inspection</span>
-              <pre className={styles.jobPre}><code>{BUYER_SETUP_QUICKSTART}</code></pre>
-            </div>
-          </div>
+          </details>
         </section>
 
         <section className={styles.sellerOffer} aria-labelledby="inventory-title">
@@ -303,14 +321,17 @@ export default function ForAgents() {
             <p className="eyebrow">Authoritative inventories</p>
             <h2 id="live-title">Read the live merchant, not a copied count</h2>
           </div>
-          <div className={styles.commands}>
-            {LIVE_INVENTORY.map((item) => (
-              <div key={item.href}>
-                <span>{item.label}</span>
-                <a href={item.href}>{item.href}</a>
-              </div>
-            ))}
-          </div>
+          <details className={styles.fold}>
+            <summary>Steps and commands</summary>
+            <div className={styles.commands}>
+              {LIVE_INVENTORY.map((item) => (
+                <div key={item.href}>
+                  <span>{item.label}</span>
+                  <a href={item.href}>{item.href}</a>
+                </div>
+              ))}
+            </div>
+          </details>
         </section>
       </main>
       <Footer />

@@ -69,3 +69,60 @@ git push origin HEAD:refs/heads/release/revert-samedaydesk-grand-phase
 ```
 
 The release operator lands the revert. Confirm the previous Hostinger path and keep earned obligations, existing records and the already-qualified receipt data intact. Stop a release scheduler introduced by this slice rather than dropping data. The exact scratch merge, revert and rebuild evidence must be added before release.
+
+## Public agent ingress
+
+Keep the existing Hostinger CDN enabled. Its Security setting is **Essentially off**
+for these public reading routes: Low still challenged ordinary headless Chrome.
+Root received fresh first-response product pages at `/` and `/for-agents` after
+that setting change. This is host receiving, not a new source or Lighthouse result.
+For a later release, check once from an admitted Cursor VM with its enrolled Chrome
+and dependencies, using a fresh isolated context and the default headless user agent:
+
+```sh
+node --input-type=module <<'JS'
+import {execFileSync} from 'node:child_process';
+import {createRequire} from 'node:module';
+const kit=execFileSync(process.execPath,['scripts/release/kit.mjs','path'],{encoding:'utf8'}).trim();
+const {default:puppeteer}=await import(createRequire(kit+'/package.json').resolve('puppeteer-core'));
+const browser=await puppeteer.launch({executablePath:process.env.RELEASE_CHROME||'/usr/bin/google-chrome',headless:true,args:['--no-sandbox','--disable-dev-shm-usage']});
+try { for (const path of ['/', '/for-agents']) {
+  const context=await browser.createBrowserContext();
+  try { const page=await context.newPage();
+    const response=await page.goto('https://samedaydesk.com'+path,{waitUntil:'domcontentloaded',timeout:30000});
+    const title=await page.title(), headings=await page.$$eval('h1',nodes=>nodes.map(n=>n.textContent.trim()));
+    const ok=response.status()===200 && headings.length>0 && !/checking your browser|just a moment|access denied/i.test(title);
+    console.log(JSON.stringify({path,firstStatus:response.status(),title,headings,ok}));
+    if (!ok) process.exitCode=1;
+  } finally { await context.close(); }
+} } finally { await browser.close(); }
+JS
+```
+
+Receive the first response, not a later page after a challenge or reload. Root owns
+host setting changes; no DNS migration is part of this check. The keyless PageSpeed
+API is currently over its daily quota and is deferred to a later run. The enrolled
+`SDS_FREE_CHECK_CRUX_API_KEY` is restricted to Chrome UX Report API and remains a
+separate field-data input; it is not enrolled or reused for PageSpeed.
+
+## Plan 22 cut and receiving
+
+The approved first-visitor price line, receipts placement and For Agents folds are included with
+Free Check's optional renderer client. Keep both FREE_CHECK_RENDER_URL and FREE_CHECK_RENDER_TOKEN
+unset. No renderer is deployed for this cut. The rendered-text result stays Not verified when the
+client is unconfigured; no fallback measurement is invented. Preserve all existing 102 host env
+values, including SDS_CARE_NONCARD=1 and SDS_FREE_CHECK_CRUX_API_KEY. No new migration is needed.
+The existing Root Stripe.com CrUX measurement and void/canceled bank QA remain historical receipts,
+not new tests on this source. Root owns the cut, status, merge, managed host build and live receiving.
+
+Use the saved Node 22 Express profile with build:managed-foundry and server/index.js. After deploy,
+receive /, /for-agents, /tools/ai-readiness and /docs-lab/openscan/ with the existing first-response
+procedure above; PageSpeed stays deferred. Verify the hero price line, offers before the receipt band,
+the For Agents priced list/folds and both 149/349 offer returns through login/signup. Do not create
+another invoice or payment. Keep CDN enabled with its operator-selected Essentially off security.
+
+Copy now runs through the pinned shared kit. The existing copy gate reads raw index.html, no-script
+and visually hidden text, browser-rendered pages and final prerenders. Its strict-prose pass covers
+all seven served/rendered representations of the three repaired pages, refusing long dashes and
+dollar-prefix prices. The canonical structured check receipt is release/out/check.json; Root's
+receiver reads the exact source-bound copy published at previews/samedaydesk/release/check-<sha>.log.

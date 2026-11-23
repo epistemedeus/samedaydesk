@@ -219,11 +219,10 @@ export const CUSTOM = {
 export const ALL_OFFERS: Offer[] = CATEGORIES.flatMap((category) => category.offers);
 export const flagship = ALL_OFFERS.find((offer) => offer.flagship)!;
 
-// Live Stripe Payment Links are inserted only after the matching product,
-// price, and metadata have been verified in the live Stripe account.
+// Cards and report recommendations share the checkout entries qualified in release/offers.json.
 export const PAYMENT_LINKS: Record<string, string> = {
-  agent_workflow: "https://buy.stripe.com/7sY3cw8025np9dd282eZ20B",
-  agent_mcp_server: "https://buy.stripe.com/eVq7sMdkmaHJ1KL6oieZ20C",
+  agent_workflow: "/checkout?offer=agent_workflow",
+  agent_mcp_server: "/checkout?offer=agent_mcp_server",
   machine_payment_route: "/care/buy?offer=machine_payment_route",
   agent_storefront: "/care/buy?offer=agent_storefront",
   agent_front_door: "/care/buy?offer=agent_front_door",
@@ -234,3 +233,11 @@ export const PAYMENT_LINKS: Record<string, string> = {
 // These scoped services use their receipt flow rather than account PaymentIntents.
 export const careCheckoutFromAccount = (slug: string) =>
   slug === "agent_front_door" || slug === "keep_it_working" ? PAYMENT_LINKS[slug] : null;
+
+
+// Only the two qualified account offers can continue through sign-in to checkout.
+export function accountCheckoutEntry(slug: string | null | undefined): string | null {
+  if (!slug || !ALL_OFFERS.some((offer) => offer.slug === slug)) return null;
+  const entry = PAYMENT_LINKS[slug];
+  return entry === `/checkout?offer=${slug}` ? entry : null;
+}

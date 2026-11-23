@@ -9,6 +9,7 @@ import {createReadStream, existsSync, mkdirSync, readdirSync, rmSync, statSync, 
 import {createServer} from 'node:http';
 import {extname, join, relative, resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {publicFirstRenderPath, shellFilePath} from '../server/lib/spa-route-shells.js';
 import {findChrome} from '../tools/browser-smoke/lib.mjs';
 
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
@@ -54,10 +55,18 @@ server.close();
     const p = join(d, name);
     const rel = relative(dist, p);
     if (statSync(p).isDirectory()) { if (rel !== 'assets') walk(p); continue; }
-    if (name.endsWith('.html') && rel !== 'index.html') files.push(p);
+    if (name.endsWith('.html')) files.push(p);
     if (d === dist && MACHINE.includes(name)) files.push(p);
   }
 })(dist);
 
 const r = spawnSync(process.execPath, [join(root, 'tools/public-copy-check.mjs'), '--site', 'samedaydesk', ...files], {stdio: 'inherit'});
-process.exit(r.status ?? 1);
+if (r.status !== 0) process.exit(r.status ?? 1);
+// Read every served representation of the three operator-owned copy repairs,
+// including no-script summaries and prerendered first responses.
+const prose = [join(dist, 'index.html'), publicFirstRenderPath(dist, '/'),
+  shellFilePath(dist, '/tools/ai-readiness'), publicFirstRenderPath(dist, '/tools/ai-readiness'),
+  join(dist, 'docs-lab/openscan/index.html'), ...['home.html', 'tools__ai-readiness.html'].map(name => join(out, name))];
+for (const file of prose) if (!existsSync(file)) throw Error(`Missing copy representation: ${relative(root, file)}`);
+const strict = spawnSync(process.execPath, [join(root, 'tools/public-copy-check.mjs'), '--site', 'samedaydesk', '--strict-prose', ...prose], {stdio: 'inherit'});
+process.exit(strict.status ?? 1);

@@ -11,12 +11,12 @@ import { initAnalytics } from "./lib/posthog";
 import { journey, observeBrowserErrors } from "./lib/journey";
 import { useSmoothScroll } from "./motion/useSmoothScroll";
 import { publicPages, type InitialPublicPage } from "./public-pages";
+// The buy page is where money moves, so it ships with the main bundle rather than as a later chunk.
+import { BuyCare, CareReceipt } from "./pages/Care";
 
 const Auth = lazy(() => import("./pages/Auth"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Checkout = lazy(() => import("./pages/Checkout"));
-const BuyCare = lazy(() => import("./pages/Care").then((module) => ({ default: module.BuyCare })));
-const CareReceipt = lazy(() => import("./pages/Care").then((module) => ({ default: module.CareReceipt })));
 const Receipts = lazy(() => import("./pages/Receipts"));
 const ReceiptPage = lazy(() => import("./pages/ReceiptPage"));
 
@@ -54,9 +54,9 @@ export default function App({ initialPage }: { initialPage?: InitialPublicPage }
       <DraftingFrame />
       <DraftingCrosshair />
       <ScrollToHash />
-      {/* The build and browser preload this page. Hydrate it with its providers,
+      {/* Public first renders and the eager buy page hydrate with their providers,
           before effects like the theme preference can change shared state. */}
-      {initialPage?.path === pathname ? routes : (
+      {initialPage?.path === pathname || pathname === "/care/buy" ? routes : (
         <Suspense fallback={<div className="route-loading" aria-busy="true" />}>{routes}</Suspense>
       )}
     </AuthProvider>

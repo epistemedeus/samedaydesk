@@ -13,7 +13,7 @@ export default function Hero() {
       <EnergySurface />
       <div className={styles.scrim} aria-hidden="true" />
 
-      <div className={clsx("container", styles.content)}>
+      <div className={clsx("container", styles.content)} data-hero-copy>
         <p className={styles.eyebrow} data-hero-fade>
           <span className={styles.tick} aria-hidden="true" /> Agent commerce · built and shipped
         </p>
@@ -32,7 +32,7 @@ export default function Hero() {
 
         <div data-hero-fade>
           <HeroCheckForm onResult={(result, err, busy) => setCheck({ result, err, busy })} />
-          <p className={styles.alt}><a href="#services">Or see what we build, at fixed prices</a></p>
+          <p className={styles.alt}><a href="#services"><strong>Fixed prices from 149 USD.</strong> See what we build</a></p>
         </div>
         <p className={styles.fine} data-hero-fade>
           For engineers: MCP servers, x402 and MPP payment routes, and machine storefronts, built

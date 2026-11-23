@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { ALL_OFFERS, PAYMENT_LINKS } from "../lib/services";
 import styles from "./Care.module.css";
 import { journey } from "../lib/journey";
+import Nav from "../components/Nav";
+import Footer from "../components/Footer";
 
 type Receipt = {
   title: string; state: string; receivedIntake: boolean; amountCents: number; refundedCents?: number; invoiceUrl?: string;
@@ -24,18 +26,25 @@ const redirect = (value: string, host: string) => {
   window.location.assign(url.href);
 };
 
-function CareFrame({ title, children }: { title: string; children: React.ReactNode }) {
+// The buy page sits inside the site (header and footer); receipts keep the bare ticket.
+function CareFrame({ title, children, site = false }: { title: string; children: React.ReactNode; site?: boolean }) {
   useEffect(() => {
     const stored = document.title;
     document.title = `${title} | SameDayDesk`;
     return () => { document.title = stored; };
   }, [title]);
+  const ticket = <section className={styles.ticket} aria-labelledby="care-title">
+    <h1 id="care-title">{title}</h1>
+    {children}
+  </section>;
+  if (site) return <>
+    <Nav />
+    <main id="main" className={`${styles.shell} ${styles.inSite}`}>{ticket}</main>
+    <Footer />
+  </>;
   return <main className={styles.shell}>
     <Link className={styles.home} to="/">SameDayDesk</Link>
-    <section className={styles.ticket} aria-labelledby="care-title">
-      <h1 id="care-title">{title}</h1>
-      {children}
-    </section>
+    {ticket}
   </main>;
 }
 
@@ -88,12 +97,16 @@ export function BuyCare() {
       setBusy(false);
     }
   };
-  return <CareFrame title={offer?.plain || "Choose a service"}>
+  return <CareFrame site title={offer?.plain || "Choose a service"}>
     {offer ? <>
       <p>{offer.outcome}</p>
       <p><strong>{offer.price} USD</strong>{offer.per ? " each month" : " once"}</p>
       {offer.per && <p>Billed monthly. Cancel future renewals from your receipt.</p>}
-      <p>After payment, tell us what to build or check.</p>
+      <dl className={styles.terms}>
+        <dt>What you get</dt><dd>{offer.receive.join(". ")}.</dd>
+        <dt>When</dt><dd>After payment, tell us what to build or check. Before we start, we write down what must work.</dd>
+        <dt>The guarantee</dt><dd>If what we deliver does not do it, we fix it at no extra charge. If we cannot make it work, you get your money back.</dd>
+      </dl>
       {query.get("left") === "1" && <p role="status">You left checkout. Continue there to finish.</p>}
       {error && <p role="alert">{error}</p>}
       <button type="button" disabled={busy} onClick={() => void buy()}>

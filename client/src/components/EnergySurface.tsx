@@ -53,6 +53,7 @@ const fragment = /* glsl */ `
 
 export default function EnergySurface() {
   const host = useRef<HTMLDivElement>(null);
+  const mark = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -195,12 +196,37 @@ export default function EnergySurface() {
     };
   }, [theme]);
 
+  // Reading first: the drafting ring slides right until it clears the hero copy by 24 px, and is
+  // hidden where less than a third of it would remain on screen. Measured, so it holds at every
+  // width and in every language.
+  useEffect(() => {
+    const ring = mark.current;
+    const hero = ring?.closest<HTMLElement>("[data-hero]");
+    const copy = hero?.querySelector<HTMLElement>("[data-hero-copy]");
+    if (!ring || !hero || !copy) return;
+    const place = () => {
+      ring.style.transform = "";
+      ring.style.visibility = "";
+      const r = ring.getBoundingClientRect(), c = copy.getBoundingClientRect();
+      if (!r.width || r.bottom <= c.top || r.top >= c.bottom || r.left >= c.right + 24) return;
+      const shift = c.right + 24 - r.left;
+      if ((window.innerWidth - (r.left + shift)) / r.width < 0.35) ring.style.visibility = "hidden";
+      else ring.style.transform = `translateX(${Math.round(shift)}px)`;
+    };
+    place();
+    const watch = new ResizeObserver(place);
+    watch.observe(hero);
+    watch.observe(copy);
+    document.fonts?.ready.then(place);
+    return () => watch.disconnect();
+  }, [theme]);
+
   return (
     <div className={styles.surface} aria-hidden="true">
       <div ref={host} className={styles.canvasHost} />
       <div className={styles.glow} />
       <div className={styles.grid} />
-      <div className={styles.draftMark} />
+      <div ref={mark} className={styles.draftMark} />
     </div>
   );
 }

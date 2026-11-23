@@ -22,7 +22,9 @@
 .mark { width: 1.35em; height: 1.35em; flex: none; }
 .tag { color: var(--ink-dim); margin-top: var(--space-xs); max-width: 32ch; }
 .contact {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
   margin-top: var(--space-s);
   font-family: var(--font-mono);
   font-size: var(--step--1);
@@ -39,7 +41,7 @@
   font-weight: 500;
   margin-bottom: 0.3em;
 }
-.col a { color: var(--ink-dim); font-size: var(--step--1); transition: color 0.18s; width: fit-content; }
+.col a { color: var(--ink-dim); font-size: var(--step--1); transition: color 0.18s; width: fit-content; display: inline-flex; align-items: center; min-height: 24px; }
 .col a:hover { color: var(--ink); }
 .base {
   display: flex;

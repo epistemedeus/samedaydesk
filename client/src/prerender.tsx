@@ -4,6 +4,7 @@ import { StaticRouter } from "react-router-dom";
 import App from "./App";
 import { ThemeProvider } from "./lib/theme";
 import { initialPublicPage, publicPages } from "./public-pages";
+import { ALL_OFFERS, PAYMENT_LINKS } from "./lib/services";
 
 export async function renderPublicPages() {
   const output = [];
@@ -23,4 +24,19 @@ export async function renderPublicPages() {
     output.push({ path, entry, html });
   }
   return output;
+}
+
+// The buy page for each offer sold through it, so the price and button paint with the document.
+export function renderBuyPages() {
+  return ALL_OFFERS.filter((offer) => PAYMENT_LINKS[offer.slug]?.startsWith("/care/buy?")).map((offer) => {
+    const html = renderToString(<StrictMode>
+      <ThemeProvider initialTheme="drafting">
+        <StaticRouter location={`/care/buy?offer=${offer.slug}`}>
+          <App />
+        </StaticRouter>
+      </ThemeProvider>
+    </StrictMode>);
+    if (!/<main\b[^>]*\bid="main"/.test(html) || !html.includes(`${offer.price} USD`)) throw new Error(`Incomplete buy render: ${offer.slug}`);
+    return { offer: offer.slug, title: `${offer.plain} | SameDayDesk`, html };
+  });
 }

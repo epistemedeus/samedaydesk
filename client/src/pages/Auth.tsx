@@ -3,13 +3,15 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { getSupabase, isAuthConfigured, authedFetch } from "../lib/supabase";
 import { useAuth } from "../lib/auth";
 import { ALL_OFFERS } from "../lib/services";
+import { authHandoff } from "../lib/authHandoff";
 import { track } from "../lib/posthog";
 import styles from "./Auth.module.css";
 import { journey } from "../lib/journey";
 
 export default function Auth({ mode }: { mode: "login" | "signup" }) {
   const [params] = useSearchParams();
-  const offerSlug = params.get("offer") || undefined;
+  const handoff = authHandoff(params.toString());
+  const offerSlug = handoff.offer;
   const offer = ALL_OFFERS.find((o) => o.slug === offerSlug);
   const navigate = useNavigate();
   const { user, loading } = useAuth();
@@ -20,8 +22,9 @@ export default function Auth({ mode }: { mode: "login" | "signup" }) {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
-  const dest = () => (offerSlug ? `/dashboard?offer=${offerSlug}` : "/dashboard");
-  const altQuery = offerSlug ? `?offer=${offerSlug}` : "";
+  const altQuery = handoff.query;
+  // Keep the existing dashboard OAuth callback and its validated purchase return.
+  const dest = () => handoff.destination;
 
   useEffect(() => {
     if (!loading && user) navigate(dest(), { replace: true });

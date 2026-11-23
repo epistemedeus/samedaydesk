@@ -1,5 +1,9 @@
 .shell { max-width: 44rem; margin: 0 auto; padding: 2rem 1rem 5rem; }
 .home { display: inline-block; padding: .5rem 0; }
+.inSite { padding-top: calc(var(--nav-h) + 2rem); }
+.terms { display: grid; gap: .35rem; margin: 0 0 1.5rem; }
+.terms dt { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-dim); margin-top: .6rem; }
+.terms dd { margin: 0; }
 .ticket { margin-top: 2rem; padding: clamp(1rem, 5vw, 3rem); border: 1px solid currentColor; }
 .ticket h1 { margin: 0 0 1.25rem; }
 .ticket p { margin: 0 0 1rem; }

@@ -26,9 +26,8 @@
 .bl { bottom: 16px; left: 16px; }
 .br { bottom: 16px; right: 16px; }
 
-@media (max-width: 600px) {
-  .tl, .tr { top: 12px; }
-  .bl, .br { bottom: 12px; }
-  .tl, .bl { left: 12px; }
-  .tr, .br { right: 12px; }
+/* On phones and small tablets the corners hold the menu button and the edges of cards, so the
+   marks would sit on them. */
+@media (max-width: 767px) {
+  .frame { display: none; }
 }
