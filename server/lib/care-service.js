@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import {
-  CARE_OFFERS, careServiceOffer, CareError, NONCARD_DAYS_DUE, NONCARD_METHODS, NONCARD_PRICE_KEY, careLink, careOrigin, carePaidPeriod,
+  CARE_OFFERS, careServiceOffer, careReceiptAmount, CareError, NONCARD_DAYS_DUE, NONCARD_METHODS, NONCARD_PRICE_KEY, careLink, careOrigin, carePaidPeriod,
   checkoutArgs, checkedSession, invoiceSubscriptionArgs, isOrderId, newIntegrationId, providerId, readCareIntake, subscriptionOfInvoice, subscriptionWillNotRenew, verifyCareToken,
 } from "./care-contract.js";
 import { openCareStore } from "./care-store.js";
@@ -174,7 +174,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
       if (invoice.status === "open") invoiceUrl = allowedStripeUrl(invoice.hosted_invoice_url, "invoice.stripe.com");
     }
     return {
-      offer: order.offer, title: careServiceOffer(order.offer).title, amountCents: order.amount_cents, ...(invoiceUrl ? { invoiceUrl } : {}),
+      offer: order.offer, title: careServiceOffer(order.offer).title, ...careReceiptAmount(order), ...(invoiceUrl ? { invoiceUrl } : {}),
       ...(order.rail_id ? { paymentUrl: "https://agents.samedaydesk.com/order-payments/sds/" + order.rail_id,
         paymentState: order.rail_refund?.state || order.rail_observation?.state || (order.rail_attempt ? "seen" : "waiting") } : {}),
       state: order.state, receivedIntake: Boolean(order.intake), refundedCents: order.refunded_cents ?? 0,

@@ -12,6 +12,19 @@ export const CARE_OFFERS = immutable({
 export const watchOffer=immutable({id:"legacy_skill_watch",title:"SkillGuard Watch",cents:1200,interval:"month",mode:"subscription"});
 export const careServiceOffer = key => key === watchOffer.id
   ? watchOffer : Object.hasOwn(CARE_OFFERS,key) ? CARE_OFFERS[key] : null;
+// Receipt projection only. Catalog and stored payment obligations are unchanged.
+export function careReceiptAmount(order) {
+  if (order.checkout_rail !== "usdc") return { amountCents: order.amount_cents, currency: "USD" };
+  let amountCents = order.rail_qa_cents ?? order.amount_cents;
+  const amount = order.rail_observation?.state === "paid" ? order.rail_observation.evidence?.amount : null;
+  if (amount != null) {
+    if (typeof amount !== "string" || !/^[1-9][0-9]*$/.test(amount)) throw new Error("Invalid Care receipt amount");
+    const atomic = BigInt(amount);
+    if (atomic % 10000n || atomic / 10000n > BigInt(Number.MAX_SAFE_INTEGER)) throw new Error("Invalid Care receipt amount");
+    amountCents = Number(atomic / 10000n);
+  }
+  return { amountCents, currency: "USDC" };
+}
 export const isOrderId = (value) => typeof value === "string" && /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(value);
 export const providerId = (value, prefix) => typeof (value?.id ?? value) === "string" &&
   new RegExp(`^${prefix}_[A-Za-z0-9_]{2,150}$`).test(value?.id ?? value) ? value?.id ?? value : null;

@@ -9,8 +9,8 @@ import { createSdsApp } from "../app.js";
 import { createCareService } from "../lib/care-service.js";
 import { careTable } from "../lib/care-database.js";
 import { openCareStore } from "../lib/care-store.js";
-import { careToken } from "../lib/care-contract.js";
-import { drainCareMail } from "../lib/care-mail.js";
+import { careToken, careReceiptAmount } from "../lib/care-contract.js";
+import { drainCareMail, careMailMessage } from "../lib/care-mail.js";
 import { githubSentinel, sentinelReportArtifacts, sentinelReportingChecks, tickSentinel } from "../lib/care-sentinel.js";
 import { FROM, resend } from "../lib/resend.js";
 import { stripe as signingClient } from "../lib/stripe.js";
@@ -425,4 +425,33 @@ test("built HTTP preview and real PostgreSQL receive both checkouts, money autho
   const mailRows = (await db.query(`select event_id,email_id,event_type,test from ${careTable("mail_events")} `)).rows;
   assert.deepEqual(mailRows, [{ event_id: mailId, email_id: emailId, event_type: "email.bounced", test: true }]);
   console.log("MAIL_BOUNCE_STORAGE_OK signed synthetic bounce stored once; invalid signature refused");
+});
+
+
+// Pure receipt consumers: no provider, DB or delivery effect.
+for (const [name, fields, amountCents, currency] of [
+  ["card", {}, 49900, "USD"],
+  ["bank", { offer: "keep_it_working", amount_cents: 10000, subscription_id: "sub_existing" }, 10000, "USD"],
+  ["USDC", { checkout_rail: "usdc", rail_observation: { state: "paid", evidence: { amount: "499000000" } } }, 49900, "USDC"],
+  ["owner QA", { checkout_rail: "usdc", rail_qa_cents: 1, rail_observation: { state: "paid", evidence: { amount: "10000" } } }, 1, "USDC"],
+  ["QA fallback", { checkout_rail: "usdc", rail_qa_cents: 1 }, 1, "USDC"],
+  ["Watch USDC", { offer: "legacy_skill_watch", amount_cents: 1200, checkout_rail: "usdc", intake: { repositories: [] }, rail_observation: { state: "paid", evidence: { amount: "12000000" } } }, 1200, "USDC"],
+]) test(`Care receipt projection: ${name} mail, API and repeat reads`, async () => {
+  const secret = "synthetic receipt capability secret of sufficient length";
+  const id = "11111111-1111-4111-8111-111111111111";
+  const row = { id, offer: "machine_payment_route", amount_cents: 49900, live_mode: false, state: "paid",
+    checkout_origin: "https://samedaydesk.com", stripe_email: "owner@example.test", ...fields };
+  const before = JSON.stringify(row);
+  const care = createCareService({ store: { order: async () => row, quotes: {} }, stripe: {}, secret, live: false, origin: row.checkout_origin });
+  const key = careToken(secret, id, "intake");
+  for (let i = 0; i < 3; i++) {
+    assert.deepEqual(careReceiptAmount(row), { amountCents, currency });
+    const receipt = await care.read(id, key);
+    assert.equal(receipt.amountCents, amountCents); assert.equal(receipt.currency, currency);
+    const mail = careMailMessage({ order: row, item: { kind: "receipt" }, secret });
+    const display = amountCents % 100 ? (amountCents / 100).toFixed(2) : String(amountCents / 100);
+    assert.match(mail.text, new RegExp(`Paid:? ${display.replace(".", "\\.")} ${currency}\\.`));
+    if (name === "owner QA") { assert.doesNotMatch(mail.text, /499|USD\b/); assert.equal(receipt.amountCents, 1); }
+    assert.equal(JSON.stringify(row), before);
+  }
 });
