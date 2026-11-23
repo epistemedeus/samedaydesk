@@ -216,7 +216,7 @@
     "server/lib/managed-watch/worker-main.mjs": "475fcb4e2c2c2d0a19fcf2b7ac253e403601ee79a06c745c99d93e8616372c1f",
     "server/lib/mcp-admission.js": "b8e6d52564baf55db8d6d84ae189dfaa779c2ce8946ae14222f42d8e85762d74",
     "server/lib/mcp-http.js": "e84958459ac9d2da77e33e917ea20550e2498911474e5634d929c9a0dd3875ca",
-    "server/lib/mcp-tool-inventory.js": "e774e9e48a290ab1b52f9e40ac1ef6e2f9b56280e006dc25e7ce4eb005512fa9",
+    "server/lib/mcp-tool-inventory.js": "548309f19f3c55efa0d62f34ff52ad4e2d1936affa559684a05a73ecb33255bb",
     "server/lib/neomorphic-contributor-journey-mount.js": "799fe5d4d0fbcd62a80f23bd053902b236b63d6f3eee61bd501c4b2a08731157",
     "server/lib/neomorphic-opportunity-mount.js": "ae97f69cbe092cc06cc846abd32bf2cf79e803ec0502abb0582bbca64d4c5043",
     "server/lib/neomorphic-original-continuation-mount.js": "0eb6aad1436563ac0a1f61f6792b797055e84fbb386c35472bb01746f479c210",
@@ -262,7 +262,7 @@
     "server/routes/agent-readiness.js": "de888e34d7f68ddbf099cfd5021b850ee9e725f425a9375377af497c5216e312",
     "server/routes/care.js": "a32d6977d0b4e63f8b24b306a161145b1e44e7b831b3821974bd7ad99ec28cd9",
     "server/routes/checkout.js": "db41b5c8e00275e6eb6618877653d38790014172d13a9fa06921c867b2be366f",
-    "server/routes/mcp.js": "2ddd1587d918bdd7da1fa5ae7ae00d24b61b4a4f531c0107ecaca4caace12e28",
+    "server/routes/mcp.js": "69fac79a4dee7f76e7b121051d5559e62e58297c47bff3c23306463e0f33dbea",
     "server/routes/pulse.js": "30900298a5a5a233c2daaf81a8d5e81ff3c73b2a5f3572a75101784f48eda260",
     "server/routes/requests.js": "9f42868435cfd9e40041a324fb3e272535ee6ca914d8224487434c4a110aec8b",
     "server/routes/resend-webhook.js": "b4b78b2ec212e2ae98c73703fb425d24538fdb2ee51492877a5c07a0d3f79352",
@@ -1530,7 +1530,8 @@
     "server/lib/free-check-v2/store.js": "1a60a850dd00ca817e1c52746273357749970d5469415510fadd877d8c5ff62b",
     "server/lib/free-check-v2/http.js": "e4f5fd49660f0e18abf758259d05ce48dc7d0b93d3dd240a8e0472046c371080",
     "server/lib/free-check-v2/render-client.js": "fceb750b0d7ca83e23e05fe909150f6e90dbb6023092a93f2f72ef791d980e20",
-    "client/src/data/readinessPage.mjs": "d0b89badfdfaf4f16b175989ef7063be0976cc476562e6d353111c35462d2a6b"
+    "client/src/data/readinessPage.mjs": "d0b89badfdfaf4f16b175989ef7063be0976cc476562e6d353111c35462d2a6b",
+    "server/routes/scan.js": "1fb65804632de1434b8e24a447da0d170d7444a73c77bdb94cef4efa89a6ce6b"
   },
   "receivedCallerClosures": [
     {

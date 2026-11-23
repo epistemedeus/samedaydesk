@@ -27,7 +27,9 @@ const EXPECTED_ANNOTATIONS = {
 };
 const EXPECTED_TOOL_NAMES = [...MCP_TOOL_NAMES];
 // Byte-semantic pin of the apex tool surface definitions. Recomputed when TOOLS changes.
-const FROZEN_TOOLS_BLOCK_SHA256 = "cc472087c0ecd3ba2d95cec0697dcc9b2f8a34f67f5728c8be3c5a28c2da559b";
+// Only the reviewed Fix Pack description wording changes; schemas, names, values and annotations retain their prior binding.
+const FROZEN_TOOL_CONTRACT_SHA256 = "885e92eefc353527258390dcac5d0ebc4d9d75777e14cf6ce12c28d35ceb8b0a";
+const FROZEN_TOOLS_BLOCK_SHA256 = "9739a9bee986ea24342820b2de97e296a423fd07c11d65502605bdaf8c220719";
 
 const MCP_SOURCE_PATH = join(dirname(fileURLToPath(import.meta.url)), "../routes/mcp.js");
 const MCP_SOURCE = readFileSync(MCP_SOURCE_PATH, "utf8");
@@ -126,6 +128,9 @@ test("apex tools remain listed; tools/call still serves readiness, Fix Pack, and
   // Qualified cross-chain plan selectors and amount fields update the machine inventory pin.
   const toolsBlock = TOOLS_SOURCE.slice(TOOLS_SOURCE.indexOf("const TOOLS = [")).trimEnd() + "\n\n";
   assert.equal(sha256(toolsBlock), FROZEN_TOOLS_BLOCK_SHA256);
+  const withoutDescriptions = value => Array.isArray(value) ? value.map(withoutDescriptions)
+    : value && typeof value === "object" ? Object.fromEntries(Object.entries(value).filter(([key]) => key !== "description").map(([key, item]) => [key, withoutDescriptions(item)])) : value;
+  assert.equal(sha256(JSON.stringify(withoutDescriptions(toolsFromSource()))), FROZEN_TOOL_CONTRACT_SHA256);
 
   const callBlock = extractBlock(
     MCP_SOURCE,

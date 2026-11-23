@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// node scripts/release/kit.mjs <check|sweep|visual|stripe|status|demand|path> [args]
+// node scripts/release/kit.mjs <copy|check|sweep|visual|stripe|status|demand|path> [args]
 //
 // The site's launcher for the shared release kit (pilot repository, tools/release-kit). Each site keeps
 // a copy of this file as scripts/release/kit.mjs and pins the kit in release/kit.json:
@@ -44,7 +44,7 @@ if (!dir) {
     renameSync(partial, cache);
   }
 }
-if (!existsSync(join(dir, "node_modules", "puppeteer-core"))) {
+if (command !== "copy" && !existsSync(join(dir, "node_modules", "puppeteer-core"))) {
   execFileSync("npm", ["ci", "--prefix", dir, "--ignore-scripts", "--no-audit", "--no-fund"], { stdio: ["ignore", "ignore", "inherit"] });
 }
 if (command === "path") { console.log(dir); process.exit(0); }
