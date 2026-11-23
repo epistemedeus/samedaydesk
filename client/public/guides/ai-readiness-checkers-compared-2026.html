@@ -37,9 +37,9 @@
   "@graph": [
     {
       "@type": "Article",
-      "headline": "AI readiness audit tools for websites: what a checker can and cannot prove (2026)",
+      "headline": "Find your website's next AI-readiness fix (2026)",
       "datePublished": "2026-06-24",
-      "dateModified": "2026-09-23",
+      "dateModified": "2026-11-23",
       "author": { "@type": "Organization", "name": "SameDayDesk", "url": "https://samedaydesk.com/" },
       "publisher": { "@type": "Organization", "name": "SameDayDesk", "url": "https://samedaydesk.com/" },
       "mainEntityOfPage": "https://samedaydesk.com/guides/ai-readiness-checkers-compared-2026.html"
@@ -72,40 +72,40 @@
 <div class="wrap">
 
   <p class="eyebrow">SameDayDesk guide</p>
-  <h1>AI readiness audit tools for websites: what a checker can and cannot prove</h1>
-  <p class="lead">An AI readiness audit tool checks public access signals that the answer engines document, mainly robots.txt tokens and whether a URL returns text a person can read. It does not prove that ChatGPT, Perplexity, or Google AI Overviews will cite the site. OpenAI says a site opted out of OAI-SearchBot will not be shown in ChatGPT search answers. Google says AI Overviews have no extra technical requirements beyond ordinary Search eligibility, and that no third-party tool has access to Google's internal ranking or AI systems.</p>
+  <h1>Find your website's next AI-readiness fix</h1>
+  <p class="lead">Find the files and page content you can improve today. Our free readiness check reads crawler access, the HTML your server returns and the business details your page publishes. Use its evidence to fix blocked access, missing answers and unclear metadata, then rerun the same URL. For the answers buyers actually see in ChatGPT, Perplexity or Google AI, choose our AI Visibility Audit below.</p>
   <p class="muted">Last checked: 2026-09-23.</p>
 
-  <h2>What each kind of tool is allowed to claim</h2>
+  <h2>From a check to a useful fix</h2>
   <table>
     <thead>
-      <tr><th>Tool</th><th>What it can check</th><th>What it cannot prove</th></tr>
+      <tr><th>Tool</th><th>What it can check</th><th>Your next step</th></tr>
     </thead>
     <tbody>
       <tr>
         <td>robots.txt reader</td>
         <td>Whether the file names OAI-SearchBot, PerplexityBot, or Googlebot, and what Allow or Disallow rules sit in that group.</td>
-        <td>That the engine fetched the page, indexed it, or cited it. RFC 9309 says robots.txt rules are not access authorization.</td>
+        <td>Check the page's index state in Search Console and publish the crawler access you intend.</td>
       </tr>
       <tr>
         <td>URL fetch</td>
         <td>The HTTP status and the HTML your server returned to that client.</td>
-        <td>How a model ranks that HTML. OpenAI, Anthropic, and Perplexity do not publish a score for it.</td>
+        <td>Put the useful answer in the initial HTML and rerun the free check.</td>
       </tr>
       <tr>
         <td>Google's own report</td>
         <td>Impressions in Google's generative AI features, in the Search Console report Google documents.</td>
-        <td>ChatGPT or Perplexity citations. Google says third-party tools do not have its internal metrics.</td>
+        <td>Use the live-answer audit below for the buyer queries you want to test.</td>
       </tr>
       <tr>
         <td>Done-for-you audit</td>
         <td>A person can run named prompts and record what the live answers say, then point at the gaps above.</td>
-        <td>A future ranking. Indexing and serving are not guaranteed.</td>
+        <td>Use the recorded answers and recommended changes to improve your pages.</td>
       </tr>
     </tbody>
   </table>
 
-  <h2>The controls the vendors actually publish</h2>
+  <h2>Check the rules for each search destination</h2>
   <p>Use the operator's page, not a checklist that treats every bot token as the same switch.</p>
   <ul>
     <li><a href="https://developers.openai.com/api/docs/bots">OpenAI's crawler overview</a>, checked 2026-09-23: OAI-SearchBot is the robots.txt control for ChatGPT search answers. GPTBot is the training crawler. The two settings are independent. ChatGPT-User is for user-triggered visits, robots.txt may not apply, and OpenAI says it is not used to decide Search appearance. A robots.txt change can take about 24 hours to be reflected.</li>
@@ -122,19 +122,19 @@
   <ol>
     <li>Open <code>robots.txt</code> and compare the OAI-SearchBot, PerplexityBot, and Googlebot groups with the pages linked above.</li>
     <li>Fetch the URL and confirm the answer is in the HTML, not only in a script. Google's guide says it can process JavaScript when it is not blocked, and that JavaScript sites are harder to debug. Put the answer in text anyway so a reader, and any fetcher, can see it without guessing.</li>
-    <li>For Google, use Search Console, including the generative AI report Google documents. Do not buy a tool that claims a private Google rank.</li>
-    <li>If you need someone to run the live prompts and write down who gets named, that is a different job from a URL paste. Use the audit linked below. This page does not set its price.</li>
+    <li>For Google, use Search Console, including the generative AI report Google documents. Track the pages and queries you want to improve.</li>
+    <li>Use our audit below to see the live answers for your buyer queries and get the page fixes to work on next.</li>
   </ol>
 
   <div class="cta">
     <h2>One path when you want the citation check done for you</h2>
-    <p>The AI Visibility Audit is the existing done-for-you offer. The scope and price are on that page, not invented here.</p>
+    <p>Get the live buyer-query answers, the pages they cite and the fixes to work on next. See the scope and price below.</p>
     <a class="btn" href="https://samedaydesk.com/ai-visibility-audit.html">Open the AI Visibility Audit</a>
   </div>
 
   <footer>
     <p>Sources, checked 2026-09-23 unless a page prints its own date: <a href="https://developers.openai.com/api/docs/bots">OpenAI crawlers</a>; <a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">Perplexity crawlers</a>; <a href="https://www.perplexity.ai/help-center/en/articles/10354969-how-does-perplexity-follow-robots-txt">Perplexity robots.txt help, modified 2026-09-14</a>; <a href="https://developers.google.com/search/docs/appearance/ai-features">Google AI features, updated 2025-12-10</a>; <a href="https://developers.google.com/search/docs/fundamentals/ai-optimization-guide">Google generative AI optimization, updated 2026-07-10</a>; <a href="https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers">Google crawlers, updated 2026-07-14</a>; <a href="https://www.rfc-editor.org/rfc/rfc9309">RFC 9309, September 2022</a>.</p>
-    <p class="muted">SameDayDesk. This page replaced an earlier version that repeated third-party percentages we do not treat as vendor rules.</p>
+
   </footer>
 </div>
 </body>

@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { RECEIPT_SHELLS } from "../../client/src/data/receiptPages.mjs";
+import { READINESS_SHELL } from "../../client/src/data/readinessPage.mjs";
 import { CONSUMER_REPEAT_SHELL, DISTRIBUTION_REPAIR_SHELL, FOR_AGENTS_SHELL, RECORD_REPEAT_SHELL, USEFUL_JOBS_SHELL, X402_SHELL } from "../../client/src/data/machineEntry.mjs";
 
 // Exact public SPA paths that must return their own crawler-readable HTML.
@@ -136,30 +137,7 @@ export const SPA_ROUTE_SHELLS = Object.freeze([
       </ul>
     `,
   }),
-  Object.freeze({
-    path: "/tools/ai-readiness",
-    title: "Free AI Readiness Checker: is your site visible to ChatGPT & Perplexity? | SameDayDesk",
-    description:
-      "Free, no-signup AI readiness checker: see whether AI search engines (ChatGPT, Perplexity, Claude, Google AI) can crawl and understand your website. Scores AI crawler access, JSON-LD, metadata, sitemap and llms.txt, with concrete fixes.",
-    canonical: `${SITE_ORIGIN}/tools/ai-readiness`,
-    ogImage: "/og/ai-readiness.png",
-    crawlerHtml: `
-      <h1>Is your site visible to AI search?</h1>
-      <p>
-        ChatGPT, Perplexity, Claude and Google AI are becoming how buyers find things. This free
-        check tells you whether AI engines can crawl and understand your site, and what to fix. No
-        email required.
-      </p>
-      <p>
-        It fetches your homepage and robots.txt and checks whether AI crawlers (GPTBot, ClaudeBot,
-        PerplexityBot, Google-Extended) are allowed, and whether you have JSON-LD structured data, a
-        clear title and meta description, Open Graph tags, an XML sitemap, and an llms.txt file.
-      </p>
-      <p>
-        llms.txt is cheap hygiene for developer tools and has no proven effect on AI citations today.
-      </p>
-    `,
-  }),
+  READINESS_SHELL,
   ...PUBLIC_SHELLS.map(Object.freeze),
   ...ACCOUNT_SHELLS.map(Object.freeze),
 ]);

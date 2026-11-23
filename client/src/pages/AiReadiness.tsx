@@ -3,6 +3,8 @@ import { useLocation } from "react-router-dom";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import { track } from "../lib/posthog";
+import { READINESS_PAGE } from "../data/readinessPage.mjs";
+import { applyMachineMetadata } from "../data/machineEntry.mjs";
 import styles from "./AiReadiness.module.css";
 
 import FreeCheckReport from "../components/FreeCheckReport";
@@ -51,22 +53,8 @@ export default function AiReadiness() {
     };
   }, []);
 
-  // Per-route SEO: the SPA shell ships the homepage <title>; give the flagship tool page
-  // its own title + description so search engines (which render JS) rank it for its query.
-  useEffect(() => {
-    const prevTitle = document.title;
-    document.title = "Free AI Readiness Checker: is your site visible to ChatGPT & Perplexity? | SameDayDesk";
-    const meta = document.querySelector('meta[name="description"]');
-    const prevDesc = meta?.getAttribute("content") ?? null;
-    meta?.setAttribute(
-      "content",
-      "Free, no-signup AI readiness checker: see whether AI search engines (ChatGPT, Perplexity, Claude, Google AI) can crawl and understand your website. Scores AI crawler access, JSON-LD, metadata, sitemap and llms.txt, with concrete fixes.",
-    );
-    return () => {
-      document.title = prevTitle;
-      if (prevDesc !== null) meta?.setAttribute("content", prevDesc);
-    };
-  }, []);
+  // The direct shell and browser navigation use the same title, canonical and share metadata.
+  useEffect(() => applyMachineMetadata(document, READINESS_PAGE), []);
 
   async function run(e: FormEvent) {
     e.preventDefault();
@@ -95,12 +83,10 @@ export default function AiReadiness() {
         <header className={styles.head}>
           <p className="eyebrow">Free tool · no signup</p>
           <h1 className={styles.h1}>
-            Is your site visible to <span className="lime">AI search</span>?
+            {READINESS_PAGE.headingPrefix} <span className="lime">{READINESS_PAGE.headingHighlight}</span>
           </h1>
           <p className={styles.lead}>
-            ChatGPT, Perplexity, Claude and Google AI are becoming how buyers find things. This free
-            check tells you whether AI engines can crawl and understand your site, and what to fix. No
-            email required.
+            {READINESS_PAGE.introduction}
           </p>
 
           <form className={styles.form} onSubmit={run}>
@@ -139,17 +125,15 @@ export default function AiReadiness() {
           <div className={styles.faqItem}>
             <h3>Why does AI-search visibility matter?</h3>
             <p>
-              AI search referrals are growing fast and answers increasingly come from a small set of
-              well-structured, crawlable pages. Public access and clear structure help tools read a page. This check does not prove
-              that a search engine has indexed it or will cite it.
+              Help search tools read the page your next buyer is looking for. Start with public access,
+              clear answers and useful business details. Your report shows the fixes you can make next.
             </p>
           </div>
           <div className={styles.faqItem}>
             <h3>Does llms.txt help me get cited?</h3>
             <p>
-              Not yet, by the evidence. We flag it because it is cheap, harmless hygiene for developer
-              tools, but it has no proven effect on AI citations today. Anyone selling llms.txt as a
-              ranking boost is overselling it.
+              Use llms.txt to give developer tools a short index of your useful pages. Our free
+              generator helps you publish it alongside readable pages, structured data and a sitemap.
             </p>
           </div>
           <div className={styles.faqItem}>

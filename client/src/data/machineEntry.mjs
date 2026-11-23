@@ -145,10 +145,15 @@ export const FOR_AGENTS_DESCRIPTION =
 export const FOR_AGENTS_CANONICAL = `${SITE_ORIGIN}${FOR_AGENTS_PATH}`;
 
 export const X402_PATH = "/x402";
-export const X402_TITLE = "Agent Payment Infrastructure: x402 and MPP | SameDayDesk";
+export const X402_TITLE = "x402 vs MPP: Agent Payments with HTTP and MCP | SameDayDesk";
 export const X402_DESCRIPTION =
-  "Web data and checks your AI agent can buy one call at a time: read the web, check a payment or seller, company and wallet profiles, lending positions on Base. From 0.002 USDC per call over x402 or MPP, no account or key.";
+  "Compare x402 and MPP payment messages, connect through HTTP or MCP, and buy web data or checks per call. Inspect the gateway price before your agent approves a payment.";
 export const X402_CANONICAL = `${SITE_ORIGIN}${X402_PATH}`;
+const X402_HEADING_PREFIX = "x402 or MPP: your agent";
+const X402_HEADING_HIGHLIGHT = "pays per call";
+const X402_COMPARISON = "x402 and MPP both use HTTP 402 to return payment terms before a paid response. In x402 v2, the server sends PAYMENT-REQUIRED and the client replies with PAYMENT-SIGNATURE. MPP sends its challenge in WWW-Authenticate and accepts a payment credential in Authorization. Use the protocol your client supports.";
+const X402_MCP_EXPLANATION = "MCP is the tool connection, not a payment protocol. Connect your assistant through MCP, or use HTTP directly, then follow the payment terms returned by the gateway. Start with the unpaid quote and inspect its amount and recipient before approving anything.";
+
 
 // Client-side navigation must update the same metadata as a direct route-shell load.
 // Return a cleanup for React effects, including StrictMode's setup/cleanup replay.
@@ -271,10 +276,12 @@ Query-key list path: value.items
     `;
 
 export const X402_CRAWLER_HTML = `
-      <h1>AI agents pay for what they use, in the same request</h1>
+      <h1>${X402_HEADING_PREFIX} ${X402_HEADING_HIGHLIGHT}</h1>
       <p>
         Paid tools your agent can call and pay for in the same request: exact USDC on Base through x402 or native MPP. No API key, subscription or account.
       </p>
+      <p>${X402_COMPARISON}</p>
+      <p>${X402_MCP_EXPLANATION}</p>
       <p>
         Practical jobs live on
         <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>:
@@ -437,7 +444,7 @@ export const DISTRIBUTION_REPAIR_SHELL = Object.freeze({
 export const CONSUMER_REPEAT_PATH = "/for-agents/consumer-repeat";
 export const CONSUMER_REPEAT_TITLE = "Run local consumer evidence jobs offline | SameDayDesk";
 export const CONSUMER_REPEAT_DESCRIPTION =
-  "Download one portable package for local evidence jobs: release brief, table reconcile, procurement brief, and related checks. Verify size and sha256 before extract. Supply your own files and an operator clock. Local provenance is integrity metadata, not an attestation.";
+  "Download one portable package for local evidence jobs: release brief, table reconcile, procurement brief, and related checks. Verify size and sha256 before extract. Supply your own files and an operator clock. Local provenance records input and result hashes.";
 export const CONSUMER_REPEAT_CANONICAL = `${SITE_ORIGIN}${CONSUMER_REPEAT_PATH}`;
 export const CONSUMER_REPEAT_ARCHIVE = CONSUMER_REPEAT_KIT.archive;
 export const CONSUMER_REPEAT_ARCHIVE_SHA256 = CONSUMER_REPEAT_KIT.sha256;
@@ -527,9 +534,8 @@ export const CONSUMER_REPEAT_CRAWLER_HTML = `
       <h2>Changed-input repeat</h2>
       <pre><code>${CONSUMER_REPEAT_REPEAT_USE}</code></pre>
       <p>
-        Material limit: you must supply an operator clock. Local provenance files are
-        integrity metadata, not an independent attestation, and <code>ok:true</code> is
-        honest completion rather than a pass. Announced, shipped, and tested stay distinct.
+        Supply your clock when checking freshness. Local provenance files record input and
+        result hashes. <code>ok:true</code> records completion; read the job result for its findings.
         Paid observation jobs remain on
         <a href="${FOR_AGENTS_CANONICAL}">/for-agents</a>.
       </p>
@@ -717,6 +723,10 @@ export const FOR_AGENTS_SHELL = Object.freeze({
 });
 
 export const X402_SHELL = Object.freeze({
+  headingPrefix: X402_HEADING_PREFIX,
+  headingHighlight: X402_HEADING_HIGHLIGHT,
+  comparison: X402_COMPARISON,
+  mcpExplanation: X402_MCP_EXPLANATION,
   path: X402_PATH,
   title: X402_TITLE,
   description: X402_DESCRIPTION,

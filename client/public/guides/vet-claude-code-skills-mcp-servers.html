@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>How to vet a Claude Code skill or MCP server before you install it (2026)</title>
-<meta name="description" content="Read the skill files and the MCP tool list before you install. Anthropic does not security-audit MCP servers. A scan pass is not a guarantee. Last checked 2026-09-23." />
+<meta name="description" content="Review skill files, bundled scripts and MCP tools before you install. Follow this checklist for permissions, network calls and a controlled first run. Last checked 2026-09-23." />
 <link rel="canonical" href="https://samedaydesk.com/guides/vet-claude-code-skills-mcp-servers.html" />
 <meta property="og:type" content="article" />
 <meta property="og:title" content="How to vet a Claude Code skill or MCP server before you install it" />
@@ -20,7 +20,7 @@
       "@type": "Article",
       "headline": "How to vet a Claude Code skill or MCP server before you install it",
       "datePublished": "2026-06-24",
-      "dateModified": "2026-09-23",
+      "dateModified": "2026-11-23",
       "author": { "@type": "Organization", "name": "SameDayDesk", "url": "https://samedaydesk.com/" },
       "publisher": { "@type": "Organization", "name": "SameDayDesk", "url": "https://samedaydesk.com/" },
       "mainEntityOfPage": "https://samedaydesk.com/guides/vet-claude-code-skills-mcp-servers.html"
@@ -31,7 +31,7 @@
         {
           "@type": "Question",
           "name": "How do I vet a Claude Code skill before I install it?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Read SKILL.md and every bundled script before you enable it. Anthropic says the main risks are prompt injection and data exfiltration, and that skills should be installed only from sources you trust. A passing enterprise scan is not a guarantee the skill is safe." }
+          "acceptedAnswer": { "@type": "Answer", "text": "Read SKILL.md and every bundled script before you enable it. Anthropic says the main risks are prompt injection and data exfiltration, and that skills should be installed only from sources you trust. Review its scripts and permissions, then test it with controlled inputs before granting access." }
         },
         {
           "@type": "Question",
@@ -74,7 +74,7 @@
   <p><a href="https://support.claude.com/en/articles/12512180-use-skills-in-claude">Anthropic's "Use skills in Claude" page</a>, checked 2026-09-23, says to review a less-trusted skill before enabling it, including code, scripts, and any instruction that tells Claude to contact an external network. It names prompt injection and data exfiltration as the primary risks.</p>
 
   <h2>2. Do not treat a scan pass as clearance</h2>
-  <p><a href="https://support.claude.com/en/articles/15927065-get-started-with-skill-and-plugin-scanning">Skill and plugin scanning</a>, checked 2026-09-23, is an Enterprise control. The page says it is off by default until 2026-10-02, when it turns on for Enterprise organizations that have not set it. Scanning does not cover MCP servers or hooks. It also does not cover skills shared through a connected MCP server. A pass means that scan did not find the kind of malicious misuse it looks for. The page says a pass is not a guarantee the skill is safe in every respect, and that it will not catch a skill that merely does something you did not intend.</p>
+  <p><a href="https://support.claude.com/en/articles/15927065-get-started-with-skill-and-plugin-scanning">Skill and plugin scanning</a>, checked 2026-09-23, is an Enterprise control. The page says it is off by default until 2026-10-02, when it turns on for Enterprise organizations that have not set it. Scanning does not cover MCP servers or hooks. It also does not cover skills shared through a connected MCP server. A pass means that scan did not find the kind of malicious misuse it looks for. Use the scan alongside a review of the scripts, requested permissions and the actions you intend to allow.</p>
 
   <h2>3. Read install scripts before npm install</h2>
   <p><a href="https://docs.npmjs.com/cli/v10/using-npm/scripts">npm's scripts documentation</a>, last edited 2024-02-27, says <code>npm install</code> runs <code>preinstall</code>, <code>install</code>, and <code>postinstall</code> from the package, and that a <code>prepare</code> script in a git dependency runs before that package is installed. Read those fields in <code>package.json</code> before you install a third-party skill or server. npm's own best-practices note says you should almost never need a <code>preinstall</code> or <code>install</code> script except for compilation that must happen on the target machine.</p>
