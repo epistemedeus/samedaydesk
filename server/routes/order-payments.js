@@ -11,7 +11,7 @@ export function orderPaymentsRouter(store, token, admin = false) {
     const expected = Buffer.from(`Bearer ${token}`);
     if (!store || typeof token !== "string" || token.length < 32 || actual.length !== expected.length ||
         !timingSafeEqual(expected, actual) || !isOrderId(req.params.id) ||
-        !(admin ? ["read","reserve"] : ["load","arm","anchor","submitted","observe","refund-observe"]).includes(req.params.action)) return res.sendStatus(404);
+        !(admin ? ["read","reserve","bind"] : ["load","arm","anchor","submitted","observe","refund-observe"]).includes(req.params.action)) return res.sendStatus(404);
     try { return res.json(await store.change(req.params.id, admin ? "refund-" + req.params.action : req.params.action, req.body || {})); }
     catch (e) { return res.status((e instanceof CareError || e instanceof OrderRailConflict) ? e.status : 503).json({ error: "order_update_unavailable" }); }
   });

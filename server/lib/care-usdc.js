@@ -1,4 +1,4 @@
-import { checkRefund } from "./order-rail-state.js";
+import { checkRefund, projectRailChange } from "./order-rail-state.js";
 import { recordUsdcMonth } from "./care-usdc-month.js";
 import { createHash } from "node:crypto";
 import { CareError, CARE_OFFERS } from "./care-contract.js";
@@ -69,6 +69,11 @@ export function createCareUsdcStore({ txn, table, mail }) {
         await db.query(`update ${name} set rail_refund=$2,state='review' where rail_id=$1`, [id, refund]);
         return { won: true };
       }
+      if (action === "refund-bind") {
+        const plan=projectRailChange(quote,action,body);
+        if (plan.patch) await db.query(`update ${name} set rail_refund=$2 where rail_id=$1`,[id,plan.patch.refund]);
+        return plan.value;
+      }
       if (action === "refund-observe") {
         const refund = row.rail_refund;
         if (!refund || refund.original !== body.original) throw conflict();
@@ -76,7 +81,8 @@ export function createCareUsdcStore({ txn, table, mail }) {
         const e = result.evidence, original = row.rail_observation?.evidence;
         if (result.state === "paid") {
           if (e?.amount !== original.amount || e.payer?.toLowerCase() !== merchant || e.recipient !== original.payer ||
-              e.asset?.toLowerCase() !== asset || e.nonce !== refund.typedData.message.nonce || !hex32.test(e.transaction) ||
+              e.asset?.toLowerCase() !== asset || (refund.request ? e.operationId !== refund.request.operationId || e.transaction !== refund.transaction ||
+                e.transferLogIndex !== refund.transferLogIndex : e.nonce !== refund.typedData.message.nonce) || !hex32.test(e.transaction) ||
               !hex32.test(e.blockHash) || !uint.test(e.timestamp) || !Number.isSafeInteger(e.transferLogIndex)) throw conflict();
           refund.state = "refunded";
           refund.evidence = e;
