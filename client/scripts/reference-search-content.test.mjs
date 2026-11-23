@@ -19,6 +19,7 @@ for (const [path,copy] of Object.entries(SDK_SEARCH_CONTENT)) {
     const source=await readFile(new URL('../public'+path,import.meta.url),'utf8');
     const html=applyReferenceSearchContent(source,path),nodes=[...walk(parse(html))];
     assert.deepEqual(structural(html),structural(source));
+    assert.deepEqual(html.match(/<(pre|code)\b[^>]*>[\s\S]*?<\/\1>/g),source.match(/<(pre|code)\b[^>]*>[\s\S]*?<\/\1>/g),'code markup bytes stay exact');
     assert.equal(text(nodes.find(n=>n.tagName==='title')),copy.title);
     const content=nodes.find(n=>attr(n,'id')==='content-area');assert.equal(text([...walk(content)].find(n=>n.tagName==='h1')),copy.heading);
     for(const name of ['description','og:description','twitter:description'])assert.equal(attr(nodes.find(n=>n.tagName==='meta'&&(attr(n,'name')===name||attr(n,'property')===name)),'content'),copy.description);
@@ -26,6 +27,12 @@ for (const [path,copy] of Object.entries(SDK_SEARCH_CONTENT)) {
     const plain = prose(content).replace(/\s+/g, ' ');
     const punctuation = [...plain.matchAll(/[\u2013\u2014]|\s-\s/g)].map(match => plain.slice(Math.max(0, match.index - 45), match.index + 60));
     assert.deepEqual(punctuation, []);
+    const located = [...walk(parse(source,{sourceCodeLocationInfo:true}))];
+    const description = located.find(node=>attr(node,'class')?.split(' ').includes('page-description'));
+    const span = [...walk(description)].find(node=>node.tagName==='span') || description;
+    const location = span.sourceCodeLocation;
+    const freshExport = source.slice(0,location.startTag.endOffset)+'A mutable - upstream introduction.'+source.slice(location.endTag.startOffset);
+    assert.ok(applyReferenceSearchContent(freshExport,path).includes(copy.introduction),'site introduction wins without overlapping prose edits');
     assert.equal(applyReferenceSearchContent(html,path),html,'idempotent across ordinary rebuilds');
     assert.throws(()=>applyReferenceSearchContent(source.replace('id="content-area"','id="missing-area"'),path),/unexpected document structure/);
     assert.throws(()=>applyReferenceSearchContent(source.replace('name="twitter:description"','name="missing-description"'),path),/missing twitter:description/);

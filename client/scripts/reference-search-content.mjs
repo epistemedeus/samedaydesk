@@ -39,6 +39,7 @@ export function applyReferenceSearchContent(html, pathname) {
     }
     if (protectedText || !node.sourceCodeLocation) continue;
     const { startOffset: start, endOffset: end } = node.sourceCodeLocation;
+    if (edits.some(edit => start >= edit.start && end <= edit.end)) continue;
     const original = html.slice(start, end);
     const updated = copy.proseReplacements.reduce((value, [before, after]) => value.replace(phrasePattern(before), after), original);
     if (updated !== original) edits.push({ start, end, text: updated });
