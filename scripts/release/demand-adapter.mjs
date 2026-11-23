@@ -9,7 +9,11 @@ export function readJourney({ sql, between }) {
     from "${schema}".journey_events where brand = 'samedaydesk' and ${between("created_at")} order by created_at`);
   const qaSessions = new Set(rows.filter((row) => row.test).flatMap((row) => [row.session, row.order_id]).filter(Boolean));
   const live = rows.filter((row) => !row.test);
+  const usdc = live.filter(row => row.utm?.payment_method === "base_usdc");
   return {
+    usdcOrders: { started: usdc.filter(r => r.event === "checkout_started").length,
+      paid: usdc.filter(r => r.event === "payment_verified").length,
+      refunded: usdc.filter(r => r.event === "payment_refunded").length },
     visits: live.filter((row) => row.event === "visit").map(({ session, referrer, utm, agent }) => ({ session, referrer, utm, agent })),
     checkouts: live.filter((row) => row.event === "checkout_started").length,
     qaSessions,

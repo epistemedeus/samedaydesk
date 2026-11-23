@@ -10,7 +10,7 @@
     "client/src/data/receipts.json": "09c3e7065672b8d62a3a5fbc1641ad170aea74c1a88c0ba48b86e5143f737821",
     "package-lock.json": "e925a74416eb507923c5dd5130919c0f1bd67a52141b80d84c2cf1cc0fadac59",
     "package.json": "7c354440e53a611cead60d4e900c8f839357f581c7308a90b489222711f91429",
-    "server/app.js": "c6d302bbb2325f1369b84b5551db6355f5cec8d9f26a1ef0b861e1b92004b145",
+    "server/app.js": "c7ac1c3b57ae2952aae7fcb9ac96fb28dc2197c080d566fc91a4a73ff6b81b47",
     "server/contributor-desk-host.mjs": "a491467e92ea0de1f931dbdd53b0b83f3819e8a6cc8c9c10533820761e7956cb",
     "server/foundry/activation/remote-private-journey.mjs": "d0ea01701c3e598a4358509b7f52d90313c30d498ab2c583d57f2db0236a940c",
     "server/foundry/bounded-child.mjs": "13dbfa82e3482d764a384bdf9e2f399cc2d4e836eaeb72697d411144d4ff6e1f",
@@ -48,10 +48,10 @@
     "server/lib/apex-agent-card.js": "f7657e87aecfc8d62ac484098e9a2d47a18f96c912fbb486b9b1af5853366d0d",
     "server/lib/apex-declarations.js": "9d12e20db9fd8a303ba8e2ca4659f1edf8e84788436cf47b0297ac0d85f5b595",
     "server/lib/care-contract.js": "6e7430f7e61c70e4eaf0ff806561fbde91b18523611a634a0a401029b76dfa84",
-    "server/lib/care-mail.js": "547248215996599e737f3b01991891ea994e7c3b098f1f2466e1e620e6397696",
+    "server/lib/care-mail.js": "878d09c08f4780e0613dd171132c92324dad5aebd457d5959eff9a60b283cce8",
     "server/lib/care-sentinel.js": "95694a6f738e209bd0a32608780e29f41669660a2bfa90471c55434c68e64baa",
-    "server/lib/care-service.js": "7672cd1ac321faeb96da91dacc460c499e4a5f2bb13cf115939f146aca7bc323",
-    "server/lib/care-store.js": "a55d5a08b2034707de110e848025c0ed55941cd3fe9ac65389b3f97eeff4b39f",
+    "server/lib/care-service.js": "755156ce2c8c976681d350839a518c8c3a2af0d3745db00ad787a66d6f1d84e4",
+    "server/lib/care-store.js": "5b0831187a8266f6aeb3e006d3f3c25d8c3ee8914e5201bfc8cc457f553c2444",
     "server/lib/commerce-journey.js": "0b9482ec930baaf24c2db92fdc8b5b3527e3a24dbd251c3e7bca9490b46b7723",
     "server/lib/contributor-artifact.js": "72657728eab3b9bab0dfffccb2561dbea5fc3d9cbb886ce84ed83890ff1edc3c",
     "server/lib/contributor-desk-assets.js": "67b379f429ac7223b3e8b2fc923da367ed7b48ebd158552e117885c117c73da5",
@@ -249,8 +249,8 @@
     "server/lib/receipt-snapshot.js": "1774496cc0319fa101fd777b7bbc59befb456293cc651ec9d829d8cb42e36259",
     "server/lib/release-run.js": "8456608e96093cc222bd526efdabd3da0b3fe2bb3df169342ffc0398771b7a8c",
     "server/lib/resend.js": "413efbb7ca7852865f645e00392a36be8e588601c9496995161887c9c111e8b8",
-    "server/lib/spa-client.js": "aed4770ce732494cc3c099aca4f42d50ec644b41183c5fc66dbe03f371a3af44",
-    "server/lib/spa-fallback.js": "ab553ee04195ef7b2bff2fdefad47215714d50a8d5ce2e53a0e2b9901336ac0a",
+    "server/lib/spa-client.js": "b0e9e9601a1bc847a55b88924a367d570b4dce65812de52a1ade31da748a3d6f",
+    "server/lib/spa-fallback.js": "f08ed6700a5f6a899bd6f0a475f15e825db67af45603ae6a047cef9c35fc90c9",
     "server/lib/spa-route-shells.js": "f4146514eb99c7d8eca7e5458f56a90f2502ab71647cf00c9c897dc78e80b8c8",
     "server/lib/start-guide.js": "e8a1ca5ecd67ca95ddb93526a36c5d281d7ceef7baa029b0dbedf61f05201d62",
     "server/lib/start-guide.md": "bbdd8c0b945d7ec1364b27a975590d43b2f408dec55bf71be96b8ae123b3fbe2",
@@ -260,7 +260,7 @@
     "server/lib/taskmarket-networks.js": "3ea4537e72b61d6acdfcd43fdc61db0f3466a92692a425c57520aa99d16379c7",
     "server/lib/taskmarket.js": "852086cc7a515f7a213903da69529b7d1c2bb181647d13ede9a35e2cf9584311",
     "server/routes/agent-readiness.js": "de888e34d7f68ddbf099cfd5021b850ee9e725f425a9375377af497c5216e312",
-    "server/routes/care.js": "a32d6977d0b4e63f8b24b306a161145b1e44e7b831b3821974bd7ad99ec28cd9",
+    "server/routes/care.js": "de281dbc9a34223fe6723e665cbc4ca91d7b12294e11e7a4461c21c7ce029a39",
     "server/routes/checkout.js": "db41b5c8e00275e6eb6618877653d38790014172d13a9fa06921c867b2be366f",
     "server/routes/mcp.js": "2ddd1587d918bdd7da1fa5ae7ae00d24b61b4a4f531c0107ecaca4caace12e28",
     "server/routes/pulse.js": "30900298a5a5a233c2daaf81a8d5e81ff3c73b2a5f3572a75101784f48eda260",
@@ -1529,7 +1529,11 @@
     "server/lib/free-check-v2/probe.js": "5883e32b64be4c48ee12be42208bac37bf18054100b60a665e4a8dce5a43ea71",
     "server/lib/free-check-v2/store.js": "1a60a850dd00ca817e1c52746273357749970d5469415510fadd877d8c5ff62b",
     "server/lib/free-check-v2/http.js": "e4f5fd49660f0e18abf758259d05ce48dc7d0b93d3dd240a8e0472046c371080",
-    "server/lib/free-check-v2/render-client.js": "fceb750b0d7ca83e23e05fe909150f6e90dbb6023092a93f2f72ef791d980e20"
+    "server/lib/free-check-v2/render-client.js": "fceb750b0d7ca83e23e05fe909150f6e90dbb6023092a93f2f72ef791d980e20",
+    "server/lib/care-usdc.js": "0af74ee44a3903fa24601256c8af5b37183c9c71766e427876e5bf383c38e8a0",
+    "server/lib/care-usdc-month.js": "22500bdd148d3ffc3101ea392d765407eefd56ef452881ac43f206189854e59f",
+    "server/routes/order-payments.js": "4858c0a8581053e217b2785a9bd215d184fbcc2fdde5344e34db7c98db8b9e3d",
+    "supabase/migrations/0017_care_order_rail.sql": "5e1f8026bd808c807275c342e80ba2bcde5321cb8012e97c6ecfced901fa84a5"
   },
   "receivedCallerClosures": [
     {
@@ -1841,6 +1845,11 @@
       "base": "c817c1ee6fc7ec598580a9d776def68893a32b60",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:151436bf66bed4aa084d78d58267df97e24d20e8898eaadce60c0ab71f16b228"
+    },
+    {
+      "base": "ea2a221bd3cbcf0a44b265cde9d0a22553c418b6",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:44a2f667ff5ac5891dbcfe0e8d773e453928d48e6a91b8dce19ff2371c1b13c4"
     }
   ]
 }
