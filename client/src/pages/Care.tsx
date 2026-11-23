@@ -7,7 +7,7 @@ import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 
 type Receipt = {
-  title: string; state: string; receivedIntake: boolean; amountCents: number; currency?: "USD" | "USDC"; refundedCents?: number; invoiceUrl?: string; paymentUrl?: string; paymentState?: string;
+  title: string; state: string; receivedIntake: boolean; amountCents: number; currency?: "USD" | "USDC"; refundedCents?: number; invoiceUrl?: string; paymentUrl?: string; wallet?: string; paymentState?: string;
   subscription?: { cancelAtPeriodEnd: boolean; status: string };
 };
 const money = (cents: number, currency: "USD" | "USDC" = "USD") => `${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 2 })} ${currency}`;
@@ -201,7 +201,7 @@ export function CareReceipt({ mode }: { mode: "intake" | "cancel" }) {
     {mode === "intake" && hasLink && !receipt && !error && <p role="status">Opening your receipt</p>}
     {mode === "intake" && hasLink && (error || receipt?.state === "created") && <>
       {receipt?.state === "created" && <p role="status">Waiting for payment confirmation.</p>}
-      {receipt?.state === "created" && receipt.paymentUrl && <p><a href={receipt.paymentUrl + "/wallet"} target="_blank" rel="noopener noreferrer">Open wallet payment on Base</a></p>}
+      {receipt?.state === "created" && receipt.paymentUrl && <p><a href={receipt.wallet || receipt.paymentUrl + "/wallet"} target="_blank" rel="noopener noreferrer">Open wallet payment on Base</a></p>}
       {receipt?.state === "created" && receipt.invoiceUrl && <p><a href={receipt.invoiceUrl}>Pay your invoice on Stripe</a></p>}
       <button disabled={busy} onClick={() => void run("receipt")}>Check payment status</button>
     </>}

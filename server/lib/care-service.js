@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import {
   CARE_OFFERS, careServiceOffer, careReceiptAmount, CareError, NONCARD_DAYS_DUE, NONCARD_METHODS, NONCARD_PRICE_KEY, careLink, careOrigin, carePaidPeriod,
-  checkoutArgs, checkedSession, invoiceSubscriptionArgs, isOrderId, newIntegrationId, providerId, readCareIntake, subscriptionOfInvoice, subscriptionWillNotRenew, verifyCareToken,
+  checkoutArgs, checkedSession, invoiceSubscriptionArgs, isOrderId, newIntegrationId, providerId, readCareIntake, subscriptionOfInvoice, subscriptionWillNotRenew, verifyCareToken, careWalletLink,
 } from "./care-contract.js";
 import { openCareStore } from "./care-store.js";
 import { createTaskQuoteService } from "./task-quotes.js";
@@ -106,7 +106,8 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     }
     const order = await store.reserve({ id, offer: offerKey, cents: offer.cents, live, origin, rail: "usdc", railEmail: buyer,
       expires: new Date(now().getTime() + 2 * HOUR), integrationId: newIntegrationId(), journeySession: isOrderId(journeySession) ? journeySession : id });
-    return { paymentUrl: "https://agents.samedaydesk.com/order-payments/sds/" + order.rail_id, receipt: careLink(order, secret) };
+    return { paymentUrl: "https://agents.samedaydesk.com/order-payments/sds/" + order.rail_id,
+      wallet: careWalletLink(order, secret), receipt: careLink(order, secret) };
   }
 
   const methods = (offerKey) => ["card", ...(orderPayments && Object.hasOwn(CARE_OFFERS, offerKey) ? ["base_usdc"] : []), ...(noncard && offerKey === "keep_it_working"
@@ -175,7 +176,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     }
     return {
       offer: order.offer, title: careServiceOffer(order.offer).title, ...careReceiptAmount(order), ...(invoiceUrl ? { invoiceUrl } : {}),
-      ...(order.rail_id ? { paymentUrl: "https://agents.samedaydesk.com/order-payments/sds/" + order.rail_id,
+      ...(order.rail_id ? { paymentUrl: "https://agents.samedaydesk.com/order-payments/sds/" + order.rail_id, wallet: careWalletLink(order, secret),
         paymentState: order.rail_refund?.state || order.rail_observation?.state || (order.rail_attempt ? "seen" : "waiting") } : {}),
       state: order.state, receivedIntake: Boolean(order.intake), refundedCents: order.refunded_cents ?? 0,
       ...(careServiceOffer(order.offer)?.mode === "subscription" && order.state === "paid"
