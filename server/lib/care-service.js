@@ -359,6 +359,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
       if (!orderPayments) throw new CareError(404,"Payment method unavailable.");
       return store.legacyOrders.start(input,{stripe,env:process.env,live});
     },
+    legacyStatus:(offer,id)=>store.legacyOrders.status(offer,id,live),
     legacyEntitlement: (id,proof) => store.legacyOrders.entitlement(id,proof,secret),
     hostedRail: store.hostedRail, startRepair(input) {
       if (!orderPayments) throw new CareError(404,"Payment method unavailable.");

@@ -31,6 +31,7 @@ test("seven one-time catalog offers retain exact delivered work, receipt and pri
     const offer=legacyOffer(id),input={offer:id,order:randomUUID(),method:"base_usdc",email:"legacy@example.test",target:"https://example.com/work",city:"Palo Alto"};
     const [r,dup]=await Promise.all([store.legacyOrders.start(input,config),store.legacyOrders.start(input,config)]);
     assert.deepEqual(r,dup);
+    assert.equal((await store.legacyOrders.status(offer.id,input.order,false)).canOrderAgain,false);
     assert.deepEqual(await store.legacyOrders.start(input,{...config,stripe:{}}),r);
     await assert.rejects(store.legacyOrders.start({...input,method:"card"},config),/already attached/);
     const rid=r.paymentUrl.split("/").at(-1),call=(op,body={})=>store.hostedRail.change(rid,op,body),q=await call("load");
@@ -45,6 +46,7 @@ test("seven one-time catalog offers retain exact delivered work, receipt and pri
     const result={state:"paid",evidence};
     const states=await Promise.all([call("observe",{attempt,result}),call("observe",{attempt,result})]);
     assert.ok(states.every(s=>s.state==="paid"));
+    assert.equal((await store.legacyOrders.status(offer.id,input.order,false)).canOrderAgain,true);
     const work=(await pool.query(`select * from ${table("task_requests")} where id=$1`,[rid])).rows;
     if (!offer.artifact) {assert.equal(work.length,1);assert.equal(work[0].status,"paid");assert.match(work[0].task,new RegExp(offer.title));}
     else {assert.equal(work.length,0);assert.equal((await store.legacyOrders.entitlement(cap.id,cap.proof,secret)).kind,offer.artifact);}

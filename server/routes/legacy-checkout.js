@@ -23,8 +23,15 @@ router.get("/hosted/:offer",(req,res)=>{
       ${watch?'<label>Repository links <textarea name="repositories" maxlength="3500" required></textarea></label>':""}
       ${offer.city?'<label>City (optional) <input name="city" maxlength="120"></label>':""}
       <button type="submit">Pay ${price} USDC</button></form></details><p id="state" role="status"></p>
+      ${watch?"":'<a id="previous" hidden>View your order</a> <button id="again" type="button" hidden>Start another order</button>'}
       <script type="module" src="/checkout/hosted-order.js"></script></main></body></html>`);
   } catch { return res.status(503).json({error:"The original checkout is unavailable."}); }
+});
+router.post("/hosted/:offer/status",async(req,res)=>{
+  const care=req.app.get("sdsCare");
+  if(!care || !legacyEnabled(req.params.offer,process.env))return res.sendStatus(404);
+  try {return res.json(await care.legacyStatus(req.params.offer,req.body?.order));}
+  catch(e){return res.status(e instanceof CareError?e.status:503).json({error:"The original order could not be read."});}
 });
 router.post("/hosted/:offer",async(req,res)=>{
   const care=req.app.get("sdsCare");

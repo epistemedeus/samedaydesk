@@ -134,7 +134,16 @@ export function legacyOrders(txn,table) {
       return {kind:offer.artifact,target:row.checkout_details.target,label:offer.title};
     });
   }
-  return { start, card, entitlement };
+  async function status(offer,id,live) {
+    if(!legacyOffer(offer) || !isOrderId(id))throw new CareError(404,"Order not found.");
+    return txn(async db=>{
+      const row=(await db.query(`select state,rail_id,checkout_rail from ${name} where order_key=$1 and offer=$2 and live_mode=$3`,[id,offer,live])).rows[0];
+      if(!row)return {state:"new"};
+      return {state:row.state,canOrderAgain:["received","refunded"].includes(row.state),
+        ...(row.checkout_rail==="usdc" && {wallet:"https://agents.samedaydesk.com/order-payments/sds/"+row.rail_id+"/wallet"})};
+    });
+  }
+  return { start, card, entitlement, status };
 }
 
 export function legacyLicense(secret,id) { return "sds_"+id+"_"+careToken(secret,id,"legacy-delivery"); }
