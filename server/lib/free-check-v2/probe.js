@@ -5,6 +5,7 @@ import { looksLikeChallenge } from '../agent-readiness/retrieval.js';
 import { assertPublicHostname } from '../agent-readiness/ssrf.js';
 import { analyzeDocument, publicLink, excerpt } from './facts.js';
 import { evaluateReport } from './rules.js';
+import { createRemoteRenderer } from './render-client.js';
 
 export const TOTAL_MS = 18_000;
 export const AGENTS = Object.freeze([
@@ -46,7 +47,9 @@ async function pool(jobs, count = 6) {
     while (index < jobs.length) { const job = jobs[index++]; await job(); }
   }));
 }
-export async function collectObservation(raw, { signal, onProgress = () => {}, fetcher = fetchPublicBounded, lookup, renderer, cruxKey = process.env.SDS_FREE_CHECK_CRUX_API_KEY } = {}) {
+// The render worker is used when FREE_CHECK_RENDER_URL and FREE_CHECK_RENDER_TOKEN are set; pass
+// renderer: null to skip it.
+export async function collectObservation(raw, { signal, onProgress = () => {}, fetcher = fetchPublicBounded, lookup, renderer = createRemoteRenderer(), cruxKey = process.env.SDS_FREE_CHECK_CRUX_API_KEY } = {}) {
   const url = normalizeInput(raw);
   const budget = createRequestBudget(TOTAL_MS, signal);
   const observation = { url: url.href, probes: {}, bots: [], requests: [], policies: [], robotsUrl: new URL('/robots.txt', url).href };
