@@ -86,3 +86,10 @@ test('ten-site receiver keeps skips/cache distinct from actual measured provider
  const{TARGETS,summarize}=await import('../../../scripts/free-check-v2/receive-rendering.mjs');assert.equal(TARGETS.length,10);assert.ok(TARGETS.includes('https://linear.app/'));assert.ok(TARGETS.includes('https://excalidraw.com/'));
  const result=summarize([{measurement:{providerRequests:1,browserMsUsed:1000}},{measurement:{providerRequests:1,browserMsUsed:3000}},{measurement:{providerRequests:0,cache:'hit'}},{measurement:{providerRequests:0,reason:'initial-html-sufficient'},renderedStatus:'unknown'}]);assert.equal(result.actualProviderRequests,2);assert.equal(result.positiveCacheHits,1);assert.equal(result.htmlSkipped,1);assert.equal(result.medianBrowserMs,2000);assert.equal(result.theoreticalCacheMissChecksFromFull600000Ms,300);assert.equal(result.accountRemainingKnown,false);assert.equal(summarize([]).medianBrowserMs,null);
 });
+
+test('ordinary independent factory instances reuse the same account cache in this process',async()=>{
+ let calls=0;const options={cfAccountId:'11111111111111111111111111111111',cfToken:token,fetchImpl:async()=>{calls++;return response()}};
+ await createRemoteRenderer(options)({url:target});
+ const cached=await createRemoteRenderer(options)({url:target,initialWords:5});
+ assert.equal(calls,1);assert.equal(cached.measurement.cache,'hit');assert.equal(cached.extraWords,295);
+});

@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "c817c1ee6fc7ec598580a9d776def68893a32b60",
+  "base": "ea2a221bd3cbcf0a44b265cde9d0a22553c418b6",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
@@ -1524,12 +1524,12 @@
     "supabase/migrations/0016_hosted_orders.sql": "e38d95bd4270397382834c1a5fa06dc34a05fda7b59e711fe9aa3f0f9343c1bf",
     "server/lib/care-database.js": "c36fb812abbeffa9a1876093c2ed8fe5ea93799135b3dbf1b7a65ac814d5adb3",
     "server/lib/seller-repair-checkout.js": "ff785e9c2b07e7eb8c29a4d0040d46aab5d9d6ce7f4197d8ce5e2633ca4936c0",
-    "server/lib/free-check-v2/facts.js": "a2ef4265a16e10a0f85351e68986bd93913aee6cc73e9788085157f6a8d149da",
-    "server/lib/free-check-v2/rules.js": "2bedcfbd1917535e0f097c8c3a2a66f8d22c161fae5aec19ad880dcf6b65d502",
-    "server/lib/free-check-v2/probe.js": "48cbd4de8b363a27f256146765f453b06d2e19e83b8bca7765d8a934f12f3fb0",
+    "server/lib/free-check-v2/facts.js": "38ed98f2279f535578303d24ba6a0d5faa93001b38f0c9e589f4709696be3e61",
+    "server/lib/free-check-v2/rules.js": "73515a9e866bdfca809a6183dc4584e4a1a353c12d6eb9dfb032c9c77046fbe7",
+    "server/lib/free-check-v2/probe.js": "5883e32b64be4c48ee12be42208bac37bf18054100b60a665e4a8dce5a43ea71",
     "server/lib/free-check-v2/store.js": "1a60a850dd00ca817e1c52746273357749970d5469415510fadd877d8c5ff62b",
     "server/lib/free-check-v2/http.js": "e4f5fd49660f0e18abf758259d05ce48dc7d0b93d3dd240a8e0472046c371080",
-    "server/lib/free-check-v2/render-client.js": "9cdea0015dc3247b668aecb40b461faef296454d941a93fc2c85e437941ebe1c"
+    "server/lib/free-check-v2/render-client.js": "fceb750b0d7ca83e23e05fe909150f6e90dbb6023092a93f2f72ef791d980e20"
   },
   "receivedCallerClosures": [
     {
@@ -1836,6 +1836,11 @@
       "base": "c817c1ee6fc7ec598580a9d776def68893a32b60",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:df767788f06c8fbd2a1aba5ea10ee4b137cb6b1e8b4e753defcc3088707746bf"
+    },
+    {
+      "base": "c817c1ee6fc7ec598580a9d776def68893a32b60",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:151436bf66bed4aa084d78d58267df97e24d20e8898eaadce60c0ab71f16b228"
     }
   ]
 }
