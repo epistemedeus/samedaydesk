@@ -11,6 +11,6 @@ test("commerce observations require an anonymous session and never copy arbitrar
   assert.equal(await recordCommerceJourney("payment_verified", { sessionId, key: "pi_test", orderId: "order_test",
     live: false, email: "private@example.test", test: false }, write), true);
   assert.deepEqual(received, [{ event_key: "samedaydesk/payment_verified/pi_test", brand: "samedaydesk",
-    event: "payment_verified", session_id: sessionId, test: true, order_id: "order_test", is_agent: false, referrer: null, utm: {} }]);
+    event: "payment_verified", session_id: sessionId, test: true, traffic: null, order_id: "order_test", is_agent: false, referrer: null, utm: {} }]);
   assert.equal(await recordCommerceJourney("visit", { sessionId, key: sessionId }, async () => { throw new Error("offline"); }), false);
 });

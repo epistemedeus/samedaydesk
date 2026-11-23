@@ -13,3 +13,8 @@ export function observeBrowserErrors() {
   window.addEventListener("unhandledrejection", receive);
   return () => { window.removeEventListener("error", receive); window.removeEventListener("unhandledrejection", receive); };
 }
+
+export function sendTraffic(context: { path: string; scriptRan: true; interacted: boolean }) {
+  void fetch('/api/pulse/traffic', { method: 'POST', credentials: 'same-origin', keepalive: true,
+    headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(context) }).catch(() => undefined);
+}

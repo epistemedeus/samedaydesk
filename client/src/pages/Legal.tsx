@@ -135,7 +135,7 @@ export function Privacy() {
           <li>What you send us about your project: addresses, repositories, descriptions.</li>
           <li>The public address you enter into a free checker, and its result.</li>
           <li>Payment records. Card details go to Stripe and never reach us.</li>
-          <li>Anonymous page analytics, without cookies.</li>
+          <li>Page paths without query strings, a coarse client class, whether script ran and a first interaction occurred, and country supplied by our CDN. Journey records reuse a short-lived session cookie; they store neither IP addresses nor full user agents.</li>
         </ul>
       </section>
       <section>

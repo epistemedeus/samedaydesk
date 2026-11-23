@@ -36,6 +36,8 @@ test("the adapter reads one day's live journey rows and marks QA", (t) => {
   const admin = (sql) => execFileSync("psql", ["-X", "-q", "-v", "ON_ERROR_STOP=1", "-h", dir, "-p", port, "postgres"], { input: sql });
   const create = readFileSync(join(root, MIGRATION), "utf8").match(/create table if not exists [^;]+;/is)[0];
   admin(SETUP(create));
+  admin(readFileSync(join(root, "supabase/migrations/0017_journey_traffic.sql"), "utf8").replaceAll("public.journey_events", "care.journey_events"));
+  admin(`update care.journey_events set traffic = '{"schema":"journey.traffic.v1","path":"/pricing","coarseClass":"browser","crawler":null,"crawlerVerification":"unverified","scriptRan":true,"interacted":true,"country":"MA"}'::jsonb where event_key='k1'`);
   const url = `postgresql://${userInfo().username}@localhost/postgres?host=${encodeURIComponent(dir)}&port=${port}`;
   const window = dayWindow("2026-11-21");
   const journey = adapter.readJourney({ ...window, sql: sqlReader({ PATH: process.env.PATH, DEMAND_DATABASE_URL: url }), between: (c) => between(c, window) });
@@ -44,6 +46,9 @@ test("the adapter reads one day's live journey rows and marks QA", (t) => {
     ["22222222-2222-4222-8222-222222222222", true, null, { source: "chatgpt.com" }],
   ]);
   assert.equal(journey.checkouts, 1);
+  assert.deepEqual(journey.traffic.counts, {people:1,agents:0,scanners:0,own:1,unknown:1});
+  assert.equal(journey.traffic.coverage.context,1);
+  assert.equal(journey.traffic.coverage.country,1);
   assert.ok(journey.qaSessions.has("33333333-3333-4333-8333-333333333333"));
   assert.ok(journey.qaSessions.has(QA_ORDER));
   assert.equal(journey.qaSessions.has("11111111-1111-4111-8111-111111111111"), false);

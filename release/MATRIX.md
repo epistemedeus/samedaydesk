@@ -138,3 +138,9 @@ remains synthetic evidence; the external Resend and inbox proof is still require
 | F3 rollback rehearsed | earlier receipt (staging workflow) | rerun on the final commit |
 | F4 five journey events, flagged as tests | not run | |
 | G `release:check` green and status posted | 9/9 passed on `36bd5464`; receipt pushed for the controller (16 §4) | on the final commit: run, push `previews/samedaydesk/release/check-<sha>.log`, the controller posts |
+
+### F4: readable journey context
+
+Plan23 adds `traffic` with a query-free path, coarse client class, script/first-interaction flags and nullable CDN country. Apply `0017_journey_traffic.sql` in the private Care schema before this writer. The legacy Supabase fallback also needs service-role-only `0018_journey_traffic_rpc.sql`. Both preserve legacy nulls and monotonic flags. The existing session/page/UTC-day key prevents duplicated browser reports without adding a visitor identifier. Later events copy known context at ingestion, otherwise null.
+
+The controller verifies the actual trusted ingress and sets `JOURNEY_INGRESS_POLICY`; arbitrary forwarded/country headers never establish a client or crawler. Published-range snapshots expire into unverified observations after seven days. See the [common contract and release/readback recipe](https://github.com/epistemedeus/pilot/blob/codex/plan23-traffic-20261123/overview/grand-phase/previews/traffic/PLAN23-TRAFFIC-HANDBACK.md). Run `node --test server/scripts/test-traffic-ingest.mjs server/scripts/test-commerce-journey.mjs server/scripts/test-care-schema.mjs` and the existing demand-adapter tests. The SDS demand reader needs only an additive `SELECT(traffic)` grant, prepared in the shared kit. People is a script-and-interaction label, not human identity; old and unverified observations remain unknown, with QA separate.

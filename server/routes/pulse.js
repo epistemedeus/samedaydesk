@@ -3,6 +3,7 @@ import crypto from "node:crypto";
 import { flushPulseSnapshot, pulseSnapshot, recordClientEvent } from "../lib/pulse.js";
 import { journeySnapshot, recordJourney, reportRequestError } from "../lib/journey-events.js";
 
+import { commerceBrowser } from '../lib/commerce-journey.js';
 const router = Router();
 
 // Aggregate, non-PII traffic snapshot. Reads require a configured token.
@@ -38,6 +39,7 @@ function boundedSignal(req, res, next) {
   limits.set(req.ip, row);
   next();
 }
+router.post("/traffic", boundedSignal, commerceBrowser);
 router.post("/journey", boundedSignal, (req, res) => {
   if (!recordJourney(req.body?.event, req.body?.props)) return res.status(400).json({ error: "Unsupported event" });
   res.status(204).end();
