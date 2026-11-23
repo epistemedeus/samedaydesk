@@ -114,12 +114,12 @@ export default function Mcp() {
       <main id="main" className={styles.wrap}>
         <header className={x.hero}>
           <div>
-            <p className="eyebrow">Agent payments · x402</p>
+            <p className="eyebrow">Agent payments · x402 and MPP</p>
             <h1 className={x.h1}>
-              Your agent asks, pays a few cents, <span className="lime">and gets the answer</span>
+              {X402_SHELL.headingPrefix} <span className="lime">{X402_SHELL.headingHighlight}</span>
             </h1>
             <p className={styles.lead}>
-              Web data and checks your agent can buy one call at a time, in exact USDC on Base. No account, no key,
+              Buy web data and checks through HTTP or MCP, one call at a time, in exact USDC on Base. No account, no key,
               no subscription: the price comes back with the first answer, and the agent pays only if it goes on.
             </p>
             <div className={`${styles.actions} ${x.actions}`}>
@@ -134,6 +134,20 @@ export default function Mcp() {
           </div>
           <Sequence />
         </header>
+
+        <section className={styles.section} aria-labelledby="protocols-title">
+          <div className={styles.sectionHead}>
+            <p className="eyebrow">Choose your connection</p>
+            <h2 id="protocols-title">x402, MPP and MCP: what each does</h2>
+          </div>
+          <p className={styles.jobCopy}>{X402_SHELL.comparison}</p>
+          <p className={styles.jobCopy}>{X402_SHELL.mcpExplanation}</p>
+          <p className={styles.jobCopy}>
+            References: <a href="https://docs.x402.org/core-concepts/http-402">x402 v2 payment messages</a>
+            {" · "}<a href="https://mpp.dev/protocol">MPP challenges and credentials</a>
+            {" · "}<a href="#setup">HTTP and MCP setup</a>.
+          </p>
+        </section>
 
         <CreditsStrip />
 

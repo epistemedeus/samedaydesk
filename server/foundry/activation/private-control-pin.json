@@ -1,11 +1,11 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "ea2a221bd3cbcf0a44b265cde9d0a22553c418b6",
+  "base": "99a1605f1407e2485724e511d774473188ee8079",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
     "client/public/for-agents/original-task/original-task-client.tar.gz": "9b5b9bf82119d7c8c0d4e277e34e85f6e9c0711ed4cfc84017c7a79b47bed887",
-    "client/src/data/machineEntry.mjs": "db82d57bb0272ad04c8148696553d85a7c30c064e1adbb5c0603699b7ffb922c",
+    "client/src/data/machineEntry.mjs": "404b5b2f15b0fd095fc829769a120159e83aae1eb42ab0549f4137f9d3fb6eef",
     "client/src/data/receiptPages.mjs": "92705522d6c767523b6bedc356b60e1e364d6d20efa237f90a9d6e3950160d23",
     "client/src/data/receipts.json": "09c3e7065672b8d62a3a5fbc1641ad170aea74c1a88c0ba48b86e5143f737821",
     "package-lock.json": "e925a74416eb507923c5dd5130919c0f1bd67a52141b80d84c2cf1cc0fadac59",
@@ -216,7 +216,7 @@
     "server/lib/managed-watch/worker-main.mjs": "475fcb4e2c2c2d0a19fcf2b7ac253e403601ee79a06c745c99d93e8616372c1f",
     "server/lib/mcp-admission.js": "b8e6d52564baf55db8d6d84ae189dfaa779c2ce8946ae14222f42d8e85762d74",
     "server/lib/mcp-http.js": "e84958459ac9d2da77e33e917ea20550e2498911474e5634d929c9a0dd3875ca",
-    "server/lib/mcp-tool-inventory.js": "e774e9e48a290ab1b52f9e40ac1ef6e2f9b56280e006dc25e7ce4eb005512fa9",
+    "server/lib/mcp-tool-inventory.js": "548309f19f3c55efa0d62f34ff52ad4e2d1936affa559684a05a73ecb33255bb",
     "server/lib/neomorphic-contributor-journey-mount.js": "799fe5d4d0fbcd62a80f23bd053902b236b63d6f3eee61bd501c4b2a08731157",
     "server/lib/neomorphic-opportunity-mount.js": "ae97f69cbe092cc06cc846abd32bf2cf79e803ec0502abb0582bbca64d4c5043",
     "server/lib/neomorphic-original-continuation-mount.js": "0eb6aad1436563ac0a1f61f6792b797055e84fbb386c35472bb01746f479c210",
@@ -251,7 +251,7 @@
     "server/lib/resend.js": "413efbb7ca7852865f645e00392a36be8e588601c9496995161887c9c111e8b8",
     "server/lib/spa-client.js": "aed4770ce732494cc3c099aca4f42d50ec644b41183c5fc66dbe03f371a3af44",
     "server/lib/spa-fallback.js": "ab553ee04195ef7b2bff2fdefad47215714d50a8d5ce2e53a0e2b9901336ac0a",
-    "server/lib/spa-route-shells.js": "f4146514eb99c7d8eca7e5458f56a90f2502ab71647cf00c9c897dc78e80b8c8",
+    "server/lib/spa-route-shells.js": "9451da10b1ba1f347961d4507a614a5b34470df86b31db9a8e6fc074ec4b1878",
     "server/lib/start-guide.js": "e8a1ca5ecd67ca95ddb93526a36c5d281d7ceef7baa029b0dbedf61f05201d62",
     "server/lib/start-guide.md": "bbdd8c0b945d7ec1364b27a975590d43b2f408dec55bf71be96b8ae123b3fbe2",
     "server/lib/stripe.js": "74207f33563ca044c1531d93a36c7e9bbb8218c38f3f240c174f399b2e2ec368",
@@ -262,7 +262,7 @@
     "server/routes/agent-readiness.js": "de888e34d7f68ddbf099cfd5021b850ee9e725f425a9375377af497c5216e312",
     "server/routes/care.js": "a32d6977d0b4e63f8b24b306a161145b1e44e7b831b3821974bd7ad99ec28cd9",
     "server/routes/checkout.js": "db41b5c8e00275e6eb6618877653d38790014172d13a9fa06921c867b2be366f",
-    "server/routes/mcp.js": "2ddd1587d918bdd7da1fa5ae7ae00d24b61b4a4f531c0107ecaca4caace12e28",
+    "server/routes/mcp.js": "69fac79a4dee7f76e7b121051d5559e62e58297c47bff3c23306463e0f33dbea",
     "server/routes/pulse.js": "30900298a5a5a233c2daaf81a8d5e81ff3c73b2a5f3572a75101784f48eda260",
     "server/routes/requests.js": "9f42868435cfd9e40041a324fb3e272535ee6ca914d8224487434c4a110aec8b",
     "server/routes/resend-webhook.js": "b4b78b2ec212e2ae98c73703fb425d24538fdb2ee51492877a5c07a0d3f79352",
@@ -1529,7 +1529,9 @@
     "server/lib/free-check-v2/probe.js": "5883e32b64be4c48ee12be42208bac37bf18054100b60a665e4a8dce5a43ea71",
     "server/lib/free-check-v2/store.js": "1a60a850dd00ca817e1c52746273357749970d5469415510fadd877d8c5ff62b",
     "server/lib/free-check-v2/http.js": "e4f5fd49660f0e18abf758259d05ce48dc7d0b93d3dd240a8e0472046c371080",
-    "server/lib/free-check-v2/render-client.js": "fceb750b0d7ca83e23e05fe909150f6e90dbb6023092a93f2f72ef791d980e20"
+    "server/lib/free-check-v2/render-client.js": "fceb750b0d7ca83e23e05fe909150f6e90dbb6023092a93f2f72ef791d980e20",
+    "client/src/data/readinessPage.mjs": "d0b89badfdfaf4f16b175989ef7063be0976cc476562e6d353111c35462d2a6b",
+    "server/routes/scan.js": "1fb65804632de1434b8e24a447da0d170d7444a73c77bdb94cef4efa89a6ce6b"
   },
   "receivedCallerClosures": [
     {
@@ -1841,6 +1843,11 @@
       "base": "c817c1ee6fc7ec598580a9d776def68893a32b60",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:151436bf66bed4aa084d78d58267df97e24d20e8898eaadce60c0ab71f16b228"
+    },
+    {
+      "base": "ea2a221bd3cbcf0a44b265cde9d0a22553c418b6",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:44a2f667ff5ac5891dbcfe0e8d773e453928d48e6a91b8dce19ff2371c1b13c4"
     }
   ]
 }

@@ -82,7 +82,7 @@ export default function UsefulJobs() {
           <p className={styles.jobCopy}>
             Acquisition tools (download, size/sha256 check, extract):{" "}
             <code>{USEFUL_JOBS_ACQUIRE_TOOLS.join(", ")}</code>. After extract, offline runtime is{" "}
-            <code>{USEFUL_JOBS_RUNTIME}</code>. This repository is not required.
+            <code>{USEFUL_JOBS_RUNTIME}</code>. Use the download on your local runtime.
           </p>
           <p className={styles.jobCopy}>
             If the size, digest, or HTTP status is wrong, do not extract and do not run the CLI.
@@ -106,7 +106,7 @@ export default function UsefulJobs() {
             <code>node bin/useful-jobs.mjs</code> routes ten offline jobs. Labeled samples require
             an explicit <code>--example</code> flag except <code>page-change-offline-job</code>,
             which refuses it. Ordinary callers must supply their own files. This is a local
-            download, not a paid HTTP endpoint.
+            download you run on your own files.
           </p>
           <ol className={styles.flow}>
             <li>
@@ -120,7 +120,7 @@ export default function UsefulJobs() {
               <strong>
                 <code>json-schema-webhook-drift</code>.
               </strong>{" "}
-              Used JSON Pointer drift on JSON Schema or webhook-example JSON. Not OpenAPI. Inputs:{" "}
+              Used JSON Pointer drift on JSON Schema or webhook-example JSON. For OpenAPI, use api-upgrade-brief below. Inputs:{" "}
               <code>--before --after --used</code>. Outputs: <code>drift-brief.json/.md</code>.
             </li>
             <li>
@@ -149,7 +149,7 @@ export default function UsefulJobs() {
                 <code>vendor-budget-impact</code>.
               </strong>{" "}
               Compare caller-supplied pricing snapshots for added, removed, changed, and
-              incomparable-unit rows. Not a bill calculator or live quote. Inputs:{" "}
+              incomparable-unit rows. Compare recorded costs and units. Inputs:{" "}
               <code>--before --after</code>. Outputs: <code>budget-impact.json/.md</code>.
             </li>
             <li>
@@ -177,7 +177,7 @@ export default function UsefulJobs() {
               <strong>
                 <code>repeat-job-record</code>.
               </strong>{" "}
-              Build an operator next-run record with local byte checks. Not a daemon. Input:{" "}
+              Build an operator next-run record with local byte checks. Run it once for each input. Input:{" "}
               <code>--next-run</code> (optional <code>--input-root</code>).
             </li>
           </ol>

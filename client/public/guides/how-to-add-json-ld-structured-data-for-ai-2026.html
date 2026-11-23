@@ -46,7 +46,7 @@
       "@type": "Article",
       "headline": "How to Add JSON-LD Structured Data for AI Search (2026)",
       "datePublished": "2026-06-24",
-      "dateModified": "2026-06-24",
+      "dateModified": "2026-11-23",
       "mainEntityOfPage": "https://samedaydesk.com/guides/how-to-add-json-ld-structured-data-for-ai-2026.html",
       "about": ["JSON-LD", "structured data", "AI search", "generative engine optimization", "schema.org"],
       "author": {
@@ -132,7 +132,7 @@
   <div class="stat"><b>1 in 3</b><span>top SaaS sites ship no JSON-LD at all (our 24-company scan)</span></div>
   <div class="stat"><b>8 / 24</b><span>SaaS leaders with zero structured data: Notion, Linear, Airtable, Clerk and more</span></div>
   <div class="stat"><b>~32%</b><span>visibility lift from adding statistics; +41% from quotations (GEO paper, KDD 2024)</span></div>
-  <div class="stat"><b>~4.4x</b><span>AI-search referral traffic converts vs organic search</span></div>
+
 </div>
 
 <h2>The direct answer: two blocks, in the head, today</h2>
@@ -165,7 +165,7 @@
   "@type": "Article",
   "headline": "Your exact page title",
   "datePublished": "2026-06-24",
-  "dateModified": "2026-06-24",
+  "dateModified": "2026-11-23",
   "author": { "@type": "Organization", "name": "Your Company" },
   "publisher": {
     "@type": "Organization",
@@ -197,13 +197,13 @@
 </table>
 
 <h2>Why this moves the needle for ChatGPT, Perplexity and AI Overviews</h2>
-<p>AI search retrieves live. ChatGPT Search and Microsoft Copilot largely pull from the Bing index : about 87% of SearchGPT citations matched Bing's top 20 (Seer Interactive, reconfirmed by Search Engine Land, April 2026). Perplexity runs its own crawler and tends to cite fresher pages, so first citations on low-competition queries can land in days. Google AI Overviews is the wild card: citation there is largely independent of organic rank, with about 68% of AIO-cited pages <em>not</em> in the top 10 organic results.</p>
+<p>Give search tools a page they can retrieve and understand. Put the answer in the initial HTML, keep the title specific, and describe your business and offer with structured data. Start with the <a href="/tools/ai-readiness">free readiness check</a> to find the files to fix.</p>
 <p>Because retrieval is live (RAG), a freshly indexed page can be cited without ever being in a model's training set. That is the opening. But to be cited, the engine has to parse your page cleanly : and that is exactly where structured data earns its keep. JSON-LD hands the machine the headline, the publisher, and the dates as data instead of asking it to scrape them out of your markup.</p>
 
 <blockquote>About 44% of LLM citations come from the first 30% of a page, and adding direct quotations raised visibility about 41% in the Princeton/Georgia Tech GEO study (KDD 2024). Put your answer up top, mark up who said it, and you are playing both sides of how these systems pick sources.</blockquote>
 
 <h2>The benchmark: the sites you'd assume are dialed in, aren't</h2>
-<p>We scored 189 well-known companies across 10 industries on six fundamentals, including JSON-LD structured data. SaaS averaged 87/100 : respectable : yet <strong>8 of the 24 SaaS sites we scanned ship no JSON-LD at all</strong>. That list includes Notion, Linear, Airtable, Clerk, Cal.com, PostHog and Gumroad. These are product-led teams that obsess over conversion, and they are leaving the machine-readable layer blank.</p>
+<p>We scored 189 well-known companies across 10 industries on six fundamentals, including JSON-LD structured data. SaaS averaged 87/100 : respectable : yet <strong>8 of the 24 SaaS sites we scanned ship no JSON-LD at all</strong>. That list includes Notion, Linear, Airtable, Clerk, Cal.com and PostHog. These are product-led teams that obsess over conversion, and they are leaving the machine-readable layer blank.</p>
 <p>The contrast is sharp. Stripe, Supabase, Webflow, Vercel (93) and HubSpot (90) score an A. Meanwhile Figma (73), Linear (71), Substack (68), Airtable (68) and Clerk (61) sit in C territory. The gap between an A and a C here is rarely talent : it is whether someone pasted two blocks into the <code>&lt;head&gt;</code>.</p>
 
 <table>
@@ -235,15 +235,15 @@
   <li><strong>Add the two blocks.</strong> Paste Organization sitewide and Article on every content page, server-rendered into the <code>&lt;head&gt;</code>. If your homepage is a heavy JavaScript bundle (the trap OpenAI and GitHub fell into), make sure the JSON-LD is in the initial HTML, not injected after load.</li>
   <li><strong>Validate.</strong> Run it through <a href="https://validator.schema.org/">validator.schema.org</a>. Zero errors, no exceptions.</li>
   <li><strong>Tool and product pages.</strong> Add <code>SoftwareApplication</code> to any app page and <code>Service</code> + <code>Offer</code> (with a real price) to anything you sell.</li>
-  <li><strong>Push to the index now.</strong> Bing indexes new content in hours to days, and IndexNow needs no account : that is the fast lane to ChatGPT visibility. Do not gate on Google: new domains can sit in a 3 to 9 month sandbox on commercial queries.</li>
-  <li><strong>Skip llms.txt as a priority.</strong> Google's Gary Illyes says it is not supported and not planned, and roughly 97% of LLM crawler hits never fetch it (Ahrefs). Optional hygiene, not a ranking factor.</li>
+  <li><strong>Keep your pages discoverable.</strong> Publish your page URLs in a sitemap, check crawler access and review indexing in Search Console.</li>
+  <li><strong>Make documentation easy to find.</strong> Use our <a href="/tools/llms-txt-generator.html">llms.txt generator</a> to publish a short index alongside your readable pages and sitemap.</li>
   <li><strong>Audit it.</strong> Run our open-source CLI from your terminal: <code>npx github:epistemedeus/ai-readiness yoursite.com</code> (<a href="https://github.com/epistemedeus/ai-readiness">repo</a>).</li>
 </ol>
 
-<p>Want it done for you? The <a href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">39 USD Fix Pack</a> ships the exact JSON-LD, Open Graph and crawler config built for your site. And the <a href="https://buy.stripe.com/3cIbJ2gwy2bdgFFfYSeZ20u">199 USD AI-Search Visibility Audit</a> tests whether ChatGPT, Perplexity and AI Overviews actually cite you against named competitors : the thing structured data is supposed to unlock. Given that AI-search referral traffic reportedly converts about 4.4x organic, and comparison and "alternatives to" formats draw roughly 40.9% of AI citations on commercial-intent queries, this is the cheapest visibility you will buy this quarter.</p>
+<p>Want it done for you? The <a href="https://buy.stripe.com/28E5kE9465np2OPh2WeZ20e">39 USD Fix Pack</a> ships the exact JSON-LD, Open Graph and crawler config built for your site. And the <a href="https://buy.stripe.com/3cIbJ2gwy2bdgFFfYSeZ20u">199 USD AI-Search Visibility Audit</a> tests whether ChatGPT, Perplexity and AI Overviews actually cite you against named competitors. Use the recorded answers to choose the page fixes to make next.</p>
 
 <footer>
-  <p>SameDayDesk &middot; June 2026. Benchmark figures from our scan of 189 companies across 10 industries; GEO lift figures from the Princeton/Georgia Tech GEO paper (KDD 2024); citation-source figures from Seer Interactive and Search Engine Land (April 2026) and Ahrefs. Raw data: <a href="https://raw.githubusercontent.com/epistemedeus/ai-readiness/main/data/ai-search-readiness-2026.csv">CC-BY CSV</a>. Verify your own site free at <a href="https://samedaydesk.com/tools/ai-readiness">samedaydesk.com/tools/ai-readiness</a>.</p>
+  <p>SameDayDesk &middot; June 2026. Benchmark figures from our scan of 189 companies across 10 industries; GEO lift figures from the Princeton/Georgia Tech GEO paper (KDD 2024). Raw data: <a href="https://raw.githubusercontent.com/epistemedeus/ai-readiness/main/data/ai-search-readiness-2026.csv">CC-BY CSV</a>. Verify your own site free at <a href="https://samedaydesk.com/tools/ai-readiness">samedaydesk.com/tools/ai-readiness</a>.</p>
 </footer>
 
 </div>

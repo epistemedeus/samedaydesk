@@ -43,7 +43,7 @@
 </style>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
- {"@type":"Article","headline":"We scanned 24 top SaaS sites for AI-search readiness (2026)","datePublished":"2026-06-23","dateModified":"2026-06-23","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/reports/ai-search-readiness-saas-2026.html","about":"AI search optimization, generative engine optimization, structured data"},
+ {"@type":"Article","headline":"We scanned 24 top SaaS sites for AI-search readiness (2026)","datePublished":"2026-06-23","dateModified":"2026-11-23","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/reports/ai-search-readiness-saas-2026.html","about":"AI search optimization, generative engine optimization, structured data"},
  {"@type":"FAQPage","mainEntity":[
    {"@type":"Question","name":"What is AI-search readiness?","acceptedAnswer":{"@type":"Answer","text":"Whether AI search engines (ChatGPT, Perplexity, Claude, Google AI) can crawl and understand a site: AI-crawler access in robots.txt, JSON-LD structured data, a clear title and meta description, Open Graph tags, an XML sitemap, and optionally llms.txt."}},
    {"@type":"Question","name":"Why do a third of top SaaS sites fail on structured data?","acceptedAnswer":{"@type":"Answer","text":"Many marketing sites ship without JSON-LD because it is invisible to human visitors. But AI engines rely on it to classify and quote content, so its absence is a real AI-search gap even on otherwise-polished sites."}},
@@ -68,12 +68,12 @@
   <h2>What we found</h2>
   <p>The good news: none of these sites block AI crawlers outright, and all have a sitemap and Open Graph tags. The gaps cluster in two places:</p>
   <ul>
-    <li><b>Structured data is the #1 gap.</b> 8 of 24 sites (33%) ship <b>no JSON-LD at all</b> on the homepage, including Notion, Linear, Airtable, Substack, Clerk, Cal.com, PostHog and Gumroad. JSON-LD (<code>Organization</code>, <code>FAQPage</code>, <code>Article</code>) is the layer AI engines use to classify and quote a page. Its absence is invisible to humans but real to machines.</li>
+    <li><b>Structured data is the #1 gap.</b> 8 of 24 sites (33%) ship <b>no JSON-LD at all</b> on the homepage, including Notion, Linear, Airtable, Substack, Clerk, Cal.com, PostHog. JSON-LD (<code>Organization</code>, <code>FAQPage</code>, <code>Article</code>) is the layer AI engines use to classify and quote a page. Its absence is invisible to humans but real to machines.</li>
     <li><b>Titles and meta descriptions are often too short.</b> Several sites use a 1-3 word title or a thin description, giving engines little to summarize.</li>
     <li><b>llms.txt is rare</b>, but that is fine. There is no evidence it improves AI citations yet, so we treat it as optional hygiene, not a ranking factor.</li>
   </ul>
 
-  <h2>The full data</h2>
+  <h2>Selected results from the 24-site sample</h2>
   <table>
     <thead><tr><th>Grade</th><th>Score</th><th>Site</th><th>Main gap</th></tr></thead>
     <tbody>
@@ -95,7 +95,7 @@
       <tr><td class="g B">B</td><td class="num">78</td><td>cal.com</td><td>no JSON-LD</td></tr>
       <tr><td class="g B">B</td><td class="num">78</td><td>notion.com</td><td>no JSON-LD</td></tr>
       <tr><td class="g B">B</td><td class="num">78</td><td>posthog.com</td><td>no JSON-LD</td></tr>
-      <tr><td class="g B">B</td><td class="num">76</td><td>gumroad.com</td><td>no JSON-LD</td></tr>
+
       <tr><td class="g C">C</td><td class="num">73</td><td>figma.com</td><td>thin meta + minor</td></tr>
       <tr><td class="g C">C</td><td class="num">71</td><td>linear.app</td><td>no JSON-LD</td></tr>
       <tr><td class="g C">C</td><td class="num">68</td><td>substack.com</td><td>no JSON-LD</td></tr>
@@ -103,6 +103,7 @@
       <tr><td class="g C">C</td><td class="num">61</td><td>clerk.com</td><td>no JSON-LD</td></tr>
     </tbody>
   </table>
+  <p class="muted">The table shows 23 selected examples. The scan totals above refer to all 24 sites in the original June 2026 sample.</p>
   <p class="muted">Snapshot of each site's homepage + robots.txt, June 2026. A homepage check is a sample, not a full-site audit; scores can change as sites update.</p>
 
   <div class="cta">

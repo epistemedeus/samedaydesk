@@ -75,6 +75,10 @@ const SCHEMA_IDS = [
 export function namesCompany(text) {
   let rest = text;
   for (const id of SCHEMA_IDS) rest = rest.split(id).join("");
+  // Protocol paths and source/download URLs identify maintained reusable tools. They
+  // are not company copy; link labels and surrounding prose are still checked.
+  rest = rest.replace(/https:\/\/(?:neomorphic\.io|github\.com\/epistemedeus\/neomorphic-io)[^\s"'<>`]*/g, "")
+    .replaceAll("/api/neomorphic-contributor-journey/v1/market/accepted-work", "");
   return /neomorphic/i.test(rest);
 }
 
@@ -90,9 +94,8 @@ export function guideProblems(html) {
   const offerCount = html.split(OFFER).length - 1;
   if (offerCount !== 1) issues.push(`offer-count-${offerCount}`);
   if (!html.includes("Last checked: 2026-09-23")) issues.push("missing-last-checked");
-  if (!html.includes('"dateModified": "2026-09-23"') && !html.includes('"dateModified":"2026-09-23"')) {
-    issues.push("missing-datemodified");
-  }
+  const modified = html.match(/"dateModified"\s*:\s*"(\d{4}-\d{2}-\d{2})"/)?.[1];
+  if (!modified || modified < "2026-09-23") issues.push("missing-datemodified");
   const sourced = PRIMARY.filter((url) => html.includes(url));
   if (sourced.length < 2) issues.push("few-primary-sources");
   const lead = html.match(/<h1[^>]*>[\s\S]*?<\/h1>\s*<p class="lead">([\s\S]*?)<\/p>/);
@@ -139,12 +142,13 @@ test("marketing customer surfaces do not name Neomorphic", () => {
   }
 });
 
-test("sitemap lastmod matches the check date for the five cited guides", () => {
+test("sitemap lastmod matches the current editorial modification of the five cited guides", () => {
   const xml = read("client/public/sitemap.xml");
   for (const name of CITED) {
     const block = xml.split(`<loc>https://samedaydesk.com/guides/${name}</loc>`)[1];
     assert.ok(block, name);
-    assert.match(block.slice(0, 200), /<lastmod>2026-09-23<\/lastmod>/);
+    const modified = read(`client/public/guides/${name}`).match(/"dateModified"\s*:\s*"([^"]+)"/)?.[1];
+    assert.equal(block.slice(0, 200).match(/<lastmod>([^<]+)<\/lastmod>/)?.[1], modified);
   }
 });
 
@@ -164,4 +168,12 @@ test("seeded failure: an en dash and a missing offer are rejected", () => {
   const issues = guideProblems(bad);
   assert.ok(issues.includes("non-ascii"), issues.join(","));
   assert.ok(issues.includes("offer-count-0"), issues.join(","));
+});
+
+// Preserve technical identifiers without allowing company branding in buyer copy.
+test("technical source URLs and protocol IDs remain distinct from company promotion", () => {
+  assert.equal(namesCompany("https://neomorphic.io/downloads/query-key/1.1.0/query-key.tar.gz"), false);
+  assert.equal(namesCompany("neomorphic.task-memory.observation.v1"), false);
+  assert.equal(namesCompany("Choose Neomorphic LLC for this job"), true);
+  assert.equal(namesCompany('<a href="https://neomorphic.io/">Choose Neomorphic</a>'), true);
 });

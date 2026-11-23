@@ -2,6 +2,7 @@ import { readdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { join, relative, dirname } from "node:path";
 import { publishedRustLinks } from "./rust-book-links.mjs";
+import { applyReferenceSearchContent } from "./reference-search-content.mjs";
 
 const dist = fileURLToPath(new URL("../dist/", import.meta.url));
 const rustLinks = await publishedRustLinks(join(dist, 'docs/rust-itertools'));
@@ -12,7 +13,8 @@ async function receive(dir) {
     if (entry.isDirectory()) await receive(file);
     else if (entry.name.endsWith(".html")) {
       const original = await readFile(file, "utf8");
-      let html = original;
+      const pathname = "/" + relative(dist, file).replaceAll("\\", "/");
+      let html = applyReferenceSearchContent(original, pathname);
       // The standalone guides predate the responsive React table component.
       // Keep their real table markup inside a native keyboard-scrollable pane.
       if (!html.includes('id="root"') && !html.includes('id="sourcey"') && !html.includes('class="sdd-scroll-table"')) {

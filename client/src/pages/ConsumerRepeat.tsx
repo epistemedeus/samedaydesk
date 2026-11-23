@@ -105,7 +105,7 @@ export default function ConsumerRepeat() {
             </li>
             <li>
               <strong>Procurement and result package.</strong> Malformed input is refused.
-              <code>ok: true</code> is honest completion, not a pass.
+              <code>ok: true</code> records completion. Read the job result for its findings.
             </li>
           </ol>
           <div className={styles.commands}>
@@ -140,13 +140,12 @@ export default function ConsumerRepeat() {
               <Link className={styles.inlineLink} to="/for-agents">
                 /for-agents
               </Link>{" "}
-              stays a separate product and is not started by this CLI. A local completion is
-              not an actual customer delivery.
+              gives you a fresh observation to compare. The CLI reads your local input files and
+              writes the result for the job you selected.
             </p>
             <p>
-              Material limit: you must supply an operator clock. Local provenance files are
-              integrity metadata, not an independent attestation, and <code>ok:true</code> is
-              honest completion rather than a pass.
+              Supply your clock when checking freshness. Local provenance files record
+              input and result hashes. <code>ok:true</code> records completion; read the job result for its findings.
             </p>
             <div className={styles.actions}>
               <Link className={styles.primary} to="/for-agents">

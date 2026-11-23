@@ -22,7 +22,14 @@ const ROUTES = ['/', '/x402', '/x402/seller-conformance', '/x402/verified', '/to
   '/for-agents', '/for-agents/record-repeat', '/for-agents/distribution-repair',
   '/for-agents/consumer-repeat', '/for-agents/useful-jobs', '/receipts', '/terms', '/privacy',
   '/login', '/signup', '/no-such-page'];
-const MACHINE = ['llms.txt', 'start.md'];
+const COPY_SOURCES = ['client/index.html', 'client/public/public-access.js',
+  'client/src/data/machineEntry.mjs', 'client/src/data/readinessPage.mjs',
+  'client/src/data/sdkSearchContent.mjs', 'client/src/pages/AiReadiness.tsx',
+  'client/src/pages/ConsumerRepeat.tsx', 'client/src/pages/ForAgents.tsx',
+  'client/src/pages/Mcp.tsx', 'client/src/pages/UsefulJobs.tsx',
+  'server/lib/apex-declarations.js', 'server/lib/care-contract.js',
+  'server/lib/mcp-tool-inventory.js', 'server/routes/mcp.js', 'server/routes/scan.js',
+  'server/lib/notify.js', 'server/lib/care-mail.js', 'client/scripts/gen-og.mjs'];
 
 const types = {'.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.svg': 'image/svg+xml'};
 const server = createServer((req, res) => {
@@ -55,12 +62,15 @@ server.close();
     const p = join(d, name);
     const rel = relative(dist, p);
     if (statSync(p).isDirectory()) { if (rel !== 'assets') walk(p); continue; }
-    if (name.endsWith('.html')) files.push(p);
-    if (d === dist && MACHINE.includes(name)) files.push(p);
+    // HTML covers the initial, hidden and prerendered customer representations.
+    // The companion public descriptors are copy too. Vite dependency bundles and
+    // immutable financial records are data/code; their displayed text is in the routes.
+    if (rel.startsWith('assets/') || rel === 'receipts.json') continue;
+    if (['.html', '.htm', '.txt', '.md', '.json', '.svg'].includes(extname(name))) files.push(p);
   }
 })(dist);
 
-const r = spawnSync(process.execPath, [join(root, 'tools/public-copy-check.mjs'), '--site', 'samedaydesk', ...files], {stdio: 'inherit'});
+const r = spawnSync(process.execPath, [join(root, 'scripts/release/kit.mjs'), 'copy', '--site', 'samedaydesk', ...files, ...COPY_SOURCES.map(file => join(root, file))], {stdio: 'inherit'});
 if (r.status !== 0) process.exit(r.status ?? 1);
 // Read every served representation of the three operator-owned copy repairs,
 // including no-script summaries and prerendered first responses.
@@ -68,5 +78,5 @@ const prose = [join(dist, 'index.html'), publicFirstRenderPath(dist, '/'),
   shellFilePath(dist, '/tools/ai-readiness'), publicFirstRenderPath(dist, '/tools/ai-readiness'),
   join(dist, 'docs-lab/openscan/index.html'), ...['home.html', 'tools__ai-readiness.html'].map(name => join(out, name))];
 for (const file of prose) if (!existsSync(file)) throw Error(`Missing copy representation: ${relative(root, file)}`);
-const strict = spawnSync(process.execPath, [join(root, 'tools/public-copy-check.mjs'), '--site', 'samedaydesk', '--strict-prose', ...prose], {stdio: 'inherit'});
+const strict = spawnSync(process.execPath, [join(root, 'scripts/release/kit.mjs'), 'copy', '--site', 'samedaydesk', '--strict-prose', ...prose], {stdio: 'inherit'});
 process.exit(strict.status ?? 1);

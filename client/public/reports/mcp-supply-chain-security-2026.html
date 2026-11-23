@@ -13,7 +13,7 @@
 <meta property="og:image" content="https://samedaydesk.com/og.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Article","headline":"We scanned the official MCP registry for supply-chain risk: here's what we found","datePublished":"2026-06-24","dateModified":"2026-06-24","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/reports/mcp-supply-chain-security-2026.html"}
+{"@context":"https://schema.org","@type":"Article","headline":"We scanned the official MCP registry for supply-chain risk: here's what we found","datePublished":"2026-06-24","dateModified":"2026-11-23","author":{"@type":"Organization","name":"SameDayDesk"},"publisher":{"@type":"Organization","name":"SameDayDesk","url":"https://samedaydesk.com/"},"mainEntityOfPage":"https://samedaydesk.com/reports/mcp-supply-chain-security-2026.html"}
 </script>
 <style>
   :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --good:#3a7d44; }
@@ -65,7 +65,7 @@
   <p>This is the core lesson of supply-chain scanning: the dangerous and the routine share a shape. A scanner can surface candidates in seconds, but separating a real threat from benign dual-use is human judgment.</p>
 
   <h2>The other finding: registry hygiene</h2>
-  <p>Nearly half the listed entries we sampled (15 of 33) pointed to repositories that <strong>couldn't be cloned</strong> (private, moved, or removed). That's not a security verdict, but it's a freshness signal worth knowing: a registry listing is not a guarantee the code is still there, let alone unchanged since it was reviewed. The "mutable tool" / rug-pull problem is real, which is why a one-time scan isn't enough.</p>
+  <p>Nearly half the listed entries we sampled (15 of 33) pointed to repositories that <strong>couldn't be cloned</strong> (private, moved, or removed). Use the listing to find the source, then check that the exact revision is available and inspect what changed before granting access. Repeat those checks when a tool updates.</p>
 
   <h2>How to vet a server before you install it</h2>
   <p>Read the install/lifecycle scripts; trace where secrets and <code>process.env</code> go; look for obfuscation and committed binaries; read <code>SKILL.md</code> and tool descriptions as instructions. Or run a scanner that checks all of it in seconds, and re-checks on every upstream release, because clean-today isn't clean-forever.</p>
