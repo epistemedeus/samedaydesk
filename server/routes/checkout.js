@@ -1,5 +1,5 @@
 import legacyCheckout from "./legacy-checkout.js";
-import { reportCheckoutEnabled, reportCheckoutPage, startReportCheckout } from "../lib/report-order.js";
+import { readReportCheckout, reportCheckoutEnabled, reportCheckoutPage, startReportCheckout } from "../lib/report-order.js";
 import { accountUsdc } from "../lib/account-usdc.js";
 import { CareError } from "../lib/care-contract.js";
 import { Router } from "express";
@@ -36,6 +36,15 @@ router.get("/seller-conformance", (req, res) => {
     if (isValidSellerRepairFindingId(req.query.finding)) link.searchParams.set("client_reference_id", req.query.finding);
     return res.redirect(303, link.href);
   } catch { return res.status(503).json({ error: "The report checkout is not available." }); }
+});
+
+router.post("/seller-conformance/order/status", async (req, res) => {
+  res.set({ "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" });
+  if (!reportCheckoutEnabled(process.env)) return res.sendStatus(404);
+  try {
+    const { status, body } = await readReportCheckout(req.body?.order);
+    return res.status(status).json(body);
+  } catch { return res.status(503).json({ error: "Check the status of your report order." }); }
 });
 
 router.post("/seller-conformance/order", async (req,res) => {

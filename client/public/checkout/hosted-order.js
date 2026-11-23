@@ -1,4 +1,4 @@
-import { pendingOrder } from "./order-key.js";
+import { pendingOrder, showPreviousOrder } from "./order-key.js";
 const card=document.querySelector("#card"), form=document.querySelector("#wallet"), status=document.querySelector("#state");
 let busy=false;
 async function open(method) {
@@ -17,32 +17,4 @@ async function open(method) {
 card.onclick=()=>open("card");
 form.onsubmit=e=>{e.preventDefault();void open("base_usdc");};
 
-
-const again=document.querySelector("#again"),previous=document.querySelector("#previous");
-const methods=form.closest("details");
-async function priorOrder(id) {
-  const response=await fetch(location.pathname+"/status",{method:"POST",headers:{"content-type":"application/json"},
-    body:JSON.stringify({order:id}),credentials:"same-origin",redirect:"error"});
-  if(!response.ok)throw Error("Check the status of the original order.");
-  return response.json();
-}
-async function showPrior() {
-  if(!again)return;
-  const id=await pendingOrder(location.pathname);
-  const prior=await priorOrder(id);
-  if(prior.wallet) {
-    const wallet=new URL(prior.wallet);
-    if(wallet.origin==="https://agents.samedaydesk.com") {previous.href=wallet.href;previous.hidden=false;}
-  }
-  if(!prior.canOrderAgain)return;
-  card.hidden=true;methods.hidden=true;again.hidden=false;
-  status.textContent=prior.state==="refunded"?"Your previous order was refunded.":"Your previous order was paid.";
-  again.onclick=async()=>{
-    again.disabled=true;
-    try {
-      if(!(await priorOrder(id)).canOrderAgain)throw Error("Check the original order before continuing.");
-      await pendingOrder(location.pathname,id);location.reload();
-    } catch(error){status.textContent=error.message;again.disabled=false;}
-  };
-}
-void showPrior().catch(()=>{}); // The actual start route also checks the original order.
+void showPreviousOrder(location.pathname, location.pathname + "/status");

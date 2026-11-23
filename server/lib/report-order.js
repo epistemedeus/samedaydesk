@@ -4,15 +4,37 @@ const reportApi = "https://api.neomorphic.io/v1/desk/report-orders";
 const uuid = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/;
 export const reportCheckoutEnabled = env => env.SDS_REPORT_ORDER_USDC === "1";
 
-export async function startReportCheckout(input, { env = process.env, fetcher = fetch } = {}) {
-  const preview = env.SDS_PRIVATE_PREVIEW === "1";
-  let endpoint = reportApi;
-  if (preview) {
+function reportEndpoint(env) {
+  if (env.SDS_PRIVATE_PREVIEW === "1") {
     const local = new URL(env.SDS_TEST_REPORT_ORDER_ENDPOINT);
     if (local.protocol !== "http:" || local.hostname !== "127.0.0.1" || local.pathname !== "/v1/desk/report-orders" ||
         local.username || local.password || local.search || local.hash) throw Error("isolated preview report owner required");
-    endpoint = local.href;
+    return local.href;
   }
+  return reportApi;
+}
+
+export async function readReportCheckout(order, { env = process.env, fetcher = fetch } = {}) {
+  if (!uuid.test(order)) return { status: 400, body: { error: "Check the report order reference." } };
+  const response = await fetcher(reportEndpoint(env) + "/status", {
+    method: "POST", redirect: "error", signal: AbortSignal.timeout(10000),
+    headers: { "content-type": "application/json" }, body: JSON.stringify({ order, brand: "sds" }),
+  });
+  if (!response.ok) throw Error("Report status unavailable");
+  const envelope = await response.json(), result = envelope?.result;
+  if (envelope?.ok !== true || typeof result?.state !== "string" || typeof result.canOrderAgain !== "boolean") {
+    throw Error("Report status unavailable");
+  }
+  const body = { state: result.state, canOrderAgain: result.canOrderAgain };
+  const prefix = "https://agents.samedaydesk.com/order-payments/neo/";
+  if (typeof result.wallet === "string" && result.wallet.startsWith(prefix) && result.wallet.endsWith("/wallet") &&
+      uuid.test(result.wallet.slice(prefix.length, -7))) body.wallet = result.wallet;
+  return { status: 200, body };
+}
+
+export async function startReportCheckout(input, { env = process.env, fetcher = fetch } = {}) {
+  const preview = env.SDS_PRIVATE_PREVIEW === "1";
+  const endpoint = reportEndpoint(env);
   if (!uuid.test(input?.order) || !["card", "base_usdc"].includes(input.method) ||
       (input.finding && !isValidSellerRepairFindingId(input.finding))) return { status: 400, body: { error: "Check the report order details." } };
   const fields = { order: input.order, method: input.method, brand: "sds", finding: input.finding || null };
@@ -46,5 +68,5 @@ export const reportCheckoutPage = `<!doctype html>
 <p><label>GET route <input name="getRoute" placeholder="/api/example" required maxlength="255"></label></p>
 <p><label><input name="authorized" type="checkbox" required> I authorize review of this public route.</label></p>
 <button type="submit">Pay 490 USDC</button></form></details>
-<p role="status" id="state"></p><noscript><a href="?card=1">Continue to card checkout</a></noscript>
+<p role="status" id="state"></p><a id="previous" hidden>View your order</a> <button id="again" type="button" hidden>Start another order</button><noscript><a href="?card=1">Continue to card checkout</a></noscript>
 <script type="module" src="/checkout/report-order.js"></script></main></body></html>`;

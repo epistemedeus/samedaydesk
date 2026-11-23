@@ -1,4 +1,4 @@
-import { pendingOrder } from "./order-key.js";
+import { pendingOrder, showPreviousOrder } from "./order-key.js";
 const status = document.querySelector("#state");
 const card = document.querySelector("#card");
 const form = document.querySelector("#wallet");
@@ -29,3 +29,5 @@ async function openPayment(method) {
 }
 card.onclick = () => openPayment("card");
 form.onsubmit = event => { event.preventDefault(); void openPayment("base_usdc"); };
+
+void showPreviousOrder(key, "/api/checkout/seller-conformance/order/status");
