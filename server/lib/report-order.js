@@ -37,7 +37,7 @@ export async function startReportCheckout(input, { env = process.env, fetcher = 
 
 export const reportCheckoutPage = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pay for your one-route report | SameDayDesk</title></head><body><main><h1>One-route report</h1>
+<link rel="stylesheet" href="/checkout/payment.css"><title>Pay for your one-route report | SameDayDesk</title></head><body><main><h1>One-route report</h1>
 <p>490 USD for a written report on one public GET route.</p>
 <button id="card" type="button">Pay by card</button>
 <details><summary>Pay with USDC on Base</summary><form id="wallet">

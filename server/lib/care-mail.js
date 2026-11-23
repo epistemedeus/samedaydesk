@@ -1,3 +1,5 @@
+import { legacyLicense } from "./legacy-order.js";
+import { readFile } from "node:fs/promises";
 import { CARE_OFFERS, careLink } from "./care-contract.js";
 import { recordCommerceJourney } from "./commerce-journey.js";
 
@@ -36,11 +38,11 @@ export function careMailMessage({ order, item, secret, from, replyTo }) {
   return { from, replyTo, to: order.rail_email || order.stripe_email, subject, text };
 }
 
-export async function queueOrderReceipt(db,table,{hostedId,quoteId,email,label,cents,paymentUrl,live,session}) {
+export async function queueOrderReceipt(db,table,{hostedId,quoteId,email,label,cents,paymentUrl,legacy,railId,live,session}) {
   const id=hostedId ?? quoteId;
   await db.query(`insert into ${table("care_mail")}(mail_key,hosted_order_id,quote_id,kind,details)
     values($1,$2,$3,'order_receipt',$4) on conflict(mail_key) do nothing`,
-    ["order_receipt/"+id,hostedId ?? null,quoteId ?? null,{ email,label,cents,paymentUrl,live,session }]);
+    ["order_receipt/"+id,hostedId ?? null,quoteId ?? null,{ email,label,cents,paymentUrl,legacy,railId,live,session }]);
 }
 
 export async function drainCareMail({ store, send, secret, from, replyTo, limit = 20 }) {
@@ -55,6 +57,14 @@ export async function drainCareMail({ store, send, secret, from, replyTo, limit 
         const units=BigInt(cents);
         message={from,replyTo,to:email,subject:"Your SameDayDesk receipt",
           text:`${label}\nPaid ${units / 100n}.${String(units % 100n).padStart(2,"0")} USDC on Base.\n\nView your payment and receipt: ${paymentUrl}/wallet`};
+        if (item.details.legacy === "kit") {
+          const kit = await readFile(new URL("../../client/public/kit/ai-readiness-kit.html",import.meta.url));
+          message.attachments = [{ filename:"ai-readiness-kit.html",content:kit.toString("base64") }];
+        }
+        if (item.details.legacy === "fixpack") {
+          const license = legacyLicense(secret,item.details.railId);
+          message.text += "\n\nOpen https://samedaydesk.com/api/checkout/fix-pack to download your complete Fix Pack. Your license is " + license;
+        }
       } else {
         order = await store.order(item.order_id);
         if (!order?.rail_email && !order?.stripe_email) throw new Error("No receipt email");

@@ -1,3 +1,4 @@
+import { pendingOrder } from "./order-key.js";
 const status = document.querySelector("#state");
 const card = document.querySelector("#card");
 const form = document.querySelector("#wallet");
@@ -5,32 +6,11 @@ const finding = new URL(location.href).searchParams.get("finding");
 const key = "report/" + (finding || "");
 let busy = false;
 
-// An IndexedDB read/write transaction elects one purchase key across browser tabs.
-function pendingOrder() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open("sds-report-checkout", 1);
-    request.onupgradeneeded = () => request.result.createObjectStore("orders");
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => {
-      const db = request.result;
-      const tx = db.transaction("orders", "readwrite");
-      const store = tx.objectStore("orders"), read = store.get(key);
-      let order;
-      read.onsuccess = () => {
-        order = read.result || crypto.randomUUID();
-        if (!read.result) store.add(order, key);
-      };
-      tx.oncomplete = () => { db.close(); resolve(order); };
-      tx.onabort = () => { db.close(); reject(tx.error); };
-    };
-  });
-}
-
 async function openPayment(method) {
   if (busy) return;
   busy = true; card.disabled = true; form.querySelector("button").disabled = true;
   try {
-    const order = await pendingOrder();
+    const order = await pendingOrder(key);
     const body = { order, method, finding };
     if (method === "base_usdc") {
       const fields = new FormData(form);

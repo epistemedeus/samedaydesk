@@ -1,3 +1,4 @@
+import { legacyFulfillment, legacyOffer } from "./legacy-order.js";
 import { queueOrderReceipt } from "./care-mail.js";
 import { createHash, randomUUID } from "node:crypto";
 import { CareError, isOrderId, providerId } from "./care-contract.js";
@@ -12,7 +13,8 @@ const base = "https://agents.samedaydesk.com/order-payments/sds/";
 function quote(row) {
   const created = new Date(row.created_at).getTime();
   const version = createHash("sha256").update(JSON.stringify([row.id,row.rail_id,row.offer,row.amount_cents,row.currency,
-    row.live_mode,row.checkout_details.findingId,row.checkout_details.email,created])).digest("hex");
+    row.live_mode,row.checkout_details.findingId,row.checkout_details.email,created,
+    ...(legacyOffer(row.offer) ? [row.checkout_details.target,row.checkout_details.city,row.checkout_details.linkId,row.checkout_details.priceId] : [])])).digest("hex");
   return { id:row.rail_id,resource:base+row.rail_id,cents:row.amount_cents,created,expires:created+7200000,
     version,state:"waiting",...row.rail_state };
 }
@@ -29,7 +31,7 @@ export function hostedOrderRail(txn,table) {
     const offer = getOffer(SELLER_CONTRACT_REPAIR_SLUG);
     const row = await txn(async db=>{
       await db.query(`insert into ${orders}(id,offer,label,amount_cents,currency,live_mode,state,checkout_rail,order_key,rail_id,checkout_details)
-        values($1,$2,$3,$4,'usd',$5,'waiting',$6,$7,$8,$9) on conflict(order_key) do nothing`,
+        values($1,$2,$3,$4,'usd',$5,'waiting',$6,$7,$8,$9) on conflict do nothing`,
         ["order_"+order,SELLER_CONTRACT_REPAIR_SLUG,offer.label,offer.amount,live,method,order,randomUUID(),{findingId,email}]);
       const saved=(await db.query(`select * from ${orders} where order_key=$1 for update`,[order])).rows[0];
       if (saved.checkout_rail!==method || saved.live_mode!==live || saved.amount_cents!==offer.amount ||
@@ -78,10 +80,14 @@ export function hostedOrderRail(txn,table) {
         [row.id,state,next,state==="refunded" ? String(BigInt(next.receipt.amount)/10000n) : 0]);
       if(plan.patch.state==="paid") {
         await event(db,row,"payment_verified");
+        await legacyFulfillment(db,table,row,"paid");
         await queueOrderReceipt(db,table,{hostedId:row.id,email:row.checkout_details.email,label:row.label,
-          cents:row.amount_cents,paymentUrl:q.resource,live:row.live_mode,session:row.order_key});
+          cents:row.amount_cents,paymentUrl:q.resource,legacy:legacyOffer(row.offer)?.artifact,railId:row.rail_id,live:row.live_mode,session:row.order_key});
       }
-      if(plan.patch.state==="refunded") await event(db,row,"payment_refunded");
+      if(plan.patch.state==="refunded") {
+        await legacyFulfillment(db,table,row,"refunded");
+        await event(db,row,"payment_refunded");
+      }
       return plan.value ?? {...q,...next};
     });
   }

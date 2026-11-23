@@ -1,3 +1,4 @@
+import legacyCheckout from "./legacy-checkout.js";
 import { reportCheckoutEnabled, reportCheckoutPage, startReportCheckout } from "../lib/report-order.js";
 import { accountUsdc } from "../lib/account-usdc.js";
 import { CareError } from "../lib/care-contract.js";
@@ -9,6 +10,7 @@ import { createSellerRepairCheckoutSession, isValidSellerRepairFindingId } from 
 import { createOfferPaymentIntent, preparePaymentIntake } from "../lib/payment-attempt.js";
 
 const router = Router();
+router.use(legacyCheckout);
 export const accountOrderRail = () => accountUsdc({ stripe, enabled: process.env.SDS_ORDER_USDC === "1" &&
   (process.env.ORDER_PAYMENTS_SDS_TOKEN?.length ?? 0) >= 32, live: process.env.SDS_PRIVATE_PREVIEW !== "1" });
 router.post("/usdc", requireAuth, requireVerifiedEmail, async (req,res) => {

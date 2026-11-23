@@ -9,6 +9,7 @@
 // (standard Stripe); this just validates + delivers, with a graceful fallback.
 // License authority is a bearer checkout-session id bound to the merchant Fix Pack
 // Payment Link / product — not an amount-only threshold and not a customer login.
+import { parseLegacyLicense } from "../lib/legacy-order.js";
 import { Router } from "express";
 import { recordMcpProduced } from "../lib/pulse.js";
 import { clientKey } from "../lib/agent-readiness/rate-limit.js";
@@ -175,7 +176,9 @@ async function handle(msg, ctx = {}) {
 
       if (name === "generate_complete_fix_pack") {
         const license = params?.arguments?.license;
-        const paid = await validateFixPackLicense(license);
+        const cap = parseLegacyLicense(license);
+        const legacy = cap && await ctx.care?.legacyEntitlement(cap.id,cap.proof);
+        const paid = cap ? legacy?.kind === "fixpack" : await validateFixPackLicense(license);
         if (!paid) {
           let starter = "";
           try {
@@ -241,7 +244,7 @@ router.get("/", (req, res) => {
 router.post("/", async (req, res) => {
   const admission = mcpAdmissionForRequest(req);
   if (admission.error) return res.status(admission.status).json(admission.error);
-  const ctx = { clientKey: clientKey(req) };
+  const ctx = { clientKey: clientKey(req), care: req.app.get("sdsCare") };
   // Validate and bound the entire producer body before choosing any async tool.
   // Per-entry failures must not discard valid work from a legacy mixed batch.
   const out = (await Promise.all(admission.entries.map(async (message) => {

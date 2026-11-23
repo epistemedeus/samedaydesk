@@ -329,7 +329,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     const known = getOffer(offer);
     if (known && known.amount !== session.amount_total) throw new CareError(409, "The hosted price does not match the offer.");
     const label = known?.label || (typeof meta.label === "string" && meta.label.length <= 160 ? meta.label : "Hosted work");
-    const result = meta.sds_hosted_order ? await store.hostedRail.cardPaid({key:meta.sds_hosted_order,
+    const result = /^sds_legacy_/.test(session.client_reference_id || "") ? await store.legacyOrders.card(session,intent,live) : meta.sds_hosted_order ? await store.hostedRail.cardPaid({key:meta.sds_hosted_order,
       session:session.id,payment:intent.id,offer,amount:session.amount_total,live,findingId:meta.finding_id}) : await store.hostedOrder({ id: `order_${intent.id}`, session: session.id, payment: intent.id,
       offer, label, amount: session.amount_total, currency: "usd", live });
     if (providerId(intent.latest_charge, "ch")) {
@@ -346,6 +346,11 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
   }
 
   return { start, startInvoice, startUsdc, usdc: store.usdc, methods, read, submit, portal, eventIsCare, recordHosted, taskRequests: store.taskRequests,
+    legacyStart(input) {
+      if (!orderPayments) throw new CareError(404,"Payment method unavailable.");
+      return store.legacyOrders.start(input,{stripe,env:process.env,live});
+    },
+    legacyEntitlement: (id,proof) => store.legacyOrders.entitlement(id,proof,secret),
     hostedRail: store.hostedRail, startRepair(input) {
       if (!orderPayments) throw new CareError(404,"Payment method unavailable.");
       return store.hostedRail.start({ ...input,stripe,origin,live });
