@@ -74,6 +74,8 @@ export function analyzeDocument(body, url) {
     canonical: publicLink(attr(linkRel('canonical')[0], 'href'), url),
     language: attr(tag('html')[0], 'lang'), viewport: meta('viewport'), robots: meta('robots'),
     // The opening is the copy from the main heading on, not the menu above it.
+    emptyAppShell: tag('script').some(node => attr(node, 'type') !== 'application/ld+json' && (attr(node, 'src') || node.childNodes?.some(child => child.value?.trim()))) &&
+      (tag('div').some(node => ['root', 'app', '__next'].includes(attr(node, 'id')) && !normalize(text(node))) || /(?:enable|requires?|turn on) javascript/i.test(visible)),
     headings, visible, opening: opening(visible, headings, tag), siteName: normalize(meta('og:site_name')) || null, words: visible.split(/\s+/).filter(Boolean).length,
     links, schemas, schemaTypes: [...new Set(schemas.flatMap(types))], invalidSchemas,
     entities, products, offers, faq: ofType(['FAQPage', 'Question']), dates,

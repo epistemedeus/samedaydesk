@@ -126,3 +126,67 @@ and visually hidden text, browser-rendered pages and final prerenders. Its stric
 all seven served/rendered representations of the three repaired pages, refusing long dashes and
 dollar-prefix prices. The canonical structured check receipt is release/out/check.json; Root's
 receiver reads the exact source-bound copy published at previews/samedaydesk/release/check-<sha>.log.
+
+## Optional free browser comparison and case-study theme repair
+
+This follow-up starts at production merge ea2a221bd3cbcf0a44b265cde9d0a22553c418b6,
+tree equal to qualified 69ebf290. Solana Pulse and OpenScan callouts now use the saved site
+theme, with shared opt-in styles; wording, layout and offer links are unchanged.
+
+Root alone enrolls FREE_CHECK_CF_ACCOUNT_ID and FREE_CHECK_CF_TOKEN in the complete retained
+host environment (102 existing values plus these two = 104). Account ID is
+718093524570bf468ddcd030df87562a. The token stays only in the protected host config and is
+never needed by tests. Leave FREE_CHECK_RENDER_URL and FREE_CHECK_RENDER_TOKEN absent. With
+both CF inputs present the existing renderer factory prefers its Quick Action; if either is
+missing the previous optional-worker behavior is preserved. There is no new worker or service.
+
+The adapter uses the official Browser Run scrape endpoint, cacheTTL=0 in the query, body
+selector, networkidle2 and remaining deadline, with image/media/font resources excluded.
+It sends neither target cookies nor target headers. The ordinary public-address and redirect
+admission runs first, including DNS-private refusal. Initial HTML with at least 80 words, or
+without an empty script app shell, does not consume browser time. Positive final-URL word
+counts are reused for 24 hours, in a bounded 256-entry process cache. No page text is cached.
+
+One queue per account serializes this Node process's provider requests, with starts at least
+10 seconds apart, at most four pending requests, and queue wait at most 12 seconds. All work
+shares the check's existing 18-second deadline (below its 20-second bar), including other
+checks. Provider work has its existing 9-second cap, shortened by remaining time. Owned
+queue/deadline timers and listeners are disposed. No retry hides a provider failure.
+
+Empty, challenged, timed-out, unavailable and rate-limited results stay Not verified. Only
+the documented daily-limit 429 stops further provider calls until the next UTC day; an
+ordinary rate 429 does not latch the day. Browser milliseconds come only from the actual
+X-Browser-Ms-Used header; absent or invalid headers stay null. Safe receipt metadata is at
+measurements.rendered. This includes actual providerRequests, positive-cache/HTML-skip reasons,
+observedDailyBrowserMs, observedDailyRequests and counterScope=process/accountTotalKnown=false.
+Counters, quota latch, queue and cache reset on process restart and do not include Root's prior
+manual calls, other callers or another process. Host precondition is the existing single Node
+application process; these observations do not claim account-wide synchronization or remaining
+quota. Workers Free's hard daily provider limit remains authoritative; no paid plan is enabled.
+
+After Root receives the exact completed managed deployment and 104-value config, use the normal
+public checker for one finite ten-site batch, without any CF credentials on the runner VM:
+
+```sh
+node scripts/free-check-v2/receive-rendering.mjs --source <qualified-full-sha> --build <Root-completed-build-uuid> --out /tmp/sds-cf-ten-20261123 --check
+node scripts/free-check-v2/receive-rendering.mjs --source <qualified-full-sha> --build <Root-completed-build-uuid> --out /tmp/sds-cf-ten-20261123 --run
+```
+
+The output directory must be new; it is private. --check makes no requests. --run checks ten
+sites sequentially through /api/tools/ai-readiness?version=2, not a provider bypass. It includes
+linear.app and excalidraw.com; actual unpaid initial HTML at Excalidraw was 200, one readable
+word and an empty script app shell on November 23. This is not a rendered measurement. The
+runner preserves each terminal result without retries and distinguishes ten site checks from
+actual provider calls, cache hits and HTML skips. It reports median browser milliseconds only
+for actual header samples. Estimated capacity from a full 600,000 ms daily allowance is not
+remaining account quota. No invoice, checkout, account, payment or mail is created.
+
+Keep the unchanged Node 22 Express build:managed-foundry / server/index.js saved host profile.
+Root owns freeze/status/merge, full-env enrollment, host build and live ten-site receiving.
+Rollback the source and the two optional config inputs using the complete encrypted preimage;
+preserve the existing 102 values, bank flag, CrUX key, receipt/report storage and Care data.
+PageSpeed remains deferred and CDN Security remains Essentially off with CDN enabled.
+
+Wire and quota references:
+https://developers.cloudflare.com/browser-run/quick-actions/scrape-endpoint/
+https://developers.cloudflare.com/browser-run/limits/
