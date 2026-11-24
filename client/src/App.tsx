@@ -8,7 +8,7 @@ import DraftingCrosshair from "./components/DraftingCrosshair";
 import ScrollToHash from "./components/ScrollToHash";
 import { AuthProvider } from "./lib/auth";
 import { initAnalytics } from "./lib/posthog";
-import { journey, observeBrowserErrors } from "./lib/journey";
+import { observePageTraffic, observeBrowserErrors } from "./lib/journey";
 import { useSmoothScroll } from "./motion/useSmoothScroll";
 import { publicPages, type InitialPublicPage } from "./public-pages";
 // The buy page is where money moves, so it ships with the main bundle rather than as a later chunk.
@@ -22,7 +22,7 @@ const ReceiptPage = lazy(() => import("./pages/ReceiptPage"));
 
 export default function App({ initialPage }: { initialPage?: InitialPublicPage }) {
   const { pathname } = useLocation();
-  useEffect(() => { journey("page_viewed"); }, [pathname]);
+  useEffect(observePageTraffic, [pathname]);
   useEffect(observeBrowserErrors, []);
   useEffect(() => {
     performance.mark("sdd:react-ready");

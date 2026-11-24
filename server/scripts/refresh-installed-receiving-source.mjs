@@ -14,9 +14,10 @@ const read=name=>readFile(path.join(root,name));
 // Receive explicitly named installed source, never infer it from a dirty export.
 // The same predecessor is idempotent; ordinary refresh adds no new descriptor.
 const args=process.argv.slice(2), predecessorRefs=[];
-let joinMeasurement=false, joinCareSchema=false;
+let joinMeasurement=false, joinCareSchema=false, joinTraffic=false;
 while(args.length){
   const option=args.shift();
+  if(option==='--join-traffic-runtime'){joinTraffic=true;continue;}
   if(option==='--join-measurement-runtime'){joinMeasurement=true;continue;}
   if(option==='--join-care-schema'){joinCareSchema=true;continue;}
   const ref=args.shift();
@@ -27,6 +28,7 @@ while(args.length){
 // These are the host-application bytes the free-tool measurement changed.
 // The full exporter still refuses every other drifted pin member.
 const measurementRuntime=['package.json','server/lib/pulse.js','server/lib/pulse-store/free-tool-outcomes.js','server/lib/pulse-store/schema.js','server/lib/pulse-store/supabase-adapter.js','server/lib/pulse-store/wal-schema.js','server/routes/tools.js','supabase/migrations/0010_pulse_free_tool_outcomes.sql'];
+const trafficRuntime=['server/lib/commerce-journey.js','server/routes/pulse.js','server/lib/traffic-context.mjs','server/lib/traffic-ingress.mjs','server/lib/crawler-ranges.json'];
 const careRuntime=['server/lib/care-database.js','server/lib/care-store.js','server/lib/commerce-journey.js','server/lib/mail-events.js','server/lib/task-quotes.js','server/lib/task-requests.js'];
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 const manifestName='vendor/hosted-wallet-market/SOURCE.json';
@@ -64,10 +66,10 @@ const next={...pin.files};
 const hostOwned=new Set(['server/app.js','server/lib/hosted-wallet-market-mount.js','server/lib/neomorphic-contributor-journey-mount.js','server/lib/contributor-desk-assets.js',
   'server/lib/contributor-https-qualification.js','server/scripts/verify-contributor-install.mjs',
   'server/scripts/resolve-contributor-source.mjs','server/scripts/refresh-installed-receiving-source.mjs']);
-if(joinMeasurement||joinCareSchema){
-  if(joinMeasurement&&joinCareSchema)throw Error('select one explicit host runtime scope');
-  const joined=joinCareSchema?careRuntime:measurementRuntime;
-  const refreshable=new Set(joinCareSchema?[...careRuntime,'server/scripts/refresh-installed-receiving-source.mjs']:[...hostOwned,...measurementRuntime]);
+if(joinMeasurement||joinCareSchema||joinTraffic){
+  if([joinMeasurement,joinCareSchema,joinTraffic].filter(Boolean).length>1)throw Error('select one explicit host runtime scope');
+  const joined=joinTraffic?trafficRuntime:joinCareSchema?careRuntime:measurementRuntime;
+  const refreshable=new Set(joinTraffic?[...trafficRuntime,'server/scripts/refresh-installed-receiving-source.mjs']:joinCareSchema?[...careRuntime,'server/scripts/refresh-installed-receiving-source.mjs']:[...hostOwned,...measurementRuntime]);
   for(const [name,expected] of Object.entries(pin.files)){
     if(refreshable.has(name))continue;
     if(sha(await read(name))!==expected)throw Error('unrelated source pin drift: '+name);

@@ -59,7 +59,7 @@
     "server/lib/care-store.js": "355a0cabb43454b584f11efe47068a314f822b0e81f5a313245e1b65a514d402",
     "server/lib/care-usdc-month.js": "fb5fad01248408357581e26f76bdc4574788f736ff8165fab1023b83171e8f77",
     "server/lib/care-usdc.js": "ef18bc54522790a4c103bc8811b3d0434367638fd2502f63a884aa98544b2499",
-    "server/lib/commerce-journey.js": "8e5aca569623f9575c704af7a401ce026d5e17b7d2f2febbf7468bf5e2a11015",
+    "server/lib/commerce-journey.js": "d12fe9772dc4158bc79ed245181b84b866e80d20e141c8f759740dd78dc9ec92",
     "server/lib/contributor-artifact.js": "72657728eab3b9bab0dfffccb2561dbea5fc3d9cbb886ce84ed83890ff1edc3c",
     "server/lib/contributor-desk-assets.js": "67b379f429ac7223b3e8b2fc923da367ed7b48ebd158552e117885c117c73da5",
     "server/lib/contributor-environment-packet.js": "07ca0bfd8bfcbb3c4ef0b3ee5f780274ac6e3f4c34392031ab583ad411ff8214",
@@ -288,7 +288,7 @@
     "server/routes/legacy-checkout.js": "633a3244d8c7065e4f6d9556760afffc4f2689e521448d958bcb3a40552ee429",
     "server/routes/mcp.js": "7a806301a0f283990bc028b1d2b563fa9a5314c742c4d35488d7bd6e9850c772",
     "server/routes/order-payments.js": "6670db17504246de98eb10854978359a13cbdb143873af6e2480a1feff692108",
-    "server/routes/pulse.js": "30900298a5a5a233c2daaf81a8d5e81ff3c73b2a5f3572a75101784f48eda260",
+    "server/routes/pulse.js": "692c503e71415d376bbca8679560b161442c104826a28eeb34e43a52f41530e4",
     "server/routes/requests.js": "9f42868435cfd9e40041a324fb3e272535ee6ca914d8224487434c4a110aec8b",
     "server/routes/resend-webhook.js": "b4b78b2ec212e2ae98c73703fb425d24538fdb2ee51492877a5c07a0d3f79352",
     "server/routes/scan.js": "1fb65804632de1434b8e24a447da0d170d7444a73c77bdb94cef4efa89a6ce6b",
@@ -297,7 +297,7 @@
     "server/routes/x402-quote.js": "11caf4fa157443aa171e567a5308dea21e64b161c178300d3c0eb4259be97903",
     "server/scripts/fixtures/hosted-synthetic-upload-100511.json": "b2956cd3f1c2f4bd2b551d216f7aa2b9a627280f8077b00d13756a26e448664a",
     "server/scripts/qualify-contributor-https-edge.mjs": "9068044c60b26037ab346468da68663ca4013bd49b76f47a5ca7ece194e3d16b",
-    "server/scripts/refresh-installed-receiving-source.mjs": "88077e167479c7f74108a9d3787677e2289d51a0703f3e48b5439c4ab8eea0f6",
+    "server/scripts/refresh-installed-receiving-source.mjs": "6cad4889252be607fde4e9bbd4ec47894794c5cbbe96e771d79341865ad01705",
     "server/scripts/resolve-contributor-source.mjs": "303ccf41a660340836a8667ec0764797169ee06713fd51124f0e2be12ff0bd72",
     "server/scripts/test-neomorphic-opportunity-isolation.mjs": "b5e127fdc90906391d491f82681ff40a7d52ae0e027f96c9017163ea4e2fb546",
     "server/scripts/verify-contributor-install.mjs": "ef7926f8a1b00ad71ae374b2726c51a4f711a420bab12086674f9db9e84bd139",
@@ -1549,7 +1549,10 @@
     "vendor/visitor-foundry-receiver/services/correspondence/src/visitor-work-cells/index.ts": "2e39111e4dfd57bb4beed23a6fa8ab252f932c734dc489be832f47284fe07dc7",
     "vendor/visitor-foundry-receiver/services/correspondence/src/visitor-work-cells/router.ts": "b6abf1f5f97d42df796b702ab28dbd492c90ce3e9181eb6104cd6c891f688681",
     "vendor/visitor-foundry-receiver/services/correspondence/src/visitor-work-cells/store.ts": "2e0730d1a3c1de1ca1f7e5d40303822912905fbd0e90000b5599717e5891b3a8",
-    "vendor/visitor-foundry-receiver/services/correspondence/tsconfig.json": "4c2928d371fa19546ccc4b1dcef7b5109429bb493d1efc3c4a81c05fe2d70b26"
+    "vendor/visitor-foundry-receiver/services/correspondence/tsconfig.json": "4c2928d371fa19546ccc4b1dcef7b5109429bb493d1efc3c4a81c05fe2d70b26",
+    "server/lib/traffic-context.mjs": "9cc277aedc7dae07cad00c1daa31f3abf010ba1a5fa8fe047f2b23fbf4f338f3",
+    "server/lib/traffic-ingress.mjs": "059bdd8f5ffad9d92a0fe56216088665497cfa1f343993a19b66d60376be5ec9",
+    "server/lib/crawler-ranges.json": "69511f45947d1dd0390177c500fbcfe24e2e26d2e3c5a828cc496b4867688037"
   },
   "receivedCallerClosures": [
     {
@@ -1876,6 +1879,11 @@
       "base": "44328893bf3598a54deadf2d49952f55ab9ff7cf",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:1534830b5c8d0347ff235d1f163fcd85afc626424f356077aa21bd13951c8727"
+    },
+    {
+      "base": "cee7c9f9e6cc03da2ca3fa0c3dbfb45d2ba374e6",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:fc26105149ff27aeeecf58c1c982aef848a55aafb91ed2c8063db73806cc8efc"
     }
   ]
 }
