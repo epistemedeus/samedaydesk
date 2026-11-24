@@ -4,7 +4,7 @@
   "origin": "https://samedaydesk.com",
   "preview": {
     "build": "npm run build",
-    "start": "node server/index.js",
+    "start": "node scripts/release/sds-preview.mjs",
     "ready": "/api/health",
     "env": {
       "NODE_ENV": "production",
