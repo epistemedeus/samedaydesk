@@ -4,6 +4,7 @@ import {
   checkoutArgs, checkedSession, invoiceSubscriptionArgs, isOrderId, newIntegrationId, providerId, readCareIntake, subscriptionOfInvoice, subscriptionWillNotRenew, verifyCareToken, careWalletLink,
 } from "./care-contract.js";
 import { openCareStore } from "./care-store.js";
+import { railQuote } from "./care-usdc.js";
 import { createTaskQuoteService } from "./task-quotes.js";
 import { releaseRunOf } from "./release-run.js";
 import { recordJourney } from "./journey-events.js";
@@ -174,11 +175,18 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
       const invoice = await stripe.invoices.retrieve(providerId(subscription.latest_invoice, "in"));
       if (invoice.status === "open") invoiceUrl = allowedStripeUrl(invoice.hosted_invoice_url, "invoice.stripe.com");
     }
+    const quote = railQuote(order);
+    // This is a receipt projection. Keep the stored order and gateway quote
+    // available for recovery, including a signed request arriving after expiry.
+    const expiredUnused = order.state === "created" && quote?.state === "waiting" &&
+      !order.session_id && !order.subscription_id && order.rail_attempt == null &&
+      order.rail_provider == null && order.rail_observation == null && order.rail_refund == null &&
+      now().getTime() >= quote.expires;
     return {
       offer: order.offer, title: careServiceOffer(order.offer).title, ...careReceiptAmount(order), ...(invoiceUrl ? { invoiceUrl } : {}),
-      ...(order.rail_id ? { paymentUrl: "https://agents.samedaydesk.com/order-payments/sds/" + order.rail_id, wallet: careWalletLink(order, secret),
-        paymentState: order.rail_refund?.state || order.rail_observation?.state || (order.rail_attempt ? "seen" : "waiting") } : {}),
-      state: order.state, receivedIntake: Boolean(order.intake), refundedCents: order.refunded_cents ?? 0,
+      ...(quote ? { paymentUrl: quote.resource, wallet: careWalletLink(order, secret),
+        paymentState: expiredUnused ? "expired" : quote.state } : {}),
+      state: expiredUnused ? "expired" : order.state, receivedIntake: Boolean(order.intake), refundedCents: order.refunded_cents ?? 0,
       ...(careServiceOffer(order.offer)?.mode === "subscription" && order.state === "paid"
         ? { subscription: { cancelAtPeriodEnd: order.cancel_at_period_end, status: order.subscription_status || "active" } }
         : {}),
