@@ -110,7 +110,8 @@ export function skillWatchStore(txn,table) {
       for(const row of rows) {
         if(row.report?.releases?.[key])continue;
         const releases={...row.report?.releases,[key]:{repository:repo,commit,publishedAt:at.toISOString(),...report}};
-        await db.query(`update ${periods} set report=$2 where invoice_id=$1`,[row.invoice_id,{releases}]);fresh++;
+        await db.query(`update ${periods} set report=jsonb_set(coalesce(report,'{}'::jsonb),'{releases}',$2)
+          where invoice_id=$1`,[row.invoice_id,releases]);fresh++;
         if(report.verdict==="clean")continue;
         const prior=await db.query(`select entry.value->'rules' as rules from ${periods} p
           cross join lateral jsonb_each(coalesce(p.report->'releases','{}'::jsonb)) entry
@@ -125,12 +126,27 @@ export function skillWatchStore(txn,table) {
       return {observed:fresh,alertsQueued:alerted};
     });
   }
-  async function scheduledRepositories(at,limit) {
-    return txn(async db=>(await db.query(`select r.repository,min(p.period_start) as since from ${periods} p
-      join ${orders} o on o.id=p.order_id cross join lateral jsonb_array_elements_text(
-        case when jsonb_typeof(o.intake->'repositories')='array' then o.intake->'repositories' else '[]'::jsonb end
-      ) r(repository) where ${ready} and p.period_start<=$2 and p.period_end>$2
-      group by r.repository order by r.repository limit $3`,[watchOffer.id,at,limit])).rows);
+  async function openReleaseSchedule(at) {
+    // Use the database clock so restarts and simultaneous ticks share one
+    // ordering. A tick cannot reselect anything claimed after it opened.
+    const started=await txn(async db=>(await db.query("select clock_timestamp()::text as started")).rows[0].started);
+    return () => txn(async db=>{
+      await db.query("select pg_advisory_xact_lock(hashtextextended($1, 99125))",[`skill-watch:${periods}`]);
+      const {rows}=await db.query(`with eligible as (
+        select r.repository collate "C" as repository,min(p.period_start) as since,
+          min(p.invoice_id collate "C") as invoice_id,max((p.report->'watchSchedule'->>r.repository)::timestamptz) as claimed
+        from ${periods} p join ${orders} o on o.id=p.order_id cross join lateral jsonb_array_elements_text(
+          case when jsonb_typeof(o.intake->'repositories')='array' then o.intake->'repositories' else '[]'::jsonb end
+        ) r(repository) where ${ready} and p.period_start<=$2 and p.period_end>$2 and r.repository is not null
+        group by r.repository collate "C"
+      ), next as (
+        select repository,since,invoice_id from eligible where claimed is null or claimed<$3::timestamptz
+        order by claimed nulls first,since,repository limit 1
+      ) update ${periods} p set report=jsonb_set(coalesce(p.report,'{}'::jsonb),'{watchSchedule}',
+        coalesce(p.report->'watchSchedule','{}'::jsonb) || jsonb_build_object(next.repository,clock_timestamp()))
+      from next where p.invoice_id=next.invoice_id and p.status='ready' returning next.repository,next.since`,[watchOffer.id,at,started]);
+      return rows[0] ?? null;
+    });
   }
   async function needsRelease({repository,commit,publishedAt}) {
     return txn(async db=>(await db.query(`select exists(select 1 from ${periods} p join ${orders} o on o.id=p.order_id
@@ -138,5 +154,5 @@ export function skillWatchStore(txn,table) {
         and not (coalesce(p.report->'releases','{}'::jsonb) ? $4)) as needed`,
     [watchOffer.id,repository,publishedAt,releaseKey(repository,commit)])).rows[0].needed);
   }
-  return {start,card,observeRelease,scheduledRepositories,needsRelease};
+  return {start,card,observeRelease,openReleaseSchedule,needsRelease};
 }

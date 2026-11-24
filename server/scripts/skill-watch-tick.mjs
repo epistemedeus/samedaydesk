@@ -70,10 +70,15 @@ async function staticReport(read, root, sha, source) {
 // The clock and transport can be passed by a private test. The cron entry uses
 // today's clock and the normal admitted public GitHub reader.
 export async function runSkillWatchTick({ watch, source, at = new Date(), upstream = githubReader() }) {
-  const counts = { repositories: 0, published: 0, scanned: 0, observed: 0, alertsQueued: 0, issues: [] };
-  const rows = await watch.scheduledRepositories(at, repositoryLimit + 1);
-  if (rows.length > repositoryLimit) counts.issues.push("repository_limit");
-  for (const { repository, since } of rows.slice(0, repositoryLimit)) {
+  const counts = { claimed: 0, repositories: 0, published: 0, scanned: 0, observed: 0, alertsQueued: 0, issues: [] };
+  const claim = await watch.openReleaseSchedule(at);
+  while (counts.claimed < repositoryLimit) {
+    let entry;
+    try { entry = await claim(); }
+    catch { counts.issues.push("schedule_claim_unreceived"); break; }
+    if (!entry) break;
+    counts.claimed++;
+    const { repository, since } = entry;
     const name = githubRepository(repository);
     if (!name) { counts.issues.push("unsupported_repository"); continue; }
     counts.repositories++;
