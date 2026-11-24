@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { careSchema, careTable, careTables } from "../lib/care-database.js";
 
 export const careMigrations = ["0011_task_requests.sql", "0012_care_orders.sql", "0013_task_quotes.sql",
-  "0014_commerce_journey.sql", "0015_mail_events.sql", "0016_hosted_orders.sql", "0019_care_order_rail.sql", "0021_task_quote_rail.sql", "0022_hosted_order_rail.sql", "0023_skill_watch_periods.sql"];
+  "0014_commerce_journey.sql", "0015_mail_events.sql", "0016_hosted_orders.sql", "0019_care_order_rail.sql", "0021_task_quote_rail.sql", "0022_hosted_order_rail.sql", "0023_skill_watch_periods.sql", "0024_journey_traffic.sql"];
 
 function scopedMigration(file,schema) {
   const source = readFileSync(new URL(`../../supabase/migrations/${file}`,import.meta.url),"utf8");
@@ -16,6 +16,12 @@ export function careRailUpgrade(schema) {
   careSchema({ SDS_CARE_SCHEMA:schema });
   return ["BEGIN;",...careMigrations.filter(file=>file === "0019_care_order_rail.sql" || file === "0021_task_quote_rail.sql" || file === "0022_hosted_order_rail.sql" || file === "0023_skill_watch_periods.sql")
     .map(file=>scopedMigration(file,schema)),"COMMIT;",""].join("\n");
+}
+
+// Existing production schema upgrade, emitted only; Root applies through its owner route.
+export function careTrafficUpgrade(schema) {
+  careSchema({ SDS_CARE_SCHEMA: schema });
+  return ['BEGIN;', scopedMigration('0024_journey_traffic.sql', schema), 'COMMIT;', ''].join('\n');
 }
 
 export function careEnrollment(schema, role) {
@@ -67,5 +73,5 @@ export function careEnrollment(schema, role) {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   if (process.argv.length !== 4) throw new Error("Usage: node server/scripts/care-enrollment.mjs SCHEMA APP_ROLE > care-enrollment.sql");
-  process.stdout.write(process.argv[2] === "--rail-upgrade" ? careRailUpgrade(process.argv[3]) : careEnrollment(process.argv[2], process.argv[3]));
+  process.stdout.write(process.argv[2] === "--traffic-upgrade" ? careTrafficUpgrade(process.argv[3]) : process.argv[2] === "--rail-upgrade" ? careRailUpgrade(process.argv[3]) : careEnrollment(process.argv[2], process.argv[3]));
 }
