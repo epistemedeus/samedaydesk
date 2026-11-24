@@ -160,3 +160,58 @@ test("anonymous repair uses the existing hosted order, receipt and offer under r
   const mail=await pool.query(`select * from ${careTable("care_mail")} where hosted_order_id=$1`,[res.order]);
   assert.equal(mail.rowCount,1);assert.equal(mail.rows[0].details.email,email);
 });
+
+test("Care receipt expires only a genuinely unused quote and keeps late finality recoverable", async t => {
+  assert.equal(process.env.SDS_PRIVATE_PREVIEW, "1");
+  const pool = new pg.Pool({ connectionString: process.env.SDS_CARE_DATABASE_URL });
+  const store = openCareStore();
+  t.after(async () => { await store.close(); await pool.end(); });
+
+  let clock = Date.now();
+  const service = createCareService({ store, stripe: {}, live: false, origin, secret, orderPayments: true, now: () => new Date(clock) });
+  const open = async (offer = "machine_payment_route") => {
+    const id = randomUUID();
+    const selected = await service.startUsdc(offer, id, email);
+    const key = new URLSearchParams(new URL(selected.receipt).hash.slice(1)).get("key");
+    const row = await store.order(id);
+    const change = (action, body = {}) => store.usdc.change(row.rail_id, action, body);
+    return { id, row, key, change, quote: await change("load"), selected, read: () => service.read(id, key) };
+  };
+  const unused = await open();
+  const signed = await open();
+  const monthly = await open("keep_it_working");
+  await unused.change("anchor", { block: "10" });
+  await signed.change("anchor", { block: "10" });
+  const attempt = { protocol: "x402", payer, nonce: "0x" + "5".repeat(64), version: signed.quote.version, nextBlock: "10" };
+  assert.equal((await signed.change("arm", { attempt })).armed, true);
+  await signed.change("submitted", { attempt, result: { reason: "provider_outcome_unknown" } });
+
+  const unchanged = () => store.order(unused.id);
+  const initial = await unchanged();
+  clock = unused.quote.expires - 1;
+  assert.equal((await unused.read()).paymentState, "waiting");
+  clock += 1;
+  t.mock.method(Date, "now", () => clock);
+  const view = await unused.read();
+  assert.deepEqual([view.state, view.paymentState], ["expired", "expired"]);
+  assert.equal(view.wallet, unused.selected.wallet);
+  assert.equal(view.paymentUrl, unused.selected.paymentUrl);
+  assert.deepEqual(await unchanged(), initial);
+  const retry = await unused.change("load");
+  assert.equal(retry.state, "waiting"); // Gateway owns the 410 and late signed-request readback.
+  assert.deepEqual([retry.version, retry.cents, retry.created, retry.expires],
+    [unused.quote.version, unused.quote.cents, unused.quote.created, unused.quote.expires]);
+  assert.equal((await unused.change("arm", { attempt: { ...attempt, version: retry.version } })).armed, false);
+  assert.deepEqual([(await monthly.read()).state, (await monthly.read()).paymentState], ["expired", "expired"]);
+
+  clock = signed.quote.expires + 18 * 60_000 + 33_000;
+  const pending = await signed.read();
+  assert.deepEqual([pending.state, pending.paymentState], ["created", "seen"]);
+  await signed.change("observe", { attempt, result: { state: "seen", nextBlock: "11" } });
+  const proof = { asset, recipient: merchant, payer, nonce: attempt.nonce, transaction: "0x" + "6".repeat(64),
+    logIndex: 0, transferLogIndex: 1, block: "11", blockHash: "0x" + "7".repeat(64),
+    timestamp: String(Math.floor((signed.quote.expires - 1) / 1000)), amount: "499000000" };
+  assert.equal((await signed.change("observe", { attempt, result: { state: "paid", evidence: proof } })).state, "paid");
+  const paid = await signed.read();
+  assert.deepEqual([paid.state, paid.paymentState], ["paid", "paid"]);
+});
