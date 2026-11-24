@@ -23,6 +23,8 @@ function repositories(raw) {
 }
 export function skillWatchStore(txn,table) {
   const orders=table("care_orders"),periods=table("care_periods");
+  const releaseKey=(repository,commit)=>createHash("sha256").update(JSON.stringify([repository,commit])).digest("hex");
+  const ready=`o.offer=$1 and o.state='paid' and p.status='ready'`;
   async function start(input,{stripe,live,env,origin}) {
     if(!watchEnabled(env) || !isOrderId(input.order) || !["card","base_usdc"].includes(input.method))throw conflict();
     const usdc=input.method==="base_usdc",rail=usdc?"usdc":"stripe";
@@ -99,11 +101,11 @@ export function skillWatchStore(txn,table) {
     if(repo!==repository || !/^[a-f0-9]{40}$/.test(commit) || !Number.isFinite(at.getTime()) || at>Date.now() ||
         !["clean","suspicious","dangerous"].includes(report?.verdict) || !Number.isSafeInteger(report.scanned) || report.scanned<1 ||
         !Array.isArray(report.rules) || report.rules.some(rule=>typeof rule!=="string" || rule.length>150))throw conflict();
-    const key=createHash("sha256").update(JSON.stringify([repo,commit])).digest("hex");
+    const key=releaseKey(repo,commit);
     return txn(async db=>{
       const {rows}=await db.query(`select p.invoice_id,p.order_id,p.report,o.rail_email from ${periods} p join ${orders} o on o.id=p.order_id
-        where o.offer=$1 and o.state='paid' and o.intake->'repositories' ? $2
-          and p.status='ready' and p.period_start<=$3 and p.period_end>$3 for update of p,o`,[watchOffer.id,repo,at]);
+        where ${ready} and o.intake->'repositories' ? $2
+          and p.period_start<=$3 and p.period_end>$3 for update of p,o`,[watchOffer.id,repo,at]);
       let fresh=0,alerted=0;
       for(const row of rows) {
         if(row.report?.releases?.[key])continue;
@@ -123,5 +125,18 @@ export function skillWatchStore(txn,table) {
       return {observed:fresh,alertsQueued:alerted};
     });
   }
-  return {start,card,observeRelease};
+  async function scheduledRepositories(at,limit) {
+    return txn(async db=>(await db.query(`select r.repository,min(p.period_start) as since from ${periods} p
+      join ${orders} o on o.id=p.order_id cross join lateral jsonb_array_elements_text(
+        case when jsonb_typeof(o.intake->'repositories')='array' then o.intake->'repositories' else '[]'::jsonb end
+      ) r(repository) where ${ready} and p.period_start<=$2 and p.period_end>$2
+      group by r.repository order by r.repository limit $3`,[watchOffer.id,at,limit])).rows);
+  }
+  async function needsRelease({repository,commit,publishedAt}) {
+    return txn(async db=>(await db.query(`select exists(select 1 from ${periods} p join ${orders} o on o.id=p.order_id
+      where ${ready} and o.intake->'repositories' ? $2 and p.period_start<=$3 and p.period_end>$3
+        and not (coalesce(p.report->'releases','{}'::jsonb) ? $4)) as needed`,
+    [watchOffer.id,repository,publishedAt,releaseKey(repository,commit)])).rows[0].needed);
+  }
+  return {start,card,observeRelease,scheduledRepositories,needsRelease};
 }

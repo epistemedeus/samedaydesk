@@ -243,9 +243,10 @@ export function createCareStore(pool, schema = careSchema()) {
       });
     },
 
-    async nextMail(at = new Date()) {
+    async nextMail(at = new Date(), kind = null) {
       return first(pool.query(`with chosen as (
         select mail_key from ${table("care_mail")} m where accepted_at is null and next_attempt_at <= $1
+          and ($3::text is null or m.kind = $3)
           and (m.kind <> 'monthly_invoice' or exists (select 1 from ${table("care_orders")} o
             where o.id=m.order_id and o.state='paid' and not o.cancel_at_period_end))
           and (m.kind <> 'skill_watch_alert' or exists (select 1 from ${table("care_periods")} p join ${table("care_orders")} o
@@ -254,7 +255,7 @@ export function createCareStore(pool, schema = careSchema()) {
           order by created_at limit 1 for update skip locked
         ) update ${table("care_mail")} m set claim_id = $2,
           first_attempt_at = coalesce(m.first_attempt_at, $1), next_attempt_at = $1::timestamptz + interval '5 minutes'
-        from chosen where m.mail_key = chosen.mail_key returning m.*`, [at, randomUUID()]));
+        from chosen where m.mail_key = chosen.mail_key returning m.*`, [at, randomUUID(), kind]));
     },
 
     async acceptMail(key, claim, provider) {

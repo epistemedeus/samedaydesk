@@ -1,0 +1,21 @@
+# SkillGuard Watch private enrollment
+
+The existing hourly-capable Hostinger scheduler can run `server/scripts/skill-watch-tick.mjs` once per hour. The command uses the existing Care database role, paid periods, mail claims and SameDayDesk sender. It requires no migration, installed worker or GitHub credential. Keep `SDS_SKILL_WATCH_USDC` off during owned receiving. This job is separate from the managed source-projection watcher and from the receipt snapshot cron.
+
+## Controller setup
+
+1. Receive the exact source through the saved Node 22 Express build profile (`build:managed-foundry`, `server/index.js`, repository root, default output). Verify the deployed command exists under the live source path before scheduling it. Preserve the other offers and the full enrolled environment.
+2. Obtain [SkillGuard v1.3.0](https://github.com/epistemedeus/skillguard/releases/tag/v1.3.0) `index.js` from the [immutable Git commit](https://github.com/epistemedeus/skillguard/blob/14705f72f8daa56f986401554783992a598b0f08/index.js), 13,298 bytes, SHA-256 `0db78baedbf2b475d8cf762608e5bcee12b05e53a93e8e8b29b58d6f1af6f79f`. Verify the bytes before saving a regular 0600 file under a private 0700 directory. Set only `SKILLGUARD_SOURCE` to its absolute path, for example `/home/u188979531/.samedaydesk-skill-watch/skillguard-v1.3.0-index.js`.
+3. Reuse `SDS_CARE_CHECKOUT`, `SDS_CARE_DATABASE_URL`, `SDS_CARE_DATABASE_CA_BASE64`, `SDS_CARE_SCHEMA`, `SDS_CARE_ACCESS_SECRET`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL` and the optional `RESEND_REPLY_TO`. Do not pass credential values as arguments. Use the existing protected complete-env broker to enroll the scanner path without replacing other values.
+4. Run the exact command once. Read its JSON and exit status. Save the same one-command native cron at minute 17 every hour, UTC, after the command is verified. The command uses the current deployment symlink and the protected dotenv file.
+
+```sh
+/opt/alt/alt-nodejs22/root/usr/bin/node --env-file=/home/u188979531/domains/samedaydesk.com/hbuilds/config/.env /home/u188979531/domains/samedaydesk.com/hbuilds/current/nodejs/server/scripts/skill-watch-tick.mjs
+```
+
+## Receive and roll back
+
+- For an existing paid owned Watch period, use an enrolled public GitHub repository with a published release inside that interval. Match the alert's repository and release commit to the resolved GitHub tag. Receive the report on the original Care period, one outbox record, provider acceptance and the actual owned inbox message with its new rule lines. A static rule is a prompt for review. An old, clean, previously observed or unchanged-risk release can correctly produce zero new alerts. An empty or inactive period does not qualify owned delivery.
+- One tick inspects up to eight repository entries and ten recent releases per repository, with 45 public GitHub API requests and a two-minute upstream deadline. Unsupported repositories, incomplete pages and exhausted budgets surface as issues. The existing manual release consumer remains available to the operator for a larger verified Git snapshot. Each acquisition rejects redirects, private DNS, mismatched refs and blob identities, nonregular files, truncated trees and excessive sizes. The runner removes its own snapshot and executes only the digest-pinned scanner. Use a subsequent scheduled tick for transient upstream failures. Inspect recurring capacity limits or unsupported sources before wider enrollment.
+- The existing mail sender claims only `skill_watch_alert` messages during this job. A deferred or timed-out provider response is unresolved. Receive the original outbox claim, acceptance and provider idempotency key before taking action. The existing five-minute retry due time and 23-hour same-key window still apply. Do not reset those claims or replay an unknown send manually. A zero count does not prove that a prior deferred item was delivered.
+- To pause, disable this one cron entry, leave the public Watch flag off and preserve original paid periods, observations and outbox claims. If removing the scanner, remove only its pointer from the full environment. No other mail kind, receipts job or database migration depends on this entry.

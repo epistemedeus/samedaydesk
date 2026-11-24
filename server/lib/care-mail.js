@@ -27,7 +27,7 @@ export function careMailMessage({ order, item, secret, from, replyTo }) {
   } else if (item.kind === "skill_watch_alert") {
     subject="SkillGuard Watch release alert";
     const {repository,commit,verdict,rules}=item.details;
-    text=`${repository}\nRelease commit ${commit}\nScan result: ${verdict}.\n${rules.join("\n")}`;
+    text=`${repository}\nRelease commit ${commit}\nStatic scan result: ${verdict}. Review these signals in the release source.\n${rules.join("\n")}`;
   } else if (item.kind === "intake") {
     subject = "We received your workflow";
     text = "Your workflow is attached to your order. Reply to this email if you need to add anything.";
@@ -53,10 +53,10 @@ export async function queueOrderReceipt(db,table,{hostedId,quoteId,email,label,c
     ["order_receipt/"+id,hostedId ?? null,quoteId ?? null,{ email,label,cents,paymentUrl,legacy,railId,live,session }]);
 }
 
-export async function drainCareMail({ store, send, secret, from, replyTo, limit = 20 }) {
+export async function drainCareMail({ store, send, secret, from, replyTo, limit = 20, kind }) {
   let accepted = 0, deferred = 0;
   for (let i = 0; i < limit; i++) {
-    const item = await store.nextMail();
+    const item = kind ? await store.nextMail(undefined, kind) : await store.nextMail();
     if (!item) break;
     try {
       let message, order;
