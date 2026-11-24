@@ -1,4 +1,7 @@
 import test from 'node:test';
+import { execFileSync } from 'node:child_process';
+import { createRequire, stripTypeScriptTypes } from 'node:module';
+import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { randomUUID } from 'node:crypto';
@@ -23,7 +26,11 @@ test('normal HTTP ingest stores a page, merges first interaction and preserves l
   const old = randomUUID();
   await recordCommerceJourney('visit', { sessionId: old, key: old });
   const app = express(); app.use(express.json({ limit: '2kb' })); app.use(commerceVisit);
-  app.use('/api/pulse', pulseRouter); app.get('/pricing', (_req,res) => res.send('Pricing'));
+  app.use('/api/pulse', pulseRouter);
+  app.get('/traffic-browser.mjs',(_req,res)=>res.type('js').send(readFileSync(new URL('../../client/src/lib/traffic-browser.mjs',import.meta.url),'utf8')));
+  app.get('/journey.js',(_req,res)=>res.type('js').send(stripTypeScriptTypes(readFileSync(new URL('../../client/src/lib/journey.ts',import.meta.url),'utf8'))));
+  app.get('/browser',(_req,res)=>res.type('html').send('<button>Continue</button><script type="module">import {observePageTraffic} from "/journey.js"; observePageTraffic();</script>'));
+  app.get('/pricing', (_req,res) => res.send('Pricing'));
   const server = app.listen(0, '127.0.0.1'); await new Promise(r => server.once('listening', r));
   t.after(() => new Promise(r => server.close(r)));
   const base = `http://127.0.0.1:${server.address().port}`;
@@ -63,6 +70,27 @@ test('normal HTTP ingest stores a page, merges first interaction and preserves l
   assert.equal((await db.query("select has_function_privilege('anonymous_traffic','public.record_journey_traffic(jsonb)','EXECUTE') as allowed")).rows[0].allowed,false);
   const projection = trafficProjection((await db.query("select session_id::text as session,test,traffic from journey_events where event='visit'")).rows);
   console.log(JSON.stringify({actualVisitProjection:projection}));
+  const root = fileURLToPath(new URL('../..',import.meta.url));
+  const runReader = () => execFileSync(process.execPath,['scripts/release/kit.mjs','demand','--traffic-only','--day',new Date().toISOString().slice(0,10)],{
+    cwd:root,encoding:'utf8',env:{...process.env,DEMAND_DATABASE_URL:cluster.url,DEMAND_DATABASE_SCHEMA:'public'}});
+  const readout=JSON.parse(runReader().trim());
+  assert.equal(readout.status,'read'); assert.equal(readout.counts.own,3); assert(readout.pages.some(p=>p.path==='/pricing'));
+  console.log(JSON.stringify({configuredDailyReader:readout}));
+  if(process.env.TRAFFIC_BROWSER_PROBE==='1') {
+    const kit=execFileSync(process.execPath,['scripts/release/kit.mjs','path'],{cwd:root,encoding:'utf8'}).trim().split('\n').at(-1);
+    const require=createRequire(kit+'/package.json');const puppeteer=require('puppeteer-core');
+    const browser=await puppeteer.launch({headless:true,executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});
+    t.after(()=>browser.close());const page=await browser.newPage();
+    const baseline=page.waitForResponse(r=>r.url().endsWith('/api/pulse/journey')&&r.status()===204);
+    await page.goto(base+'/browser?discard=never#k=PRIVATE');await baseline;
+    const cookie=(await page.cookies()).find(c=>c.name==='sds_session').value;
+    const pointer=page.waitForResponse(r=>r.url().endsWith('/api/pulse/journey')&&r.status()===204);
+    await page.click('button');await pointer;
+    const actual=(await db.query("select traffic from journey_events where session_id=$1 and traffic->>'path'='/browser'",[cookie])).rows[0].traffic;
+    assert.equal(actual.scriptRan,true);assert.equal(actual.interacted,true);assert.equal(actual.coarseClass,'headless');
+    assert(!JSON.stringify(actual).includes('PRIVATE'));await browser.close();
+    console.log(JSON.stringify({actualBrowser:true,firstInteractionStored:true,existingCookieReused:true}));
+  }
   await db.query('alter table journey_events rename to unavailable_journey');
   assert.equal((await send(observation)).status, 503, 'storage failure is not reported as reception');
   console.log(JSON.stringify({ localHttpReadback: true, rows: rows.length, legacyUnknownContext: 1,
