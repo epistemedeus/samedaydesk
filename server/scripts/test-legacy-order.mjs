@@ -72,4 +72,7 @@ test("seven one-time catalog offers retain exact delivered work, receipt and pri
   const saved=(await pool.query(`select * from ${table("hosted_orders")} where id=$1`,[sale.order])).rows[0];
   assert.equal(saved.state,"received");assert.equal(saved.refunded_cents,0);
   assert.deepEqual(saved.checkout_details.duplicateCards.pi_extra,{session:other.id,amount:900,state:"refunded",refundedCents:900});
+  const events=(await pool.query(`select event,test,utm from ${table("journey_events")}
+    where order_id=$1 and event='payment_verified'`,[sale.order])).rows;
+  assert.deepEqual(events,[{event:"payment_verified",test:true,utm:{payment_method:"card"}}]);
 });

@@ -65,6 +65,7 @@ export function hostedOrderRail(txn,table) {
           (row.session_id && row.session_id!==facts.session) || (row.payment_intent_id && row.payment_intent_id!==facts.payment)) throw conflict();
       if (row.state!=="waiting") return {ok:true,isNew:false,orderId:row.id};
       await db.query(`update ${orders} set state='received',session_id=$2,payment_intent_id=$3 where id=$1`,[row.id,facts.session,facts.payment]);
+      await recordRailEvent(db,table,{...row,journey_session:row.order_key},"payment_verified","card");
       return {ok:true,isNew:true,orderId:row.id};
     });
   }

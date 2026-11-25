@@ -122,6 +122,7 @@ export function legacyOrders(txn,table) {
       }
       if(row.state!=="waiting") return {ok:true,isNew:false,orderId:row.id};
       await db.query(`update ${name} set state='received',session_id=$2,payment_intent_id=$3 where id=$1`,[row.id,session.id,intent.id]);
+      await recordRailEvent(db,table,{...row,journey_session:row.order_key},"payment_verified","card");
       return {ok:true,isNew:true,orderId:row.id};
     });
   }
