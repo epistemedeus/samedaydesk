@@ -15,7 +15,7 @@ export function careMailMessage({ order, item, secret, from, replyTo }) {
     const [label, url, marker] = officialPages[id];
     return {
       from, replyTo, to: officialWatch.recipient, subject: "Official source changed: " + label,
-      text: `SameDayDesk Watch detected a change in the ${marker ? "page content" : "PDF file"} for ${label}.\n\nReview the official source: ${url}`,
+      text: `SameDayDesk Watch detected a change in the ${marker ? "page content" : "PDF file"} for ${label}.\n\nReview the official source and update any affected guides: ${url}`,
     };
   }
   const offer = careServiceOffer(order.offer);

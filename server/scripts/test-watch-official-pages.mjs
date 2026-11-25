@@ -128,6 +128,11 @@ test("configured native tick baselines, retries after a read failure and deliver
     assert.equal(rows.length, 1);
     assert.ok(rows[0].accepted_at);
     assert.equal(rows[0].details.target, target);
+    assert.deepEqual(rows[0].details.task, {
+      schema: "sds.watch.official-source-task.v1", action: "review_official_source",
+      target, label: "IRS Form SS-4", url: "https://www.irs.gov/forms-pubs/about-form-ss-4",
+      observedAt: clock(4).toISOString(), beforeSha256: await read(100)(target), afterSha256: await read(200)(target),
+    });
     assert.equal(messages.length, 1);
     assert.match(JSON.stringify(messages[0]), /Official source changed: IRS Form SS-4/);
     assert.match(JSON.stringify(messages[0]), /https:\/\/www\.irs\.gov\/forms-pubs\/about-form-ss-4/);

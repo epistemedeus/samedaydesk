@@ -3,7 +3,7 @@ import { CareError, carePaidPeriod, isOrderId, newIntegrationId, watchOffer } fr
 import { legacySlug } from "./legacy-order.js";
 import { readHostedTerms } from "./hosted-offer-catalog.js";
 import { recordRailEvent } from "./care-usdc.js";
-import { isOfficialPage, officialDigest, officialWatch } from "./watch-official-pages.js";
+import { isOfficialPage, officialDigest, officialSourceTask, officialWatch } from "./watch-official-pages.js";
 
 export { watchOffer };
 export function watchEnabled(env) {
@@ -181,6 +181,7 @@ export function skillWatchStore(txn,table) {
       const row = rows[0];
       if (!row) return "skipped";
       const previous = row.report?.officialPages?.[id];
+      if (previous && !officialDigest.test(previous.digest)) throw conflict();
       const checkedAt = at.toISOString();
       if (previous?.checkedAt >= checkedAt) return "skipped";
       const observations = { ...row.report?.officialPages, [id]: { digest, checkedAt } };
@@ -191,7 +192,10 @@ export function skillWatchStore(txn,table) {
       const key = createHash("sha256").update(JSON.stringify([id, previous, digest])).digest("hex");
       await db.query(`insert into ${table("care_mail")}(mail_key,order_id,kind,details)
         values($1,$2,'skill_watch_alert',$3) on conflict(mail_key) do nothing`,
-      ["watch/official/" + key, officialWatch.order, { source: "official_page", target: id, invoiceId: row.invoice_id }]);
+      ["watch/official/" + key, officialWatch.order, {
+        source: "official_page", target: id, invoiceId: row.invoice_id,
+        task: officialSourceTask(id, checkedAt, previous.digest, digest),
+      }]);
       return "changed";
     });
   }

@@ -33,6 +33,11 @@ export const officialWatch = Object.freeze({
 });
 export const officialDigest = /^[a-f0-9]{64}$/;
 export const isOfficialPage = (id) => typeof id === "string" && Object.hasOwn(officialPages, id);
+export function officialSourceTask(target, observedAt, beforeSha256, afterSha256) {
+  const [label, url] = officialPages[target];
+  return { schema: "sds.watch.official-source-task.v1", action: "review_official_source",
+    target, label, url, observedAt, beforeSha256, afterSha256 };
+}
 const skip = new Set(["script", "style", "noscript", "template", "svg", "nav", "footer", "form", "aside"]);
 const attr = (node, key) => node.attrs?.find(item => item.name === key)?.value;
 const isMain = (node) => node.tagName === "main" || attr(node, "role") === "main";
