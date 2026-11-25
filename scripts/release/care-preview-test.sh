@@ -12,6 +12,7 @@ files=(server/scripts/test-skill-watch-tick.mjs server/scripts/test-skill-watch-
 if [[ $# -eq 0 ]]; then
   files=(server/scripts/test-care-preview.mjs server/scripts/test-care-invoice.mjs server/scripts/test-care-usdc.mjs server/scripts/test-legacy-order.mjs "${files[@]}")
 fi
+files=(server/scripts/test-watch-official-pages.mjs "${files[@]}")
 pg_bin="$(pg_config --bindir)"
 pg_root="$(mktemp -d)"
 "$pg_bin/initdb" -A trust -D "$pg_root/data" > /dev/null

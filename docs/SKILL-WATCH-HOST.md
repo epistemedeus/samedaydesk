@@ -21,6 +21,23 @@ The existing hourly-capable Hostinger scheduler can run `server/scripts/skill-wa
 - The existing mail sender claims only `skill_watch_alert` messages during this job. A deferred or timed-out provider response is unresolved. Receive the original outbox claim, acceptance and provider idempotency key before taking action. The existing five-minute retry due time and 23-hour same-key window still apply. Do not reset those claims or replay an unknown send manually. A zero count does not prove that a prior deferred item was delivered.
 - To pause, disable this one cron entry, leave the public Watch flag off and preserve original paid periods, observations and outbox claims. If removing the scanner, remove only its pointer from the full environment. No other mail kind, receipts job or database migration depends on this entry.
 
+### Official pages for the operator
+
+Use the same native cron command and current environment. Once its empty canary is received, the controller can apply [the private enrollment SQL](../scripts/release/official-watch-enrollment.sql) through the existing Supabase owner route on project `arvmcttdegqwiwdaembr`. It adds one existing Care review record and one review window for `contact@samedaydesk.com`. Both remain outside payment, checkout and paid-period selection. The public Watch flag stays off.
+
+The [source list](../server/lib/watch-official-pages.js) covers Delaware, Wyoming, New Mexico, the IRS, Google Play, Apple, Stripe, PayPal REST payments, D&B and FinCEN. The worker fetches these exact public addresses with no redirects. Each has a six-second, 2,500,000-byte limit. HTML fingerprints use material text, including availability labels and links to public fee documents. PDF fingerprints use the delivered bytes without opening the file. A replacement link on an index alerts the operator to review the new document address. Read failures leave the previous baseline intact.
+
+The first successful read of each page stores its baseline. A change on a later read queues one alert with that page's official label and link. Receive the `official` results in the usual cron JSON and inspect only the reserved row's `report.officialPages` and its `care_mail` claims. Confirm a provider acceptance separately from the actual inbox message. A deferred send follows the existing same-key claim window.
+
+To pause only official-page alerts, let an already started tick finish, then use the existing owner connection to empty the reserved record's targets. Preserve the row, observations and mail claims. The paid-repository schedule continues.
+
+```sql
+update samedaydesk_care.care_orders
+set intake=jsonb_set(intake, '{officialPages}', '[]'::jsonb)
+where id='505a0b26-a89a-4f45-8d2a-a3e1780ef6c6'
+  and state='review' and not live_mode and integration_id='official-watch-owner-v1';
+```
+
 ### Controller-only owner inbox receiving
 
 On the controller's protected host, use the exact qualified source and the same disposable PostgreSQL setup as [`care-preview-test.sh`](../scripts/release/care-preview-test.sh). Keep the test database and receipts until acceptance is reconciled. Use only a private 0700 socket directory (`WATCH_QA_DIR`), no TCP listener, and enroll a separate `sds_watch_owner_qa` schema and `sds_watch_owner_qa_app` role with `node server/scripts/care-enrollment.mjs sds_watch_owner_qa sds_watch_owner_qa_app`. In that new database only, seed the following single synthetic period. No money moves and no production Care record is created.

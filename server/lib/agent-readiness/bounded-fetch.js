@@ -45,7 +45,7 @@ export async function fetchPublicBounded(url, opts = {}) {
   const {
     allowedOrigin = null, allowHostVariants = false, maxRedirects = 3,
     maxBytes = 2_500_000, timeoutMs = 10_000, headers = {}, budget = null, lookup,
-    includeOversizeAlternate = false, includeHeaders = false, method = "GET", userAgent,
+    includeOversizeAlternate = false, includeHeaders = false, method = "GET", userAgent, responseBytes = false,
   } = opts;
   if (!["GET", "HEAD"].includes(method)) throw new TypeError("Bounded public fetch permits GET or HEAD only");
   if (userAgent !== undefined && (typeof userAgent !== "string" || !/^[\x20-\x7E]{1,256}$/.test(userAgent))) throw new TypeError("Invalid public user agent");
@@ -61,7 +61,7 @@ export async function fetchPublicBounded(url, opts = {}) {
       const hopTimeout = Math.max(1, lifetime.remaining());
       const res = await transport(current, {
         address: addresses[0], maxBytes: maxBytes + 1, timeoutMs: hopTimeout, headers,
-        signal: lifetime.signal, discardRedirectBody: true, method, userAgent,
+        signal: lifetime.signal, discardRedirectBody: true, method, userAgent, responseBytes,
       });
       if (budget?.exhausted) {
         throw new BoundedFetchError(FETCH_FAILURE.BUDGET_EXHAUSTED, "Request budget exhausted", { url: current.toString() });
@@ -84,10 +84,10 @@ export async function fetchPublicBounded(url, opts = {}) {
         current = next;
         continue;
       }
-      const body = String(res.body || "");
+      const body = responseBytes ? Buffer.from(res.body || "") : String(res.body || "");
       const oversize = Boolean(res.truncated) || Buffer.byteLength(body) > maxBytes;
       const ok = res.status >= 200 && res.status < 300;
-      const declaredAlternate = includeOversizeAlternate && ok && oversize && current.origin === allowedOrigin
+      const declaredAlternate = !responseBytes && includeOversizeAlternate && ok && oversize && current.origin === allowedOrigin
         && isHtmlDocument(res) && !looksLikeChallenge(res)
         ? declaredTextAlternate(res.headers?.link, current)
         : null;
@@ -96,7 +96,7 @@ export async function fetchPublicBounded(url, opts = {}) {
         status: res.status,
         contentType: String(res.headers?.["content-type"] || ""),
         finalUrl: current.toString(),
-        body: oversize ? Buffer.from(body).subarray(0, maxBytes).toString("utf8") : body,
+        body: responseBytes ? body.subarray(0, maxBytes) : oversize ? Buffer.from(body).subarray(0, maxBytes).toString("utf8") : body,
         redirects,
         oversize,
         ...(includeHeaders ? { headers: Object.fromEntries(Object.entries(res.headers || {}).filter(([key]) => ["content-type", "x-robots-tag", "link", "payment-required", "www-authenticate", "content-language", "cf-mitigated"].includes(key.toLowerCase()))) } : {}),

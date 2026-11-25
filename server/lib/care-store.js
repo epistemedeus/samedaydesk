@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import pg from "pg";
 import { CareError } from "./care-contract.js";
 import { createCareUsdcStore, recordRailEvent } from "./care-usdc.js";
-import { skillWatchStore } from "./skill-watch.js";
+import { officialWatchEnrollment, skillWatchStore } from "./skill-watch.js";
 import { legacyOrders } from "./legacy-order.js";
 import { hostedOrderRail } from "./hosted-rail.js";
 import { createTaskQuoteStore } from "./task-quotes.js";
@@ -250,7 +250,11 @@ export function createCareStore(pool, schema = careSchema()) {
           and (m.kind <> 'monthly_invoice' or exists (select 1 from ${table("care_orders")} o
             where o.id=m.order_id and o.state='paid' and not o.cancel_at_period_end))
           and (m.kind <> 'skill_watch_alert' or exists (select 1 from ${table("care_periods")} p join ${table("care_orders")} o
-            on o.id=p.order_id where o.id=m.order_id and p.invoice_id=m.details->>'invoiceId' and p.status='ready' and o.state='paid'))
+            on o.id=p.order_id where o.id=m.order_id and p.invoice_id=m.details->>'invoiceId' and (
+              (m.details->>'source' is distinct from 'official_page' and p.status='ready' and o.state='paid')
+              or (m.details->>'source'='official_page' and ${officialWatchEnrollment("$1")}
+                and o.intake->'officialPages' ? (m.details->>'target'))
+            )))
           and (first_attempt_at is null or first_attempt_at > $1::timestamptz - interval '23 hours')
           order by created_at limit 1 for update skip locked
         ) update ${table("care_mail")} m set claim_id = $2,

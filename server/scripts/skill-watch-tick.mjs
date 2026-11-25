@@ -4,9 +4,10 @@ import { realpath } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 import { openCareStore } from "../lib/care-store.js";
 import { drainCareMail } from "../lib/care-mail.js";
-import { FROM, ownSender, resend } from "../lib/resend.js";
+import { FROM, ownSender, previewResend, resend } from "../lib/resend.js";
 import { fetchPublicBounded } from "../lib/agent-readiness/bounded-fetch.js";
 import { githubRepository, gitShaPattern, readPinnedScanner, scanRelease, validTag, validateReleaseTree } from "./skill-watch-release.mjs";
+import { runOfficialWatch } from "../lib/watch-official-pages.js";
 
 const api = "https://api.github.com";
 const repositoryLimit = 8;
@@ -115,10 +116,11 @@ export async function runSkillWatchTick({ watch, source, at = new Date(), upstre
   return { ...counts, requests: upstream.requests };
 }
 
-export async function runConfiguredSkillWatchTick({ at, upstream } = {}) {
+export async function runConfiguredSkillWatchTick({ at = new Date(), upstream, readOfficial, previewTransport } = {}) {
   const { SKILLGUARD_SOURCE: scanner, SDS_CARE_ACCESS_SECRET: secret = "", SDS_CARE_CHECKOUT: checkout } = process.env;
   const replyTo = process.env.RESEND_REPLY_TO || "contact@samedaydesk.com";
-  if (checkout !== "1" || !scanner || !isAbsolute(scanner) || Buffer.byteLength(secret) < 32 || !resend || !ownSender(replyTo)) {
+  const mailer = previewTransport && process.env.SDS_PRIVATE_PREVIEW === "1" ? previewResend(previewTransport) : resend;
+  if (checkout !== "1" || !scanner || !isAbsolute(scanner) || Buffer.byteLength(secret) < 32 || !mailer || !ownSender(replyTo)) {
     return { ok: false, stage: "configuration" };
   }
   let source;
@@ -130,11 +132,14 @@ export async function runConfiguredSkillWatchTick({ at, upstream } = {}) {
     let scan;
     try { scan = await runSkillWatchTick({ watch: store.watch, source, at, upstream }); }
     catch { scan = { issues: ["care_read_failed"] }; }
+    let official;
+    try { official = await runOfficialWatch({ watch: store.watch, at, read: readOfficial }); }
+    catch { official = { issues: ["official_enrollment_unreceived"] }; }
     let mail;
     try {
-      mail = await drainCareMail({ store, secret, from: FROM, replyTo, kind: mailKind, send: (...args) => resend.emails.send(...args) });
+      mail = await drainCareMail({ store, secret, from: FROM, replyTo, kind: mailKind, send: (...args) => mailer.emails.send(...args) });
     } catch { mail = { unknown: true }; }
-    return { ok: !scan.issues.length && !mail.deferred && !mail.unknown, scan, mail };
+    return { ok: !scan.issues.length && !official.issues.length && !mail.deferred && !mail.unknown, scan, official, mail };
   } finally { await store.close(); }
 }
 
