@@ -91,6 +91,17 @@
       "note": "Recurring: the lane adds one renewal through a test clock and one cancellation (16 §3 C2)."
     },
     {
+      "id": "agent_first_use_report",
+      "offer": "agent_first_use_report",
+      "kind": "account",
+      "name": "Agent first-use report",
+      "cents": 4900,
+      "currency": "usd",
+      "mode": "payment",
+      "switchedOn": false,
+      "status": "unavailable"
+    },
+    {
       "id": "task_quote",
       "kind": "quote",
       "name": "Fixed quote for a requested task",

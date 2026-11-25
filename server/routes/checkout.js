@@ -9,9 +9,24 @@ import { fulfillFromIntent } from "../lib/fulfill.js";
 import { createSellerRepairCheckoutSession, isValidSellerRepairFindingId } from "../lib/seller-repair-checkout.js";
 import { createOfferPaymentIntent, preparePaymentIntake } from "../lib/payment-attempt.js";
 import { recordCommerceJourney } from "../lib/commerce-journey.js";
+import { AGENT_FIRST_USE_REPORT, CURRENCY, firstUseCheckoutEnabled, getOffer } from "../pricing.js";
+import { readFirstUseDelivery } from "../lib/first-use-delivery.js";
 
 const router = Router();
 router.use(legacyCheckout);
+router.get("/offers/agent_first_use_report", (_req, res) => {
+  const enabled = firstUseCheckoutEnabled();
+  return res.set("Cache-Control", "no-store").json({ offer: AGENT_FIRST_USE_REPORT,
+    cents: getOffer(AGENT_FIRST_USE_REPORT).amount, currency: CURRENCY,
+    status: enabled ? "available" : "unavailable", methods: enabled ? ["card"] : [] });
+});
+router.get("/orders/:id/delivery", requireAuth, requireVerifiedEmail, async (req, res) => {
+  res.set({ "Cache-Control": "no-store", "Referrer-Policy": "no-referrer" });
+  try {
+    const delivery = await readFirstUseDelivery({ id: req.params.id, uid: req.uid });
+    return delivery ? res.json(delivery) : res.status(404).json({ error: "Order not found" });
+  } catch { return res.status(503).json({ error: "Delivery is temporarily unavailable" }); }
+});
 export const accountOrderRail = () => accountUsdc({ stripe, enabled: process.env.SDS_ORDER_USDC === "1" &&
   (process.env.ORDER_PAYMENTS_SDS_TOKEN?.length ?? 0) >= 32, live: process.env.SDS_PRIVATE_PREVIEW !== "1" });
 router.post("/usdc", requireAuth, requireVerifiedEmail, async (req,res) => {
@@ -68,8 +83,9 @@ router.post("/seller-conformance/order", async (req,res) => {
 // computed here and stamped into metadata, which fulfillment reads back (never the client).
 // Duplicate creates for the same server-owned payment_attempt_id reuse one Stripe idempotency key.
 router.post("/create-payment-intent", requireAuth, requireVerifiedEmail, async (req, res) => {
-  if (!isStripeConfigured()) return res.status(503).json({ error: "Payments not configured" });
   const slug = req.body?.offer;
+  if (slug === AGENT_FIRST_USE_REPORT && !firstUseCheckoutEnabled()) return res.status(404).json({ error: "Offer is unavailable" });
+  if (!isStripeConfigured()) return res.status(503).json({ error: "Payments not configured" });
   const uploadPath = typeof req.body?.upload_path === "string" ? req.body.upload_path : "";
   const paymentAttemptId = typeof req.body?.payment_attempt_id === "string"
     ? req.body.payment_attempt_id.trim()
@@ -82,6 +98,7 @@ router.post("/create-payment-intent", requireAuth, requireVerifiedEmail, async (
       email: req.userEmail,
       offerSlug: slug,
       uploadPath,
+      intake: req.body?.intake,
       paymentAttemptId: paymentAttemptId || null,
     });
     if (!result.ok) return res.status(result.status).json({ error: result.error });
@@ -92,13 +109,13 @@ router.post("/create-payment-intent", requireAuth, requireVerifiedEmail, async (
       clientSecret: intent.client_secret,
       paymentIntentId: intent.id,
       paymentAttemptId: attemptId,
-      usdcAvailable: process.env.SDS_ORDER_USDC === "1" && (process.env.ORDER_PAYMENTS_SDS_TOKEN?.length ?? 0) >= 32,
+      usdcAvailable: slug !== AGENT_FIRST_USE_REPORT && process.env.SDS_ORDER_USDC === "1" && (process.env.ORDER_PAYMENTS_SDS_TOKEN?.length ?? 0) >= 32,
       amount: offer.amount,
       label: offer.label,
       intakeSnapshot: result.intakeSnapshot || null,
     });
   } catch (e) {
-    console.error("[checkout] create-payment-intent", e?.message);
+    console.error("[checkout] create-payment-intent", slug === AGENT_FIRST_USE_REPORT ? "first-use status not received" : e?.message);
     res.status(502).json({ error: "Could not start checkout" });
   }
 });

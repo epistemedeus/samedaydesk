@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { getOffer } from "../pricing.js";
+import { AGENT_FIRST_USE_REPORT, getOffer } from "../pricing.js";
 import { CareError } from "./care-contract.js";
 import { preparePaymentIntake } from "./payment-attempt.js";
 import { supabaseAdmin } from "./supabase-admin.js";
@@ -12,7 +12,7 @@ const conflict = () => new CareError(409, "Your current payment must be confirme
 
 export function accountRailQuote(row) {
   const offer = getOffer(row.offer);
-  if (!offer || !row.intake_hash || row.currency !== "usd" || row.checkout_rail !== "usdc") throw conflict();
+  if (!offer || row.offer === AGENT_FIRST_USE_REPORT || !row.intake_hash || row.currency !== "usd" || row.checkout_rail !== "usdc") throw conflict();
   const created = Date.parse(row.created_at);
   const version = createHash("sha256").update(JSON.stringify([row.id, row.user_id, row.facts_hash, row.intake_hash,
     row.rail_id, row.offer, row.amount, row.currency])).digest("hex");
@@ -49,7 +49,7 @@ export function accountUsdc({ getAdmin = supabaseAdmin, stripe, enabled, live = 
   async function start({ uid, paymentAttemptId, intake }) {
     if (!enabled || typeof paymentAttemptId !== "string") throw conflict();
     let row = await byId(paymentAttemptId);
-    if (!row || row.user_id !== uid || row.amount !== getOffer(row.offer)?.amount) throw conflict();
+    if (!row || row.user_id !== uid || row.offer === AGENT_FIRST_USE_REPORT || row.amount !== getOffer(row.offer)?.amount) throw conflict();
     if (row.checkout_rail === "stripe" && row.status === "open") {
       const prepared = await prepareIntake({ stripeClient: stripe, uid, paymentAttemptId, intake });
       if (!prepared.ok) throw new CareError(prepared.status, prepared.error);
