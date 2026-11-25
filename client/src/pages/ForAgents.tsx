@@ -268,6 +268,17 @@ export default function ForAgents() {
           </details>
         </section>
 
+        <section className={styles.section} aria-labelledby="official-source-example">
+          <div className={styles.sectionHead}>
+            <h2 id="official-source-example">How we check official sources</h2>
+          </div>
+          <p className={styles.jobCopy}>
+            Our team checks 16 official pages hourly for changes to IRS forms, state fees, and platform rules.
+            A change opens a task for us to review. The first run recorded all 16 baselines.
+            The next run found all 16 unchanged, so there were no alerts to send.
+          </p>
+        </section>
+
         <section className={styles.sellerOffer} aria-labelledby="inventory-title">
           <div>
             <p className="eyebrow">Live merchant inventory</p>
