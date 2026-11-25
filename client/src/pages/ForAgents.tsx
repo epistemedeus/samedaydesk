@@ -273,9 +273,18 @@ export default function ForAgents() {
             <h2 id="official-source-example">How we check official sources</h2>
           </div>
           <p className={styles.jobCopy}>
-            Our team checks 16 official pages hourly for changes to IRS forms, state fees, and platform rules.
-            A change opens a task for us to review. The first run recorded all 16 baselines.
-            The next run found all 16 unchanged, so there were no alerts to send.
+            We check 16 official pages hourly for changes to IRS forms, state fees, and platform rules.
+            Changes open a review task. On November 25, the first run saved 16 baselines.
+            The next found all 16 unchanged.
+          </p>
+          <p className={styles.jobCopy}>
+            For the current rule, read{" "}
+            <a className={styles.inlineLink} href="https://corp.delaware.gov/alt-entitytaxinstructions/">
+              Delaware’s official LLC tax instructions
+            </a>{" "}and{" "}
+            <a className={styles.inlineLink} href="https://ein.llc/guides/delaware-llc-annual-tax">
+              our Delaware LLC annual tax guide
+            </a>.
           </p>
         </section>
 
