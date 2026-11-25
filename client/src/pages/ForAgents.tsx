@@ -268,6 +268,26 @@ export default function ForAgents() {
           </details>
         </section>
 
+        <section className={styles.section} aria-labelledby="official-source-example">
+          <div className={styles.sectionHead}>
+            <h2 id="official-source-example">How we check official sources</h2>
+          </div>
+          <p className={styles.jobCopy}>
+            We check 16 official pages hourly for changes to IRS forms, state fees, and platform rules.
+            Changes open a review task. On November 25, the first run saved 16 baselines.
+            The next found all 16 unchanged.
+          </p>
+          <p className={styles.jobCopy}>
+            For the current rule, read{" "}
+            <a className={styles.inlineLink} href="https://corp.delaware.gov/alt-entitytaxinstructions/">
+              Delaware’s official LLC tax instructions
+            </a>{" "}and{" "}
+            <a className={styles.inlineLink} href="https://ein.llc/guides/delaware-llc-annual-tax">
+              our Delaware LLC annual tax guide
+            </a>.
+          </p>
+        </section>
+
         <section className={styles.sellerOffer} aria-labelledby="inventory-title">
           <div>
             <p className="eyebrow">Live merchant inventory</p>
