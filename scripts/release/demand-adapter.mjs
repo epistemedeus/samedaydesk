@@ -3,6 +3,18 @@ import { trafficProjection } from "../../server/lib/traffic-context.mjs";
 // the care database through the read-only role in DEMAND_DATABASE_URL, schema DEMAND_DATABASE_SCHEMA.
 const host = (session) => { try { return new URL(session.success_url).hostname; } catch { return ""; } };
 
+export function readDailySiteCounts({ day, sql }) {
+  if (typeof day !== "string" || !/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(day)) throw new Error("Explicit UTC day required");
+  const start = new Date(`${day}T00:00:00Z`);
+  if (!Number.isFinite(+start) || start.toISOString().slice(0,10) !== day || +start + 86400000 > Date.now()) {
+    throw new Error("Closed UTC day required");
+  }
+  const rows = sql(`select samedaydesk_care.daily_site_counts('${day}'::pg_catalog.date) as counts`);
+  if (rows.length !== 1 || rows[0]?.counts?.day !== day || rows[0].counts.site !== "samedaydesk.com" ||
+      rows[0].counts.schema !== "pilot.daily-site-counts.v1") throw new Error("Daily counts not received");
+  return rows[0].counts;
+}
+
 export function readJourney({ sql, between }) {
   const schema = process.env.DEMAND_DATABASE_SCHEMA;
   if (!/^[a-z][a-z0-9_]{0,62}$/.test(schema ?? "")) throw new Error("Set DEMAND_DATABASE_SCHEMA to the care schema");

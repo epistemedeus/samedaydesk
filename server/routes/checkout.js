@@ -8,6 +8,7 @@ import { stripe, isStripeConfigured } from "../lib/stripe.js";
 import { fulfillFromIntent } from "../lib/fulfill.js";
 import { createSellerRepairCheckoutSession, isValidSellerRepairFindingId } from "../lib/seller-repair-checkout.js";
 import { createOfferPaymentIntent, preparePaymentIntake } from "../lib/payment-attempt.js";
+import { recordCommerceJourney } from "../lib/commerce-journey.js";
 
 const router = Router();
 router.use(legacyCheckout);
@@ -52,6 +53,13 @@ router.post("/seller-conformance/order", async (req,res) => {
   if (!reportCheckoutEnabled(process.env)) return res.sendStatus(404);
   try {
     const result = await startReportCheckout(req.body);
+    if (result.status === 201) {
+      const order = result.body.order;
+      await recordCommerceJourney("checkout_started", {
+        key: `report/${order}`, orderId: order, sessionId: req.journeySession || order,
+        utm: { checkout_family: "one_route_report" },
+      });
+    }
     return res.status(result.status).json(result.body);
   } catch { return res.status(503).json({error:"Check this report order before continuing payment."}); }
 });

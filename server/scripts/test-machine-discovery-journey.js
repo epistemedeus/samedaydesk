@@ -17,6 +17,7 @@ import { withNetworkInfo } from "./helpers/taskmarket-fixtures.js";
 import { NOT_FOUND_SHELL, ROUTE_SHELL_DIR, shellFileName } from "../lib/spa-route-shells.js";
 import { pulseSnapshot } from "../lib/pulse.js";
 import { gatewayAvailability } from "../lib/paid-gateway-availability.js";
+import { hostedOfferRoutes, legacyOffer, legacySlug } from "../lib/legacy-order.js";
 import { createSdsApp } from "../app.js";
 import {
   assertMachineDeclarationContract,
@@ -572,17 +573,20 @@ test("refusal and truncated retrieval stay distinct from a missing declaration",
 });
 
 
-test("public checkout cards retain the independently approved USD amounts and links", () => {
+test("public checkout cards lead to the chooser and retain approved prices and card fallbacks", () => {
   const html = readFileSync(new URL("../../client/public/ai-visibility-audit.html", import.meta.url), "utf8");
-  for (const [id, amount, link] of [
-    ["buy-audit", "199", "3cIbJ2gwy2bdgFFfYSeZ20u"],
-    ["buy-fix", "399", "3cI00kdkmeXZ6118wqeZ20v"],
-    ["buy-sprint", "499", "00w00k1BE9DF2OP282eZ20w"],
+  for (const [id, amount, route, card] of [
+    ["buy-audit", 199, "ai-visibility-audit", "3cIbJ2gwy2bdgFFfYSeZ20u"],
+    ["buy-fix", 399, "ai-visibility-audit-and-fix", "3cI00kdkmeXZ6118wqeZ20v"],
+    ["buy-sprint", 499, "ai-visibility-sprint", "00w00k1BE9DF2OP282eZ20w"],
   ]) {
     const anchor = [...html.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)].find(m => m[1].includes(`id="${id}"`));
     assert.ok(anchor, id);
-    assert.ok(anchor[1].includes(`https://buy.stripe.com/${link}`));
+    assert.equal(/\bhref="([^"]+)"/.exec(anchor[1])?.[1], `/api/checkout/hosted/${route}`);
     assert.match(anchor[2], new RegExp(`\\b${amount} USD\\b`));
+    const offer = legacyOffer(hostedOfferRoutes[route]);
+    assert.equal(offer?.cents, amount * 100);
+    assert.equal(legacySlug(offer.id, {}), card);
   }
   assert.doesNotMatch(html, /USD[0-9]/);
 });

@@ -172,9 +172,10 @@ export function createCareUsdcStore({ txn, table, mail }) {
   return { change };
 }
 
-export async function recordRailEvent(db, table, row, event) {
+export async function recordRailEvent(db, table, row, event, method = "base_usdc") {
+  const key = method === "card" ? `card/${row.id}` : `usdc/${row.rail_id}`;
   await db.query(`insert into ${table("journey_events")}(event_key, brand,event,session_id,test,order_id,is_agent,utm)
     values ($1,'samedaydesk',$2,$3,$4,$5,$6,$7) on conflict(event_key) do nothing`,
-    [`samedaydesk/${event}/usdc/${row.rail_id}`, event, row.journey_session || row.id,
-      !row.live_mode || row.rail_qa_cents != null, row.id, false, { payment_method: "base_usdc" }]);
+    [`samedaydesk/${event}/${key}`, event, row.journey_session || row.id,
+      !row.live_mode || row.rail_qa_cents != null, row.id, false, { payment_method: method }]);
 }

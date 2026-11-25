@@ -67,6 +67,7 @@ export async function fulfillFromIntent(intent, { sb, attemptStore } = {}) {
           receipt_email: intent.receipt_email || null,
           intake: draft?.data || null,
           payment_attempt_id: meta.payment_attempt_id || null,
+          ...(intent.livemode === false ? { test: true } : {}),
           ...(fulfillmentPending ? { fulfillment_issue: "missing_attempt_intake_snapshot" } : {}),
         },
       },
