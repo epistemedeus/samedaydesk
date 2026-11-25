@@ -28,7 +28,8 @@ create policy demand_journey_read on samedaydesk_care.journey_events for select 
 insert into public.profiles values
  ('10000000-0000-4000-8000-000000000001','positive@example.test','2026-01-02T00:00:00Z'),
  ('10000000-0000-4000-8000-000000000002','excluded@example.test','2026-01-02T05:00:00Z'),
- ('10000000-0000-4000-8000-000000000003','next-day@example.test','2026-01-03T00:00:00Z');
+ ('10000000-0000-4000-8000-000000000003','next-day@example.test','2026-01-03T00:00:00Z'),
+ ('10000000-0000-4000-8000-000000000004','unlinked-owner@example.test','2026-01-02T02:00:00Z');
 insert into public.payment_attempts values
  ('attempt_a','10000000-0000-4000-8000-000000000001','2026-01-02T00:00:00Z'),
  ('attempt_qa','10000000-0000-4000-8000-000000000002','2026-01-02T02:00:00Z');
@@ -50,6 +51,8 @@ insert into samedaydesk_care.journey_events(event_key,brand,event,session_id,tes
  ('r-owner','samedaydesk','visit','30000000-0000-4000-8000-000000000003',true,null,'{}','2026-01-01T00:00:00Z');
 SQL
 "${sql[@]}" -U postgres -f supabase/private-migrations/0026_daily_site_counts.sql
+"${sql[@]}" -U postgres -c "insert into samedaydesk_care.daily_account_exclusions values (
+  sha256(convert_to('samedaydesk/daily-account-exclusion/v1/10000000-0000-4000-8000-000000000004','UTF8')),'owner');"
 query() { "${sql[@]}" -U samedaydesk_demand_reader -c "$1"; }
 counts() { query "begin read only; select samedaydesk_care.daily_site_counts('$1'::date); commit;"; }
 counts 2026-01-02 | jq -e '.accountsCreated==null and .ordersStarted==null and .ordersPaid==null and .coverage.ordersPaid.retainedCount==2' >/dev/null
@@ -72,6 +75,8 @@ refused unrelated "select samedaydesk_care.daily_site_counts('2026-01-02');" 'pe
 refused samedaydesk_demand_reader 'select * from public.profiles;' 'permission denied'
 refused samedaydesk_demand_reader 'select * from public.orders;' 'permission denied'
 refused samedaydesk_demand_reader 'select * from samedaydesk_care.hosted_orders;' 'permission denied'
+refused samedaydesk_demand_reader 'select * from samedaydesk_care.daily_account_exclusions;' 'permission denied'
+refused samedaydesk_care_app 'select * from samedaydesk_care.daily_account_exclusions;' 'permission denied'
 refused samedaydesk_demand_reader "select samedaydesk_care.daily_site_counts('not-a-day');" 'invalid input syntax'
 refused samedaydesk_demand_reader 'select samedaydesk_care.daily_site_counts(current_date);' 'closed UTC calendar day'
 refused samedaydesk_demand_reader 'select samedaydesk_care.daily_site_counts(current_date+1);' 'closed UTC calendar day'
@@ -81,6 +86,9 @@ test "$identity" = 'postgres|true'
 "${sql[@]}" -U postgres -c 'drop function samedaydesk_care.daily_site_counts(date);'
 query 'select count(event) from samedaydesk_care.journey_events' | grep -qx 8
 refused samedaydesk_demand_reader "select samedaydesk_care.daily_site_counts('2026-01-02');" 'does not exist'
+"${sql[@]}" -U postgres -f supabase/private-migrations/0026_daily_site_counts.sql
+"${sql[@]}" -U postgres -c "comment on function samedaydesk_care.daily_site_counts(date) is 'coverage-from:2026-01-02'"
+counts 2026-01-02 | jq -e '.accountsCreated==1 and .ordersStarted==3 and .ordersPaid==2' >/dev/null
 printf '%s\n' 'PASS: installed role boundaries, historical unknown, positive and zero days, exclusive midnight, QA joins, retry dedupe, rollback, unchanged reader.'
 env -i PATH="$PATH" NODE_ENV=production HOME="$fixture" SDS_PRIVATE_PREVIEW=1 SDS_CARE_SCHEMA=samedaydesk_care \
   SDS_CARE_DATABASE_URL="postgresql://samedaydesk_care_app@127.0.0.1/postgres?host=$fixture&port=55493" \

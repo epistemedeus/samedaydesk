@@ -1,5 +1,16 @@
 begin;
 
+-- The existing owner manages these verified exclusions. No new account identity
+-- is copied here, and the demand reader receives no table privilege.
+create table if not exists samedaydesk_care.daily_account_exclusions (
+  profile_digest bytea primary key check (octet_length(profile_digest)=32),
+  scope text not null check (scope in ('owner','test','sponsored'))
+);
+alter table samedaydesk_care.daily_account_exclusions owner to postgres;
+alter table samedaydesk_care.daily_account_exclusions enable row level security;
+alter table samedaydesk_care.daily_account_exclusions force row level security;
+revoke all on table samedaydesk_care.daily_account_exclusions from public, anon, authenticated, service_role, samedaydesk_demand_reader;
+
 -- The installed Care tables use FORCE RLS and their preexisting owner is postgres.
 -- Install through that existing owner, without adding a table grant or RLS policy.
 create function samedaydesk_care.daily_site_counts(p_day date)
@@ -54,6 +65,8 @@ begin
   neighbors(a,b) as (select a,b from edges union all select b,a from edges),
   seeds(key) as (
     select 'session:'||session from journey where excluded
+    union select 'account:'||p.id from public.profiles p join samedaydesk_care.daily_account_exclusions e
+      on e.profile_digest=sha256(convert_to('samedaydesk/daily-account-exclusion/v1/'||p.id,'UTF8'))
     union select 'order:'||id from public.orders where meta->>'test'='true'
     union select 'order:'||id from samedaydesk_care.care_orders where not live_mode or rail_qa_cents is not null
     union select 'order:'||id from samedaydesk_care.hosted_orders where not live_mode
@@ -100,7 +113,7 @@ begin
     'lettersSigned',null,'letterChecks',null,
     'coverage',jsonb_build_object('coverageFrom',coverage_from,
       'accountsCreated',jsonb_build_object('status',case when p_day>=coverage_from then 'retained' else 'UNKNOWN' end,
-        'retainedCount',accounts,'basis','retained authoritative profiles; linked marked exclusions'),
+        'retainedCount',accounts,'basis','retained authoritative profiles; private verified exclusions and linked marked exclusions'),
       'ordersStarted',jsonb_build_object('status',case when p_day>=coverage_from then 'retained' else 'UNKNOWN' end,
         'retainedCount',starts,'basis','local admitted elections and confirmed SDS Report handoffs; bare external links have no local order start'),
       'ordersPaid',jsonb_build_object('status',case when p_day>=coverage_from then 'retained' else 'UNKNOWN' end,
@@ -119,6 +132,12 @@ grant execute on function samedaydesk_care.daily_site_counts(date) to samedaydes
 -- than changing a reader's unrelated grants or accepting another callable role.
 do $guard$
 begin
+  if exists (
+    select 1 from pg_catalog.pg_class c
+    cross join lateral pg_catalog.aclexplode(coalesce(c.relacl,pg_catalog.acldefault('r',c.relowner))) a
+    where c.oid='samedaydesk_care.daily_account_exclusions'::pg_catalog.regclass
+      and a.grantee<>'postgres'::pg_catalog.regrole
+  ) then raise exception 'Unexpected daily exclusion table grant'; end if;
   if exists (
     select 1 from pg_catalog.pg_proc p cross join lateral pg_catalog.aclexplode(p.proacl) a
     where p.oid='samedaydesk_care.daily_site_counts(date)'::pg_catalog.regprocedure
