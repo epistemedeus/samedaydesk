@@ -2,10 +2,22 @@ import { legacyLicense } from "./legacy-order.js";
 import { readFile } from "node:fs/promises";
 import { careServiceOffer, careLink, careReceiptAmount } from "./care-contract.js";
 import { recordCommerceJourney } from "./commerce-journey.js";
+import { isOfficialPage, officialPages, officialWatch } from "./watch-official-pages.js";
 
 const day = (value) => new Date(value).toISOString().slice(0, 10);
 
 export function careMailMessage({ order, item, secret, from, replyTo }) {
+  if (item.kind === "skill_watch_alert" && item.details?.source === "official_page") {
+    const id = item.details.target;
+    if (order.id !== officialWatch.order || order.rail_email !== officialWatch.recipient || !isOfficialPage(id)) {
+      throw new Error("Invalid official Watch mail");
+    }
+    const [label, url, marker] = officialPages[id];
+    return {
+      from, replyTo, to: officialWatch.recipient, subject: "Official source changed: " + label,
+      text: `SameDayDesk Watch detected a change in the ${marker ? "page content" : "PDF file"} for ${label}.\n\nReview the official source and update any affected guides: ${url}`,
+    };
+  }
   const offer = careServiceOffer(order.offer);
   const scopeLink = careLink(order, secret);
   const cancelLink = offer.mode === "subscription" ? careLink(order, secret, "cancel") : null;

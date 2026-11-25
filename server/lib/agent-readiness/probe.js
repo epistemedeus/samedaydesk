@@ -134,7 +134,7 @@ export async function rawExchange(url, options = {}) {
     const snapshot = (extra = {}) => ({
       status: response?.statusCode || 0,
       headers: headerMap(response?.headers),
-      body: Buffer.concat(chunks, size).toString("utf8"),
+      body: options.responseBytes ? Buffer.concat(chunks, size) : Buffer.concat(chunks, size).toString("utf8"),
       ...extra,
     });
     const onAbort = () => finish(snapshot({ error: options.signal?.aborted ? "aborted" : "timeout" }));

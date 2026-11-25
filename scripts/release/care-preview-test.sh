@@ -12,17 +12,22 @@ files=(server/scripts/test-skill-watch-tick.mjs server/scripts/test-skill-watch-
 if [[ $# -eq 0 ]]; then
   files=(server/scripts/test-care-preview.mjs server/scripts/test-care-invoice.mjs server/scripts/test-care-usdc.mjs server/scripts/test-legacy-order.mjs "${files[@]}")
 fi
+files=(server/scripts/test-watch-official-pages.mjs "${files[@]}")
 pg_bin="$(pg_config --bindir)"
 pg_root="$(mktemp -d)"
 "$pg_bin/initdb" -A trust -D "$pg_root/data" > /dev/null
 "$pg_bin/pg_ctl" -D "$pg_root/data" -l "$pg_root/log" -o "-F -p 55493 -k $pg_root -c listen_addresses=''" -w start > /dev/null
 trap '"$pg_bin/pg_ctl" -D "$pg_root/data" -m immediate -w stop > /dev/null; rm -rf "$pg_root"' EXIT
 dsn="postgresql://$(id -un)@127.0.0.1/postgres?host=$pg_root&port=55493"
-node server/scripts/care-enrollment.mjs sds_care_fixture sds_care_fixture_app > "$pg_root/enrollment.sql"
-psql -X -q -v ON_ERROR_STOP=1 "$dsn" -f "$pg_root/enrollment.sql"
-app_dsn="postgresql://sds_care_fixture_app@127.0.0.1/postgres?host=$pg_root&port=55493"
+for schema in sds_care_fixture sds_watch_fixture; do
+  node server/scripts/care-enrollment.mjs "$schema" "${schema}_app" > "$pg_root/enrollment.sql"
+  psql -X -q -v ON_ERROR_STOP=1 "$dsn" -f "$pg_root/enrollment.sql"
+done
 for file in "${files[@]}"; do
-  env -i PATH="$PATH" HOME="$pg_root" TMPDIR="$pg_root" NODE_ENV=production SDS_PRIVATE_PREVIEW=1 SDS_CARE_DATABASE_URL="$app_dsn" SDS_CARE_SCHEMA=sds_care_fixture \
+  schema=sds_care_fixture
+  if [[ $file == server/scripts/test-watch-official-pages.mjs ]]; then schema=sds_watch_fixture; fi
+  app_dsn="postgresql://${schema}_app@127.0.0.1/postgres?host=$pg_root&port=55493"
+  env -i PATH="$PATH" HOME="$pg_root" TMPDIR="$pg_root" NODE_ENV=production SDS_PRIVATE_PREVIEW=1 SDS_CARE_DATABASE_URL="$app_dsn" SDS_CARE_SCHEMA="$schema" \
     SKILLGUARD_SOURCE="${SKILLGUARD_SOURCE:-}" SDS_PREVIEW_MAIL_OUTBOX="$pg_root/outbox.jsonl" STRIPE_SECRET_KEY=sk_test_private_fixture \
     SDS_CARE_CHECKOUT=1 SDS_CARE_ACCESS_SECRET=synthetic-preview-watch-access-secret-only SDS_TEST_WATCH_PUBLIC_RELEASE="${SDS_TEST_WATCH_PUBLIC_RELEASE:-}" \
     STRIPE_WEBHOOK_SECRET=whsec_private_fixture node --test "$file"

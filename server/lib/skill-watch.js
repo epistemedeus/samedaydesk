@@ -3,12 +3,21 @@ import { CareError, carePaidPeriod, isOrderId, newIntegrationId, watchOffer } fr
 import { legacySlug } from "./legacy-order.js";
 import { readHostedTerms } from "./hosted-offer-catalog.js";
 import { recordRailEvent } from "./care-usdc.js";
+import { isOfficialPage, officialDigest, officialSourceTask, officialWatch } from "./watch-official-pages.js";
 
 export { watchOffer };
 export function watchEnabled(env) {
   return env.SDS_ORDER_USDC==="1" && env.SDS_SKILL_WATCH_USDC==="1";
 }
 const conflict=()=>new CareError(409,"Check the payment already attached to this subscription.");
+// Aliases match the Care store's order/period join. Only the reserved
+// owner-enrolled record can produce or release official-page mail.
+export const officialWatchEnrollment = (at) => `
+  o.id='${officialWatch.order}' and p.invoice_id='${officialWatch.window}'
+  and o.offer='legacy_skill_watch' and o.integration_id='${officialWatch.tag}'
+  and o.state='review' and not o.live_mode and o.rail_email='${officialWatch.recipient}'
+  and p.status='review' and p.period_start<=${at} and p.period_end>${at}
+  and jsonb_typeof(o.intake->'officialPages')='array'`;
 function repositories(raw) {
   const values=String(raw||"").split(/[\s,]+/).filter(Boolean);
   const safe=values.map(value=>{
@@ -154,5 +163,42 @@ export function skillWatchStore(txn,table) {
         and not (coalesce(p.report->'releases','{}'::jsonb) ? $4)) as needed`,
     [watchOffer.id,repository,publishedAt,releaseKey(repository,commit)])).rows[0].needed);
   }
-  return {start,card,observeRelease,openReleaseSchedule,needsRelease};
+  async function officialTargets(at) {
+    return txn(async db => {
+      const { rows } = await db.query(`select o.intake->'officialPages' as targets
+        from ${periods} p join ${orders} o on o.id=p.order_id
+        where ${officialWatchEnrollment("$1")}`, [at]);
+      return rows[0]?.targets ?? null;
+    });
+  }
+
+  async function observeOfficialPage({ id, digest, at }) {
+    if (!isOfficialPage(id) || typeof digest !== "string" || !officialDigest.test(digest) ||
+        !(at instanceof Date) || !Number.isFinite(at.getTime())) throw conflict();
+    return txn(async db => {
+      const { rows } = await db.query(`select p.invoice_id,p.report from ${periods} p join ${orders} o on o.id=p.order_id
+        where ${officialWatchEnrollment("$1")} and o.intake->'officialPages' ? $2 for update of p,o`, [at,id]);
+      const row = rows[0];
+      if (!row) return "skipped";
+      const previous = row.report?.officialPages?.[id];
+      if (previous && !officialDigest.test(previous.digest)) throw conflict();
+      const checkedAt = at.toISOString();
+      if (previous?.checkedAt >= checkedAt) return "skipped";
+      const observations = { ...row.report?.officialPages, [id]: { digest, checkedAt } };
+      await db.query(`update ${periods} set report=jsonb_set(coalesce(report,'{}'::jsonb),'{officialPages}',$2)
+        where invoice_id=$1`, [row.invoice_id, observations]);
+      if (!previous) return "baseline";
+      if (previous.digest === digest) return "unchanged";
+      const key = createHash("sha256").update(JSON.stringify([id, previous, digest])).digest("hex");
+      await db.query(`insert into ${table("care_mail")}(mail_key,order_id,kind,details)
+        values($1,$2,'skill_watch_alert',$3) on conflict(mail_key) do nothing`,
+      ["watch/official/" + key, officialWatch.order, {
+        source: "official_page", target: id, invoiceId: row.invoice_id,
+        task: officialSourceTask(id, checkedAt, previous.digest, digest),
+      }]);
+      return "changed";
+    });
+  }
+
+  return {start,card,observeRelease,openReleaseSchedule,needsRelease,officialTargets,observeOfficialPage};
 }

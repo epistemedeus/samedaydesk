@@ -1,13 +1,13 @@
 # SkillGuard Watch private enrollment
 
-The existing hourly-capable Hostinger scheduler can run `server/scripts/skill-watch-tick.mjs` once per hour. The command uses the existing Care database role, paid periods, mail claims and SameDayDesk sender. It requires no migration, installed worker or GitHub credential. Keep `SDS_SKILL_WATCH_USDC` off during owned receiving. This job is separate from the managed source-projection watcher and from the receipt snapshot cron.
+The existing Hostinger scheduler runs `server/scripts/skill-watch-tick.mjs`. The command uses the existing Care database role, paid periods, mail claims and SameDayDesk sender. It requires no migration, installed worker or GitHub credential. Preserve the current public Watch configuration and use disposable data for owned checks. This job is separate from the managed source-projection watcher and from the receipt snapshot cron.
 
 ## Controller setup
 
-1. Receive the exact source through the saved Node 22 Express build profile (`build:managed-foundry`, `server/index.js`, repository root, default output). Verify the deployed command exists under the live source path before scheduling it. Preserve the controller's 109 received environment values, including the seven legacy offers, Report and Care. Keep Watch off. Existing terms and issued quotes do not need any change.
+1. Receive the exact source through the saved Node 22 Express build profile (`build:managed-foundry`, `server/index.js`, repository root, default output). Verify the deployed command exists under the live source path. Preserve the controller's current complete environment, including Watch, the seven legacy offers, Report and Care. Existing terms and issued quotes do not need any change.
 2. Obtain [SkillGuard v1.3.0](https://github.com/epistemedeus/skillguard/releases/tag/v1.3.0) `index.js` from the [immutable Git commit](https://github.com/epistemedeus/skillguard/blob/14705f72f8daa56f986401554783992a598b0f08/index.js), 13,298 bytes, SHA-256 `0db78baedbf2b475d8cf762608e5bcee12b05e53a93e8e8b29b58d6f1af6f79f`. Verify the bytes before saving a regular 0600 file under a private 0700 directory. Set only `SKILLGUARD_SOURCE` to its absolute path, for example `/home/u188979531/.samedaydesk-skill-watch/skillguard-v1.3.0-index.js`.
 3. Reuse `SDS_CARE_CHECKOUT`, `SDS_CARE_DATABASE_URL`, `SDS_CARE_DATABASE_CA_BASE64`, `SDS_CARE_SCHEMA`, `SDS_CARE_ACCESS_SECRET`, `RESEND_API_KEY`, `RESEND_FROM_EMAIL` and the optional `RESEND_REPLY_TO`. Do not pass credential values as arguments. Use the existing protected complete-env broker to enroll the scanner path without replacing other values.
-4. Run the exact command once. Read its JSON and exit status. Save the same one-command native cron at minute 17 every hour, UTC, after the command is verified. The command uses the current deployment symlink and the protected dotenv file.
+4. Use the controller's existing Hostinger authentication to read `GET /api/hosting/v1/accounts/u188979531/cron-jobs` and match the command below. Receive the returned schedule and the existing job's `GET /api/hosting/v1/accounts/u188979531/cron-jobs/{uid}/output`. The intended schedule is `17 * * * *` UTC. Keep the received job if it matches. The command uses the current deployment symlink and the protected dotenv file. [Hostinger cron API](https://github.com/hostinger/api-php-sdk/blob/main/docs/Api/HostingCronJobsApi.md)
 
 ```sh
 /opt/alt/alt-nodejs22/root/usr/bin/node --env-file=/home/u188979531/domains/samedaydesk.com/hbuilds/config/.env /home/u188979531/domains/samedaydesk.com/hbuilds/current/nodejs/server/scripts/skill-watch-tick.mjs
@@ -15,11 +15,32 @@ The existing hourly-capable Hostinger scheduler can run `server/scripts/skill-wa
 
 ## Receive and roll back
 
-- The controller received zero production Watch orders, paid periods or pending alerts. Receive the actual installed cron's empty canary separately. Its expected receipt has zero claims, upstream requests and Watch mail. Use the isolated owner QA below for actual inbox delivery before changing the public Watch flag.
+- The controller's prior receiving recorded an installed empty cron run and a private source alert with zero sends on repeat. The current scheduler record and latest output are separate readbacks. If the paid queue is empty, the existing release part reports zero claims, upstream requests and paid Watch mail.
 - One tick claims up to eight repositories, one at a time. Care records the claim in `care_periods.report.watchSchedule`, while `report.releases` and other report fields survive. Unvisited active repositories come first, followed by the least recently claimed. A claim records scheduling progress even when the repository is unsupported or its response is empty or failed. On rate limits or exhaustion the tick stops, leaving unattempted repositories in their previous positions. The next hourly tick resumes from PostgreSQL, including after a restart. An unreceived checkpoint stops the tick. Inspect the stored state rather than replaying the claim.
 - The runner retains the limits of ten recent releases per repository, 45 upstream requests and two minutes for upstream reads. Unsupported repositories, incomplete pages and exhausted budgets surface as issues. The existing manual release consumer remains available for a larger verified Git snapshot. Each acquisition rejects redirects, private DNS, mismatched refs and blob identities, nonregular files, truncated trees and excessive sizes. The worker removes its own snapshot and executes only the digest-pinned scanner.
 - The existing mail sender claims only `skill_watch_alert` messages during this job. A deferred or timed-out provider response is unresolved. Receive the original outbox claim, acceptance and provider idempotency key before taking action. The existing five-minute retry due time and 23-hour same-key window still apply. Do not reset those claims or replay an unknown send manually. A zero count does not prove that a prior deferred item was delivered.
-- To pause, disable this one cron entry, leave the public Watch flag off and preserve original paid periods, observations and outbox claims. If removing the scanner, remove only its pointer from the full environment. No other mail kind, receipts job or database migration depends on this entry.
+- To pause only official sources, use the owner enrollment pause below. To pause the whole Watch worker, disable this one cron entry and preserve original paid periods, observations and outbox claims. If removing the scanner, remove only its pointer from the full environment. No other mail kind, receipts job or database migration depends on this entry.
+
+### Official pages for the operator
+
+Use the same native cron command and current environment. The controller can apply [the private enrollment SQL](../scripts/release/official-watch-enrollment.sql) through its existing Supabase owner route on project `arvmcttdegqwiwdaembr`. It adds one existing Care review record and one review window for `contact@samedaydesk.com`. Both remain outside payment, checkout and paid-period selection. The enrollment leaves public Watch settings unchanged.
+
+The [source list](../server/lib/watch-official-pages.js) covers Delaware, Wyoming, New Mexico, the IRS, Google Play, Apple, Stripe, PayPal REST payments, D&B and FinCEN. The worker fetches these exact public addresses with no redirects. Each has a six-second, 2,500,000-byte limit. HTML fingerprints use material text, including availability labels and links to public fee documents. PDF fingerprints use the delivered bytes without opening the file. A replacement link on an index alerts the operator to review the new document address. Read failures leave the previous baseline intact.
+
+The first successful read of each page stores its baseline without opening a task. A changed digest opens a review task in the existing `care_mail` claim and the same tick drains it to the SameDayDesk owner inbox. The task payload at `details.task` has schema `sds.watch.official-source-task.v1`, action `review_official_source`, `target`, `label`, `url`, UTC `observedAt`, `beforeSha256` and `afterSha256`. Those fields describe public sources. The queue and recipient remain private. The existing Node command is the drain entry point. It uses the existing Care connection and `RESEND_API_KEY` with the enrolled SameDayDesk sender. It needs no HTTP drain route or extra schedule.
+
+Receive the `official` results in the usual cron JSON and inspect the reserved window's `report.officialPages` and its `care_mail` claims through the owner route. Keep the same claim on unknown delivery and confirm provider acceptance separately from the actual inbox message. The worker uses the existing five-minute due time and 23-hour same-key claim window.
+
+Qualify baseline, changed content, unchanged content, failed fetch, duplicate tick and notification recovery with `SKILLGUARD_SOURCE=/absolute/verified/skillguard.js bash scripts/release/care-preview-test.sh --watch-only` on disposable PostgreSQL. For live receiving, wait for the next existing scheduled output after enrollment, record all received baseline digests, and follow later normal outputs. The first actual live change and owner review remain unreceived until a source changes and the inbox message arrives.
+
+To pause only official-page alerts, let an already started tick finish, then use the existing owner connection to empty the reserved record's targets. Preserve the row, observations and mail claims. The paid-repository schedule continues.
+
+```sql
+update samedaydesk_care.care_orders
+set intake=jsonb_set(intake, '{officialPages}', '[]'::jsonb)
+where id='505a0b26-a89a-4f45-8d2a-a3e1780ef6c6'
+  and state='review' and not live_mode and integration_id='official-watch-owner-v1';
+```
 
 ### Controller-only owner inbox receiving
 
