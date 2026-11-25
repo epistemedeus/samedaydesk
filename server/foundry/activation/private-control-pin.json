@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "31b43a18d3df1460c45500f52313e6b1a699f0d8",
+  "base": "9de7731530de248e37202354dedf96cab39f1316",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
@@ -35,12 +35,12 @@
     "server/index.js": "6e8a6241a172127324cc9defe916522ee5222cf29f4d53ebf5c27b661abf55b9",
     "server/lib/account-usdc.js": "093d25d7dba638d7f8fcf0588426d538e58b8a60d19e5223d4e4b9c059414458",
     "server/lib/agent-readiness/TRANSPORT.md": "09f4210ff1fa56d01fb3548d3cc38fc576c52e8649737082b0ed4b39c64e0a18",
-    "server/lib/agent-readiness/bounded-fetch.js": "8451864628400b6ea17b657b76231e9baa080a63a397a0f699b8da13eb1815bd",
+    "server/lib/agent-readiness/bounded-fetch.js": "a9da5e49163fd36734fc3a5671d4867407697e5a7e69a89142cf71cd03e9bf4b",
     "server/lib/agent-readiness/checks.js": "1002daa016e1f81f90a83eaa7b8a912f7040d834e1e9a4ff27479b38d4a3f7f4",
     "server/lib/agent-readiness/documentation-alternate.js": "6f80b26680d04b0e38bfc327cd6498cf1c2d0bfb24d6149d483b771b33eac068",
     "server/lib/agent-readiness/documentation.js": "8243003ca19632f76a754c4795c8801999b9d3f7d550f4822ca1fee1cb999f03",
     "server/lib/agent-readiness/linkage.js": "33f99a1ce42cb92b0c9abb34250a8901d0da814cb65795f9cb42358a90aec747",
-    "server/lib/agent-readiness/probe.js": "ae38de16b24ee7949709af45c2e9597169d8eb963ef1191c1587e4f08992a1b3",
+    "server/lib/agent-readiness/probe.js": "38153c269277d7f2727e8b3da5aa2bf64a36ac096b6775cfbff1397e5e0fd9db",
     "server/lib/agent-readiness/request-budget.js": "ea40e0442da09cde3bf44ce68ab98851bb0e91c0e8c67a7f533c0458aeff4c95",
     "server/lib/agent-readiness/schema.js": "be4720649d9fb2a9fc03cf27b585b499cbca3e452e135256993c18baf9e0b7cc",
     "server/lib/agent-readiness/score.js": "8c5ffe67eb25e45df3aff3cdfcb67d71be1734de0bb4c20fdd7e44ccb1fbc350",
@@ -53,10 +53,10 @@
     "server/lib/apex-declarations.js": "9d12e20db9fd8a303ba8e2ca4659f1edf8e84788436cf47b0297ac0d85f5b595",
     "server/lib/care-contract.js": "589bfbb60743bfa11a09c28f5b52a9bfd3007d0ac60452627fcd86c5d5a70917",
     "server/lib/care-database.js": "c36fb812abbeffa9a1876093c2ed8fe5ea93799135b3dbf1b7a65ac814d5adb3",
-    "server/lib/care-mail.js": "ac577c9563eb105facaadc9edcd3ef582f78a2661817d7bae6370cfb39097991",
+    "server/lib/care-mail.js": "67d0357f7d8b0125f22a2f88ded7b71469e8bbc9de0d15dbb84f78a3cd512900",
     "server/lib/care-sentinel.js": "95694a6f738e209bd0a32608780e29f41669660a2bfa90471c55434c68e64baa",
     "server/lib/care-service.js": "8b0c0b039d252b62b860c1190c7e0234d16ae0b91287334849524faaf60f0981",
-    "server/lib/care-store.js": "dcf836834a3b13018bd9ef214061d3cbd774984d1aaa6b3211ace5bc6f3fa559",
+    "server/lib/care-store.js": "c58b9010b951ff422034a7f64bef0142a6cdf3058d1425ee82667bd442c91283",
     "server/lib/care-usdc-month.js": "fb5fad01248408357581e26f76bdc4574788f736ff8165fab1023b83171e8f77",
     "server/lib/care-usdc.js": "4af73302901ebaa99fbc02170041e804bf00cbbd76fd2f63c9e14206a3135dac",
     "server/lib/commerce-journey.js": "d12fe9772dc4158bc79ed245181b84b866e80d20e141c8f759740dd78dc9ec92",
@@ -270,7 +270,7 @@
     "server/lib/report-order.js": "f93deaf0651781ec59d3c784b197996023a2c4a1c3960a8f33b6416ba1560f27",
     "server/lib/resend.js": "413efbb7ca7852865f645e00392a36be8e588601c9496995161887c9c111e8b8",
     "server/lib/seller-repair-checkout.js": "ff785e9c2b07e7eb8c29a4d0040d46aab5d9d6ce7f4197d8ce5e2633ca4936c0",
-    "server/lib/skill-watch.js": "103f720bd917fade5bab151579202a94dfe328d3965c193c97c448b3f0120f27",
+    "server/lib/skill-watch.js": "a8cc471aa0b87f4b43ad7a5f65d8d57dc9dc07fe65c567e8332d9249259fa038",
     "server/lib/spa-client.js": "b0e9e9601a1bc847a55b88924a367d570b4dce65812de52a1ade31da748a3d6f",
     "server/lib/spa-fallback.js": "f08ed6700a5f6a899bd6f0a475f15e825db67af45603ae6a047cef9c35fc90c9",
     "server/lib/spa-route-shells.js": "9451da10b1ba1f347961d4507a614a5b34470df86b31db9a8e6fc074ec4b1878",
@@ -1552,7 +1552,13 @@
     "vendor/visitor-foundry-receiver/services/correspondence/tsconfig.json": "4c2928d371fa19546ccc4b1dcef7b5109429bb493d1efc3c4a81c05fe2d70b26",
     "server/lib/traffic-context.mjs": "9cc277aedc7dae07cad00c1daa31f3abf010ba1a5fa8fe047f2b23fbf4f338f3",
     "server/lib/traffic-ingress.mjs": "059bdd8f5ffad9d92a0fe56216088665497cfa1f343993a19b66d60376be5ec9",
-    "server/lib/crawler-ranges.json": "69511f45947d1dd0390177c500fbcfe24e2e26d2e3c5a828cc496b4867688037"
+    "server/lib/crawler-ranges.json": "69511f45947d1dd0390177c500fbcfe24e2e26d2e3c5a828cc496b4867688037",
+    "server/lib/agent-readiness/discovery.js": "dd2018d4fc2e31c1a42941097447105cf55ae1314c63e4a2e3763eb63a715c0a",
+    "server/lib/agent-readiness/normalize.js": "22ebed6b83ac3ff98f87714433c2f01d5d5ce92cb80f8f708a674636f93b9b32",
+    "server/lib/agent-readiness/probeScript.js": "86f10c088e8068e1c0b0ab65dce8b1ee488426c85d10a2ab7927ac9321da886e",
+    "server/lib/agent-readiness/retrieval.js": "23a4e3a7a9fda1c05367eb1b0ab9375367790ab40764fdb4bc8da1dd20d83003",
+    "server/lib/agent-readiness/usability.js": "5c61f0d29df8384cad8038b44c2e7ca1efab440e91d6c3d7dfae21d9ae11438c",
+    "server/lib/watch-official-pages.js": "0a1aec7d410cb5584647e19ed0f68f7aefcd80e5e3c5ab3d45465cafa2040dbd"
   },
   "receivedCallerClosures": [
     {
@@ -1889,6 +1895,16 @@
       "base": "cee7c9f9e6cc03da2ca3fa0c3dbfb45d2ba374e6",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:744f766099f87c8bcdbad2326a84a1f69b1371c0b02c1a4acb9528524870074e"
+    },
+    {
+      "base": "31b43a18d3df1460c45500f52313e6b1a699f0d8",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:bc3004cc2792dceb7fb214878cdc2adbd381fee9590e621314aa1d10be64b3ab"
+    },
+    {
+      "base": "f47de14cef200fe227a771afd2c73991610ede88",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:648e71ece0723fa993ea366e43b7ce15acf4b541eb1dd134f0181f1f2ef25d6f"
     }
   ]
 }

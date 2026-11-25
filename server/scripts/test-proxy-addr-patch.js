@@ -262,6 +262,7 @@ test("cold caller refuses changed machine/PG/continuation/artifact/authority mem
     "server/vendor/machine-gateway/src/store-pg.mjs", "server/vendor/continuous-monitoring/src/worker.mjs",
     "vendor/neomorphic-opportunity/services/earned-work/dist/opportunity/continuation.js",
     "vendor/neomorphic-contributor-journey/SOURCE.json", "server/lib/contributor-https-qualification.js",
+    "server/lib/watch-official-pages.js", "server/lib/agent-readiness/retrieval.js",
   ]) {
     const target = path.join(coldDir, member);
     const original = await readFile(target);
@@ -275,6 +276,9 @@ test("cold caller refuses changed machine/PG/continuation/artifact/authority mem
       assert.equal(refused.code, 0, member + ": " + refused.stderr);
     } finally { await writeFile(target, original); }
   }
+  const restored = await run(process.execPath, ["--input-type=module", "-e",
+    "import {verifyCallerClosure} from './server/foundry/activation/remote-private-journey.mjs'; verifyCallerClosure();"], coldDir);
+  assert.equal(restored.code, 0, restored.stderr);
 });
 
 test("caller closure binds original-task runtime and retains received callers", async () => {
