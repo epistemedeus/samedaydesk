@@ -151,6 +151,4 @@ test("configured native tick baselines, retries after a read failure and deliver
     assert.equal((await drain(new Date(now + 6 * 60_000), async () => ({ data: { id: "fixture-original-provider-id" } }))).accepted, 1);
     assert.equal(keys.length, 2);
     assert.equal(keys[0], keys[1]);
-    // Leave the fixture paused for the existing empty native CLI canary.
-    await pool.query(`update ${orders} set intake='{"officialPages":[]}' where id=$1`, [officialWatch.order]);
   });
