@@ -9,6 +9,8 @@ import { sendReceipt } from "./notify.js";
 import { markPaymentAttemptSucceeded } from "./payment-attempt.js";
 import { paymentAttemptStoreDeps } from "./payment-attempt-store.js";
 import { recordJourney } from "./journey-events.js";
+import { stripe } from "./stripe.js";
+import { applyAccountOrderHold, readAccountChargeHold } from "./account-charge-hold.js";
 
 export function orderIdForPaymentIntent(intent) {
   if (!intent?.id) throw new Error("payment intent id required for order identity");
@@ -19,7 +21,7 @@ export function legacyOrderIdForUidOffer(uid, offer) {
   return `order_${uid}_${offer}`;
 }
 
-export async function fulfillFromIntent(intent, { sb, attemptStore, live = process.env.SDS_PRIVATE_PREVIEW !== "1", receipt = sendReceipt } = {}) {
+export async function fulfillFromIntent(intent, { sb, attemptStore, live = process.env.SDS_PRIVATE_PREVIEW !== "1", receipt = sendReceipt, stripeClient = stripe } = {}) {
   const meta = intent.metadata || {};
   const uid = meta.uid;
   if (!uid && meta.offer !== AGENT_FIRST_USE_REPORT) return { ok: false, reason: "no_uid" }; // e.g. an operator Payment Link w/o an account
@@ -66,6 +68,10 @@ export async function fulfillFromIntent(intent, { sb, attemptStore, live = proce
     draft = data;
   }
 
+  // Read the current charge before receipt, the same hold facts care uses.
+  const hold = await readAccountChargeHold(intent, { stripeClient, live });
+  const orderStatus = hold ? hold.status : (fulfillmentPending ? "intake_required" : "received");
+
   // Atomic insert-if-absent (PI-based id + ON CONFLICT DO NOTHING).
   // Unique index on stripe_payment_intent also collapses duplicate inserts.
   const { data: inserted, error } = await sb
@@ -78,7 +84,7 @@ export async function fulfillFromIntent(intent, { sb, attemptStore, live = proce
         label: pricing.label,
         amount: intent.amount ?? pricing.amount,
         currency: intent.currency || "usd",
-        status: fulfillmentPending ? "intake_required" : "received",
+        status: orderStatus,
         stripe_payment_intent: intent.id,
         upload_path: meta.payment_attempt_id ? (draft?.upload_path || null) : (draft?.upload_path || meta.upload_path || null),
         meta: {
@@ -86,7 +92,11 @@ export async function fulfillFromIntent(intent, { sb, attemptStore, live = proce
           intake: draft?.data || null,
           payment_attempt_id: meta.payment_attempt_id || null,
           ...(intent.livemode === false ? { test: true } : {}),
-          ...(fulfillmentPending ? { fulfillment_issue: "missing_attempt_intake_snapshot" } : {}),
+          ...(fulfillmentPending && !hold ? { fulfillment_issue: "missing_attempt_intake_snapshot" } : {}),
+          ...(hold ? { charge_hold: {
+            status: hold.status, amountRefunded: hold.amountRefunded, total: hold.total,
+            disputed: hold.disputed === true, earlyFraud: hold.earlyFraud === true,
+          } } : {}),
         },
       },
       { onConflict: "stripe_payment_intent", ignoreDuplicates: true },
@@ -104,8 +114,12 @@ export async function fulfillFromIntent(intent, { sb, attemptStore, live = proce
         existing.amount !== pricing.amount || existing.currency !== CURRENCY)) {
       throw new Error("Existing first-use order does not match the stored account attempt");
     }
-    if (firstUse && existing.status === "intake_required") fulfillmentPending = true;
+    if (firstUse && existing.status === "intake_required" && !hold) fulfillmentPending = true;
     orderId = existing.id;
+  }
+  if (hold) {
+    const applied = await applyAccountOrderHold(sb, { paymentIntentId: intent.id, hold });
+    if (applied.found) orderId = applied.orderId;
   }
 
   // Flip the user to paid (server-managed field; clients can't write it).
@@ -123,10 +137,10 @@ export async function fulfillFromIntent(intent, { sb, attemptStore, live = proce
     }
   }
 
-  if (isNew) {
+  if (isNew && !hold) {
     recordJourney("payment_confirmed", { path: "/checkout", offer: pricing.offer, state: "paid" }, "server");
     // best-effort; never fail fulfillment on a notification error
     receipt({ to: intent.receipt_email || meta.email, label: pricing.label, amount: intent.amount ?? pricing.amount, orderId }).catch(() => {});
   }
-  return { ok: true, orderId, isNew, fulfillmentPending };
+  return { ok: true, orderId, isNew, fulfillmentPending: hold ? false : fulfillmentPending, held: Boolean(hold) };
 }

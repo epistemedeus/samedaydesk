@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { stripe, isStripeConfigured } from "../lib/stripe.js";
 import { fulfillFromIntent } from "../lib/fulfill.js";
+import { holdAccountOrderFromCharge, isAccountChargeHoldEvent } from "../lib/account-charge-hold.js";
 import { notifyAdmin, sendReceipt } from "../lib/notify.js";
 import { belongsToAnotherRun } from "../lib/release-run.js";
 import {
@@ -30,6 +31,7 @@ export function createStripeWebhookRouter({
   notify = notifyAdmin,
   neomorphicPaymentLinkId = configuredNeomorphicSellerConformancePaymentLinkId(),
   care,
+  holdAccountOrder = holdAccountOrderFromCharge,
 } = {}) {
   const router = Router();
 
@@ -60,6 +62,11 @@ export function createStripeWebhookRouter({
       }
       if (event.type === "payment_intent.succeeded") {
         await fulfill(event.data.object);
+      } else if (isAccountChargeHoldEvent(event.type)) {
+        await holdAccountOrder(event, {
+          stripeClient,
+          live: process.env.SDS_PRIVATE_PREVIEW !== "1",
+        });
       } else if (event.type === "checkout.session.expired") {
         const attribution = expiredNeomorphicSellerRepairAttribution(
           event,
