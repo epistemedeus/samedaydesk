@@ -2,7 +2,7 @@ import path from "node:path";
 import express from "express";
 import compression from "compression";
 import { createSpaFallback } from "./spa-fallback.js";
-import { START_GUIDE_LINK } from "./start-guide.js";
+import { START_GUIDE_LINK, prefersMarkdown, startGuideMarkdown } from "./start-guide.js";
 import { createRouteShellMiddleware } from "./spa-route-shells.js";
 import { mountReceiptSnapshot } from "./receipt-snapshot.js";
 
@@ -25,6 +25,20 @@ export function mountProductionClient(app, clientDist) {
         .test(String(res.getHeader("Content-Type") || "")) && compression.filter(req, res);
     },
   }));
+
+  app.use((req, res, next) => {
+    if ((req.method !== "GET" && req.method !== "HEAD") || req.path !== "/") return next();
+    if (!prefersMarkdown(req.headers.accept)) return next();
+    const payload = Buffer.from(startGuideMarkdown(), "utf8");
+    res.status(200);
+    res.set("Cache-Control", "no-cache");
+    res.set("Link", START_GUIDE_LINK);
+    res.type("text/markdown; charset=utf-8");
+    res.set("Content-Length", String(payload.length));
+    if (req.method === "HEAD") return res.end();
+    return res.end(payload);
+  });
+
   app.use(createRouteShellMiddleware(clientDist));
   app.use(
     express.static(clientDist, {
