@@ -168,7 +168,7 @@ test("directory and badge HTTP surfaces consume real records and refuse bad subj
   assert.equal(badge.status, 200);
   assert.match(badge.headers.get("content-type"), /image\/svg\+xml/);
   const svg = await badge.text();
-  assert.match(svg, /stale · 2026-09-03 · not a certification/);
+  assert.match(svg, /stale\/partial · 2026-09-03 · not a certification/);
   assert.match(svg, /not an independent certification/);
 
   const x402 = await fetch(`${base}/directory/x402/agents.samedaydesk.com?format=json`);
@@ -203,4 +203,30 @@ test("directory and badge HTTP surfaces consume real records and refuse bad subj
   assert.equal(leaked.email, undefined);
   assert.ok(!JSON.stringify(leaked).includes("buyer@example.test"));
   assert.ok(!JSON.stringify(leaked).includes("pi_hidden"));
+});
+
+test("IP literals and internal hosts are invalid subjects, not missing public checks", async (t) => {
+  const { base } = await mount(t, { env: {} });
+  for (const host of ["127.0.0.1", "169.254.169.254", "10.0.0.1", "metadata.google.internal"]) {
+    const res = await fetch(`${base}/directory/x402/${host}?format=json`);
+    assert.equal(res.status, 404, host);
+    assert.equal((await res.json()).reason, "invalid_subject", host);
+  }
+  const mcpDot = await fetch(`${base}/directory/mcp/./repo?format=json`);
+  assert.ok([404, 400].includes(mcpDot.status));
+});
+
+test("inaccessible records fail honestly instead of throwing a missing check", async (t) => {
+  const { base } = await mount(t, {
+    env: {},
+    loadRecords: () => {
+      throw new Error("cannot read records");
+    },
+  });
+  const res = await fetch(`${base}/directory?format=json`);
+  assert.equal(res.status, 503);
+  assert.equal((await res.json()).reason, "inaccessible_records");
+  const missing = await fetch(`${base}/directory/mcp/epistemedeus/x402-url-extractor?format=json`);
+  assert.equal(missing.status, 503);
+  assert.equal((await missing.json()).reason, "inaccessible_records");
 });
