@@ -5,8 +5,12 @@ import { availableCatalogOffers } from "../conformance/catalog.js";
 import { publicFacts } from "../conformance/privacy.js";
 import { loadExistingProbeRecords } from "../conformance/records.js";
 import { createConformanceRouter } from "../conformance/routes.js";
-import { renderBadgeSvg } from "../conformance/badge.js";
-import { STALE_AFTER_MS, buildScorecard, listDirectory } from "../conformance/scorecard.js";
+import { badgeMessage, badgeStatusLabel, renderBadgeSvg } from "../conformance/badge.js";
+import { STALE_AFTER_MS, buildScorecard } from "../conformance/scorecard.js";
+import http from "node:http";
+import fs from "node:fs";
+import os from "node:os";
+import { isMcpSubject, isX402Host } from "../conformance/subjects.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -66,6 +70,20 @@ test("publicFacts drops private customer rows", () => {
   assert.equal(cleaned.order_id, undefined);
   assert.equal(cleaned.client_secret, undefined);
   assert.equal(cleaned.payment_intent, undefined);
+  const camel = publicFacts({
+    host: "agents.samedaydesk.com",
+    customerId: "cus_secret",
+    customerEmail: "buyer@example.test",
+    paymentIntent: "pi_123",
+    orderId: "ord_1",
+    accountId: "acct_1",
+  });
+  assert.equal(camel.host, "agents.samedaydesk.com");
+  assert.equal(camel.customerId, undefined);
+  assert.equal(camel.customerEmail, undefined);
+  assert.equal(camel.paymentIntent, undefined);
+  assert.equal(camel.orderId, undefined);
+  assert.equal(camel.accountId, undefined);
 });
 
 test("existing presence and crawl records stay stale, partial, and uncertified", () => {
@@ -90,6 +108,15 @@ test("existing presence and crawl records stay stale, partial, and uncertified",
   assert.match(x402Card.limitations.join("\n"), /not an independent certification/);
   assert.ok(x402Card.observations.some((item) => item.registryStatus === "alternate"));
   assert.deepEqual(mcpCard.catalog.map((item) => item.offer), ["keep_it_working", "machine_payment_route"]);
+  assert.equal(mcpCard.observedProtocolVersion, "2025-03-26");
+  assert.match(mcpCard.limitations.join("\n"), /2026-07-28/);
+  assert.match(mcpCard.limitations.join("\n"), /unclaimed/);
+  assert.match(mcpCard.limitations.join("\n"), /server\.schema\.json/);
+  assert.doesNotMatch(mcpCard.limitations.join("\n"), /SUPPORTED_PROTOCOL_VERSIONS|mcp-admission/);
+  assert.equal(x402Card.observedX402Version, 2);
+  assert.ok(x402Card.wellKnownPaths.includes("/.well-known/x402.json"));
+  assert.ok(x402Card.wellKnownPaths.includes("/.well-known/x402"));
+  assert.match(x402Card.limitations.join("\n"), /x402Version 2/);
 });
 
 test("a current complete MCP record is checked without becoming a certification", () => {
@@ -111,7 +138,7 @@ test("a current complete MCP record is checked without becoming a certification"
   assert.equal(card.certification, false);
   assert.equal(card.livePayment, false);
   const svg = renderBadgeSvg(card);
-  assert.match(svg, /checked · 2026-11-20 · not a certification/);
+  assert.match(svg, /checked · mcp 2025-03-26 · 2026-11-20 · not a certification/);
   assert.match(svg, /scope: mcp.registry.listing, mcp.initialize/);
   assert.doesNotMatch(svg, /Agent-Verified|Agent-Tested/);
   assert.match(svg, /not a certification/);
@@ -129,7 +156,8 @@ test("HTTP 200 alone is not a pass", () => {
   const card = buildScorecard("mcp", records[0].subject, records, { now: NOW, env: {} });
   assert.notEqual(card.status, "checked");
   assert.equal(card.completeness, "incomplete");
-  assert.match(card.limitations.join("\n"), /HTTP status alone is not a pass/);
+  assert.deepEqual(card.scope, []);
+  assert.equal(card.limitations.filter((line) => /HTTP status alone is not a pass/.test(line)).length, 1);
 });
 
 test("failed and unknown observation states are preserved", () => {
@@ -168,7 +196,7 @@ test("directory and badge HTTP surfaces consume real records and refuse bad subj
   assert.equal(badge.status, 200);
   assert.match(badge.headers.get("content-type"), /image\/svg\+xml/);
   const svg = await badge.text();
-  assert.match(svg, /stale\/partial · 2026-09-03 · not a certification/);
+  assert.match(svg, /stale\/partial · mcp 2025-03-26 · 2026-09-03 · not a certification/);
   assert.match(svg, /not an independent certification/);
 
   const x402 = await fetch(`${base}/directory/x402/agents.samedaydesk.com?format=json`);
@@ -229,4 +257,129 @@ test("inaccessible records fail honestly instead of throwing a missing check", a
   const missing = await fetch(`${base}/directory/mcp/epistemedeus/x402-url-extractor?format=json`);
   assert.equal(missing.status, 503);
   assert.equal((await missing.json()).reason, "inaccessible_records");
+});
+
+function rawGet(port, urlPath) {
+  return new Promise((resolve, reject) => {
+    const req = http.request({ host: "127.0.0.1", port, path: urlPath, method: "GET" }, (res) => {
+      const chunks = [];
+      res.on("data", (chunk) => chunks.push(chunk));
+      res.on("end", () => resolve({
+        status: res.statusCode,
+        headers: res.headers,
+        body: Buffer.concat(chunks).toString("utf8"),
+      }));
+    });
+    req.on("error", reject);
+    req.end();
+  });
+}
+
+function writeJson(file, value) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, JSON.stringify(value));
+}
+
+test("failed stale incomplete badges keep partial in the visible label", () => {
+  const card = buildScorecard("mcp", { org: "example", repo: "failed-stale" }, [{
+    kind: "mcp",
+    subject: { org: "example", repo: "failed-stale" },
+    checkedAt: "2026-09-03T17:03:44Z",
+    method: "GET",
+    observations: [
+      { id: "mcp-registry-listing", method: "GET", registryVersion: "1.23.36", registryStatus: "failed" },
+      { id: "mcp-initialize", method: "unpaid initialize", serverVersion: "1.23.40", protocolVersion: "2025-03-26" },
+    ],
+  }], { now: NOW, env: {} });
+  assert.equal(card.status, "failed");
+  assert.equal(card.freshness, "stale");
+  assert.equal(card.completeness, "incomplete");
+  assert.equal(badgeStatusLabel(card), "failed/stale/partial");
+  assert.match(badgeMessage(card), /failed\/stale\/partial · mcp 2025-03-26 · 2026-09-03 · not a certification/);
+});
+
+test("empty parseable probe files do not invent SameDayDesk subjects", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "q49-empty-"));
+  writeJson(path.join(dir, "client/src/data/sellerConformanceCrawl.json"), {});
+  writeJson(path.join(dir, "fixtures/presence/meta.json"), {});
+  writeJson(path.join(dir, "fixtures/presence/listings/mcp-registry.json"), {});
+  writeJson(path.join(dir, "fixtures/presence/listings/mcp-initialize.json"), {});
+  const records = loadExistingProbeRecords(dir);
+  assert.deepEqual(records, []);
+});
+
+test("a registry listing without a GitHub repo URL is not attributed to the SDS subject", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "q49-norepo-"));
+  writeJson(path.join(dir, "client/src/data/sellerConformanceCrawl.json"), {});
+  writeJson(path.join(dir, "fixtures/presence/meta.json"), { capturedAt: FRESH, origin: "https://other.example.test" });
+  writeJson(path.join(dir, "fixtures/presence/listings/mcp-registry.json"), {
+    servers: [{
+      server: {
+        name: "io.github.someone/other-server",
+        version: "1.0.0",
+        remotes: [{ url: "https://other.example.test/mcp" }],
+      },
+    }],
+  });
+  writeJson(path.join(dir, "fixtures/presence/listings/mcp-initialize.json"), {
+    result: { protocolVersion: "2025-03-26", serverInfo: { name: "other-server", version: "1.0.0" } },
+  });
+  const records = loadExistingProbeRecords(dir);
+  assert.ok(records.every((record) => record.kind !== "mcp" || `${record.subject.org}/${record.subject.repo}` !== "epistemedeus/x402-url-extractor"));
+  assert.ok(!records.some((record) => record.kind === "mcp"));
+});
+
+test("parser refuses IP literals, blocked names, leftover authority, and mid-dot MCP ids", () => {
+  for (const host of [
+    "127.0.0.1",
+    "127.1",
+    "0x7f.0.0.1",
+    "0177.0.0.1",
+    "1.1",
+    "8.8.8.8",
+    "localhost.localdomain",
+    "foo.localhost",
+    "metadata.google.com",
+    "metadata.google.internal",
+    "example.com.",
+    "example.com:443",
+    "user:pass@example.com",
+  ]) {
+    assert.equal(isX402Host(host), false, host);
+  }
+  assert.equal(isX402Host("agents.samedaydesk.com"), true);
+  assert.equal(isX402Host("example.com"), true);
+  assert.equal(isMcpSubject("epistemedeus", "x402-url-extractor"), true);
+  assert.equal(isMcpSubject("foo..bar", "repo"), false);
+  assert.equal(isMcpSubject("a".repeat(300), "repo"), false);
+});
+
+test("directory HTTP surfaces refuse residual invalid subjects and set nosniff", async (t) => {
+  const { base } = await mount(t, { env: {} });
+  const port = Number(new URL(base).port);
+  for (const host of ["127.1", "0x7f.0.0.1", "localhost.localdomain", "metadata.google.com"]) {
+    const res = await fetch(`${base}/directory/x402/${host}?format=json`);
+    assert.equal(res.status, 404, host);
+    assert.equal((await res.json()).reason, "invalid_subject", host);
+  }
+  const encoded = await rawGet(port, "/directory/mcp/%2e%2e/etc/passwd?format=json");
+  assert.equal(encoded.status, 404);
+  assert.match(encoded.body, /invalid_subject/);
+  const midDots = await fetch(`${base}/directory/mcp/foo..bar/repo?format=json`);
+  assert.equal(midDots.status, 404);
+  assert.equal((await midDots.json()).reason, "invalid_subject");
+  const json = await fetch(`${base}/directory?format=json`);
+  assert.equal(json.headers.get("x-content-type-options"), "nosniff");
+  assert.match(json.headers.get("content-security-policy") || "", /default-src 'none'/);
+  const badge = await fetch(`${base}/directory/mcp/epistemedeus/x402-url-extractor/badge.svg`);
+  assert.equal(badge.headers.get("x-content-type-options"), "nosniff");
+  const html = await fetch(`${base}/directory/mcp/epistemedeus/x402-url-extractor`);
+  const page = await html.text();
+  assert.match(page, /protocolVersion 2025-03-26/);
+  assert.match(page, /stale\/partial/);
+  assert.match(page, /not a certification/);
+  assert.doesNotMatch(page, /mcp-admission|SUPPORTED_PROTOCOL_VERSIONS/);
+  const x402Html = await (await fetch(`${base}/directory/x402/agents.samedaydesk.com`)).text();
+  assert.match(x402Html, /x402Version 2/);
+  assert.match(x402Html, /schema unmarked|POST \(schema unmarked\)/);
 });

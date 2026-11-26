@@ -1,9 +1,27 @@
-const PRIVATE_KEY = /^(email|authorization|cookie|client_secret|payment_intent|payment_intent_id|customer_id|customer_email|order_id|account_id|phone|address|card)$/i;
+const PRIVATE_NORMALIZED = new Set([
+  "email",
+  "authorization",
+  "cookie",
+  "clientsecret",
+  "paymentintent",
+  "paymentintentid",
+  "customerid",
+  "customeremail",
+  "orderid",
+  "accountid",
+  "phone",
+  "address",
+  "card",
+]);
 const PRIVATE_HINT = /secret|token|password|credential|private[_-]?key|api[_-]?key/i;
+
+function normalizedKey(key) {
+  return String(key).toLowerCase().replace(/[_-]/g, "");
+}
 
 export function isPrivateField(key) {
   if (typeof key !== "string" || key.length === 0) return false;
-  return PRIVATE_KEY.test(key) || PRIVATE_HINT.test(key);
+  return PRIVATE_NORMALIZED.has(normalizedKey(key)) || PRIVATE_HINT.test(key);
 }
 
 export function publicFacts(value, depth = 0) {

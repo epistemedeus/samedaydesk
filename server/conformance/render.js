@@ -1,3 +1,4 @@
+import { badgeMessage, badgeStatusLabel } from "./badge.js";
 import { DISCLAIMER } from "./scorecard.js";
 
 function escapeHtml(value) {
@@ -5,7 +6,8 @@ function escapeHtml(value) {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function catalogLinks(catalog) {
@@ -17,20 +19,52 @@ function catalogLinks(catalog) {
   return `<ul>${items}</ul>`;
 }
 
+function observationStatus(item) {
+  const status = item.registryStatus || item.status || "unmarked";
+  if (item.unpaid402OutputSchemaPresent === false) return `${status} · schema unmarked`;
+  return status;
+}
+
 function observationList(observations) {
   if (!observations?.length) return "<p>No observations are on record.</p>";
   return `<ul>${observations.map((item) => {
-    const status = item.registryStatus || item.status || "unmarked";
-    const method = item.method || "unspecified method";
+    const status = observationStatus(item);
+    const method = item.unpaid402OutputSchemaPresent === false && String(item.method || "").toUpperCase() === "POST"
+      ? "POST (schema unmarked)"
+      : (item.method || "unspecified method");
     const when = item.lastVerified || item.updatedAt || item.publishedAt || "";
     const name = item.id || item.route || item.registryName || "observation";
-    return `<li><code>${escapeHtml(name)}</code> · ${escapeHtml(method)} · ${escapeHtml(status)}${when ? ` · ${escapeHtml(when)}` : ""}</li>`;
+    const version = item.protocolVersion
+      ? ` · protocolVersion ${item.protocolVersion}`
+      : item.x402Version != null
+        ? ` · x402Version ${item.x402Version}`
+        : item.registrySchema
+          ? ` · listing schema ${item.registrySchema}`
+          : "";
+    return `<li><code>${escapeHtml(name)}</code> · ${escapeHtml(method)} · ${escapeHtml(status)}${escapeHtml(version)}${when ? ` · ${escapeHtml(when)}` : ""}</li>`;
   }).join("")}</ul>`;
 }
 
+function versionLine(scorecard) {
+  if (scorecard.kind === "mcp") {
+    const observed = scorecard.observedProtocolVersion
+      ? `Observed MCP protocolVersion ${scorecard.observedProtocolVersion}.`
+      : "No MCP protocol version was observed.";
+    const schema = scorecard.registrySchema
+      ? ` Registry listing document schema is ${scorecard.registrySchema}, which is not a protocol version.`
+      : "";
+    return `${observed}${schema}`;
+  }
+  if (scorecard.observedX402Version != null) {
+    const paths = (scorecard.wellKnownPaths || []).join(", ");
+    return `Observed x402Version ${scorecard.observedX402Version}${paths ? ` at ${paths}` : ""}.`;
+  }
+  return "No x402Version was observed.";
+}
+
 export function renderIndexHtml(directory, { origin = "https://samedaydesk.com" } = {}) {
-  const mcp = (directory.mcp || []).map((card) => `<li><a href="/directory/mcp/${escapeHtml(card.subjectKey)}">${escapeHtml(card.subjectKey)}</a> · ${escapeHtml(card.status)} · ${escapeHtml(card.checkedAt || "no check time")}</li>`).join("");
-  const x402 = (directory.x402 || []).map((card) => `<li><a href="/directory/x402/${escapeHtml(card.subjectKey)}">${escapeHtml(card.subjectKey)}</a> · ${escapeHtml(card.status)} · ${escapeHtml(card.checkedAt || "no check time")}</li>`).join("");
+  const mcp = (directory.mcp || []).map((card) => `<li><a href="/directory/mcp/${escapeHtml(card.subjectKey)}">${escapeHtml(card.subjectKey)}</a> · ${escapeHtml(badgeStatusLabel(card))} · ${escapeHtml(card.checkedAt || "no check time")}</li>`).join("");
+  const x402 = (directory.x402 || []).map((card) => `<li><a href="/directory/x402/${escapeHtml(card.subjectKey)}">${escapeHtml(card.subjectKey)}</a> · ${escapeHtml(badgeStatusLabel(card))} · ${escapeHtml(card.checkedAt || "no check time")}</li>`).join("");
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>SameDayDesk MCP and x402 directory</title>
 <meta name="description" content="Public MCP and x402 check records. Not a certification.">
@@ -56,10 +90,11 @@ export function renderScorecardHtml(scorecard) {
 <meta name="description" content="Public ${escapeHtml(scorecard.kind)} check recorded at ${escapeHtml(scorecard.checkedAt || "an unknown time")}. Not a certification.">
 </head><body>
 <h1>${escapeHtml(scorecard.subjectKey)}</h1>
-<p>Status: <strong>${escapeHtml(scorecard.status)}</strong>. Freshness: ${escapeHtml(scorecard.freshness)}. Completeness: ${escapeHtml(scorecard.completeness)}. Checked at ${escapeHtml(scorecard.checkedAt || "an unknown time")}.</p>
+<p>Status: <strong>${escapeHtml(badgeStatusLabel(scorecard))}</strong>. Freshness: ${escapeHtml(scorecard.freshness)}. Completeness: ${escapeHtml(scorecard.completeness)}. Checked at ${escapeHtml(scorecard.checkedAt || "an unknown time")}.</p>
 <p>Methods: ${escapeHtml((scorecard.methods || []).join("; ") || "unspecified")}.</p>
-<p>Scope: ${escapeHtml((scorecard.scope || []).join(", "))}.</p>
-<p><img alt="${escapeHtml(scorecard.subjectKey)} SameDayDesk check badge" src="${escapeHtml(badge)}"></p>
+<p>Scope: ${escapeHtml((scorecard.scope || []).join(", ") || "unspecified")}.</p>
+<p>${escapeHtml(versionLine(scorecard))}</p>
+<p><img alt="${escapeHtml(badgeMessage(scorecard))}" src="${escapeHtml(badge)}"></p>
 <p>Copy-paste badge: <code>![SameDayDesk ${escapeHtml(scorecard.kind)} check](${escapeHtml(badge)})</code></p>
 <h2>Observations</h2>
 ${observationList(scorecard.observations)}

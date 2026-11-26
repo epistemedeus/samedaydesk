@@ -1,27 +1,15 @@
 import express from "express";
-import { isIP } from "node:net";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { renderBadgeSvg } from "./badge.js";
 import { loadExistingProbeRecords, mcpSubjectKey, x402SubjectKey } from "./records.js";
 import { renderIndexHtml, renderScorecardHtml } from "./render.js";
 import { buildScorecard, listDirectory } from "./scorecard.js";
+import { isMcpSubject, isX402Host } from "./subjects.js";
 
 const DEFAULT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
-const MCP_ID = /^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$/;
-const HOST = /^(?=.{1,253}$)[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/i;
-const BLOCKED_HOST_SUFFIX = /(?:^|\.)(localhost|local|internal|in-addr\.arpa|ip6\.arpa)$/i;
 
-export function isMcpSubject(org, repo) {
-  return MCP_ID.test(org || "") && MCP_ID.test(repo || "");
-}
-
-export function isX402Host(host) {
-  const value = String(host || "").toLowerCase();
-  if (!HOST.test(value) || value.includes("/") || value.includes("..")) return false;
-  if (isIP(value) || BLOCKED_HOST_SUFFIX.test(value)) return false;
-  return true;
-}
+export { isMcpSubject, isX402Host };
 
 function loadCards(load) {
   try {
@@ -32,10 +20,19 @@ function loadCards(load) {
   }
 }
 
-function recordsUnavailable(res, wantsJsonResponse) {
+function setDirectoryHeaders(res, kind) {
   res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  if (kind === "html") {
+    res.setHeader("Content-Security-Policy", "default-src 'none'; img-src 'self'");
+  } else {
+    res.setHeader("Content-Security-Policy", "default-src 'none'");
+  }
+}
+
+function recordsUnavailable(res, wantsJsonResponse) {
+  setDirectoryHeaders(res, "json");
   const body = { error: "records unavailable", reason: "inaccessible_records" };
-  if (wantsJsonResponse) return res.status(503).json(body);
   return res.status(503).type("json").json(body);
 }
 
@@ -46,9 +43,17 @@ function wantsJson(req) {
 }
 
 function sendScorecard(req, res, scorecard) {
-  res.setHeader("Cache-Control", "no-cache");
-  if (wantsJson(req)) return res.json(scorecard);
+  if (wantsJson(req)) {
+    setDirectoryHeaders(res, "json");
+    return res.json(scorecard);
+  }
+  setDirectoryHeaders(res, "html");
   return res.type("html").send(renderScorecardHtml(scorecard));
+}
+
+function sendBadge(res, scorecard) {
+  setDirectoryHeaders(res, "svg");
+  return res.type("image/svg+xml").send(renderBadgeSvg(scorecard));
 }
 
 export function createConformanceRouter(options = {}) {
@@ -67,8 +72,11 @@ export function createConformanceRouter(options = {}) {
     const loaded = loadCards(load);
     if (!loaded.ok) return recordsUnavailable(res, wantsJson(req));
     const directory = listDirectory(loaded.records, optionsNow());
-    res.setHeader("Cache-Control", "no-cache");
-    if (wantsJson(req)) return res.json(directory);
+    if (wantsJson(req)) {
+      setDirectoryHeaders(res, "json");
+      return res.json(directory);
+    }
+    setDirectoryHeaders(res, "html");
     return res.type("html").send(renderIndexHtml(directory));
   });
 
@@ -80,9 +88,7 @@ export function createConformanceRouter(options = {}) {
     const subjectKey = `${org}/${repo}`.toLowerCase();
     const records = loaded.records.filter((record) => record.kind === "mcp" && mcpSubjectKey(record.subject) === subjectKey);
     if (!records.length) return res.status(404).json({ error: "Not found", reason: "no_public_check" });
-    const scorecard = buildScorecard("mcp", records[0].subject, records, optionsNow());
-    res.setHeader("Cache-Control", "no-cache");
-    res.type("image/svg+xml").send(renderBadgeSvg(scorecard));
+    return sendBadge(res, buildScorecard("mcp", records[0].subject, records, optionsNow()));
   });
 
   router.get(["/x402/:host/badge.svg", "/x402/:host.svg"], (req, res) => {
@@ -92,9 +98,7 @@ export function createConformanceRouter(options = {}) {
     if (!loaded.ok) return recordsUnavailable(res, true);
     const records = loaded.records.filter((record) => record.kind === "x402" && x402SubjectKey(record.subject) === host);
     if (!records.length) return res.status(404).json({ error: "Not found", reason: "no_public_check" });
-    const scorecard = buildScorecard("x402", records[0].subject, records, optionsNow());
-    res.setHeader("Cache-Control", "no-cache");
-    res.type("image/svg+xml").send(renderBadgeSvg(scorecard));
+    return sendBadge(res, buildScorecard("x402", records[0].subject, records, optionsNow()));
   });
 
   router.get("/mcp/:org/:repo", (req, res) => {
@@ -116,6 +120,11 @@ export function createConformanceRouter(options = {}) {
     const records = loaded.records.filter((record) => record.kind === "x402" && x402SubjectKey(record.subject) === host);
     if (!records.length) return res.status(404).json({ error: "Not found", reason: "no_public_check" });
     sendScorecard(req, res, buildScorecard("x402", records[0].subject, records, optionsNow()));
+  });
+
+  router.use((req, res) => {
+    setDirectoryHeaders(res, "json");
+    return res.status(404).json({ error: "Not found", reason: "invalid_subject" });
   });
 
   return router;
