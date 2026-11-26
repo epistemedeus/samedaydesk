@@ -7,8 +7,9 @@ import { promisify } from "node:util";
 import test from "node:test";
 import express from "express";
 import { SignJWT } from "jose";
+import { watchOffer } from "../lib/care-contract.js";
 import { firstUseIntake } from "../lib/first-use-intake.js";
-import { AGENT_FIRST_USE_REPORT as offer, getOffer } from "../pricing.js";
+import { AGENT_FIRST_USE_REPORT as offer, firstUseCheckoutEnabled, getOffer } from "../pricing.js";
 
 const details = "From a cold start, find a public example and complete one read-only tool call.";
 const intake = { targetUrl: "https://example.com/mcp", details };
@@ -17,7 +18,26 @@ const other = "00000000-0000-0000-0000-000000000002";
 
 test("Q49 is distinct from the seller report and validates public scope without fetching", () => {
   assert.equal(getOffer(offer).amount, 4900);
+  assert.equal(getOffer(offer).accountOnly, true);
   assert.equal(getOffer("seller_contract_repair").amount, 49000);
+  assert.equal(getOffer("seller_contract_repair").accountOnly, undefined);
+  assert.equal(firstUseCheckoutEnabled({}), false);
+  assert.equal(firstUseCheckoutEnabled({ SDS_AGENT_FIRST_USE_REPORT: "true" }), false);
+  assert.equal(firstUseCheckoutEnabled({ SDS_AGENT_FIRST_USE_REPORT: "1" }), true);
+  const manifest = JSON.parse(readFileSync(new URL("../../release/offers.json", import.meta.url), "utf8"));
+  const row = manifest.offers.find(item => item.offer === offer);
+  const seller = manifest.offers.find(item => item.id === "seller_conformance_report");
+  const watch = manifest.notInHarnessYet.find(item => item.id === "legacy_skill_watch");
+  assert.equal(row.cents, 4900);
+  assert.equal(row.kind, "account");
+  assert.equal(row.switchedOn, false);
+  assert.equal(row.status, "unavailable");
+  assert.equal(row.entry, undefined);
+  assert.equal(row.endpoint, undefined);
+  assert.equal(seller.cents, 49000);
+  assert.equal(watch.cents, 1200);
+  assert.equal(watch.interval, "month");
+  assert.equal(watchOffer.cents, 1200);
   assert.deepEqual(firstUseIntake(intake), { ...intake, uploadPath: "" });
   for (const targetUrl of ["http://example.com", "https://127.0.0.1/", "https://[::1]/", "https://localhost/",
     "https://host.internal/", "https://auth:password@example.com/", "https://example.com:8080/", "https://example.com/?secret=x",
@@ -30,7 +50,10 @@ test("Q49 is distinct from the seller report and validates public scope without 
 
 test("Q49 through signed fixture webhook, account checkout, operating queue and private delivery", async t => {
   const dir = mkdtempSync(join(tmpdir(), "sds-q49-"));
-  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  t.after(() => {
+    rmSync(dir, { recursive: true, force: true });
+    delete process.env.SDS_AGENT_FIRST_USE_REPORT;
+  });
   const orders = new Map(), objects = new Map();
   let loseOrderReply = false, loseUploadReply = false, loseDeliveryReply = false, signedLinks = 0;
   const api = express();
@@ -136,8 +159,20 @@ test("Q49 through signed fixture webhook, account checkout, operating queue and 
   assert.equal((await create()).status, 404);
   assert.equal((await call(root + "/hosted/" + offer)).status, 404);
   assert.equal((await call(root + "/hosted/" + offer, { body: { method: "card" } })).status, 404);
+  assert.equal((await call(root + "/hosted/" + offer, { body: { method: "base_usdc" } })).status, 404);
   assert.equal(creates, 0);
+  for (const value of ["0", "true", "yes"]) {
+    process.env.SDS_AGENT_FIRST_USE_REPORT = value;
+    assert.equal((await create()).status, 404, value);
+    assert.deepEqual((await call(root + "/offers/" + offer, { auth: "" })).body.methods, [], value);
+    assert.equal((await call(root + "/hosted/" + offer, { body: { method: "base_usdc" } })).status, 404, value);
+  }
   process.env.SDS_AGENT_FIRST_USE_REPORT = "1";
+  assert.equal((await call(root + "/hosted/" + offer)).status, 404);
+  assert.equal((await call(root + "/hosted/" + offer, { body: { method: "card" } })).status, 404);
+  assert.equal((await call(root + "/hosted/" + offer, { body: { method: "base_usdc" } })).status, 404);
+  assert.deepEqual((await call(root + "/offers/" + offer, { auth: "" })).body,
+    { offer, cents: 4900, currency: "usd", status: "available", methods: ["card"] });
   assert.equal((await create({}, unverified)).status, 403);
   assert.equal((await create({ intake: null })).status, 400);
   assert.equal(creates, 0);
@@ -147,6 +182,8 @@ test("Q49 through signed fixture webhook, account checkout, operating queue and 
   assert.equal(created.status, 200);
   assert.equal(created.body.amount, 4900);
   assert.equal(created.body.usdcAvailable, false);
+  assert.equal(created.body.paymentUrl, undefined);
+  assert.equal(created.body.rail, undefined);
   assert.equal(intentKeys.size, 1);
   const { paymentAttemptId: attempt, paymentIntentId: id } = created.body;
   const prepare = (scope, auth = token) => call(root + "/prepare-payment", { body: { payment_attempt_id: attempt, intake: scope }, auth });
@@ -167,6 +204,7 @@ test("Q49 through signed fixture webhook, account checkout, operating queue and 
     return call("/api/stripe/webhook", { body: payload, auth: "", headers: { "stripe-signature": signature } });
   };
   for (const patch of [{ amount: 49000 }, { amount_received: 1 }, { currency: "eur" }, { livemode: true },
+    { metadata: { ...intent.metadata, uid: other } },
     { metadata: { ...intent.metadata, offer: "seller_contract_repair" } }, { metadata: { ...intent.metadata, payment_attempt_id: "" } }]) {
     assert.equal((await signed({ ...intent, ...patch })).status, 500);
     assert.equal(orders.size, 0);
@@ -178,6 +216,8 @@ test("Q49 through signed fixture webhook, account checkout, operating queue and 
   assert.equal(orders.size, 1);
   const order = "order_" + id;
   assert.equal((await verify(id)).body.orderId, order);
+  assert.equal((await verify(id)).body.orderId, order);
+  assert.equal(orders.size, 1);
   assert.equal((await signed(intent)).status, 200);
   assert.equal((await signed(intent, "evt_q49_replay")).status, 200);
   assert.equal(orders.size, 1);
@@ -195,8 +235,12 @@ test("Q49 through signed fixture webhook, account checkout, operating queue and 
   writeFileSync(pdf, "%PDF-1.7 fixture report, never a customer artifact", { mode: 0o600 });
   const refs = { recordingUrl: "https://recording.example.com/view/fixture", recordingAccessConfirmed: true,
     fixPrUrl: "https://github.com/example/fixture/pull/1" };
-  writeFileSync(links, JSON.stringify(refs), { mode: 0o600 });
+  writeFileSync(links, JSON.stringify({ recordingAccessConfirmed: true }), { mode: 0o600 });
   const deliver = () => run("deliver", "--order", order, "--report", pdf, "--links", links);
+  await assert.rejects(deliver());
+  assert.equal(objects.size, 0);
+  assert.equal(orders.get(order).status, "received");
+  writeFileSync(links, JSON.stringify(refs), { mode: 0o600 });
   loseUploadReply = loseDeliveryReply = true;
   assert.deepEqual(JSON.parse((await deliver()).stdout), { status: "delivered", reused: true });
   assert.deepEqual(JSON.parse((await deliver()).stdout), { status: "delivered", reused: true });
@@ -214,6 +258,23 @@ test("Q49 through signed fixture webhook, account checkout, operating queue and 
   writeFileSync(links, JSON.stringify({ ...refs, recordingUrl: "https://recording.example.com/view/changed" }));
   await assert.rejects(deliver());
   process.env.SDS_AGENT_FIRST_USE_REPORT = "1";
+  const quiet = "00000000-0000-0000-0000-000000000004";
+  const quietToken = await sign(quiet, true);
+  const quietCreated = (await create({}, quietToken)).body;
+  const quietIntent = intents.get(quietCreated.paymentIntentId);
+  Object.assign(quietIntent, { status: "succeeded", amount_received: 4900 });
+  const quietOrder = "order_" + quietIntent.id;
+  assert.equal((await verify(quietIntent.id, quietToken)).body.orderId, quietOrder);
+  const quietLinks = join(dir, "links-no-pr.json");
+  writeFileSync(quietLinks, JSON.stringify({ recordingUrl: refs.recordingUrl, recordingAccessConfirmed: true }), { mode: 0o600 });
+  assert.deepEqual(JSON.parse((await run("deliver", "--order", quietOrder, "--report", pdf, "--links", quietLinks)).stdout),
+    { status: "delivered", reused: false });
+  const quietRead = await call(root + "/orders/" + quietOrder + "/delivery", { auth: quietToken });
+  assert.equal(quietRead.status, 200);
+  assert.equal(quietRead.body.delivery.recordingUrl, refs.recordingUrl);
+  assert.equal(quietRead.body.delivery.fixPrUrl, null);
+  assert.equal((await call(root + "/orders/" + quietOrder + "/delivery", { auth: token })).status, 404);
+  assert.equal((await call(root + "/orders/" + quietOrder + "/delivery", { auth: otherToken })).status, 404);
   for (const [uid, kind] of [[other, "missing"], ["00000000-0000-0000-0000-000000000003", "altered"]]) {
     const buyerToken = await sign(uid, true);
     const next = (await create({}, buyerToken)).body;
@@ -224,4 +285,28 @@ test("Q49 through signed fixture webhook, account checkout, operating queue and 
     assert.equal(orders.get("order_" + object.id).status, "intake_required");
   }
   assert.deepEqual(JSON.parse((await run("queue", "--output", join(dir, "after.json"))).stdout), { received: 0 });
+});
+
+test("Q49 stays off care card and agent USDC entrances and cannot settle there", async () => {
+  const { createCareService } = await import("../lib/care-service.js");
+  const { CareError } = await import("../lib/care-contract.js");
+  let reserved = 0;
+  const care = createCareService({
+    store: { quotes: {}, reserve: async () => { reserved += 1; throw new Error("must not reserve"); } },
+    stripe: { charges: { retrieve: async () => { throw new Error("must not retrieve a charge"); } } },
+    secret: "fixture-only-care-secret-32bytes!!",
+    origin: "https://samedaydesk.com",
+    live: false,
+    orderPayments: true,
+  });
+  const id = "00000000-0000-4000-8000-000000000099";
+  await assert.rejects(() => care.start(offer, id), error => error instanceof CareError && error.status === 400);
+  await assert.rejects(() => care.startUsdc(offer, id, "buyer@example.test"), error => error instanceof CareError && error.status === 400);
+  await assert.rejects(() => care.recordHosted({
+    id: "cs_test_q49", livemode: false, mode: "payment", status: "complete", payment_status: "paid",
+    payment_intent: "pi_q49_hosted", amount_total: 4900, currency: "usd", metadata: { offer },
+  }, {
+    id: "pi_q49_hosted", livemode: false, status: "succeeded", amount: 4900, currency: "usd", metadata: { offer },
+  }), error => error instanceof CareError && error.status === 409);
+  assert.equal(reserved, 0);
 });
