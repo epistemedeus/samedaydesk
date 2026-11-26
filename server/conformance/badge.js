@@ -27,9 +27,16 @@ export function badgeLabel(scorecard) {
   return scorecard.kind === "mcp" ? "SameDayDesk MCP check" : "SameDayDesk x402 check";
 }
 
-export function badgeMessage(scorecard) {
+export function badgeStatusLabel(scorecard) {
   const status = scorecard.status || "unknown";
-  return `${status} · ${checkedDay(scorecard.checkedAt)} · not a certification`;
+  if (status === "stale" && scorecard.completeness === "incomplete") return "stale/partial";
+  if (status === "failed" && scorecard.freshness === "stale") return "failed/stale";
+  if (status === "failed" && scorecard.completeness === "incomplete") return "failed/partial";
+  return status;
+}
+
+export function badgeMessage(scorecard) {
+  return `${badgeStatusLabel(scorecard)} · ${checkedDay(scorecard.checkedAt)} · not a certification`;
 }
 
 export function renderBadgeSvg(scorecard) {
