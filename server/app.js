@@ -29,6 +29,7 @@ import { mountApexDeclarations } from "./lib/apex-declarations.js";
 import marketObservationsRouter from "./routes/market-observations.js";
 import observatoryRouter from "./routes/observatory.js";
 import { createX402QuoteRouter } from "./routes/x402-quote.js";
+import { createConformanceRouter } from "./conformance/routes.js";
 import { pulseMiddleware } from "./lib/pulse.js";
 import { commerceVisit } from "./lib/commerce-journey.js";
 import { discoveryLogMiddleware, fileSink } from "./lib/discovery-log/log.js";
@@ -211,6 +212,10 @@ app.use("/mcp", mcpRouter);
 
 // Free agent-readiness page. HTML for people, JSON with ?format=json.
 app.use("/agent-readiness", agentReadinessRouter);
+
+// Public MCP/x402 check directory and dynamic SVG badges. Server-rendered,
+// before the SPA fallback. Consumes existing probe records only.
+app.use("/directory", createConformanceRouter());
 
 // Domain-ownership proof for the MCP registry (lets us list the remote MCP
 // server under the com.samedaydesk namespace).
