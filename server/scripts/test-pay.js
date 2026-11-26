@@ -20,6 +20,10 @@ if (!uid) {
   process.exit(1);
 }
 const offer = OFFERS[slug];
+if (offer?.accountOnly) {
+  console.error("Use the verified-account checkout with a frozen task for this offer.");
+  process.exit(1);
+}
 if (!offer) {
   console.error(`unknown offer '${slug}'. one of: ${Object.keys(OFFERS).join(", ")}`);
   process.exit(1);

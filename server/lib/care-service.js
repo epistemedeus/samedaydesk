@@ -341,6 +341,7 @@ export function createCareService({ store, stripe, secret, origin, live, portalC
     const meta = { ...intent.metadata, ...session.metadata };
     const offer = typeof meta.offer === "string" && /^[a-z0-9_]{1,64}$/.test(meta.offer) ? meta.offer : "custom_quote";
     const known = getOffer(offer);
+    if (known?.accountOnly) throw new CareError(409, "This offer requires its account checkout.");
     if (known && known.amount !== session.amount_total) throw new CareError(409, "The hosted price does not match the offer.");
     const label = known?.label || (typeof meta.label === "string" && meta.label.length <= 160 ? meta.label : "Hosted work");
     const result = /^sds_legacy_/.test(session.client_reference_id || "") ? await store.legacyOrders.card(session,intent,live) : meta.sds_hosted_order ? await store.hostedRail.cardPaid({key:meta.sds_hosted_order,

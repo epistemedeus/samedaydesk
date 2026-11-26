@@ -56,7 +56,9 @@ export async function createInstantLink({ amountCents, description }) {
 
 async function main() {
   const results = [];
-  for (const [slug, offer] of Object.entries(OFFERS)) results.push(await ensureOffer(slug, offer));
+  for (const [slug, offer] of Object.entries(OFFERS)) {
+    if (!offer.accountOnly) results.push(await ensureOffer(slug, offer));
+  }
   console.log(JSON.stringify(results, null, 2));
 }
 

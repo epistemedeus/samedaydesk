@@ -1,6 +1,8 @@
 // Server-authoritative pricing. The client sends an offer SLUG only — never an amount.
 // Adding a new gig = one entry here + one card in the client service config. Extensible by design.
 export const CURRENCY = "usd";
+export const AGENT_FIRST_USE_REPORT = "agent_first_use_report";
+export const firstUseCheckoutEnabled = (env = process.env) => env.SDS_AGENT_FIRST_USE_REPORT === "1";
 
 export const OFFERS = {
   agent_workflow:        { amount: 14900, label: "Agent Workflow Integration", category: "build" },
@@ -8,6 +10,7 @@ export const OFFERS = {
   machine_payment_route: { amount: 49900, label: "x402 + MPP Payment Route", category: "payments" },
   agent_storefront:      { amount: 99900, label: "Agent Commerce Storefront", category: "payments", bestValue: true },
   seller_contract_repair: { amount: 49000, label: "One-route seller contract repair", category: "repair" },
+  [AGENT_FIRST_USE_REPORT]: { amount: 4900, label: "Agent first-use report", category: "report", accountOnly: true },
   // custom_quote: operator sets the amount on an instant Payment Link.
 };
 

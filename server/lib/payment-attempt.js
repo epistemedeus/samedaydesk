@@ -7,7 +7,8 @@
 // a new attempt. Immutable offer facts are bound to the attempt; changing them
 // require resolving the existing purchase before a new attempt is admitted.
 import { createHash } from "node:crypto";
-import { getOffer, CURRENCY } from "../pricing.js";
+import { getOffer, CURRENCY, AGENT_FIRST_USE_REPORT, firstUseCheckoutEnabled } from "../pricing.js";
+import { firstUseIntake, firstUseIntentMatches, intakeDigest, storedFirstUseIntake } from "./first-use-intake.js";
 import { releaseRunOf } from "./release-run.js";
 import {
   PAYMENT_ATTEMPT_STATUS,
@@ -124,13 +125,32 @@ export async function createOfferPaymentIntent({
   email,
   offerSlug,
   uploadPath = "",
+  intake,
   paymentAttemptId = null,
-  store = paymentAttemptStoreDeps.getStore(),
+  store,
   newAttemptId = paymentAttemptStoreDeps.newAttemptId,
 } = {}) {
   const offer = getOffer(offerSlug);
   if (!offer) return { ok: false, status: 400, error: "Unknown offer" };
+  const firstUse = offerSlug === AGENT_FIRST_USE_REPORT;
+  const live = process.env.SDS_PRIVATE_PREVIEW !== "1";
+  if (firstUse && !firstUseCheckoutEnabled()) return { ok: false, status: 404, error: "Offer is unavailable" };
+  const firstUseSnapshot = firstUse ? firstUseIntake(intake) : null;
+  if (firstUse && (!firstUseSnapshot || uploadPath)) return { ok: false, status: 400, error: "Provide a public HTTPS tool URL and a task." };
   if (!stripeClient) return { ok: false, status: 503, error: "Payments not configured" };
+  store ??= paymentAttemptStoreDeps.getStore();
+  const firstUseDigest = firstUseSnapshot && intakeDigest(firstUseSnapshot);
+  const sameFirstUse = row => !firstUse || (storedFirstUseIntake(row) && row.intake_hash === firstUseDigest && !row.upload_path &&
+    (!row.checkout_rail || row.checkout_rail === "stripe"));
+  if (firstUse && paymentAttemptId) {
+    const requested = await store.getById(paymentAttemptId);
+    if (!requested || requested.user_id !== uid || requested.offer !== offerSlug) {
+      return { ok: false, status: 404, error: "Payment attempt not found" };
+    }
+    if (requested.status === PAYMENT_ATTEMPT_STATUS.SUCCEEDED) {
+      return { ok: false, status: 409, error: "This payment is already complete. Open your orders." };
+    }
+  }
 
   const normalizedUpload = normalizeUploadPath(uploadPath);
   const factsHash = hashPaymentAttemptFacts({
@@ -149,10 +169,15 @@ export async function createOfferPaymentIntent({
   });
 
   const selectedRail = row => row?.checkout_rail === "switching" || row?.checkout_rail === "usdc";
+  const changedTask = () => ({ ok: false, status: 409, error: "The saved task differs. Resolve that payment before continuing." });
+  const unreceived = () => ({ ok: false, status: 503, error: "Payment status was not received. Resume the same payment later." });
+  if (attempt && !sameFirstUse(attempt)) return changedTask();
   if (selectedRail(attempt)) return { ok: true, rail: attempt.checkout_rail, railId: attempt.rail_id, attemptId: attempt.id,
     intakeSnapshot: attempt.intake_snapshot, offer };
   if (attempt) {
     const resolved = await resolveReusableIntent(stripeClient, attempt);
+    if (firstUse && resolved.intent && (resolved.intent.id !== attempt.stripe_payment_intent ||
+        !firstUseIntentMatches(resolved.intent, attempt, live))) return unreceived();
     if (resolved.reusable && resolved.intent) {
       if (attempt.facts_hash !== factsHash) {
         return { ok: false, status: 409, error: "An existing payment has different purchase facts. Resolve or cancel it before starting a changed purchase." };
@@ -168,6 +193,7 @@ export async function createOfferPaymentIntent({
       };
     }
     if (resolved.terminal === "succeeded") {
+      if (firstUse) return { ok: false, status: 409, error: "This payment is already complete. Check your orders before starting again." };
       await markPaymentAttemptSucceeded({
         store,
         attemptId: attempt.id,
@@ -202,6 +228,7 @@ export async function createOfferPaymentIntent({
       status: PAYMENT_ATTEMPT_STATUS.OPEN,
       stripe_payment_intent: null,
       facts_hash: factsHash,
+      ...(firstUseSnapshot && { intake_snapshot: firstUseSnapshot, intake_hash: firstUseDigest, checkout_rail: "stripe" }),
       stripe_create_params: {
         amount: offer.amount,
         currency: CURRENCY,
@@ -220,6 +247,7 @@ export async function createOfferPaymentIntent({
     });
   }
 
+  if (!sameFirstUse(attempt)) return changedTask();
   if (selectedRail(attempt)) return { ok: true, rail: attempt.checkout_rail, railId: attempt.rail_id, attemptId: attempt.id,
     intakeSnapshot: attempt.intake_snapshot, offer };
   if (attempt.facts_hash !== factsHash) {
@@ -244,7 +272,10 @@ export async function createOfferPaymentIntent({
     { idempotencyKey },
   );
 
-  await store.update(attempt.id, { stripe_payment_intent: intent.id });
+  if (firstUse && (!intent?.id || !firstUseIntentMatches(intent, attempt, live))) return unreceived();
+  const bound = await store.update(attempt.id, { stripe_payment_intent: intent.id });
+  if (firstUse && (bound?.stripe_payment_intent !== intent.id || bound.user_id !== uid ||
+      bound.offer !== offerSlug || !sameFirstUse(bound))) return unreceived();
 
   return {
     ok: true,
@@ -264,6 +295,16 @@ export async function preparePaymentIntake({
 } = {}) {
   const attempt = paymentAttemptId && await store.getById(paymentAttemptId);
   if (!attempt || attempt.user_id !== uid) return { ok: false, status: 404, error: "Payment attempt not found" };
+  if (attempt.offer === AGENT_FIRST_USE_REPORT) {
+    if (!firstUseCheckoutEnabled()) return { ok: false, status: 404, error: "Offer is unavailable" };
+    const snapshot = firstUseIntake(intake);
+    if (!snapshot) return { ok: false, status: 400, error: "Provide the saved public tool URL and task." };
+    if (!storedFirstUseIntake(attempt) || intakeDigest(snapshot) !== attempt.intake_hash ||
+        attempt.status !== PAYMENT_ATTEMPT_STATUS.OPEN || !attempt.stripe_payment_intent) {
+      return { ok: false, status: 409, error: "This payment cannot accept a different task." };
+    }
+    return { ok: true, intakeSnapshot: snapshot };
+  }
   const details = typeof intake?.details === "string" ? intake.details : "";
   const uploadPath = typeof intake?.uploadPath === "string" ? intake.uploadPath : "";
   if (details.length > 10000 || uploadPath.length > 1024 || (uploadPath &&
