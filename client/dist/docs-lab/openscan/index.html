@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OpenScan Agent Documentation Case Study | SameDayDesk Docs Lab</title>
+<meta name="description" content="A transparent open-source documentation case study: seven OpenScan guides indexed into a reproducible Sourcey-generated llms.txt, proposed upstream in PR #395." />
+<link rel="canonical" href="https://samedaydesk.com/docs-lab/openscan/" />
+<meta name="robots" content="index,follow" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="OpenScan agent documentation case study" />
+<meta property="og:description" content="From scattered project Markdown to a pinned, reproducible llms.txt and upstream adoption PR." />
+<meta property="og:url" content="https://samedaydesk.com/docs-lab/openscan/" />
+<meta property="og:image" content="https://samedaydesk.com/og.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "headline": "OpenScan agent documentation case study",
+      "datePublished": "2026-08-05",
+      "dateModified": "2026-08-05",
+      "author": {
+        "@type": "Organization",
+        "name": "SameDayDesk",
+        "url": "https://samedaydesk.com/"
+      },
+      "mainEntityOfPage": "https://samedaydesk.com/docs-lab/openscan/",
+      "about": "Reproducible agent-readable documentation and upstream open-source adoption"
+    },
+    {
+      "@type": "Service",
+      "name": "Agent-ready documentation build",
+      "serviceType": "Technical documentation and llms.txt implementation",
+      "provider": {
+        "@type": "Organization",
+        "name": "SameDayDesk",
+        "url": "https://samedaydesk.com/"
+      },
+      "description": "Turn existing project documentation and source into a reproducible agent-readable index, deploy it on the project's own domain, and prepare the adoption pull request."
+    }
+  ]
+}
+</script>
+<style>
+  :root { --bg:#f4f1ea; --card:#f8f5ee; --ink:#1a1a1a; --dim:#55524c; --line:#c9c4b8; --oxide:#9e3b2e; --good:#34723e; --lime:#ccff00; }
+  * { box-sizing:border-box; }
+  html { background:var(--bg); }
+  body { margin:0; color:var(--ink); background:var(--bg); font:16px/1.65 Inter,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:52rem; margin:0 auto; padding:3rem 1.25rem 5rem; }
+  a { color:var(--oxide); }
+  .eyebrow { margin:0 0 1rem; color:var(--oxide); font:600 12px/1 ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; }
+  h1 { margin:.2em 0; font-size:clamp(1.9rem,1.3rem + 2.2vw,3rem); line-height:1.08; letter-spacing:-.025em; }
+  h2 { margin:2.4rem 0 .55rem; font-size:1.45rem; line-height:1.2; }
+  h3 { margin:0 0 .35rem; font-size:1.05rem; }
+  .lead { color:var(--dim); font-size:1.17rem; }
+  .status { display:inline-flex; align-items:center; gap:.55rem; margin:1rem 0; padding:.45rem .7rem; border:1px solid #a7c7a9; border-radius:999px; color:var(--good); background:#edf6ed; font:600 12px/1.2 ui-monospace,monospace; }
+  .dot { width:.55rem; height:.55rem; border-radius:50%; background:var(--good); }
+  .facts { display:grid; grid-template-columns:repeat(auto-fit,minmax(10rem,1fr)); gap:.8rem; margin:1.7rem 0; }
+  .fact { padding:1rem; border:1px solid var(--line); border-radius:10px; background:var(--card); }
+  .fact b { display:block; font:700 1.35rem/1.1 ui-monospace,monospace; }
+  .fact span { color:var(--dim); font-size:.86rem; }
+  .step { margin:.8rem 0; padding:1rem 1.1rem; border-left:4px solid var(--oxide); border-radius:0 10px 10px 0; background:var(--card); }
+  .step p { margin:.25rem 0 0; color:var(--dim); }
+  code { padding:.12rem .35rem; border:1px solid var(--line); border-radius:5px; background:var(--card); font-size:.9em; overflow-wrap:anywhere; }
+  .artifact { margin:1.5rem 0; padding:1.2rem; border:1px solid var(--line); border-radius:12px; background:var(--card); }
+  .artifact p { margin:.3rem 0; }
+  .artifact .hash { color:var(--dim); font:12px/1.5 ui-monospace,monospace; overflow-wrap:anywhere; }
+  .note { margin:1.4rem 0; padding:1rem 1.1rem; border:1px solid var(--line); border-radius:10px; color:var(--dim); font-size:.93rem; }
+  .cta { margin:2.6rem 0 0; padding:1.55rem; border-radius:14px; color:#f4f4f0; background:#15181d; }
+  .cta h2 { margin:0 0 .45rem; color:#fff; }
+  .cta p { margin:.25rem 0; color:#c7c9cc; }
+  .btn { display:inline-block; margin:.8rem .5rem 0 0; padding:.7rem 1.1rem; border-radius:9px; color:#0a0b0d; background:var(--lime); font-weight:700; text-decoration:none; }
+  .btn.alt { color:var(--lime); background:transparent; border:1px solid #4b4e53; }
+  footer { margin-top:2.5rem; padding-top:1.2rem; border-top:1px solid var(--line); color:var(--dim); font-size:.9rem; }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <p class="eyebrow">SameDayDesk · Open-source documentation lab · August 2026</p>
+  <h1>OpenScan: from project Markdown to an adoption-ready agent index</h1>
+  <p class="lead">A real, inspectable documentation contribution: seven maintained OpenScan guides, one pinned source commit, a reproducible Sourcey build, a live review mirror, and an upstream pull request that puts the artifact on the project's own site.</p>
+
+  <div class="status"><span class="dot"></span>Upstream PR open · project preview awaiting workflow approval</div>
+
+  <div class="facts">
+    <div class="fact"><b>7</b><span>real project guides indexed</span></div>
+    <div class="fact"><b>3.6.5</b><span>pinned Sourcey version</span></div>
+    <div class="fact"><b>200</b><span>HTTP status for every target</span></div>
+    <div class="fact"><b>1 PR</b><span>opened against the project</span></div>
+  </div>
+
+  <h2>What shipped</h2>
+  <div class="step">
+    <h3>1. Source, not a hand-written directory</h3>
+    <p>The generator reads OpenScan's README, contributor guide, architecture, testing, workflow, and code-style documentation at commit <code>8ccaa3283333eb4616efe3255398a77ca6d6ef93</code>. It stops if any input drifts without a new pin.</p>
+  </div>
+  <div class="step">
+    <h3>2. Reproducible generation</h3>
+    <p><code>npm run docs:llms</code> invokes Sourcey 3.6.5, maps its documentation graph to the pinned project files, and emits the same bytes on repeated runs.</p>
+  </div>
+  <div class="step">
+    <h3>3. Project-owned adoption path</h3>
+    <p><a href="https://github.com/openscan-explorer/explorer/pull/395">OpenScan PR #395</a> adds the generator and <code>public/llms.txt</code> to the project itself. OpenScan's own preview workflow will serve it from the project's Netlify site once a maintainer approves the first-time-contributor run.</p>
+  </div>
+
+  <div class="artifact">
+    <h3>Inspect the review artifact</h3>
+    <p><a href="./llms.txt">Open the live llms.txt mirror</a> · <a href="https://github.com/openscan-explorer/explorer/issues/388">Original project request</a> · <a href="https://github.com/openscan-explorer/explorer/pull/395/files">Review the exact diff</a></p>
+    <p class="hash">sha256:60d6a28bc1ba91068190eea7bbd41fab66770c7ececcb305b86ee58532a592c6</p>
+  </div>
+
+  <h2>Why this is useful—and what it is not</h2>
+  <p>An agent index is useful when a coding assistant needs a fast map of authoritative project context: what the project does, how its architecture fits together, how to test changes, and how to contribute. It is not a shortcut to AI-search rankings. Our <a href="/guides/does-llms-txt-work-2026.html">llms.txt evidence guide</a> explains that distinction and why structured data, indexing, and answer-first content matter more for search citations.</p>
+
+  <p class="note"><strong>Transparency:</strong> SameDayDesk is not affiliated with OpenScan. This page is a durable review mirror and case study for an open-source contribution, not OpenScan's canonical documentation. Canonical ownership remains with the project; if the contribution is adopted, this page will point visitors to the project-owned endpoint.</p>
+
+  <section class="cta">
+    <h2>Need agent-ready docs on your own domain?</h2>
+    <p>We can turn scattered READMEs, API references, and source comments into a reproducible documentation surface—then wire it into your deployment and prepare the adoption PR.</p>
+    <a class="btn" href="mailto:contact@samedaydesk.com?subject=Agent-ready%20documentation%20for%20my%20project&amp;body=Project%20URL%3A%20">Ask for a flat quote</a>
+    <a class="btn alt" href="/resources.html">See more work</a>
+  </section>
+
+  <footer>
+    <a href="/">SameDayDesk home</a> · <a href="/resources.html">Guides, reports &amp; tools</a> · <a href="mailto:contact@samedaydesk.com">contact@samedaydesk.com</a>
+  </footer>
+</main>
+</body>
+</html>

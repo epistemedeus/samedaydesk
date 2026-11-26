@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- No-FOUC: resolve the theme and paint the right ground BEFORE the React bundle (a
+         deferred module) runs. Must stay inline and synchronous. -->
+    <script>
+      (function () {
+        try {
+          var KEY = "sdd-theme"; // 'dark' | 'drafting' | 'system'
+          var BRAND_DEFAULT = "drafting"; // lead with the Drafting Table (light) look
+          var stored = localStorage.getItem(KEY);
+          var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme;
+          if (stored === "dark" || stored === "drafting") theme = stored;
+          else if (stored === "system") theme = systemDark ? "dark" : "drafting";
+          else theme = BRAND_DEFAULT;
+          var root = document.documentElement;
+          root.setAttribute("data-theme", theme);
+          root.style.colorScheme = theme === "drafting" ? "light" : "dark";
+          root.style.background = theme === "drafting" ? "#F4F1EA" : "#0a0b0d";
+          var m = document.createElement("meta");
+          m.setAttribute("name", "theme-color");
+          m.setAttribute("content", theme === "drafting" ? "#F4F1EA" : "#0a0b0d");
+          document.head.appendChild(m);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "drafting");
+          document.documentElement.style.background = "#F4F1EA";
+        }
+      })();
+    </script>
+
+    <!-- Per-theme browser chrome (no-JS / system case). JS updates a non-media tag on toggle. -->
+    <meta name="theme-color" content="#0a0b0d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="SameDayDesk llms.txt" />
+
+    <title>SameDayDesk: agent commerce, built and shipped</title>
+    <meta
+      name="description"
+      content="Agent-ready workflows, MCP servers, x402 and MPP payment routes, and machine storefronts. Bounded scope, working code, tests, and deployment handoff."
+    />
+    <link rel="canonical" href="https://samedaydesk.com/" />
+
+    <!-- Open Graph / social preview (static, works for crawlers without JS) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SameDayDesk" />
+    <meta property="og:title" content="SameDayDesk: agent commerce, built and shipped" />
+    <meta
+      property="og:description"
+      content="Agent-ready workflows, MCP servers, machine payment routes, and storefronts, delivered with working evidence."
+    />
+    <meta property="og:url" content="https://samedaydesk.com/" />
+    <meta property="og:image" content="https://samedaydesk.com/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SameDayDesk: agent commerce, built and shipped" />
+    <meta
+      name="twitter:description"
+      content="Agent-ready workflows, MCP servers, machine payment routes, and storefronts, delivered with working evidence."
+    />
+    <meta name="twitter:image" content="https://samedaydesk.com/og.png" />
+
+    <!-- Fallback ground for no-JS only; the inline script above sets the live value. -->
+    <style>
+      html { background: #F4F1EA; }
+    </style>
+
+    <!-- Structured data: helps AI search engines classify and cite the business + its services. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://samedaydesk.com/#org",
+          "name": "SameDayDesk",
+          "url": "https://samedaydesk.com/",
+          "email": "contact@samedaydesk.com",
+          "description": "Agent commerce implementation for workflows, MCP servers, x402 and MPP payment routes, and machine storefronts.",
+          "sameAs": [
+            "https://github.com/epistemedeus",
+            "https://x.com/samedaydesk"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://samedaydesk.com/#site",
+          "url": "https://samedaydesk.com/",
+          "name": "SameDayDesk",
+          "publisher": { "@id": "https://samedaydesk.com/#org" },
+          "mentions": [
+            {
+              "@type": "WebSite",
+              "name": "EIN.LLC",
+              "url": "https://ein.llc/",
+              "description": "US LLC formation and EIN activation. A separate product, not a SameDayDesk service."
+            }
+          ]
+        },
+        {
+          "@type": "ProfessionalService",
+          "@id": "https://samedaydesk.com/#service",
+          "name": "SameDayDesk",
+          "url": "https://samedaydesk.com/",
+          "image": "https://samedaydesk.com/og.png",
+          "priceRange": "$$",
+          "areaServed": "Worldwide",
+          "parentOrganization": { "@id": "https://samedaydesk.com/#org" },
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Agent commerce builds",
+            "itemListElement": [
+              { "@type": "Offer", "priceCurrency": "USD", "price": "149", "itemOffered": { "@type": "Service", "name": "Agent Workflow Integration" } },
+              { "@type": "Offer", "priceCurrency": "USD", "price": "349", "itemOffered": { "@type": "Service", "name": "Agent-Ready MCP Server" } },
+              { "@type": "Offer", "priceCurrency": "USD", "price": "499", "itemOffered": { "@type": "Service", "name": "x402 + MPP Payment Route" } },
+              { "@type": "Offer", "priceCurrency": "USD", "price": "999", "itemOffered": { "@type": "Service", "name": "Agent Commerce Storefront" } }
+            ]
+          }
+        }
+      ]
+    }
+    </script>
+    <script type="module" crossorigin src="/assets/index-Dnpco8oJ.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D-5vxndy.css">
+  </head>
+  <body>
+    <!-- Crawler-visible content for engines that don't execute JS (GPTBot, ClaudeBot,
+         PerplexityBot, CCBot). The React app below replaces #root for real users; this
+         noscript block gives AI search engines real prose + services to read and cite. -->
+    <noscript>
+      <h1>SameDayDesk: make your service ready for agents</h1>
+      <p>
+        SameDayDesk builds agent-ready workflows, MCP servers, x402 and MPP payment routes, and
+        machine storefronts. Each build has a bounded scope, working code, tests, and a deployment handoff.
+      </p>
+      <h2>Services and flat prices</h2>
+      <ul>
+        <li>Agent Workflow Integration: $149</li>
+        <li>Agent-Ready MCP Server: $349</li>
+        <li>x402 and native MPP Payment Route: $499</li>
+        <li>Agent Commerce Storefront: $999</li>
+      </ul>
+      <h2>Free tool: AI Readiness Checker</h2>
+      <p>
+        Check whether AI search engines like ChatGPT, Perplexity, Claude and Google AI can crawl and
+        understand your website. No signup. It scores AI crawler access, JSON-LD structured data,
+        title and meta, Open Graph, your XML sitemap and llms.txt, with concrete fixes. Try it at
+        <a href="https://samedaydesk.com/tools/ai-readiness">samedaydesk.com/tools/ai-readiness</a>.
+      </p>
+      <h2>More free tools</h2>
+      <ul>
+        <li><a href="https://samedaydesk.com/tools/ai-crawler-checker.html">AI Crawler &amp; robots.txt Checker</a>: see which AI crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended) your site allows or blocks, and how to fix it.</li>
+        <li><a href="https://samedaydesk.com/tools/meta-tag-generator.html">Meta Tag &amp; Open Graph Generator</a>: generate title, meta description, Open Graph and Twitter Card tags with a live preview.</li>
+        <li><a href="https://samedaydesk.com/tools/schema-generator.html">JSON-LD Schema Generator</a>: copy-paste Organization and FAQ structured data for AI search.</li>
+        <li><a href="https://samedaydesk.com/tools/sitemap-generator.html">XML Sitemap Generator</a>: paste your URLs, get a valid sitemap.xml.</li>
+        <li><a href="https://samedaydesk.com/tools/schema-validator.html">JSON-LD / Schema Validator</a>: catch the structured-data errors AI engines silently ignore.</li>
+        <li><a href="https://samedaydesk.com/tools/llms-txt-generator.html">llms.txt Generator</a>: build a clean llms.txt map of your site for AI agents.</li>
+        <li><a href="https://samedaydesk.com/tools/free-seo-ai-tools.html">All free SEO &amp; AI-search tools</a>: the full toolkit in one place.</li>
+      </ul>
+      <h2>Agent interfaces</h2>
+      <ul>
+        <li><a href="https://samedaydesk.com/llms.txt">SameDayDesk llms.txt</a>: a concise machine-readable map of the site, services, research and interfaces.</li>
+        <li><a href="https://samedaydesk.com/mcp">Remote MCP server</a>: use the AI-readiness checker through Streamable HTTP.</li>
+        <li><a href="https://agents.samedaydesk.com/.well-known/x402">x402 resource manifest</a>: twenty-two canonical paid actions on Base mainnet using USDC, with x402 and native MPP.</li>
+        <li><a href="https://samedaydesk.com/docs/x402-sdk/">x402 SDK integration reference</a>: Sourcey API docs and production notes for the SDK family behind the live data gateway.</li>
+        <li><a href="https://samedaydesk.com/x402/seller-conformance">Seller conformance proof</a>: a human-auditable seller-conformance proof page, not a product or certificate.</li>
+        <li><a href="https://samedaydesk.com/x402/verified">Inspected x402 route list</a>: build-time inspection feed of unpaid 402 terms and whether OpenAPI, the unpaid 402 output schema, and the CDP Bazaar row agree.</li>
+        <li><a href="https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json">Agent402 validation receipt</a>: one recruited, non-organic external-runtime settlement and delivered result; no buyer-owned output enforcement, repeat demand, or repair sale.</li>
+      </ul>
+      <h2>Related properties</h2>
+      <p>
+        SameDayDesk is the operating merchant.
+        <a href="https://ein.llc/">EIN.LLC</a> is a separate formation product.
+        It is not a SameDayDesk service.
+      </p>
+      <h2>Guides &amp; answers</h2>
+      <ul>
+        <li><a href="https://samedaydesk.com/guides/how-to-get-cited-by-ai-search-2026.html">How to get cited by ChatGPT, Perplexity &amp; Google AI (2026)</a>: the answer-first playbook — Bing index via IndexNow, JSON-LD, AI-crawler access, answer-first content.</li>
+        <li><a href="https://samedaydesk.com/guides/chatgpt-vs-perplexity-vs-google-ai-readability-2026.html">ChatGPT vs Perplexity vs Google AI: which can read your site (2026)</a>: how each engine crawls, indexes and cites, side by side.</li>
+        <li><a href="https://samedaydesk.com/guides/does-llms-txt-work-2026.html">Is llms.txt worth it? We checked the data (2026)</a>: what actually drives AI citations vs the llms.txt hype.</li>
+        <li><a href="https://samedaydesk.com/guides/ai-readiness-checkers-compared-2026.html">AI search readiness checkers compared (2026)</a>: what an AI readiness tool can check, and what it cannot prove.</li>
+        <li><a href="https://samedaydesk.com/guides/why-site-not-showing-up-in-chatgpt-2026.html">Why isn't my site showing up in ChatGPT? (2026)</a>: OpenAI's documented control is OAI-SearchBot, not GPTBot.</li>
+        <li><a href="https://samedaydesk.com/guides/how-to-add-json-ld-structured-data-for-ai-2026.html">How to add JSON-LD structured data for AI search (2026)</a>: copy-paste Organization &amp; Article schema for the #1 gap.</li>
+        <li><a href="https://samedaydesk.com/guides/ai-crawler-list-2026.html">AI crawler list 2026</a>: the robots.txt tokens OpenAI, Anthropic, Perplexity, and Google publish, and which job each one does.</li>
+        <li><a href="https://samedaydesk.com/guides/generative-engine-optimization-checklist-2026.html">Generative Engine Optimization (GEO) checklist (2026)</a>: the do-this-now list to get cited by AI search.</li>
+        <li><a href="https://samedaydesk.com/guides/is-your-site-ready-for-ai-shopping-agents-2026.html">Is your site ready for AI shopping agents? (2026)</a>: the fundamentals AI agents need to read and recommend you.</li>
+      </ul>
+    </noscript>
+    <div id="root"></div>
+  </body>
+</html>

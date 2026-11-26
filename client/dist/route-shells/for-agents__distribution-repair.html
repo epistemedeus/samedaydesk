@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- No-FOUC: resolve the theme and paint the right ground BEFORE the React bundle (a
+         deferred module) runs. Must stay inline and synchronous. -->
+    <script>
+      (function () {
+        try {
+          var KEY = "sdd-theme"; // 'dark' | 'drafting' | 'system'
+          var BRAND_DEFAULT = "drafting"; // lead with the Drafting Table (light) look
+          var stored = localStorage.getItem(KEY);
+          var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme;
+          if (stored === "dark" || stored === "drafting") theme = stored;
+          else if (stored === "system") theme = systemDark ? "dark" : "drafting";
+          else theme = BRAND_DEFAULT;
+          var root = document.documentElement;
+          root.setAttribute("data-theme", theme);
+          root.style.colorScheme = theme === "drafting" ? "light" : "dark";
+          root.style.background = theme === "drafting" ? "#F4F1EA" : "#0a0b0d";
+          var m = document.createElement("meta");
+          m.setAttribute("name", "theme-color");
+          m.setAttribute("content", theme === "drafting" ? "#F4F1EA" : "#0a0b0d");
+          document.head.appendChild(m);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "drafting");
+          document.documentElement.style.background = "#F4F1EA";
+        }
+      })();
+    </script>
+
+    <!-- Per-theme browser chrome (no-JS / system case). JS updates a non-media tag on toggle. -->
+    <meta name="theme-color" content="#0a0b0d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="SameDayDesk llms.txt" />
+
+    <title>Diagnose why a listed tool cannot run | SameDayDesk</title>
+    <meta
+      name="description"
+      content="Download one portable package that turns caller-supplied listing snapshots and a baseline/current route pair into an explainable diagnosis and owner repair guidance. Runs offline on the files you supply. Incomplete captures cannot prove a listing was removed everywhere."
+    />
+    <link rel="canonical" href="https://samedaydesk.com/for-agents/distribution-repair" />
+
+    <!-- Open Graph / social preview (static, works for crawlers without JS) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SameDayDesk" />
+    <meta property="og:title" content="Diagnose why a listed tool cannot run | SameDayDesk" />
+    <meta
+      property="og:description"
+      content="Download one portable package that turns caller-supplied listing snapshots and a baseline/current route pair into an explainable diagnosis and owner repair guidance. Runs offline on the files you supply. Incomplete captures cannot prove a listing was removed everywhere."
+    />
+    <meta property="og:url" content="https://samedaydesk.com/for-agents/distribution-repair" />
+    <meta property="og:image" content="https://samedaydesk.com/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Diagnose why a listed tool cannot run | SameDayDesk" />
+    <meta
+      name="twitter:description"
+      content="Download one portable package that turns caller-supplied listing snapshots and a baseline/current route pair into an explainable diagnosis and owner repair guidance. Runs offline on the files you supply. Incomplete captures cannot prove a listing was removed everywhere."
+    />
+    <meta name="twitter:image" content="https://samedaydesk.com/og.png" />
+
+    <!-- Fallback ground for no-JS only; the inline script above sets the live value. -->
+    <style>
+      html { background: #F4F1EA; }
+    </style>
+
+    <!-- Structured data: helps AI search engines classify and cite the business + its services. -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://samedaydesk.com/#org",
+      "name": "SameDayDesk",
+      "url": "https://samedaydesk.com/"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://samedaydesk.com/for-agents/distribution-repair#webpage",
+      "url": "https://samedaydesk.com/for-agents/distribution-repair",
+      "name": "Diagnose why a listed tool cannot run | SameDayDesk",
+      "description": "Download one portable package that turns caller-supplied listing snapshots and a baseline/current route pair into an explainable diagnosis and owner repair guidance. Runs offline on the files you supply. Incomplete captures cannot prove a listing was removed everywhere.",
+      "isPartOf": {
+        "@id": "https://samedaydesk.com/#site"
+      },
+      "publisher": {
+        "@id": "https://samedaydesk.com/#org"
+      }
+    }
+  ]
+}
+    </script>
+    <script type="module" crossorigin src="/assets/index-Dnpco8oJ.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D-5vxndy.css">
+  </head>
+  <body>
+    <!-- Crawler-visible content for engines that don't execute JS (GPTBot, ClaudeBot,
+         PerplexityBot, CCBot). The React app below replaces #root for real users; this
+         noscript block gives AI search engines real prose + services to read and cite. -->
+    <noscript>
+<h1>Diagnose why a listed tool cannot run from your snapshots</h1>
+      <p>
+        SameDayDesk publishes one portable package that maps caller-supplied discovery/listing
+        snapshots and a baseline/current route pair into an explainable diagnosis and owner
+        repair guidance. Identity is <code>provider</code> / <code>jobRef</code> /
+        <code>sharedEvidenceId</code>, never a filename. The CLI runs offline on the files you
+        supply (or labeled samples). It does not call priced endpoints or change live listings.
+        Incomplete captures cannot prove a listing was removed everywhere.
+      </p>
+      <p>
+        Machine discovery:
+        <a href="https://samedaydesk.com/discovery/distribution-repair.json">https://samedaydesk.com/discovery/distribution-repair.json</a>.
+        <a href="https://samedaydesk.com/kit/distribution-repair-ab84d79b0272.tar.gz">Download archive</a>
+        (sha256 <code>64a97dab335aa82d80d9e4384ef8ec89d0bc0920aa844a19b4c2534ad5be5c13</code>).
+        Source pins: <code>0e703bd4682894df4e1d25c61b594cac49f2463c</code>,
+        <code>ea000772cdbd6d5df7174369dcef9aa2270e5723</code>,
+        <code>76c0732b241beaa569f05a7394fdbf49604ffb66</code>.
+      </p>
+      <h2>Cold start</h2>
+      <pre><code>curl -fsSL -o distribution-repair.tar.gz https://samedaydesk.com/kit/distribution-repair-ab84d79b0272.tar.gz
+mkdir -p /tmp && tar -xzf distribution-repair.tar.gz -C /tmp
+cd /tmp/distribution-repair
+node bin/distribution-repair.mjs sample --positive</code></pre>
+      <h2>Caller-shaped inputs</h2>
+      <pre><code>node bin/distribution-repair.mjs schema
+node bin/distribution-repair.mjs diagnose ./examples/caller/alpha.json
+node bin/distribution-repair.mjs diagnose ./examples/caller/beta.json
+node bin/distribution-repair.mjs sample --partial
+node bin/distribution-repair.mjs sample --mismatch</code></pre>
+      <h2>Repeat after a route correction</h2>
+      <pre><code>node bin/distribution-repair.mjs diagnose ./examples/positive.json --write-next-run ./next-run.json
+node bin/distribution-repair.mjs diagnose ./examples/next-run/input-after-docs-fix.json</code></pre>
+      <p>
+        Paid observation jobs remain on
+        <a href="https://samedaydesk.com/for-agents">/for-agents</a>.
+      </p>
+    </noscript>
+    <div id="root"></div>
+  </body>
+</html>
