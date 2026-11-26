@@ -1,101 +1,329 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>SkillGuard: scan a Claude Code skill or MCP server for malware before you install it</title>
-<meta name="description" content="A free CLI that statically scans Claude Code skills, plugins, and MCP servers for env-var exfiltration, install-time shell hooks, prompt injection, and committed malware, before you install. Never runs the scanned code. Paid deep audit + continuous watch available." />
-<link rel="canonical" href="https://samedaydesk.com/skillguard" />
-<meta property="og:type" content="website" />
-<meta property="og:title" content="SkillGuard: vet a Claude Code skill or MCP server before you install it" />
-<meta property="og:description" content="Free static scanner for malicious skills/MCP servers. 71 malicious skills found in the wild; 26% carry vulnerabilities. Check yours in seconds." />
-<meta property="og:url" content="https://samedaydesk.com/skillguard" />
-<meta property="og:image" content="https://samedaydesk.com/og.png" />
-<meta name="twitter:card" content="summary_large_image" />
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SkillGuard","applicationCategory":"SecurityApplication","operatingSystem":"Node.js 18+","offers":[{"@type":"Offer","name":"Free CLI","price":"0","priceCurrency":"USD"},{"@type":"Offer","name":"Deep audit","price":"29","priceCurrency":"USD"},{"@type":"Offer","name":"Watch mode","price":"12","priceCurrency":"USD"}],"description":"Static security scanner for Claude Code skills, plugins, and MCP servers.","url":"https://samedaydesk.com/skillguard"}
-</script>
-<style>
-  :root{--bg:#0d1014;--card:#161a20;--ink:#e8e8e3;--dim:#9aa0a8;--line:#262b33;--acc:#ccff00;--good:#6fcf97;--bad:#e07a5f}
-  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 -apple-system,Inter,system-ui,sans-serif}
-  .wrap{max-width:46rem;margin:0 auto;padding:3rem 1.25rem 5rem}
-  a{color:var(--acc)}
-  .eyebrow{font:600 12px/1 ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:0 0 1rem}
-  h1{font-size:clamp(1.9rem,1.3rem+2.4vw,2.8rem);line-height:1.08;letter-spacing:-.02em;margin:.2em 0}
-  h2{font-size:1.35rem;margin:2.4rem 0 .6rem}
-  .lead{font-size:1.2rem;color:var(--dim)}
-  pre{background:#0a0c10;border:1px solid var(--line);border-radius:10px;padding:1rem;overflow:auto;font-size:.85rem;line-height:1.5}
-  .cmd{background:#0a0c10;border:1px solid var(--line);border-left:3px solid var(--acc);border-radius:10px;padding:.9rem 1rem;font:14px/1.5 ui-monospace,monospace;overflow:auto}
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin:1.8rem 0}
-  .stat{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--bad);border-radius:10px;padding:.9rem 1rem}
-  .stat b{display:block;font-size:1.7rem;font-family:ui-monospace,monospace;line-height:1}.stat span{color:var(--dim);font-size:.82rem}
-  .tiers{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.2rem 0}
-  @media(max-width:33rem){.tiers{grid-template-columns:1fr}}
-  .tier{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.3rem}
-  .tier h3{margin:0 0 .2rem}.tier .price{font-size:1.6rem;font-weight:700}.tier .price small{font-size:.9rem;color:var(--dim);font-weight:400}
-  .tier ul{padding-left:1.1rem;color:var(--dim);font-size:.92rem}
-  .btn{display:block;text-align:center;margin-top:1rem;background:var(--acc);color:#0a0b0d;font-weight:700;text-decoration:none;padding:.7rem 1rem;border-radius:9px}
-  .btn2{display:block;text-align:center;margin-top:1rem;color:var(--acc);border:1px solid #3a3f48;text-decoration:none;padding:.7rem 1rem;border-radius:9px}
-  .muted{color:var(--dim);font-size:.9rem}
-  footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--line);color:var(--dim);font-size:.9rem}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SkillGuard: scan a skill or MCP server before you install it</title>
+  <meta name="description" content="SkillGuard is a free static scanner for Claude Code skills, plugins, and MCP servers. It never runs the scanned code. Watch is listed at 12 USD a month, and a one-time deep audit is listed at 29 USD." />
+  <link rel="canonical" href="https://samedaydesk.com/skillguard" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="SkillGuard: scan a skill or MCP server before you install it" />
+  <meta property="og:description" content="SkillGuard is a free static scanner for Claude Code skills, plugins, and MCP servers. It never runs the scanned code. Watch is listed at 12 USD a month, and a one-time deep audit is listed at 29 USD." />
+  <meta property="og:url" content="https://samedaydesk.com/skillguard" />
+  <meta property="og:image" content="https://samedaydesk.com/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"SkillGuard","applicationCategory":"SecurityApplication","operatingSystem":"Node.js 18+","offers":[{"@type":"Offer","name":"Free CLI","price":"0","priceCurrency":"USD"},{"@type":"Offer","name":"Deep audit","price":"29","priceCurrency":"USD"},{"@type":"Offer","name":"Watch mode","price":"12","priceCurrency":"USD"}],"description":"SkillGuard is a free static scanner for Claude Code skills, plugins, and MCP servers. It never runs the scanned code. Watch is listed at 12 USD a month, and a one-time deep audit is listed at 29 USD.","url":"https://samedaydesk.com/skillguard"}
+  </script>
+  <style>
+    @font-face {
+      font-family: "Space Grotesk Variable";
+      font-style: normal;
+      font-display: swap;
+      font-weight: 300 700;
+      src: url("/assets/space-grotesk-latin-wght-normal-BhU9QXUp.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Inter Variable";
+      font-style: normal;
+      font-display: swap;
+      font-weight: 100 900;
+      src: url("/assets/inter-latin-wght-normal-Dx4kXJAl.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "JetBrains Mono Variable";
+      font-style: normal;
+      font-display: swap;
+      font-weight: 100 800;
+      src: url("/assets/jetbrains-mono-latin-wght-normal-B9CIFXIH.woff2") format("woff2");
+    }
+    :root, html[data-theme="dark"] {
+      --bg: #0a0b0d;
+      --bg-1: #101216;
+      --card: #15181d;
+      --ink: #f4f4f0;
+      --dim: #a7abb1;
+      --line: #f4f4f01a;
+      --line-2: #f4f4f02e;
+      --lime: #cf0;
+      --lime-ink: #0a0b0d;
+      --good: #90c79c;
+      --warn: #e7cf76;
+      --bad: #ff9b91;
+    }
+    html[data-theme="paper"] {
+      --bg: #F4F1EA;
+      --bg-1: #ebe6dc;
+      --card: #fffdf8;
+      --ink: #0a0b0d;
+      --dim: #3f434a;
+      --line: #0a0b0d1a;
+      --line-2: #0a0b0d2e;
+      --lime: #3d4a00;
+      --lime-ink: #F4F1EA;
+      --good: #1f6b3a;
+      --warn: #6a5200;
+      --bad: #9b1c1c;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--ink); }
+    body {
+      font-family: "Inter Variable", system-ui, -apple-system, sans-serif;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      min-height: 100svh;
+    }
+    h1, h2, h3, .brand-name, .price {
+      font-family: "Space Grotesk Variable", "Inter Variable", sans-serif;
+      letter-spacing: -0.03em;
+    }
+    a { color: var(--lime); }
+    a:focus-visible, button:focus-visible, input:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 3px;
+    }
+    header.nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid var(--line-2);
+      background: var(--bg);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      color: inherit;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .mark { width: 28px; height: 28px; display: block; }
+    .bm-tile { fill: var(--lime); }
+    .bm-chev { fill: var(--bg); }
+    .nav-links { display: flex; gap: 1rem; align-items: center; font-size: 0.92rem; }
+    .nav-links a { color: var(--ink); text-decoration: none; }
+    .nav-links a:hover { color: var(--lime); }
+    button.theme {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line-2);
+      border-radius: 8px;
+      padding: 0.35rem 0.7rem;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.85rem;
+    }
+    main { max-width: 48rem; margin: 0 auto; padding: 1.65rem 1.25rem 4.5rem; }
+    .eyebrow {
+      font-family: "JetBrains Mono Variable", ui-monospace, monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin: 0 0 0.7rem;
+    }
+    h1 { font-size: clamp(1.9rem, 1.3rem + 2.4vw, 2.8rem); line-height: 1.08; margin: 0 0 0.6rem; font-weight: 650; }
+    .lead { font-size: 1.15rem; color: var(--dim); margin: 0 0 1.2rem; }
+    .cmd, pre, .result {
+      font-family: "JetBrains Mono Variable", ui-monospace, monospace;
+      font-size: 0.86rem;
+      line-height: 1.5;
+      background: var(--bg-1);
+      border: 1px solid var(--line-2);
+      border-radius: 10px;
+      padding: 0.95rem 1rem;
+      overflow: auto;
+    }
+    .cmd { border-left: 3px solid var(--lime); margin: 0 0 0.55rem; }
+    .result { white-space: pre-wrap; overflow-wrap: anywhere; }
+    h2 { font-size: 1.35rem; margin: 1.7rem 0 0.6rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    th, td { text-align: left; vertical-align: top; padding: 0.55rem 0.4rem; border-bottom: 1px solid var(--line); }
+    th { color: var(--dim); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    code { font-family: "JetBrains Mono Variable", ui-monospace, monospace; font-size: 0.88em; }
+    p { margin: 0 0 0.85rem; }
+    form.paste {
+      display: grid;
+      gap: 0.6rem;
+      margin: 0.85rem 0 0.6rem;
+      padding: 1rem;
+      background: var(--card);
+      border: 1px solid var(--line-2);
+      border-radius: 12px;
+    }
+    label { font-weight: 600; }
+    input[type="text"] {
+      width: 100%;
+      padding: 0.7rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--line-2);
+      background: var(--bg);
+      color: var(--ink);
+      font: inherit;
+    }
+    button.run, .cta, .cta-secondary {
+      display: inline-block;
+      border: 0;
+      border-radius: 9px;
+      padding: 0.7rem 1rem;
+      font: inherit;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+    }
+    button.run, .cta { background: var(--lime); color: var(--lime-ink); cursor: pointer; }
+    .cta-secondary {
+      background: transparent;
+      color: var(--lime);
+      border: 1px solid var(--line-2);
+    }
+    .cta, .cta-secondary { margin-top: 0.85rem; }
+    .tier .cta, .tier .cta-secondary {
+      display: block;
+      width: 100%;
+      text-align: center;
+      font-size: 0.95rem;
+      padding: 0.7rem 0.65rem;
+      white-space: nowrap;
+    }
+    @media (max-width: 36rem) {
+      .tier .cta, .tier .cta-secondary { white-space: normal; }
+    }
+    th:first-child, td:first-child { white-space: nowrap; }
+    .note, .muted { color: var(--dim); font-size: 0.92rem; }
+    .tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.1rem 0; }
+    @media (max-width: 36rem) { .tiers { grid-template-columns: 1fr; } }
+    .tier {
+      background: var(--card);
+      border: 1px solid var(--line-2);
+      border-radius: 12px;
+      padding: 1.2rem;
+    }
+    .tier h3 { margin: 0 0 0.2rem; }
+    .price { font-size: 1.55rem; font-weight: 700; }
+    .price small { font-size: 0.9rem; color: var(--dim); font-weight: 500; }
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.4rem;
+      border-top: 1px solid var(--line-2);
+      color: var(--dim);
+      font-size: 0.9rem;
+    }
+    .cmd + .muted { margin: 0.15rem 0 0; }
+    @media (min-width: 48rem) {
+      footer {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 0.45rem;
+        row-gap: 0.2rem;
+      }
+      footer .foot-item { white-space: nowrap; }
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <p class="eyebrow">SkillGuard · by SameDayDesk</p>
-  <h1>Scan a Claude Code skill or MCP server for malware <em>before</em> you install it.</h1>
-  <p class="lead">The skill/MCP ecosystem is exploding, and so is the attack surface. SkillGuard statically scans any skill, plugin, or MCP server for the patterns attackers actually use, in seconds. Free, no signup, and it <strong>never runs the code it's inspecting</strong>.</p>
-
-  <div class="cmd">npx github:epistemedeus/skillguard https://github.com/owner/repo</div>
-
-  <div class="stats">
-    <div class="stat"><b>71</b><span>malicious skills found in the wild</span></div>
-    <div class="stat"><b>26%</b><span>of published skills carry vulnerabilities</span></div>
-    <div class="stat"><b>30+</b><span>MCP CVEs in 60 days</span></div>
-  </div>
-
-  <h2>What it catches</h2>
-  <pre>DANGER (4)
-  SKILL.md
-    ■ Prompt-injection / data-exfil instruction in text     [prompt-injection]
-  index.js
-    ■ Env/secret exfiltration (sensitive env var + network) [env-exfil]
-    ■ Hardcoded webhook / pastebin / raw-IP endpoint        [exfil-host]
-    ■ Obfuscated exec: eval(atob), curl | bash              [obfuscation]
-
-✗ DANGEROUS: do NOT install without reviewing the flagged files.</pre>
-  <p class="muted">Also detects committed binaries, hardcoded private keys, the "commit an encrypted artifact" honeypot pattern, install-time <code>postinstall</code> hooks, and auto-approve-all / <code>--dangerously-skip-permissions</code> configs. Exit codes (0/2/3) let you gate CI on it. <a href="https://github.com/epistemedeus/skillguard">Source on GitHub →</a></p>
-
-  <h2>Stop worrying about what you install</h2>
-  <p>The free CLI is the first line of defense. If you pull in third-party skills and MCP servers regularly, we'll do the deeper work for you:</p>
-  <div class="tiers">
-    <div class="tier">
-      <h3>Deep audit</h3>
-      <div class="price">29 USD <small>one-time</small></div>
-      <ul>
-        <li>A careful read, by a person, of one skill, MCP server or plugin you are about to depend on</li>
-        <li>Written risk report with specific findings + a go / no-go</li>
-        <li>Your fix report and corrected files</li>
-      </ul>
-      <a class="btn" href="/api/checkout/hosted/skillguard-deep-audit">Get a deep audit · 29 USD</a>
+  <header class="nav">
+    <a class="brand" href="https://samedaydesk.com/" aria-label="SameDayDesk home">
+      <svg class="mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+        <rect class="bm-tile" x="6" y="6" width="88" height="88" rx="20"></rect>
+        <path class="bm-chev" d="M33 29 L51 50 L33 71 Z"></path>
+        <path class="bm-chev" d="M53 29 L71 50 L53 71 Z"></path>
+      </svg>
+      <span class="brand-name">SameDayDesk</span>
+    </a>
+    <div class="nav-links">
+      <a href="https://samedaydesk.com/#services">Services</a>
+      <a href="https://github.com/epistemedeus/skillguard">Source</a>
+      <button type="button" class="theme" id="theme-toggle" aria-pressed="false">Paper theme</button>
     </div>
-    <div class="tier">
-      <h3>Watch mode</h3>
-      <div class="price">12 USD <small>/ month</small></div>
-      <ul>
-        <li>We re-scan the skills + MCP servers you depend on on every upstream release</li>
-        <li>Alert the moment new risk appears (the rug-pull / mutable-tool problem)</li>
-        <li>Cancel anytime</li>
-      </ul>
-      <a class="btn2" href="/api/checkout/hosted/skillguard-watch">Start watching · 12 USD/mo</a>
+  </header>
+  <main>
+    <p class="eyebrow">SkillGuard · SameDayDesk</p>
+    <h1>Scan a skill, plugin, or MCP server before you install it.</h1>
+    <p class="lead">SkillGuard is a free SameDayDesk command that reads the files and flags known-bad patterns. It never runs the code it inspects. No account is required for the free check.</p>
+
+    <div class="cmd">npx github:epistemedeus/skillguard https://github.com/owner/repo</div>
+    <p class="muted">A local folder works too: <code>npx github:epistemedeus/skillguard ./my-skill</code>. Hooks are disabled on clone. The command never runs <code>npm install</code> or the target code.</p>
+
+    <h2>Paste a repository link</h2>
+    <p>Paste a public Git HTTPS URL to show the equivalent SkillGuard command. This page does not clone, fetch, or scan a repository.</p>
+    <form class="paste" id="paste-form">
+      <label for="repo">Public Git repository URL</label>
+      <input id="repo" name="repo" type="text" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://github.com/owner/repo" />
+      <button type="submit" class="run">Show equivalent command</button>
+      <p class="note" id="paste-note">Paste a public repository URL. Nothing is sent from this page.</p>
+      <pre class="result" id="paste-result" hidden></pre>
+    </form>
+
+    <h2>What it checks</h2>
+    <p>These are the checks published in the SkillGuard repository on GitHub.</p>
+    <table>
+      <thead><tr><th>Check</th><th>What it flags</th></tr></thead>
+      <tbody>
+        <tr><td><code>env-exfil</code></td><td>A sensitive environment variable read next to a network call</td></tr>
+        <tr><td><code>exfil-host</code></td><td>A hardcoded webhook, pastebin, raw IP, or Telegram exfil endpoint</td></tr>
+        <tr><td><code>obfuscation</code></td><td><code>eval(atob(...))</code>, <code>curl | bash</code>, or subprocess on encoded data</td></tr>
+        <tr><td><code>prompt-injection</code></td><td>Data-exfil, ignore-instructions, or auto-approve text in SKILL.md, tool descriptions, or prompts</td></tr>
+        <tr><td><code>secret-literal</code></td><td>API keys or private keys committed in the tree</td></tr>
+        <tr><td><code>committed-binary</code></td><td>Compiled ELF, Mach-O, or PE executables</td></tr>
+        <tr><td><code>forced-artifact</code></td><td>A build step that generates and commits an encrypted blob</td></tr>
+        <tr><td><code>dangerous-perms</code></td><td>Auto-approve-all, sandbox disabling, or <code>--dangerously-skip-permissions</code></td></tr>
+        <tr><td><code>install-hook</code></td><td>preinstall or postinstall scripts that run on install</td></tr>
+      </tbody>
+    </table>
+    <p class="muted">Exit codes: 0 clean, 2 suspicious, 3 dangerous, so CI can gate on the result. Heuristics catch known patterns. A novel attack can evade a static scan. This is a first check, not a guarantee.</p>
+
+    <h2>Offers and prices</h2>
+    <p>The free CLI stays free. A one-time deep audit is listed at 29 USD, and Watch is listed at 12 USD a month. Paste a public Git HTTPS URL above to show the equivalent command, then run it locally.</p>
+    <div class="tiers">
+      <div class="tier">
+        <h3>Deep audit</h3>
+        <div class="price">29 USD <small>one-time</small></div>
+        <a class="cta" href="/api/checkout/hosted/skillguard-deep-audit">Get a deep audit · 29 USD</a>
+      </div>
+      <div class="tier">
+        <h3>Watch mode</h3>
+        <div class="price">12 USD <small>a month</small></div>
+        <a class="cta-secondary" href="/api/checkout/hosted/skillguard-watch">Start watching · 12 USD a month</a>
+      </div>
     </div>
-  </div>
 
-  <h2>Safe by design</h2>
-  <p>SkillGuard does <strong>static analysis only</strong>. It clones with <code>git clone</code> (hooks disabled) and reads files. It never runs <code>npm install</code>, never executes build/postinstall scripts, and never runs the target code. Scanning a malicious package can't harm you. (A scanner that executed what it inspects would be the very risk it's meant to prevent.)</p>
-  <p class="muted">SkillGuard flags known malicious patterns in a skill before you install it. Open each finding to see the matching rule.</p>
+    <footer>
+      <span class="foot-item">SkillGuard by <a href="https://samedaydesk.com/">SameDayDesk</a>.</span>
+      <span class="foot-item">Source: <a href="https://github.com/epistemedeus/skillguard">github.com/epistemedeus/skillguard</a>.</span>
+      <span class="foot-item">Published page: <a href="https://samedaydesk.com/skillguard">samedaydesk.com/skillguard</a>.</span>
+    </footer>
+  </main>
+  <script src="/skillguard-url.js"></script>
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var toggle = document.getElementById("theme-toggle");
+      function apply(theme) {
+        root.setAttribute("data-theme", theme);
+        var paper = theme === "paper";
+        toggle.textContent = paper ? "Dark theme" : "Paper theme";
+        toggle.setAttribute("aria-pressed", paper ? "true" : "false");
+      }
+      apply(root.getAttribute("data-theme") || "dark");
+      toggle.addEventListener("click", function () {
+        apply(root.getAttribute("data-theme") === "paper" ? "dark" : "paper");
+      });
 
-  <footer>By <a href="https://samedaydesk.com/">SameDayDesk</a> · <a href="https://github.com/epistemedeus/skillguard">github.com/epistemedeus/skillguard</a> · also try our <a href="https://samedaydesk.com/tools/ai-readiness">free AI-readiness checker</a>.</footer>
-</div>
+      var form = document.getElementById("paste-form");
+      var input = document.getElementById("repo");
+      var note = document.getElementById("paste-note");
+      var result = document.getElementById("paste-result");
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var out = SkillGuardCommand.commandForInput(input.value);
+        result.hidden = false;
+        note.textContent = out.note;
+        result.textContent = out.command;
+      });
+    })();
+  </script>
 </body>
 </html>

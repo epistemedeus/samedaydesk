@@ -1712,9 +1712,14 @@
       "feed0993bbcbd75640402ebe9ad5f7687e9aa90e36a598b0f4122d8c3aa2fead"
     ],
     [
+      "skillguard-url.js",
+      7018,
+      "a7ba8ff7b1f1a484dedc827a776886f8045d0115090ebf1cc2c73358d9241573"
+    ],
+    [
       "skillguard.html",
-      7678,
-      "afc63acd9be226b8944ef1259cbf1b63df76cc1ab494c7ccefe5a27dbcb96f40"
+      14508,
+      "233fa14ae0d41df59ab6576581dfba2e33f6a4df9dd5eb1f3466b877c0d04650"
     ],
     [
       "tools/ai-crawler-checker.html",
@@ -1768,8 +1773,8 @@
     ]
   ],
   "expected": {
-    "files": 352,
-    "bytes": 59951737,
-    "inventorySha256": "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5"
+    "files": 353,
+    "bytes": 59965585,
+    "inventorySha256": "46a41b4afd082862b6d014dbca07c279962827eb4da8d7f7dea3328fde99dfe6"
   }
 }
