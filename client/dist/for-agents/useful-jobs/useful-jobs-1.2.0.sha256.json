@@ -1,0 +1,33 @@
+{
+  "schema": "useful-jobs.release-archive.v1",
+  "name": "useful-jobs-1.2.0",
+  "archive": "useful-jobs-1.2.0.tar.gz",
+  "bytes": 2579117,
+  "sha256": "dec31ea66f1605fb9578c7d15c9583b130c6e2c0b82b5e6b93422381a04461eb",
+  "node": ">=22",
+  "builtAt": "2026-09-12T01:45:39.941Z",
+  "nestedPinsVerified": true,
+  "sourceRepo": "epistemedeus/samedaydesk",
+  "sourceCommit": "e9759e14c0cb264cc926339a9deb0e3fee993215",
+  "previous": {
+    "name": "useful-jobs-1.1.0",
+    "archive": "useful-jobs-1.1.0.tar.gz",
+    "bytes": 2577606,
+    "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534"
+  },
+  "immutable": [
+    {
+      "name": "useful-jobs-1.0.0",
+      "archive": "useful-jobs-1.0.0.tar.gz",
+      "bytes": 2522418,
+      "sha256": "6bf650391fad4fa658a7959e9717fc5499faf4caffa0a39f67c6c2ee033bdb51"
+    },
+    {
+      "name": "useful-jobs-1.1.0",
+      "archive": "useful-jobs-1.1.0.tar.gz",
+      "bytes": 2577606,
+      "sha256": "de8ebee19ffd5d9019fa7988291fe37d861e7bf3f5ee7dd341c9d2f0f0065534"
+    }
+  ],
+  "h04Examples": "37dd4b42cf21dc2031715971971bb2426a7beb80"
+}

@@ -1,0 +1,52 @@
+# x402 SDK Integration
+
+> This is SameDayDesk's independent integration reference for the open source x402 SDK. SameDayDesk uses x402 in its live pay-per-call MCP gateway and in its payment settlement tooling. This site keeps the operational guidance beside a complete, searchable Sourcey reference for the upstream Go SDK.
+
+## Integration
+
+- [x402 SDK integration reference](/docs/x402-sdk/introduction.html): This is SameDayDesk's independent integration reference for the open source x402 SDK. SameDayDesk uses x402 in its live pay-per-call MCP gateway and in its payment settlement tooling. This site keeps the operational guidance beside a complete, searchable Sourcey reference for the upstream Go SDK.
+- [SameDayDesk production map](/docs/x402-sdk/samedaydesk-production.html): The SameDayDesk gateway turns HTTP and MCP tool calls into x402-protected resources. This page maps each production concern to the public SDK component that handles it.
+- [Minimal TypeScript seller pattern](/docs/x402-sdk/typescript-seller.html): SameDayDesk's public gateway uses the official x402 TypeScript packages with an Express server. The reduced pattern below shows the same component boundaries without copying product-specific routes or credentials.
+- [Go SDK quickstart](/docs/x402-sdk/go-quickstart.html): The Sourcey API tab is generated from the x402 Go v2 module. This short path helps Go users find the right package before drilling into individual symbols.
+- [Version and generation scope](/docs/x402-sdk/version-and-scope.html): This site is reproducible and intentionally pinned. It is not a floating scrape of the upstream default branch.
+
+## Go API Reference
+
+- [github.com/x402-foundation/x402/go/v2](/docs/x402-sdk/api/package-root.html): github.com/x402-foundation/x402/go/v2
+- [extensions/bazaar](/docs/x402-sdk/api/pkg-extensions-bazaar.html): Package bazaar provides the Bazaar Discovery Extension for x402 v2 and v1.
+- [extensions/buildercode](/docs/x402-sdk/api/pkg-extensions-buildercode.html): Package buildercode provides types and helpers for the Builder Code Extension (ERC-8021).
+- [extensions/eip2612gassponsor](/docs/x402-sdk/api/pkg-extensions-eip2612gassponsor.html): Package eip2612gassponsor provides types and helpers for the EIP-2612 Gas Sponsoring extension.
+- [extensions/erc20approvalgassponsor](/docs/x402-sdk/api/pkg-extensions-erc20approvalgassponsor.html): Package erc20approvalgassponsor provides types and helpers for the ERC-20 Approval Gas Sponsoring extension.
+- [extensions/paymentidentifier](/docs/x402-sdk/api/pkg-extensions-paymentidentifier.html): Package paymentidentifier implements the payment-identifier extension for x402.
+- [extensions/signinwithx](/docs/x402-sdk/api/pkg-extensions-signinwithx.html): Package signinwithx provides helpers for the sign-in-with-x extension.
+- [extensions/types](/docs/x402-sdk/api/pkg-extensions-types.html): github.com/x402-foundation/x402/go/v2/extensions/types
+- [extensions/v1](/docs/x402-sdk/api/pkg-extensions-v1.html): github.com/x402-foundation/x402/go/v2/extensions/v1
+- [http](/docs/x402-sdk/api/pkg-http.html): THIS FILE IS AUTO-GENERATED - DO NOT EDIT
+- [http/echo](/docs/x402-sdk/api/pkg-http-echo.html): github.com/x402-foundation/x402/go/v2/http/echo
+- [http/gin](/docs/x402-sdk/api/pkg-http-gin.html): github.com/x402-foundation/x402/go/v2/http/gin
+- [http/nethttp](/docs/x402-sdk/api/pkg-http-nethttp.html): github.com/x402-foundation/x402/go/v2/http/nethttp
+- [mcp](/docs/x402-sdk/api/pkg-mcp.html): Package mcp provides MCP (Model Context Protocol) transport integration for the x402 payment protocol.
+- [mechanisms/evm](/docs/x402-sdk/api/pkg-mechanisms-evm.html): github.com/x402-foundation/x402/go/v2/mechanisms/evm
+- [mechanisms/evm/batch-settlement](/docs/x402-sdk/api/pkg-mechanisms-evm-batch-settlement.html): Package batched holds shared batch-settlement error constants used across client / facilitator / server.
+- [mechanisms/evm/batch-settlement/client](/docs/x402-sdk/api/pkg-mechanisms-evm-batch-settlement-client.html): github.com/x402-foundation/x402/go/v2/mechanisms/evm/batch-settlement/client
+- [mechanisms/evm/batch-settlement/facilitator](/docs/x402-sdk/api/pkg-mechanisms-evm-batch-settlement-facilitator.html): Package facilitator emits canonical batch-settlement EVM rejection tokens.
+- [mechanisms/evm/batch-settlement/server](/docs/x402-sdk/api/pkg-mechanisms-evm-batch-settlement-server.html): github.com/x402-foundation/x402/go/v2/mechanisms/evm/batch-settlement/server
+- [mechanisms/evm/exact/client](/docs/x402-sdk/api/pkg-mechanisms-evm-exact-client.html): github.com/x402-foundation/x402/go/v2/mechanisms/evm/exact/client
+- [mechanisms/evm/exact/facilitator](/docs/x402-sdk/api/pkg-mechanisms-evm-exact-facilitator.html): github.com/x402-foundation/x402/go/v2/mechanisms/evm/exact/facilitator
+- [mechanisms/evm/exact/server](/docs/x402-sdk/api/pkg-mechanisms-evm-exact-server.html): github.com/x402-foundation/x402/go/v2/mechanisms/evm/exact/server
+- [mechanisms/evm/exact/v1/client](/docs/x402-sdk/api/pkg-mechanisms-evm-exact-v1-client.html): github.com/x402-foundation/x402/go/v2/mechanisms/evm/exact/v1/client
+- [mechanisms/evm/exact/v1/facilitator](/docs/x402-sdk/api/pkg-mechanisms-evm-exact-v1-facilitator.html): github.com/x402-foundation/x402/go/v2/mechanisms/evm/exact/v1/facilitator
+- [mechanisms/evm/upto/client](/docs/x402-sdk/api/pkg-mechanisms-evm-upto-client.html): github.com/x402-foundation/x402/go/v2/mechanisms/evm/upto/client
+- [mechanisms/evm/upto/facilitator](/docs/x402-sdk/api/pkg-mechanisms-evm-upto-facilitator.html): github.com/x402-foundation/x402/go/v2/mechanisms/evm/upto/facilitator
+- [mechanisms/evm/upto/server](/docs/x402-sdk/api/pkg-mechanisms-evm-upto-server.html): github.com/x402-foundation/x402/go/v2/mechanisms/evm/upto/server
+- [mechanisms/evm/v1](/docs/x402-sdk/api/pkg-mechanisms-evm-v1.html): github.com/x402-foundation/x402/go/v2/mechanisms/evm/v1
+- [mechanisms/svm](/docs/x402-sdk/api/pkg-mechanisms-svm.html): github.com/x402-foundation/x402/go/v2/mechanisms/svm
+- [mechanisms/svm/exact/client](/docs/x402-sdk/api/pkg-mechanisms-svm-exact-client.html): github.com/x402-foundation/x402/go/v2/mechanisms/svm/exact/client
+- [mechanisms/svm/exact/facilitator](/docs/x402-sdk/api/pkg-mechanisms-svm-exact-facilitator.html): github.com/x402-foundation/x402/go/v2/mechanisms/svm/exact/facilitator
+- [mechanisms/svm/exact/server](/docs/x402-sdk/api/pkg-mechanisms-svm-exact-server.html): github.com/x402-foundation/x402/go/v2/mechanisms/svm/exact/server
+- [mechanisms/svm/exact/v1/client](/docs/x402-sdk/api/pkg-mechanisms-svm-exact-v1-client.html): github.com/x402-foundation/x402/go/v2/mechanisms/svm/exact/v1/client
+- [mechanisms/svm/exact/v1/facilitator](/docs/x402-sdk/api/pkg-mechanisms-svm-exact-v1-facilitator.html): github.com/x402-foundation/x402/go/v2/mechanisms/svm/exact/v1/facilitator
+- [signers/evm](/docs/x402-sdk/api/pkg-signers-evm.html): github.com/x402-foundation/x402/go/v2/signers/evm
+- [signers/svm](/docs/x402-sdk/api/pkg-signers-svm.html): github.com/x402-foundation/x402/go/v2/signers/svm
+- [types](/docs/x402-sdk/api/pkg-types.html): github.com/x402-foundation/x402/go/v2/types
+- [Go API Reference](/docs/x402-sdk/api.html): github.com/x402-foundation/x402/go/v2

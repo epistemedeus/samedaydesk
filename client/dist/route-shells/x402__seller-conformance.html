@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- No-FOUC: resolve the theme and paint the right ground BEFORE the React bundle (a
+         deferred module) runs. Must stay inline and synchronous. -->
+    <script>
+      (function () {
+        try {
+          var KEY = "sdd-theme"; // 'dark' | 'drafting' | 'system'
+          var BRAND_DEFAULT = "drafting"; // lead with the Drafting Table (light) look
+          var stored = localStorage.getItem(KEY);
+          var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var theme;
+          if (stored === "dark" || stored === "drafting") theme = stored;
+          else if (stored === "system") theme = systemDark ? "dark" : "drafting";
+          else theme = BRAND_DEFAULT;
+          var root = document.documentElement;
+          root.setAttribute("data-theme", theme);
+          root.style.colorScheme = theme === "drafting" ? "light" : "dark";
+          root.style.background = theme === "drafting" ? "#F4F1EA" : "#0a0b0d";
+          var m = document.createElement("meta");
+          m.setAttribute("name", "theme-color");
+          m.setAttribute("content", theme === "drafting" ? "#F4F1EA" : "#0a0b0d");
+          document.head.appendChild(m);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "drafting");
+          document.documentElement.style.background = "#F4F1EA";
+        }
+      })();
+    </script>
+
+    <!-- Per-theme browser chrome (no-JS / system case). JS updates a non-media tag on toggle. -->
+    <meta name="theme-color" content="#0a0b0d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="SameDayDesk llms.txt" />
+
+    <title>Seller conformance proof | SameDayDesk</title>
+    <meta
+      name="description"
+      content="Inspect SameDayDesk seller-conformance evidence, including one recruited Agent402 payment that led to deployed upstream repairs, without confusing validation with organic or repeat demand."
+    />
+    <link rel="canonical" href="https://samedaydesk.com/x402/seller-conformance" />
+
+    <!-- Open Graph / social preview (static, works for crawlers without JS) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SameDayDesk" />
+    <meta property="og:title" content="Seller conformance proof | SameDayDesk" />
+    <meta
+      property="og:description"
+      content="Inspect SameDayDesk seller-conformance evidence, including one recruited Agent402 payment that led to deployed upstream repairs, without confusing validation with organic or repeat demand."
+    />
+    <meta property="og:url" content="https://samedaydesk.com/x402/seller-conformance" />
+    <meta property="og:image" content="https://samedaydesk.com/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Seller conformance proof | SameDayDesk" />
+    <meta
+      name="twitter:description"
+      content="Inspect SameDayDesk seller-conformance evidence, including one recruited Agent402 payment that led to deployed upstream repairs, without confusing validation with organic or repeat demand."
+    />
+    <meta name="twitter:image" content="https://samedaydesk.com/og.png" />
+
+    <!-- Fallback ground for no-JS only; the inline script above sets the live value. -->
+    <style>
+      html { background: #F4F1EA; }
+    </style>
+
+    <!-- Structured data: helps AI search engines classify and cite the business + its services. -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://samedaydesk.com/#org",
+      "name": "SameDayDesk",
+      "url": "https://samedaydesk.com/"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://samedaydesk.com/x402/seller-conformance#webpage",
+      "url": "https://samedaydesk.com/x402/seller-conformance",
+      "name": "Seller conformance proof | SameDayDesk",
+      "description": "Inspect SameDayDesk seller-conformance evidence, including one recruited Agent402 payment that led to deployed upstream repairs, without confusing validation with organic or repeat demand.",
+      "isPartOf": {
+        "@id": "https://samedaydesk.com/#site"
+      },
+      "publisher": {
+        "@id": "https://samedaydesk.com/#org"
+      }
+    }
+  ]
+}
+    </script>
+    <script type="module" crossorigin src="/assets/index-Dnpco8oJ.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D-5vxndy.css">
+  </head>
+  <body>
+    <!-- Crawler-visible content for engines that don't execute JS (GPTBot, ClaudeBot,
+         PerplexityBot, CCBot). The React app below replaces #root for real users; this
+         noscript block gives AI search engines real prose + services to read and cite. -->
+    <noscript>
+<h1>Seller-conformance proof is inspection, not a guarantee</h1>
+      <p>
+        Existing SameDayDesk seller-conformance proof: inspect unpaid 402 terms, pin the integrity
+        Action SHA, and separate release verification from marketplace listing, merged contract
+        projection, deployment, settlement, demand, and revenue. This page is human-auditable
+        inspection evidence. It is not a product, certificate, or runtime monitor.
+      </p>
+      <p>
+        One recruited Agent402 payment led to deployed upstream repairs. That receipt does not prove
+        organic demand, repeat use, or a repair sale.
+      </p>
+      <ul>
+        <li><a href="https://samedaydesk.com/research/agent402-seller-integrity-validation-2026-08-29.json">Agent402 validation receipt</a></li>
+        <li><a href="https://samedaydesk.com/x402/seller-conformance/?resolved=gentech-defi-slash-20260912">Gentech DeFi resolved diagnostic case</a></li>
+        <li><a href="https://samedaydesk.com/x402/verified">Inspected x402 route list</a></li>
+        <li><a href="https://samedaydesk.com/x402">Agent payment infrastructure</a></li>
+      </ul>
+    </noscript>
+    <div id="root"></div>
+  </body>
+</html>

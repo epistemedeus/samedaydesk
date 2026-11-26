@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "dc000af08b37ce4702984e42b4b5345f55ca0160",
+  "base": "3d4ccefdac51ea38d80bae7e636cd94fe9266e7d",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
@@ -11,7 +11,7 @@
     "client/src/data/receiptPages.mjs": "92705522d6c767523b6bedc356b60e1e364d6d20efa237f90a9d6e3950160d23",
     "client/src/data/receipts.json": "09c3e7065672b8d62a3a5fbc1641ad170aea74c1a88c0ba48b86e5143f737821",
     "package-lock.json": "e925a74416eb507923c5dd5130919c0f1bd67a52141b80d84c2cf1cc0fadac59",
-    "package.json": "7c354440e53a611cead60d4e900c8f839357f581c7308a90b489222711f91429",
+    "package.json": "b3f17960de279ab0c884d984ebc97a40351806c4f4a3d6d9dbf1c5112eca8a25",
     "release/offers.json": "7c2e06c89c86d51b7a28b69822c2c72a5a9778a94f6b05db070b80f4deced062",
     "server/app.js": "115a754160109be6c115a047699281563c0ad15601ed90d8378e363ad33b1176",
     "server/contributor-desk-host.mjs": "a491467e92ea0de1f931dbdd53b0b83f3819e8a6cc8c9c10533820761e7956cb",
@@ -1914,6 +1914,11 @@
       "base": "9de7731530de248e37202354dedf96cab39f1316",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:d44effd0708268e61a8478bc5f2baefeb799ce215df3086561a1f08bfd7cba92"
+    },
+    {
+      "base": "dc000af08b37ce4702984e42b4b5345f55ca0160",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:8a9d5246407627af4a9fb026eeda869309f3e66648841af2c32c30aa64421b33"
     }
   ]
 }
