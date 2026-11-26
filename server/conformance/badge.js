@@ -14,7 +14,8 @@ function escapeXml(value) {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;");
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&apos;");
 }
 
 function checkedDay(checkedAt) {
@@ -29,14 +30,31 @@ export function badgeLabel(scorecard) {
 
 export function badgeStatusLabel(scorecard) {
   const status = scorecard.status || "unknown";
-  if (status === "stale" && scorecard.completeness === "incomplete") return "stale/partial";
-  if (status === "failed" && scorecard.freshness === "stale") return "failed/stale";
-  if (status === "failed" && scorecard.completeness === "incomplete") return "failed/partial";
-  return status;
+  const parts = [];
+  if (status === "failed" || status === "stale" || status === "partial" || status === "checked" || status === "unknown") {
+    parts.push(status);
+  } else {
+    parts.push(status);
+  }
+  if (status !== "stale" && scorecard.freshness === "stale" && !parts.includes("stale")) parts.push("stale");
+  if (status !== "partial" && scorecard.completeness === "incomplete" && !parts.includes("partial")) parts.push("partial");
+  if (status === "stale" && scorecard.completeness === "incomplete" && !parts.includes("partial")) parts.push("partial");
+  return parts.join("/");
+}
+
+export function badgeScopeText(scorecard) {
+  if (scorecard.kind === "mcp" && scorecard.observedProtocolVersion) {
+    return `mcp ${scorecard.observedProtocolVersion}`;
+  }
+  if (scorecard.kind === "x402" && scorecard.observedX402Version != null) {
+    return `x402 v${scorecard.observedX402Version}`;
+  }
+  const scope = (scorecard.scope || []).join(", ");
+  return scope || "unspecified";
 }
 
 export function badgeMessage(scorecard) {
-  return `${badgeStatusLabel(scorecard)} · ${checkedDay(scorecard.checkedAt)} · not a certification`;
+  return `${badgeStatusLabel(scorecard)} · ${badgeScopeText(scorecard)} · ${checkedDay(scorecard.checkedAt)} · not a certification`;
 }
 
 export function renderBadgeSvg(scorecard) {
