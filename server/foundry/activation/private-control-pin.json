@@ -1,6 +1,6 @@
 {
   "schema": "sds.foundry.private-control-source.v1",
-  "base": "3d4ccefdac51ea38d80bae7e636cd94fe9266e7d",
+  "base": "abfe019929695ac3e0328e4febc02cca8c42c3cd",
   "files": {
     "client/package-lock.json": "c36b4c5fdba2179b9d948c75d3fa86e30657525e026271e3ce83c922198b0e7c",
     "client/public/discovery/original-task-correspondence.json": "4c4f85571c4370d4668e1a8ba876f137806363786157768b6db08184904ee119",
@@ -33,6 +33,7 @@
     "server/foundry/serving-runtime.mjs": "40ae280165b2af26a54951377754a23179c70867fe524e0ea00fec177c90ddb8",
     "server/foundry/startup-diagnostic.js": "18afac4301b0a4d9d256e7880010f00b72bf9de12ce0e177d3aa9a67e0181662",
     "server/index.js": "6e8a6241a172127324cc9defe916522ee5222cf29f4d53ebf5c27b661abf55b9",
+    "server/lib/account-charge-hold.js": "0069978b4a4ba04ccb02b8e5a7bf2a5d972328acde9b0a3509d0a83d18f435a2",
     "server/lib/account-usdc.js": "bd3ca123561c98145efd167e9c0329dfc375809a91847284d4fb643f592edb56",
     "server/lib/agent-readiness/TRANSPORT.md": "09f4210ff1fa56d01fb3548d3cc38fc576c52e8649737082b0ed4b39c64e0a18",
     "server/lib/agent-readiness/bounded-fetch.js": "a9da5e49163fd36734fc3a5671d4867407697e5a7e69a89142cf71cd03e9bf4b",
@@ -86,7 +87,7 @@
     "server/lib/free-check-v2/render-client.js": "fceb750b0d7ca83e23e05fe909150f6e90dbb6023092a93f2f72ef791d980e20",
     "server/lib/free-check-v2/rules.js": "73515a9e866bdfca809a6183dc4584e4a1a353c12d6eb9dfb032c9c77046fbe7",
     "server/lib/free-check-v2/store.js": "1a60a850dd00ca817e1c52746273357749970d5469415510fadd877d8c5ff62b",
-    "server/lib/fulfill.js": "b4fbd2c788c4429fa4003815a82e72abe73c1ba3b4e931ef83bd3bed0ba1e2e8",
+    "server/lib/fulfill.js": "1dda50986fbc4331497cc053e60ad7be71cec30d1ff69a643f09f3c2d3f6762d",
     "server/lib/funded-round-activation.js": "01acf58234f8aa10dcd5f1dddafe44863fb77f6780a1c313fa3433700576f06f",
     "server/lib/hosted-offer-catalog.js": "844b4c2e7736bd1f68f91fd95896c2524a78faad8786854b51adf102d80e470c",
     "server/lib/hosted-rail.js": "8908c5317ece7757c3e4a995f00a8ac9726850b89d2e06d8853fd00322f5dfd4",
@@ -292,7 +293,7 @@
     "server/routes/requests.js": "9f42868435cfd9e40041a324fb3e272535ee6ca914d8224487434c4a110aec8b",
     "server/routes/resend-webhook.js": "b4b78b2ec212e2ae98c73703fb425d24538fdb2ee51492877a5c07a0d3f79352",
     "server/routes/scan.js": "1fb65804632de1434b8e24a447da0d170d7444a73c77bdb94cef4efa89a6ce6b",
-    "server/routes/stripe-webhook.js": "36b0837d0e16a96f4da098044c2f9861703b6fcd86a71a1cacd62d21efe3872a",
+    "server/routes/stripe-webhook.js": "3f519ed596bd02504d29b1757b07695ebae218adbf5e2d2e41e163e09a088797",
     "server/routes/tools.js": "b13adb624e4ef5ad975aa29c9d6af89b3071059890dbfc2516237906291a3a1f",
     "server/routes/x402-quote.js": "11caf4fa157443aa171e567a5308dea21e64b161c178300d3c0eb4259be97903",
     "server/scripts/fixtures/hosted-synthetic-upload-100511.json": "b2956cd3f1c2f4bd2b551d216f7aa2b9a627280f8077b00d13756a26e448664a",
@@ -1919,6 +1920,11 @@
       "base": "dc000af08b37ce4702984e42b4b5345f55ca0160",
       "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
       "closureDigest": "sha256:8a9d5246407627af4a9fb026eeda869309f3e66648841af2c32c30aa64421b33"
+    },
+    {
+      "base": "3d4ccefdac51ea38d80bae7e636cd94fe9266e7d",
+      "sourcePinSha256": "02d42a4d5777ae94082547dabc842c9ff035afc0354e1e7678ced72daef18e15",
+      "closureDigest": "sha256:8822895afc248dbb76fb87806c7bc202c04f4380ee762bbc0c6db431601f8988"
     }
   ]
 }
