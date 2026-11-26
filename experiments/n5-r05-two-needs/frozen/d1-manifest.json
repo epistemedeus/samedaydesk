@@ -1,0 +1,30 @@
+{
+  "recipeId": "source-change-alert",
+  "recipeVersion": "samedaydesk.recurring-job-recipe-result.v1",
+  "fields": [
+    "title"
+  ],
+  "prior": {
+    "sha256": "placeholder",
+    "sequence": 1,
+    "createdAt": "2026-09-08T12:00:00.000Z",
+    "payload": {
+      "url": "https://example.com/",
+      "status": 200,
+      "title": "Example Domain",
+      "fields": {
+        "title": "Example Domain"
+      },
+      "contentHash": "sha256:fixture-example-domain-v1"
+    }
+  },
+  "capture": {
+    "url": "https://example.com/",
+    "status": 200,
+    "title": "Example Domain",
+    "fields": {
+      "title": "Example Domain"
+    },
+    "contentHash": "sha256:fixture-example-domain-v1"
+  }
+}

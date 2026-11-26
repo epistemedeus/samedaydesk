@@ -1,0 +1,144 @@
+{
+  "ok": true,
+  "schema": "samedaydesk.recurring-job-recipe-result.v1",
+  "recipeId": "verification-reconcile",
+  "meta": {
+    "recipeId": "verification-reconcile",
+    "userBenefit": "Verify that a later observation still matches the immutable prior, or reconcile partial/error rows without replaying a payment.",
+    "operatorSupplies": [
+      "priorPath",
+      "candidatePath",
+      "scheduleHint",
+      "clock",
+      "horizonHours"
+    ],
+    "acceptedContracts": [
+      "pilot/page-change-brief/v1",
+      "samedaydesk.extract-batch.v0",
+      "samedaydesk evidence reconcile patterns"
+    ]
+  },
+  "cost": {
+    "primary": {
+      "kind": "costs_unknown",
+      "asOf": "2026-09-09",
+      "summary": "Offline compare and record recipes run on operator compute. Merchant charges are not invoked on the offline path; local CPU, disk, and wall time are costs_unknown.",
+      "examples": [
+        {
+          "item": "local page-change compare",
+          "amount": "costs_unknown",
+          "note": "no merchant charge; operator compute not priced here"
+        }
+      ]
+    },
+    "related": [
+      {
+        "kind": "sourced",
+        "asOf": "2026-09-09",
+        "source": "https://samedaydesk.com/for-agents",
+        "summary": "SameDayDesk bounded POST /extract/batch is listed at 0.01 USDC for a 1-5 URL attempt on /for-agents. These recipes do not purchase that route; total run cost including operator work remains costs_unknown.",
+        "examples": [
+          {
+            "item": "POST /extract/batch",
+            "amount": "0.01 USDC listed",
+            "note": "sourced list price only; not invoked by these recipes"
+          }
+        ]
+      }
+    ]
+  },
+  "recovery": {
+    "action": "review_and_sequence",
+    "operatorNext": "Review the evidence, then write a new sequenced artifact. Do not overwrite the immutable prior.",
+    "detail": {
+      "kind": "verification_reconcile",
+      "candidatePath": "/tmp/samedaydesk-src-9f6c0c4e/tools/recurring-job-recipes/fixtures/current/example-changed.json",
+      "candidateSha256": "601b037155ff8bd8e11eeb526f4380974762bfd50d9240263e8b8bb79751aa4d",
+      "priorDigest": {
+        "contentHash": "sha256:fixture-example-domain-v1",
+        "title": "Example Domain"
+      },
+      "candidateDigest": {
+        "contentHash": "sha256:fixture-example-domain-v2",
+        "title": "Example Domain Updated"
+      },
+      "mismatches": [
+        {
+          "field": "contentHash",
+          "before": "sha256:fixture-example-domain-v1",
+          "after": "sha256:fixture-example-domain-v2"
+        },
+        {
+          "field": "title",
+          "before": "Example Domain",
+          "after": "Example Domain Updated"
+        }
+      ],
+      "partial": false,
+      "claims": {
+        "noChangeProven": false,
+        "comparable": true,
+        "paymentImpliesUsefulOutput": false,
+        "automaticPaymentReplay": false
+      }
+    }
+  },
+  "outcome": "changed",
+  "clock": "2026-09-09T08:00:00.000Z",
+  "scheduleHint": "daily",
+  "prior": {
+    "path": "/tmp/samedaydesk-src-9f6c0c4e/tools/recurring-job-recipes/fixtures/priors/source-change.prior.json",
+    "sha256": "placeholder",
+    "sequence": 1,
+    "createdAt": "2026-09-08T12:00:00.000Z",
+    "immutable": true
+  },
+  "payment": {
+    "ok": true,
+    "attempted": false,
+    "replayBlocked": true,
+    "hasPriorReceipt": false
+  },
+  "stale": {
+    "stale": false,
+    "ageHours": 20,
+    "horizonHours": 168
+  },
+  "evidence": {
+    "kind": "verification_reconcile",
+    "candidatePath": "/tmp/samedaydesk-src-9f6c0c4e/tools/recurring-job-recipes/fixtures/current/example-changed.json",
+    "candidateSha256": "601b037155ff8bd8e11eeb526f4380974762bfd50d9240263e8b8bb79751aa4d",
+    "priorDigest": {
+      "contentHash": "sha256:fixture-example-domain-v1",
+      "title": "Example Domain"
+    },
+    "candidateDigest": {
+      "contentHash": "sha256:fixture-example-domain-v2",
+      "title": "Example Domain Updated"
+    },
+    "mismatches": [
+      {
+        "field": "contentHash",
+        "before": "sha256:fixture-example-domain-v1",
+        "after": "sha256:fixture-example-domain-v2"
+      },
+      {
+        "field": "title",
+        "before": "Example Domain",
+        "after": "Example Domain Updated"
+      }
+    ],
+    "partial": false,
+    "claims": {
+      "noChangeProven": false,
+      "comparable": true,
+      "paymentImpliesUsefulOutput": false,
+      "automaticPaymentReplay": false
+    }
+  },
+  "persisted": {
+    "ok": true,
+    "skipped": true
+  },
+  "neomorphic": null
+}

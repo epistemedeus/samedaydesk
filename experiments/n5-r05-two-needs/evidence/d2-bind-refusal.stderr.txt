@@ -1,0 +1,1 @@
+{"ok":false,"message":"input is not the before-work public manifest for source-change-alert"}

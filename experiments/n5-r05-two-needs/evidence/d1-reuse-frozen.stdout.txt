@@ -1,0 +1,116 @@
+{
+  "ok": true,
+  "mode": "decide-or-reuse",
+  "verdict": "reuse",
+  "decision": {
+    "schema": "neomorphic.task-memory.observation.v1",
+    "observationId": "obs_cb12649e972c894783b403f4238d88e7",
+    "revisionId": "rev_1",
+    "inputDigest": "sha256:ee025b1a337e17afda633aa4ec4ed66ec69e27113993386bb82184cd2e3aad6c",
+    "sourceUri": "https://example.com/",
+    "clock": "2026-09-09T08:00:00.000Z",
+    "statement": "source-change-alert unchanged; recovery keep_prior",
+    "useful": {
+      "recipeId": "source-change-alert",
+      "recipeVersion": "samedaydesk.recurring-job-recipe-result.v1",
+      "outcome": "unchanged",
+      "recovery": {
+        "action": "keep_prior",
+        "operatorNext": "No content change against the immutable prior. Keep the prior; schedule the next operator-supplied run."
+      },
+      "evidence": {
+        "kind": "field_diff",
+        "contentHash": "sha256:fixture-example-domain-v1",
+        "changed": [],
+        "unchanged": [
+          {
+            "field": "title",
+            "value": "Example Domain"
+          }
+        ]
+      }
+    },
+    "provenance": {
+      "recipeId": "source-change-alert",
+      "recipeVersion": "samedaydesk.recurring-job-recipe-result.v1",
+      "revisionId": "rev_1",
+      "clock": "2026-09-09T08:00:00.000Z",
+      "sourceUri": "https://example.com/",
+      "inputDigest": "sha256:ee025b1a337e17afda633aa4ec4ed66ec69e27113993386bb82184cd2e3aad6c",
+      "observationId": "obs_cb12649e972c894783b403f4238d88e7"
+    }
+  },
+  "inputDigest": "sha256:ee025b1a337e17afda633aa4ec4ed66ec69e27113993386bb82184cd2e3aad6c",
+  "sourceUri": "https://example.com/",
+  "revision": "rev_1",
+  "recipeId": "source-change-alert",
+  "recipeVersion": "samedaydesk.recurring-job-recipe-result.v1",
+  "clock": "2026-09-09T08:00:00.000Z",
+  "recipeWindow": {
+    "stale": false,
+    "ageHours": 0,
+    "horizonHours": 168
+  },
+  "producerInvoked": false,
+  "mechanics": {
+    "inputCaptureNs": 120238,
+    "inputCaptureBytes": 527,
+    "decisionWork": "not_run"
+  },
+  "costBaseline": {
+    "primary": {
+      "kind": "costs_unknown",
+      "asOf": "2026-09-09",
+      "summary": "Offline compare and record recipes run on operator compute. Merchant charges are not invoked on the offline path; local CPU, disk, and wall time are costs_unknown.",
+      "examples": [
+        {
+          "item": "local page-change compare",
+          "amount": "costs_unknown",
+          "note": "no merchant charge; operator compute not priced here"
+        }
+      ]
+    },
+    "related": [
+      {
+        "kind": "costs_unknown",
+        "asOf": "2026-09-09",
+        "summary": "A free public HTML fetch (for example example.com) or a mounted local fixture origin has no merchant charge, but network, CPU, and storage remain costs_unknown. Do not treat as zero marginal cost.",
+        "examples": [
+          {
+            "item": "GET https://example.com/ or mounted 127.0.0.1 fixture",
+            "amount": "costs_unknown",
+            "note": "no merchant fee; operator egress/CPU not priced here"
+          }
+        ]
+      },
+      {
+        "kind": "sourced",
+        "asOf": "2026-09-09",
+        "source": "https://samedaydesk.com/for-agents",
+        "summary": "SameDayDesk bounded POST /extract/batch is listed at 0.01 USDC for a 1-5 URL attempt on /for-agents. These recipes do not purchase that route; total run cost including operator work remains costs_unknown.",
+        "examples": [
+          {
+            "item": "POST /extract/batch",
+            "amount": "0.01 USDC listed",
+            "note": "sourced list price only; not invoked by these recipes"
+          }
+        ]
+      }
+    ]
+  },
+  "liveMetric": {
+    "distinctLaterAcceptedTasksTakingReuse": null,
+    "recomputeCostAvoidedNetOfUpkeep": "costs_unknown",
+    "observedAcceptedTaskLedger": false
+  },
+  "cannotEstablish": [
+    "live page bytes beyond the supplied public input",
+    "a distinct later accepted task took this reuse",
+    "recompute cost avoided net of upkeep",
+    "public-safe certification",
+    "merchant acceptance or a payment outcome"
+  ],
+  "publicSafeCertified": false,
+  "evidenceKind": "user_selected_unverified",
+  "kind": null
+}
