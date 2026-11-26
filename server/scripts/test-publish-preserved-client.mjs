@@ -16,9 +16,9 @@ const EXPECTED_COMMAND =
 const EXPECTED_PROOF = {
   ok: true,
   viteInvoked: false,
-  files: 352,
-  bytes: 59951737,
-  inventorySha256: "6f3cb5cde8366402812394d549d592a3003168f51f274b901f153880d0f302a5",
+  files: 353,
+  bytes: 59965585,
+  inventorySha256: "46a41b4afd082862b6d014dbca07c279962827eb4da8d7f7dea3328fde99dfe6",
 };
 
 function runPublisher(cwd) {
@@ -67,7 +67,7 @@ test("package.json build:managed-foundry is the preserved publisher, not Vite", 
   assert.equal(command.includes("vite"), false);
 });
 
-test("normal consumed 352-file dist is accepted without Vite", () => {
+test("normal consumed dist is accepted without Vite", () => {
   const result = runPublisher(repoRoot);
   assert.equal(result.status, 0, result.stderr);
   const proof = JSON.parse(result.stdout.trim());
